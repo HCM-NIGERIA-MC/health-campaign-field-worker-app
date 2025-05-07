@@ -235,19 +235,19 @@ class CustomMemberCard extends StatelessWidget {
     final theme = Theme.of(context);
     final textTheme = theme.digitTextTheme(context);
     List<TaskModel>? smcTasks = _getSMCStatusData();
-    List<TaskModel>? vasTasks = _getVACStatusData();
+   
     final doseStatus = checkStatus(smcTasks, context.selectedCycle);
     bool smcAssessmentPendingStatus = assessmentSMCPending(smcTasks);
-    bool vasAssessmentPendingStatus = assessmentVASPending(vasTasks);
+    
     bool isBeneficiaryReferredSMC = checkBeneficiaryReferredSMC(smcTasks);
-    bool isBeneficiaryReferredVAS = checkBeneficiaryReferredVAS(vasTasks);
+   
     final redosePendingStatus = smcAssessmentPendingStatus
         ? true
         : redosePending(smcTasks, context.selectedCycle);
     if ((isNotEligibleSMC || isBeneficiaryIneligible) && !doseStatus)
       return const Offstage();
     if (isNotEligibleSMC ||
-        (!vasAssessmentPendingStatus && !redosePendingStatus)) {
+        ( !redosePendingStatus)) {
       return const Offstage();
     }
     return Column(
@@ -356,47 +356,7 @@ class CustomMemberCard extends StatelessWidget {
               }
             },
           ),
-        if ((!smcAssessmentPendingStatus || isBeneficiaryReferredSMC) &&
-            vasAssessmentPendingStatus &&
-            !isBeneficiaryReferredVAS &&
-            !isNotEligibleVAS)
-          DigitElevatedButton(
-            child: Center(
-              child: Text(
-                localizations.translate(
-                  i18_local.householdOverView
-                      .householdOverViewVASAssessmentActionText,
-                ),
-                style: textTheme.headingM.copyWith(color: Colors.white),
-              ),
-            ),
-            onPressed: () async {
-              final bloc = context.read<HouseholdOverviewBloc>();
-              bloc.add(
-                HouseholdOverviewEvent.selectedIndividual(
-                  individualModel: individual,
-                ),
-              );
-
-              if ((vasTasks ?? []).isEmpty) {
-                // context.router.push(
-                //   CustomBeneficiaryDetailsRoute(
-                //     eligibilityAssessmentType:
-                //         EligibilityAssessmentType.smc,
-                //   ),
-                // );
-                context.router.push(
-                  EligibilityChecklistViewRoute(
-                    projectBeneficiaryClientReferenceId:
-                        projectBeneficiaryClientReferenceId,
-                    individual: individual,
-                    eligibilityAssessmentType: EligibilityAssessmentType.vas,
-                  ),
-                );
-              }
-            },
-          ),
-      ],
+          ],
     );
   }
 

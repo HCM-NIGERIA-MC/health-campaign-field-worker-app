@@ -121,6 +121,15 @@ class MainApplicationState extends State<MainApplication>
               ),
 
               BlocProvider(
+                create: (_) {
+                  return DigitScannerBloc(
+                    const DigitScannerState(),
+                  );
+                },
+                lazy: false,
+              ),
+
+              BlocProvider(
                 create: (context) {
                   return UserBloc(
                     const UserEmptyState(),

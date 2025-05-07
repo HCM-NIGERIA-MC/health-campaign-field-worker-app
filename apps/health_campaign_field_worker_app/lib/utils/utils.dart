@@ -656,6 +656,3 @@ class LocalizationParams {
 
   bool? get exclude => _exclude;
 }
-
-
-
