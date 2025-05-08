@@ -1,4 +1,5 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:digit_components/widgets/digit_dialog.dart';
 import 'package:digit_data_model/data_model.dart';
 import 'package:digit_data_model/models/entities/household_type.dart';
 import 'package:digit_scanner/blocs/scanner.dart';
@@ -33,6 +34,8 @@ import 'package:registration_delivery/widgets/status_filter/status_filter.dart';
 
 import '../../blocs/registration_delivery/custom_search_household.dart';
 import '../../router/app_router.dart';
+import '../../utils/extensions/extensions.dart';
+import '../../utils/i18_key_constants.dart' as i18_local;
 
 @RoutePage()
 class CustomSearchBeneficiaryPage extends LocalizedStatefulWidget {
@@ -477,20 +480,63 @@ class _CustomSearchBeneficiaryPageState
                       isDisabled: false,
                       onPressed: () {
                         FocusManager.instance.primaryFocus?.unfocus();
-                        context.read<DigitScannerBloc>().add(
-                              const DigitScannerEvent.handleScanner(),
-                            );
-                        context.router
-                            .push(CustomBeneficiaryRegistrationWrapperRoute(
-                          initialState: BeneficiaryRegistrationCreateState(
-                            searchQuery: searchHouseholdsState.searchQuery,
-                          ),
-                        ));
-                        searchController.clear();
-                        selectedFilters = [];
-                        customSearchHouseholdsBloc.add(
-                          const SearchHouseholdsClearEvent(),
-                        );
+
+                        final spaq1 = context.spaq1;
+                        final spaq2 = context.spaq2;
+
+                        if (spaq1 > 0 || spaq2 > 0) {
+                          context.read<DigitScannerBloc>().add(
+                                const DigitScannerEvent.handleScanner(),
+                              );
+                          context.router
+                              .push(CustomBeneficiaryRegistrationWrapperRoute(
+                            initialState: BeneficiaryRegistrationCreateState(
+                              searchQuery: searchHouseholdsState.searchQuery,
+                            ),
+                          ));
+                          searchController.clear();
+                          selectedFilters = [];
+                          customSearchHouseholdsBloc.add(
+                            const SearchHouseholdsClearEvent(),
+                          );
+                        } else {
+                          DigitDialog.show(
+                            context,
+                            options: DigitDialogOptions(
+                              titleText: localizations.translate(
+                                i18_local.beneficiaryDetails
+                                    .insufficientStockHeading,
+                              ),
+                              titleIcon: Icon(
+                                Icons.warning,
+                                color: DigitTheme.instance.colorScheme.error,
+                              ),
+                              contentText: localizations
+                                  .translate(
+                                    i18_local.beneficiaryDetails
+                                        .insufficientSMCStockMessageDelivery,
+                                  )
+                                  .replaceAll(
+                                    "{1}",
+                                    0.toString(),
+                                  )
+                                  .replaceAll(
+                                    "{2}",
+                                    0.toString(),
+                                  ),
+                              primaryAction: DigitDialogActions(
+                                label: localizations.translate(
+                                    i18_local.beneficiaryDetails.backToHome),
+                                action: (ctx) {
+                                  Navigator.of(
+                                    ctx,
+                                    rootNavigator: true,
+                                  ).pop();
+                                },
+                              ),
+                            ),
+                          );
+                        }
                       },
                     );
                   },

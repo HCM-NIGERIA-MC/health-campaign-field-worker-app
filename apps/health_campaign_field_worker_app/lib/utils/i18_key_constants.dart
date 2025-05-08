@@ -619,6 +619,9 @@ class ComplaintTypeShowcase {
 class CaregiverConsent {
   const CaregiverConsent();
 
+  String get caregiverConsentDescriptionTextSMC =>
+      'CARE_GIVER_CONSENT_DESCRIPTION_TEXT_SMC';
+
   String get caregiverConsentLabelText => 'CARE_GIVER_CONSENT_LABEL_TEXT';
 
   String get caregiverConsentDescriptionText =>
@@ -1127,8 +1130,13 @@ class SearchBeneficiary {
 class IndividualDetails {
   const IndividualDetails();
 
+  
+  String get headAgeValidError =>"INDIVIDUAL_HEAD_MIN_AGE_VALIDATION_MESSAGE";
+
   String get onlyAlphabetsValidationMessage =>
       'INDIVIDUAL_DETAILS_ONLY_ALPHABETS_VALIDATION_MESSAGE';
+  String get mobileNumberLengthValidationMessageSMC =>
+      'INDIVIDUAL_DETAILS_MOBILE_NUMBER_LENGTH_SMC';
 
   String get individualsDetailsLabelText => 'INDIVIDUAL_LABEL_TEXT';
 
@@ -1178,6 +1186,12 @@ class IndividualDetails {
 
 class BeneficiaryDetails {
   const BeneficiaryDetails();
+
+  String get backToHome =>"BACK_TO_HOME";
+
+  String get insufficientSMCStockMessageDelivery =>
+      'INSUFFICIENT_SMC_STOCK_MESSAGE_DELIVERY';
+
   String get insufficientStockHeading => 'INSUFFICIENT_STOCK_HEADING';
   String get insufficientAZTStockMessage => 'INSUFFICIENT_AZT_STOCK_MESSAGE';
   String get insufficientAZTStockMessageDelivery =>

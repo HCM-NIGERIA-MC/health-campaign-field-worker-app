@@ -4,6 +4,7 @@ import 'package:digit_data_model/models/entities/project_type.dart';
 import 'package:digit_data_model/models/project_type/project_type_model.dart';
 import 'package:digit_ui_components/utils/date_utils.dart';
 import 'package:health_campaign_field_worker_app/utils/constants.dart';
+import 'package:reactive_forms/reactive_forms.dart';
 import 'package:registration_delivery/models/entities/additional_fields_type.dart';
 import 'package:registration_delivery/models/entities/side_effect.dart';
 import 'package:registration_delivery/models/entities/status.dart';
@@ -353,4 +354,21 @@ bool allDosesDelivered(
       return false;
     }
   }
+}
+
+
+
+Map<String, dynamic>? minimumAgeValidator(AbstractControl control) {
+  final date = control.value;
+  if (date is! DateTime) return null;
+
+  final today = DateTime.now();
+  final age = today.year - date.year -
+      ((today.month < date.month || (today.month == date.month && today.day < date.day)) ? 1 : 0);
+
+  if (age < 18) {
+    return {'minAge': true};
+  }
+
+  return null;
 }

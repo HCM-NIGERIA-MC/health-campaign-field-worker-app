@@ -37,7 +37,7 @@ class CustomMemberCard extends StatelessWidget {
   final IndividualModel individual;
   final List<ProjectBeneficiaryModel>? projectBeneficiaries;
   final bool isSMCDelivered;
-  final bool isVASDelivered;
+  //final bool isVASDelivered;
 
   final VoidCallback setAsHeadAction;
   final VoidCallback editMemberAction;
@@ -46,7 +46,7 @@ class CustomMemberCard extends StatelessWidget {
   final List<TaskModel>? tasks;
   final List<SideEffectModel>? sideEffects;
   final bool isNotEligibleSMC;
-  final bool isNotEligibleVAS;
+  //final bool isNotEligibleVAS;
   final bool isBeneficiaryRefused;
   final bool isBeneficiaryIneligible;
   final bool isBeneficiaryReferred;
@@ -63,13 +63,13 @@ class CustomMemberCard extends StatelessWidget {
     this.months = 0,
     required this.localizations,
     required this.isSMCDelivered,
-    required this.isVASDelivered,
+    //required this.isVASDelivered,
     required this.setAsHeadAction,
     required this.editMemberAction,
     required this.deleteMemberAction,
     this.tasks,
     this.isNotEligibleSMC = false,
-    this.isNotEligibleVAS = false,
+   // this.isNotEligibleVAS = false,
     this.projectBeneficiaryClientReferenceId,
     this.isBeneficiaryRefused = false,
     this.isBeneficiaryIneligible = false,
@@ -91,25 +91,26 @@ class CustomMemberCard extends StatelessWidget {
         .toList();
   }
 
-  List<TaskModel>? _getVACStatusData() {
-    return tasks
-        ?.where((e) =>
-            e.additionalFields?.fields.firstWhereOrNull(
-              (element) =>
-                  element.key ==
-                      additional_fields_local.AdditionalFieldsType.deliveryType
-                          .toValue() &&
-                  element.value == EligibilityAssessmentStatus.vasDone.name,
-            ) !=
-            null)
-        .toList();
-  }
+//TODO: remove
+  // List<TaskModel>? _getVACStatusData() {
+  //   return tasks
+  //       ?.where((e) =>
+  //           e.additionalFields?.fields.firstWhereOrNull(
+  //             (element) =>
+  //                 element.key ==
+  //                     additional_fields_local.AdditionalFieldsType.deliveryType
+  //                         .toValue() &&
+  //                 element.value == EligibilityAssessmentStatus.vasDone.name,
+  //           ) !=
+  //           null)
+  //       .toList();
+  // }
 
   Widget statusWidget(context) {
     List<TaskModel>? smcTasks = _getSMCStatusData();
-    List<TaskModel>? vasTasks = _getVACStatusData();
+   // List<TaskModel>? vasTasks = _getVACStatusData();
     bool isBeneficiaryReferredSMC = checkBeneficiaryReferredSMC(smcTasks);
-    bool isBeneficiaryReferredVAS = checkBeneficiaryReferredVAS(vasTasks);
+   // bool isBeneficiaryReferredVAS = checkBeneficiaryReferredVAS(vasTasks);
     final theme = Theme.of(context);
     if (isHead) {
       return Align(
@@ -125,9 +126,9 @@ class CustomMemberCard extends StatelessWidget {
       );
     }
     if ((isSMCDelivered ||
-        isVASDelivered ||
-        isBeneficiaryReferredSMC ||
-        isBeneficiaryReferredVAS)) {
+        
+        isBeneficiaryReferredSMC 
+        )) {
       return Column(
         children: [
           if (isSMCDelivered || isBeneficiaryReferredSMC)
@@ -151,28 +152,7 @@ class CustomMemberCard extends StatelessWidget {
                     : DigitTheme.instance.colorScheme.onSurfaceVariant,
               ),
             ),
-          if (isVASDelivered || isBeneficiaryReferredVAS)
-            Align(
-              alignment: Alignment.centerLeft,
-              child: DigitIconButton(
-                icon: Icons.check_circle,
-                iconText: localizations.translate(
-                  isBeneficiaryReferredVAS
-                      ? i18_local.householdOverView
-                          .householdOverViewBeneficiaryReferredVASLabel
-                      : i18_local.householdOverView
-                          .householdOverViewVASDeliveredIconLabel,
-                ),
-                iconSize: 20,
-                iconTextColor: isBeneficiaryReferredVAS
-                    ? DigitTheme.instance.colorScheme.error
-                    : DigitTheme.instance.colorScheme.onSurfaceVariant,
-                iconColor: isBeneficiaryReferredVAS
-                    ? DigitTheme.instance.colorScheme.error
-                    : DigitTheme.instance.colorScheme.onSurfaceVariant,
-              ),
-            ),
-        ],
+            ],
       );
     } else if (isNotEligibleSMC || isBeneficiaryIneligible) {
       return Column(
@@ -235,19 +215,19 @@ class CustomMemberCard extends StatelessWidget {
     final theme = Theme.of(context);
     final textTheme = theme.digitTextTheme(context);
     List<TaskModel>? smcTasks = _getSMCStatusData();
-    List<TaskModel>? vasTasks = _getVACStatusData();
+    //List<TaskModel>? vasTasks = _getVACStatusData();
     final doseStatus = checkStatus(smcTasks, context.selectedCycle);
     bool smcAssessmentPendingStatus = assessmentSMCPending(smcTasks);
-    bool vasAssessmentPendingStatus = assessmentVASPending(vasTasks);
+   // bool vasAssessmentPendingStatus = assessmentVASPending(vasTasks);
     bool isBeneficiaryReferredSMC = checkBeneficiaryReferredSMC(smcTasks);
-    bool isBeneficiaryReferredVAS = checkBeneficiaryReferredVAS(vasTasks);
+   // bool isBeneficiaryReferredVAS = checkBeneficiaryReferredVAS(vasTasks);
     final redosePendingStatus = smcAssessmentPendingStatus
         ? true
         : redosePending(smcTasks, context.selectedCycle);
     if ((isNotEligibleSMC || isBeneficiaryIneligible) && !doseStatus)
       return const Offstage();
     if (isNotEligibleSMC ||
-        (!vasAssessmentPendingStatus && !redosePendingStatus)) {
+        ( !redosePendingStatus)) {
       return const Offstage();
     }
     return Column(
@@ -356,47 +336,7 @@ class CustomMemberCard extends StatelessWidget {
               }
             },
           ),
-        if ((!smcAssessmentPendingStatus || isBeneficiaryReferredSMC) &&
-            vasAssessmentPendingStatus &&
-            !isBeneficiaryReferredVAS &&
-            !isNotEligibleVAS)
-          DigitElevatedButton(
-            child: Center(
-              child: Text(
-                localizations.translate(
-                  i18_local.householdOverView
-                      .householdOverViewVASAssessmentActionText,
-                ),
-                style: textTheme.headingM.copyWith(color: Colors.white),
-              ),
-            ),
-            onPressed: () async {
-              final bloc = context.read<HouseholdOverviewBloc>();
-              bloc.add(
-                HouseholdOverviewEvent.selectedIndividual(
-                  individualModel: individual,
-                ),
-              );
-
-              if ((vasTasks ?? []).isEmpty) {
-                // context.router.push(
-                //   CustomBeneficiaryDetailsRoute(
-                //     eligibilityAssessmentType:
-                //         EligibilityAssessmentType.smc,
-                //   ),
-                // );
-                context.router.push(
-                  EligibilityChecklistViewRoute(
-                    projectBeneficiaryClientReferenceId:
-                        projectBeneficiaryClientReferenceId,
-                    individual: individual,
-                    eligibilityAssessmentType: EligibilityAssessmentType.vas,
-                  ),
-                );
-              }
-            },
-          ),
-      ],
+          ],
     );
   }
 

@@ -1,5 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:collection/collection.dart';
+import 'package:digit_components/widgets/digit_dialog.dart';
 import 'package:digit_data_model/data_model.dart';
 import 'package:digit_data_model/models/entities/household_type.dart';
 import 'package:digit_ui_components/enum/app_enums.dart';
@@ -31,6 +32,7 @@ import 'package:registration_delivery/models/entities/status.dart';
 import 'package:registration_delivery/router/registration_delivery_router.gm.dart';
 import 'package:registration_delivery/utils/i18_key_constants.dart' as i18;
 import 'package:registration_delivery/utils/utils.dart';
+import '../../utils/extensions/extensions.dart';
 import '../../widgets/custom_back_navigation.dart';
 import 'package:registration_delivery/widgets/localized.dart';
 import 'package:registration_delivery/widgets/member_card/member_card.dart';
@@ -40,6 +42,7 @@ import '../../router/app_router.dart';
 import '../../utils/app_enums.dart';
 import '../../utils/registration_delivery/utils_smc.dart';
 import '../../widgets/registration_delivery/custom_member_card.dart';
+import '../../utils/i18_key_constants.dart' as i18_local;
 
 @RoutePage()
 class CustomHouseholdOverviewPage extends LocalizedStatefulWidget {
@@ -945,28 +948,29 @@ class _CustomHouseholdOverviewPageState
                                                         sideEffectData,
                                                       )
                                                     : false,
-                                            isNotEligibleVAS:
-                                                RegistrationDeliverySingleton()
-                                                            .projectType
-                                                            ?.cycles !=
-                                                        null
-                                                    ? !checkEligibilityForAgeAndSideEffectAll(
-                                                        DigitDOBAgeConvertor(
-                                                          years: ageInYears,
-                                                          months: ageInMonths,
-                                                        ),
-                                                        RegistrationDeliverySingleton()
-                                                            .selectedProject
-                                                            ?.additionalDetails
-                                                            ?.additionalProjectType,
-                                                        (taskData ?? [])
-                                                                .isNotEmpty
-                                                            ? taskData
-                                                                ?.lastOrNull
-                                                            : null,
-                                                        sideEffectData,
-                                                      )
-                                                    : false,
+                                            //TODO: remove
+                                            // isNotEligibleVAS:
+                                            //     RegistrationDeliverySingleton()
+                                            //                 .projectType
+                                            //                 ?.cycles !=
+                                            //             null
+                                            //         ? !checkEligibilityForAgeAndSideEffectAll(
+                                            //             DigitDOBAgeConvertor(
+                                            //               years: ageInYears,
+                                            //               months: ageInMonths,
+                                            //             ),
+                                            //             RegistrationDeliverySingleton()
+                                            //                 .selectedProject
+                                            //                 ?.additionalDetails
+                                            //                 ?.additionalProjectType,
+                                            //             (taskData ?? [])
+                                            //                     .isNotEmpty
+                                            //                 ? taskData
+                                            //                     ?.lastOrNull
+                                            //                 : null,
+                                            //             sideEffectData,
+                                            //           )
+                                            //         : false,
                                             name: e.name?.givenName ?? ' - - ',
                                             years: (e.dateOfBirth == null
                                                 ? null
@@ -1004,15 +1008,16 @@ class _CustomHouseholdOverviewPageState
                                                         )
                                                     ? true
                                                     : false,
-                                            isVASDelivered: taskData == null
-                                                ? false
-                                                : taskData.isNotEmpty &&
-                                                        !checkStatusVAS(
-                                                          taskData,
-                                                          currentCycle,
-                                                        )
-                                                    ? true
-                                                    : false,
+                                            //TODO: remove
+                                            // isVASDelivered: taskData == null
+                                            //     ? false
+                                            //     : taskData.isNotEmpty &&
+                                            //             !checkStatusVAS(
+                                            //               taskData,
+                                            //               currentCycle,
+                                            //             )
+                                            //         ? true
+                                            //         : false,
                                             localizations: localizations,
                                             projectBeneficiaryClientReferenceId:
                                                 projectBeneficiaryId,
@@ -1024,10 +1029,51 @@ class _CustomHouseholdOverviewPageState
                                 ),
                                 DigitButton(
                                   mainAxisSize: MainAxisSize.max,
-                                  onPressed: () => addIndividual(
-                                    context,
-                                    state.householdMemberWrapper.household,
-                                  ),
+                                  onPressed: () => !(context.spaq1 > 0 ||
+                                          context.spaq2 > 0)
+                                      ? DigitDialog.show(
+                                          context,
+                                          options: DigitDialogOptions(
+                                            titleText: localizations.translate(
+                                              i18_local.beneficiaryDetails
+                                                  .insufficientStockHeading,
+                                            ),
+                                            titleIcon: Icon(
+                                              Icons.warning,
+                                              color: DigitTheme
+                                                  .instance.colorScheme.error,
+                                            ),
+                                            contentText: localizations
+                                                .translate(
+                                                  i18_local.beneficiaryDetails
+                                                      .insufficientSMCStockMessageDelivery,
+                                                )
+                                                .replaceAll(
+                                                  "{1}",
+                                                  0.toString(),
+                                                )
+                                                .replaceAll(
+                                                  "{2}",
+                                                  0.toString(),
+                                                ),
+                                            primaryAction: DigitDialogActions(
+                                              label: localizations.translate(
+                                                  i18_local.beneficiaryDetails
+                                                      .backToHome),
+                                              action: (ctx) {
+                                                Navigator.of(
+                                                  ctx,
+                                                  rootNavigator: true,
+                                                ).pop();
+                                              },
+                                            ),
+                                          ),
+                                        )
+                                      : addIndividual(
+                                          context,
+                                          state
+                                              .householdMemberWrapper.household,
+                                        ),
                                   label: localizations.translate(
                                     i18.householdOverView
                                         .householdOverViewAddActionText,

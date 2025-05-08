@@ -1,38 +1,28 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:collection/collection.dart';
-import 'package:dart_mappable/dart_mappable.dart';
 import 'package:digit_components/utils/date_utils.dart' as digits;
 import 'package:digit_components/widgets/atoms/digit_toaster.dart';
 import 'package:digit_ui_components/theme/ComponentTheme/checkbox_theme.dart';
+import 'package:health_campaign_field_worker_app/utils/registration_delivery/utils_smc.dart';
 import '../../widgets/custom_back_navigation.dart';
 import 'package:digit_data_model/data_model.dart';
 import 'package:digit_data_model/models/entities/household_type.dart';
 import 'package:digit_scanner/blocs/scanner.dart';
-import 'package:digit_scanner/pages/qr_scanner.dart';
 import 'package:digit_ui_components/digit_components.dart';
 import 'package:digit_ui_components/theme/digit_extended_theme.dart';
-import 'package:digit_ui_components/utils/date_utils.dart';
-import 'package:digit_ui_components/widgets/atoms/digit_dob_picker.dart';
 import 'package:digit_ui_components/widgets/atoms/pop_up_card.dart';
-import 'package:digit_ui_components/widgets/atoms/selection_card.dart';
 import 'package:digit_ui_components/widgets/molecules/digit_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:digit_components/widgets/atoms/digit_dropdown.dart' as dropdown;
-import 'package:health_campaign_field_worker_app/blocs/app_initialization/app_initialization.dart';
-import 'package:health_campaign_field_worker_app/models/app_config/app_config_model.dart';
 import 'package:health_campaign_field_worker_app/widgets/date/custom_digit_dob_picker.dart';
 // import 'package:health_campaign_field_worker_app/widgets/header/custom_back_button.dart';
 import 'package:intl/intl.dart';
 import 'package:reactive_forms/reactive_forms.dart';
-import 'package:registration_delivery/blocs/search_households/search_bloc_common_wrapper.dart';
-import 'package:registration_delivery/blocs/search_households/search_households.dart';
-import 'package:registration_delivery/models/entities/household.dart';
 import 'package:registration_delivery/utils/constants.dart';
 import 'package:registration_delivery/utils/extensions/extensions.dart';
 
-import 'package:registration_delivery/blocs/household_overview/household_overview.dart';
 import 'package:registration_delivery/router/registration_delivery_router.gm.dart';
 import 'package:registration_delivery/utils/i18_key_constants.dart' as i18;
 import '/utils/i18_key_constants.dart' as i18_local;
@@ -40,7 +30,6 @@ import 'package:registration_delivery/utils/utils.dart';
 // import 'package:registration_delivery/widgets/back_navigation_help_header.dart';
 import 'package:registration_delivery/widgets/localized.dart';
 import 'package:registration_delivery/widgets/showcase/config/showcase_constants.dart';
-import 'package:registration_delivery/widgets/showcase/showcase_button.dart';
 
 import '../../blocs/registration_delivery/custom_beneficairy_registration.dart';
 import '../../blocs/registration_delivery/custom_search_household.dart';
@@ -49,6 +38,7 @@ import '../../router/app_router.dart';
 // import '../../utils/utils.dart' as local_utils;
 import '../../utils/registration_delivery/registration_delivery_utils.dart';
 import 'custom_beneficiary_acknowledgement.dart';
+import '../../utils/i18_key_constants.dart' as i18_local;
 
 @RoutePage()
 class CustomIndividualDetailsPage extends LocalizedStatefulWidget {
@@ -247,7 +237,7 @@ class CustomIndividualDetailsPageState
                                 await DigitToast.show(
                                   context,
                                   options: DigitToastOptions(
-                                    localizations.translate(i18
+                                    localizations.translate(i18_local
                                         .individualDetails.headAgeValidError),
                                     true,
                                     theme,
@@ -575,7 +565,13 @@ class CustomIndividualDetailsPageState
 
                               digits.DigitDOBAge age =
                                   digits.DigitDateUtils.calculateAge(value);
-                              if ((age.years == 0 && age.months == 0) ||
+                              if (widget.isHeadOfHousehold &&
+                                  (age.years < 18 ||
+                                      (age.years == 18 &&
+                                          age.months == 0 &&
+                                          age.days == 0))) {
+                                formControl.setErrors({'customMinAge': true});
+                              } else if ((age.years == 0 && age.months == 0) ||
                                   age.months > 11 ||
                                   (age.years >= 150 && age.months >= 0)) {
                                 formControl.setErrors({'': true});
@@ -588,6 +584,8 @@ class CustomIndividualDetailsPageState
                             confirmText: localizations
                                 .translate(i18.common.coreCommonOk),
                             monthsHintLabel: 'Month',
+                            headAgeValidError:
+                                i18_local.individualDetails.headAgeValidError,
                           ),
                         ),
                         dropdown.DigitDropdown<String>(

@@ -19,6 +19,7 @@ class CustomDigitDobPicker extends StatelessWidget {
   final String confirmText;
   final DateTime? initialDate;
   final void Function(FormControl<dynamic>)? onChangeOfFormControl;
+  final String headAgeValidError;
 
   const CustomDigitDobPicker({
     super.key,
@@ -35,6 +36,7 @@ class CustomDigitDobPicker extends StatelessWidget {
     required this.confirmText,
     required this.cancelText,
     this.onChangeOfFormControl,
+    required this.headAgeValidError,
   });
 
   @override
@@ -64,6 +66,9 @@ class CustomDigitDobPicker extends StatelessWidget {
           children: [
             // Date picker component to select the date of birth
             DigitDateFormPicker(
+              validationMessages: {
+                'customMinAge': (_) => "",
+              },
               label: datePickerLabel,
               isRequired: true,
               start: initialDate,
@@ -84,6 +89,9 @@ class CustomDigitDobPicker extends StatelessWidget {
                 Expanded(
                   // Text form field for entering the age in years
                   child: DigitTextFormField(
+                      validationMessages: {
+                        'customMinAge': (_) => "",
+                      },
                       padding: EdgeInsets.zero,
                       inputFormatters: [
                         FilteringTextInputFormatter.digitsOnly,
@@ -104,6 +112,9 @@ class CustomDigitDobPicker extends StatelessWidget {
                 Expanded(
                   // Text form field for entering the age in months
                   child: DigitTextFormField(
+                      validationMessages: {
+                        'customMinAge': (_) => "",
+                      },
                       padding: EdgeInsets.zero,
                       inputFormatters: [
                         FilteringTextInputFormatter.digitsOnly,
@@ -123,7 +134,13 @@ class CustomDigitDobPicker extends StatelessWidget {
             ReactiveFormConsumer(
               builder: (context, form, child) {
                 final datePickerControl = form.control(datePickerFormControl);
-                if (datePickerControl.hasErrors) {
+                if (datePickerControl.hasError('customMinAge')) {
+                  return Text(
+                    headAgeValidError,
+                    style:
+                        TextStyle(color: DigitTheme.instance.colorScheme.error),
+                  );
+                } else if (datePickerControl.hasErrors) {
                   return Text(
                     yearsAndMonthsErrMsg,
                     style:
