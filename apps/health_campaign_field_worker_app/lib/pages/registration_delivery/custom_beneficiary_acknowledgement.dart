@@ -49,19 +49,22 @@ class CustomBeneficiaryAcknowledgementPageState
         ?.lastWhereOrNull((e) =>
             e.identifierType == IdentifierTypes.uniqueBeneficiaryID.toValue())
         ?.identifierId;
-    // if (widget.acknowledgementType == AcknowledgementType.addHousehold) {
-    //   return householdId == null
-    //       ? null
-    //       : {
-    //           'id': i18_local.beneficiaryDetails.householdId,
-    //           'value': householdId,
-    //         };
-    // }
-    return beneficiaryId == null
+    String? beneficiaryName =
+        householdMember?.members?.lastOrNull?.name?.givenName;
+
+    if (widget.acknowledgementType == AcknowledgementType.addHousehold) {
+      return householdId == null || beneficiaryName == null
+          ? null
+          : {
+              'id': i18_local.beneficiaryDetails.householdId,
+              'value': '$beneficiaryName - $householdId'
+            };
+    }
+    return beneficiaryId == null || beneficiaryName == null
         ? null
         : {
             'id': i18_local.beneficiaryDetails.beneficiaryId,
-            'value': beneficiaryId,
+            'value': '$beneficiaryName - $beneficiaryId',
           };
   }
 
