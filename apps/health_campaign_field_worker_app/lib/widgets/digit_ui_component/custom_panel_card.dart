@@ -380,7 +380,7 @@ class _PanelState extends State<Panel> with SingleTickerProviderStateMixin {
           Text(
             widget.subTitle?['value'] ?? "",
             textAlign: TextAlign.center,
-            style: themeData.titleTextStyle,
+            style: themeData.titleTextStyle.copyWith(fontSize: 16),
           ),
           if (widget.description != null)
             SizedBox(
