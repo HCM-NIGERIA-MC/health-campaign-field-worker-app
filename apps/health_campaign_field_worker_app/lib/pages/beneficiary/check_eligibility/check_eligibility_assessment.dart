@@ -30,6 +30,8 @@ import '../../../widgets/localized.dart';
 import '../../../models/entities/assessment_checklist/status.dart'
     as status_local;
 import 'package:digit_ui_components/services/location_bloc.dart' as location;
+import '../../../models/entities/additional_fields_type.dart'
+    as additional_fields_local;
 
 @RoutePage()
 class EligibilityChecklistViewPage extends LocalizedStatefulWidget {
@@ -152,6 +154,7 @@ class _EligibilityChecklistViewPage
                               kPadding, 0, kPadding, 0),
                           child: DigitElevatedButton(
                             onPressed: () async {
+                              submitTriggered = true;
                               final isValid =
                                   checklistFormKey.currentState?.validate();
                               if (!isValid!) {
@@ -458,13 +461,27 @@ class _EligibilityChecklistViewPage
                                                   fields: [
                                                     // AdditionalField(
                                                     //   'taskStatus',
-                                                    //   Status.beneficiaryInEligible
+                                                    //   status_local.Status
+                                                    //       .beneficiaryInEligible
                                                     //       .toValue(),
                                                     // ),
                                                     AdditionalField(
                                                       'ineligibleReasons',
                                                       ineligibilityReasons
                                                           .join(","),
+                                                    ),
+                                                    AdditionalField(
+                                                      additional_fields_local
+                                                          .AdditionalFieldsType
+                                                          .deliveryType
+                                                          .toValue(),
+                                                      (widget.eligibilityAssessmentType ==
+                                                              EligibilityAssessmentType
+                                                                  .smc)
+                                                          ? EligibilityAssessmentStatus
+                                                              .smcDone.name
+                                                          : EligibilityAssessmentStatus
+                                                              .vasDone.name,
                                                     ),
                                                   ],
                                                 ),

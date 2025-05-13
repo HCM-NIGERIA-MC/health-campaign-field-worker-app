@@ -169,6 +169,19 @@ abstract class _$AppRouter extends RootStackRouter {
         ),
       );
     },
+    CustomHFCreateReferralWrapperRoute.name: (routeData) {
+      final args = routeData.argsAs<CustomHFCreateReferralWrapperRouteArgs>();
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: CustomHFCreateReferralWrapperPage(
+          key: args.key,
+          projectId: args.projectId,
+          viewOnly: args.viewOnly,
+          referralReconciliation: args.referralReconciliation,
+          cycles: args.cycles,
+        ),
+      );
+    },
     CustomHouseHoldDetailsRoute.name: (routeData) {
       final args = routeData.argsAs<CustomHouseHoldDetailsRouteArgs>(
           orElse: () => const CustomHouseHoldDetailsRouteArgs());
@@ -284,6 +297,17 @@ abstract class _$AppRouter extends RootStackRouter {
         ),
       );
     },
+    CustomMinNumberRoute.name: (routeData) {
+      final args = routeData.argsAs<CustomMinNumberRouteArgs>(
+          orElse: () => const CustomMinNumberRouteArgs());
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: CustomMinNumberPage(
+          key: args.key,
+          appLocalizations: args.appLocalizations,
+        ),
+      );
+    },
     CustomRecordReferralDetailsRoute.name: (routeData) {
       final args = routeData.argsAs<CustomRecordReferralDetailsRouteArgs>();
       return AutoRoutePage<dynamic>(
@@ -328,6 +352,55 @@ abstract class _$AppRouter extends RootStackRouter {
           quantityWasted: args.quantityWasted,
           productVariantId: args.productVariantId,
           referralReasons: args.referralReasons,
+        ),
+      );
+    },
+    CustomReferralFacilityRoute.name: (routeData) {
+      final args = routeData.argsAs<CustomReferralFacilityRouteArgs>(
+          orElse: () => const CustomReferralFacilityRouteArgs());
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: CustomReferralFacilityPage(
+          key: args.key,
+          appLocalizations: args.appLocalizations,
+          isEditing: args.isEditing,
+        ),
+      );
+    },
+    CustomReferralReasonChecklistRoute.name: (routeData) {
+      final args = routeData.argsAs<CustomReferralReasonChecklistRouteArgs>(
+          orElse: () => const CustomReferralReasonChecklistRouteArgs());
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: CustomReferralReasonChecklistPage(
+          key: args.key,
+          referralClientRefId: args.referralClientRefId,
+          appLocalizations: args.appLocalizations,
+        ),
+      );
+    },
+    CustomReferralReasonChecklistPreviewRoute.name: (routeData) {
+      final args =
+          routeData.argsAs<CustomReferralReasonChecklistPreviewRouteArgs>(
+              orElse: () =>
+                  const CustomReferralReasonChecklistPreviewRouteArgs());
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: CustomReferralReasonChecklistPreviewPage(
+          key: args.key,
+          appLocalizations: args.appLocalizations,
+        ),
+      );
+    },
+    CustomReferralReconProjectFacilitySelectionRoute.name: (routeData) {
+      final args = routeData
+          .argsAs<CustomReferralReconProjectFacilitySelectionRouteArgs>();
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: CustomReferralReconProjectFacilitySelectionPage(
+          key: args.key,
+          appLocalizations: args.appLocalizations,
+          projectFacilities: args.projectFacilities,
         ),
       );
     },
@@ -401,6 +474,17 @@ abstract class _$AppRouter extends RootStackRouter {
       return AutoRoutePage<dynamic>(
         routeData: routeData,
         child: CustomSummaryPage(
+          key: args.key,
+          appLocalizations: args.appLocalizations,
+        ),
+      );
+    },
+    CustomTransactionalDetailsRoute.name: (routeData) {
+      final args = routeData.argsAs<CustomTransactionalDetailsRouteArgs>(
+          orElse: () => const CustomTransactionalDetailsRouteArgs());
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: CustomTransactionalDetailsPage(
           key: args.key,
           appLocalizations: args.appLocalizations,
         ),
@@ -1094,6 +1178,60 @@ class CustomFacilitySelectionSMCRouteArgs {
 }
 
 /// generated route for
+/// [CustomHFCreateReferralWrapperPage]
+class CustomHFCreateReferralWrapperRoute
+    extends PageRouteInfo<CustomHFCreateReferralWrapperRouteArgs> {
+  CustomHFCreateReferralWrapperRoute({
+    Key? key,
+    required String projectId,
+    bool viewOnly = false,
+    HFReferralModel? referralReconciliation,
+    required List<String> cycles,
+    List<PageRouteInfo>? children,
+  }) : super(
+          CustomHFCreateReferralWrapperRoute.name,
+          args: CustomHFCreateReferralWrapperRouteArgs(
+            key: key,
+            projectId: projectId,
+            viewOnly: viewOnly,
+            referralReconciliation: referralReconciliation,
+            cycles: cycles,
+          ),
+          initialChildren: children,
+        );
+
+  static const String name = 'CustomHFCreateReferralWrapperRoute';
+
+  static const PageInfo<CustomHFCreateReferralWrapperRouteArgs> page =
+      PageInfo<CustomHFCreateReferralWrapperRouteArgs>(name);
+}
+
+class CustomHFCreateReferralWrapperRouteArgs {
+  const CustomHFCreateReferralWrapperRouteArgs({
+    this.key,
+    required this.projectId,
+    this.viewOnly = false,
+    this.referralReconciliation,
+    required this.cycles,
+  });
+
+  final Key? key;
+
+  final String projectId;
+
+  final bool viewOnly;
+
+  final HFReferralModel? referralReconciliation;
+
+  final List<String> cycles;
+
+  @override
+  String toString() {
+    return 'CustomHFCreateReferralWrapperRouteArgs{key: $key, projectId: $projectId, viewOnly: $viewOnly, referralReconciliation: $referralReconciliation, cycles: $cycles}';
+  }
+}
+
+/// generated route for
 /// [CustomHouseHoldDetailsPage]
 class CustomHouseHoldDetailsRoute
     extends PageRouteInfo<CustomHouseHoldDetailsRouteArgs> {
@@ -1519,6 +1657,44 @@ class CustomManageStocksRouteArgs {
 }
 
 /// generated route for
+/// [CustomMinNumberPage]
+class CustomMinNumberRoute extends PageRouteInfo<CustomMinNumberRouteArgs> {
+  CustomMinNumberRoute({
+    Key? key,
+    InventoryLocalization? appLocalizations,
+    List<PageRouteInfo>? children,
+  }) : super(
+          CustomMinNumberRoute.name,
+          args: CustomMinNumberRouteArgs(
+            key: key,
+            appLocalizations: appLocalizations,
+          ),
+          initialChildren: children,
+        );
+
+  static const String name = 'CustomMinNumberRoute';
+
+  static const PageInfo<CustomMinNumberRouteArgs> page =
+      PageInfo<CustomMinNumberRouteArgs>(name);
+}
+
+class CustomMinNumberRouteArgs {
+  const CustomMinNumberRouteArgs({
+    this.key,
+    this.appLocalizations,
+  });
+
+  final Key? key;
+
+  final InventoryLocalization? appLocalizations;
+
+  @override
+  String toString() {
+    return 'CustomMinNumberRouteArgs{key: $key, appLocalizations: $appLocalizations}';
+  }
+}
+
+/// generated route for
 /// [CustomRecordReferralDetailsPage]
 class CustomRecordReferralDetailsRoute
     extends PageRouteInfo<CustomRecordReferralDetailsRouteArgs> {
@@ -1717,6 +1893,178 @@ class CustomReferBeneficiaryVASRouteArgs {
   @override
   String toString() {
     return 'CustomReferBeneficiaryVASRouteArgs{key: $key, appLocalizations: $appLocalizations, isEditing: $isEditing, projectBeneficiaryClientRefId: $projectBeneficiaryClientRefId, individual: $individual, isReadministrationUnSuccessful: $isReadministrationUnSuccessful, quantityWasted: $quantityWasted, productVariantId: $productVariantId, referralReasons: $referralReasons}';
+  }
+}
+
+/// generated route for
+/// [CustomReferralFacilityPage]
+class CustomReferralFacilityRoute
+    extends PageRouteInfo<CustomReferralFacilityRouteArgs> {
+  CustomReferralFacilityRoute({
+    Key? key,
+    ReferralReconLocalization? appLocalizations,
+    bool isEditing = false,
+    List<PageRouteInfo>? children,
+  }) : super(
+          CustomReferralFacilityRoute.name,
+          args: CustomReferralFacilityRouteArgs(
+            key: key,
+            appLocalizations: appLocalizations,
+            isEditing: isEditing,
+          ),
+          initialChildren: children,
+        );
+
+  static const String name = 'CustomReferralFacilityRoute';
+
+  static const PageInfo<CustomReferralFacilityRouteArgs> page =
+      PageInfo<CustomReferralFacilityRouteArgs>(name);
+}
+
+class CustomReferralFacilityRouteArgs {
+  const CustomReferralFacilityRouteArgs({
+    this.key,
+    this.appLocalizations,
+    this.isEditing = false,
+  });
+
+  final Key? key;
+
+  final ReferralReconLocalization? appLocalizations;
+
+  final bool isEditing;
+
+  @override
+  String toString() {
+    return 'CustomReferralFacilityRouteArgs{key: $key, appLocalizations: $appLocalizations, isEditing: $isEditing}';
+  }
+}
+
+/// generated route for
+/// [CustomReferralReasonChecklistPage]
+class CustomReferralReasonChecklistRoute
+    extends PageRouteInfo<CustomReferralReasonChecklistRouteArgs> {
+  CustomReferralReasonChecklistRoute({
+    Key? key,
+    String? referralClientRefId,
+    ReferralReconLocalization? appLocalizations,
+    List<PageRouteInfo>? children,
+  }) : super(
+          CustomReferralReasonChecklistRoute.name,
+          args: CustomReferralReasonChecklistRouteArgs(
+            key: key,
+            referralClientRefId: referralClientRefId,
+            appLocalizations: appLocalizations,
+          ),
+          initialChildren: children,
+        );
+
+  static const String name = 'CustomReferralReasonChecklistRoute';
+
+  static const PageInfo<CustomReferralReasonChecklistRouteArgs> page =
+      PageInfo<CustomReferralReasonChecklistRouteArgs>(name);
+}
+
+class CustomReferralReasonChecklistRouteArgs {
+  const CustomReferralReasonChecklistRouteArgs({
+    this.key,
+    this.referralClientRefId,
+    this.appLocalizations,
+  });
+
+  final Key? key;
+
+  final String? referralClientRefId;
+
+  final ReferralReconLocalization? appLocalizations;
+
+  @override
+  String toString() {
+    return 'CustomReferralReasonChecklistRouteArgs{key: $key, referralClientRefId: $referralClientRefId, appLocalizations: $appLocalizations}';
+  }
+}
+
+/// generated route for
+/// [CustomReferralReasonChecklistPreviewPage]
+class CustomReferralReasonChecklistPreviewRoute
+    extends PageRouteInfo<CustomReferralReasonChecklistPreviewRouteArgs> {
+  CustomReferralReasonChecklistPreviewRoute({
+    Key? key,
+    ReferralReconLocalization? appLocalizations,
+    List<PageRouteInfo>? children,
+  }) : super(
+          CustomReferralReasonChecklistPreviewRoute.name,
+          args: CustomReferralReasonChecklistPreviewRouteArgs(
+            key: key,
+            appLocalizations: appLocalizations,
+          ),
+          initialChildren: children,
+        );
+
+  static const String name = 'CustomReferralReasonChecklistPreviewRoute';
+
+  static const PageInfo<CustomReferralReasonChecklistPreviewRouteArgs> page =
+      PageInfo<CustomReferralReasonChecklistPreviewRouteArgs>(name);
+}
+
+class CustomReferralReasonChecklistPreviewRouteArgs {
+  const CustomReferralReasonChecklistPreviewRouteArgs({
+    this.key,
+    this.appLocalizations,
+  });
+
+  final Key? key;
+
+  final ReferralReconLocalization? appLocalizations;
+
+  @override
+  String toString() {
+    return 'CustomReferralReasonChecklistPreviewRouteArgs{key: $key, appLocalizations: $appLocalizations}';
+  }
+}
+
+/// generated route for
+/// [CustomReferralReconProjectFacilitySelectionPage]
+class CustomReferralReconProjectFacilitySelectionRoute extends PageRouteInfo<
+    CustomReferralReconProjectFacilitySelectionRouteArgs> {
+  CustomReferralReconProjectFacilitySelectionRoute({
+    Key? key,
+    ReferralReconLocalization? appLocalizations,
+    required List<ProjectFacilityModel> projectFacilities,
+    List<PageRouteInfo>? children,
+  }) : super(
+          CustomReferralReconProjectFacilitySelectionRoute.name,
+          args: CustomReferralReconProjectFacilitySelectionRouteArgs(
+            key: key,
+            appLocalizations: appLocalizations,
+            projectFacilities: projectFacilities,
+          ),
+          initialChildren: children,
+        );
+
+  static const String name = 'CustomReferralReconProjectFacilitySelectionRoute';
+
+  static const PageInfo<CustomReferralReconProjectFacilitySelectionRouteArgs>
+      page =
+      PageInfo<CustomReferralReconProjectFacilitySelectionRouteArgs>(name);
+}
+
+class CustomReferralReconProjectFacilitySelectionRouteArgs {
+  const CustomReferralReconProjectFacilitySelectionRouteArgs({
+    this.key,
+    this.appLocalizations,
+    required this.projectFacilities,
+  });
+
+  final Key? key;
+
+  final ReferralReconLocalization? appLocalizations;
+
+  final List<ProjectFacilityModel> projectFacilities;
+
+  @override
+  String toString() {
+    return 'CustomReferralReconProjectFacilitySelectionRouteArgs{key: $key, appLocalizations: $appLocalizations, projectFacilities: $projectFacilities}';
   }
 }
 
@@ -1974,6 +2322,45 @@ class CustomSummaryRouteArgs {
   @override
   String toString() {
     return 'CustomSummaryRouteArgs{key: $key, appLocalizations: $appLocalizations}';
+  }
+}
+
+/// generated route for
+/// [CustomTransactionalDetailsPage]
+class CustomTransactionalDetailsRoute
+    extends PageRouteInfo<CustomTransactionalDetailsRouteArgs> {
+  CustomTransactionalDetailsRoute({
+    Key? key,
+    InventoryLocalization? appLocalizations,
+    List<PageRouteInfo>? children,
+  }) : super(
+          CustomTransactionalDetailsRoute.name,
+          args: CustomTransactionalDetailsRouteArgs(
+            key: key,
+            appLocalizations: appLocalizations,
+          ),
+          initialChildren: children,
+        );
+
+  static const String name = 'CustomTransactionalDetailsRoute';
+
+  static const PageInfo<CustomTransactionalDetailsRouteArgs> page =
+      PageInfo<CustomTransactionalDetailsRouteArgs>(name);
+}
+
+class CustomTransactionalDetailsRouteArgs {
+  const CustomTransactionalDetailsRouteArgs({
+    this.key,
+    this.appLocalizations,
+  });
+
+  final Key? key;
+
+  final InventoryLocalization? appLocalizations;
+
+  @override
+  String toString() {
+    return 'CustomTransactionalDetailsRouteArgs{key: $key, appLocalizations: $appLocalizations}';
   }
 }
 

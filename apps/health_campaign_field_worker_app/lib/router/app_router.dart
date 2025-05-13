@@ -35,11 +35,13 @@ import '../pages/registration_delivery/custom_complaints_details.dart';
 import '../pages/boundary_selection.dart';
 import '../pages/home.dart';
 import '../pages/inventory_management/custom_manage_stock.dart';
+import '../pages/inventory_management/custom_transactional_details.dart';
 import '../pages/inventory_management/custom_inventory_report_selection.dart';
 import '../pages/inventory_management/custom_stock_details.dart';
 import '../pages/inventory_management/custom_stock_reconciliation.dart';
 import '../pages/inventory_management/custom_warehouse_details.dart';
 import '../pages/inventory_management/custom_inventory_report_details.dart';
+import '../pages/inventory_management/custom_min_number.dart';
 import '../pages/language_selection.dart';
 import '../pages/login.dart';
 import '../pages/profile.dart';
@@ -67,8 +69,14 @@ import '../pages/beneficiary/check_eligibility/custom_delivery_summary_page.dart
 import '../pages/referral_reconcillation/custom_search_referral_page.dart';
 import 'package:referral_reconciliation/blocs/app_localization.dart';
 import '../pages/referral_reconcillation/custom_record_referral_details.dart';
+import '../pages/referral_reconcillation/custom_hf_referral_wrapper_page.dart';
+import '../pages/referral_reconcillation/custom_record_facility_page.dart';
+import '../pages/referral_reconcillation/custom_record_referral_details.dart';
+import '../pages/referral_reconcillation/custom_referral_reason_checklist_page.dart';
+import '../pages/referral_reconcillation/custom_referral_reason_checklist_preview_page.dart';
+import '../pages/referral_reconcillation/custom_referral_facility_selection_page.dart';
+import 'package:referral_reconciliation/models/entities/hf_referral.dart';
 import '../utils/app_enums.dart';
-
 
 part 'app_router.gr.dart';
 
@@ -129,40 +137,60 @@ class AppRouter extends _$AppRouter {
           page: AttendanceAcknowledgementRoute.page,
           path: 'attendance-acknowledgement',
         ),
+        AutoRoute(
+            page: CustomSearchReferralReconciliationsRoute.page,
+            path: 'custom-search-referrals'),
+
+        AutoRoute(
+          page: CustomMinNumberRoute.page,
+          path: 'custom-min-number',
+        ),
 
         // Referral Reconciliation Route
         AutoRoute(
-            page: HFCreateReferralWrapperRoute.page,
+            page: CustomHFCreateReferralWrapperRoute.page,
             path: 'hf-referral',
             children: [
               AutoRoute(
-                  page: SearchReferralReconciliationsRoute.page,
-                  path: 'search-referrals'),
+                  page: ReferralFacilityRoute.page, path: 'facility-details'),
               AutoRoute(
-                  page: CustomSearchReferralReconciliationsRoute.page,
-                  path: 'custom-search-referrals'),
-              RedirectRoute(
-                  path: 'search-referrals',
-                  redirectTo: 'custom-search-referrals'),
-              AutoRoute(
-                  page: ReferralFacilityRoute.page,
-                  path: 'facility-details',
+                  page: CustomReferralFacilityRoute.page,
+                  path: 'custom-facility-details',
                   initial: true),
+              RedirectRoute(
+                  path: 'facility-details',
+                  redirectTo: 'custom-facility-details'),
               AutoRoute(
                   page: RecordReferralDetailsRoute.page,
                   path: 'referral-details'),
-                            AutoRoute(
+              AutoRoute(
                   page: CustomRecordReferralDetailsRoute.page,
                   path: 'custom-referral-details'),
-              RedirectRoute(path: 'referral-details', redirectTo: 'custom-referral-details'),
+              RedirectRoute(
+                  path: 'referral-details',
+                  redirectTo: 'custom-referral-details'),
               AutoRoute(
                 page: ReferralReasonChecklistRoute.page,
                 path: 'referral-checklist-create',
               ),
               AutoRoute(
+                page: CustomReferralReasonChecklistRoute.page,
+                path: 'custom-referral-checklist-create',
+              ),
+              RedirectRoute(
+                  path: 'referral-checklist-create',
+                  redirectTo: 'custom-referral-checklist-create'),
+              AutoRoute(
                 page: ReferralReasonChecklistPreviewRoute.page,
                 path: 'referral-checklist-view',
               ),
+              AutoRoute(
+                page: CustomReferralReasonChecklistPreviewRoute.page,
+                path: 'custom-referral-checklist-view',
+              ),
+              RedirectRoute(
+                  path: 'referral-checklist-view',
+                  redirectTo: 'custom-referral-checklist-view'),
             ]),
         AutoRoute(
           page: ReferralReconAcknowledgementRoute.page,
@@ -429,6 +457,10 @@ class AppRouter extends _$AppRouter {
             RedirectRoute(
               path: 'details',
               redirectTo: 'custom-details',
+            ),
+            AutoRoute(
+              page: CustomTransactionalDetailsRoute.page,
+              path: 'custom-transaction-details',
             ),
           ],
         ),

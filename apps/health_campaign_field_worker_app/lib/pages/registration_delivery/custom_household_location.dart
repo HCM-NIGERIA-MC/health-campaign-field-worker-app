@@ -17,6 +17,7 @@ import 'package:registration_delivery/utils/extensions/extensions.dart';
 
 import 'package:registration_delivery/router/registration_delivery_router.gm.dart';
 import 'package:registration_delivery/utils/i18_key_constants.dart' as i18;
+import '../../utils/i18_key_constants.dart' as i18_local;
 import 'package:registration_delivery/utils/utils.dart';
 import 'package:registration_delivery/widgets/back_navigation_help_header.dart';
 import 'package:registration_delivery/widgets/localized.dart';
@@ -27,6 +28,7 @@ import '../../blocs/registration_delivery/custom_beneficairy_registration.dart';
 import '../../models/entities/identifier_types.dart';
 import '../../router/app_router.dart';
 import '../../utils/constants.dart';
+import '../../utils/utils.dart' as local_utils;
 import 'caregiver_consent.dart';
 
 @RoutePage()
@@ -215,18 +217,21 @@ class CustomHouseholdLocationPageState
                                     createdBy: RegistrationDeliverySingleton()
                                         .loggedInUserUuid!,
                                     createdTime:
-                                        context.millisecondsSinceEpoch(),
+                                        ContextUtilityExtensions(context)
+                                            .millisecondsSinceEpoch(),
                                   ),
                                   clientAuditDetails: ClientAuditDetails(
                                     createdBy: RegistrationDeliverySingleton()
                                         .loggedInUserUuid!,
                                     createdTime:
-                                        context.millisecondsSinceEpoch(),
+                                        ContextUtilityExtensions(context)
+                                            .millisecondsSinceEpoch(),
                                     lastModifiedBy:
                                         RegistrationDeliverySingleton()
                                             .loggedInUserUuid,
                                     lastModifiedTime:
-                                        context.millisecondsSinceEpoch(),
+                                        ContextUtilityExtensions(context)
+                                            .millisecondsSinceEpoch(),
                                   ),
                                 );
 
@@ -339,16 +344,17 @@ class CustomHouseholdLocationPageState
                       margin: const EdgeInsets.all(spacer2),
                       children: [
                         DigitTextBlock(
-                            padding: EdgeInsets.zero,
-                            heading: (isCommunity)
-                                ? localizations.translate(
-                                    i18.householdLocation.clfLocationLabelText)
-                                : localizations.translate(
-                                    i18.householdLocation
-                                        .householdLocationLabelText,
-                                  ),
-                            headingStyle: textTheme.headingXl.copyWith(
-                                color: theme.colorTheme.text.primary),),
+                          padding: EdgeInsets.zero,
+                          heading: (isCommunity)
+                              ? localizations.translate(
+                                  i18.householdLocation.clfLocationLabelText)
+                              : localizations.translate(
+                                  i18.householdLocation
+                                      .householdLocationLabelText,
+                                ),
+                          headingStyle: textTheme.headingXl
+                              .copyWith(color: theme.colorTheme.text.primary),
+                        ),
                         householdLocationShowcaseData.administrativeArea
                             .buildWith(
                           child: ReactiveWrapperField(
@@ -418,6 +424,11 @@ class CustomHouseholdLocationPageState
                               'maxLength': (object) => localizations
                                   .translate(i18.common.maxCharsRequired)
                                   .replaceAll('{}', maxLength.toString()),
+                              'onlyAlphabetsAndDigits': (object) =>
+                                  localizations.translate(
+                                    i18_local.individualDetails
+                                        .landmarkValidationMessage,
+                                  ),
                             },
                             builder: (field) => LabeledField(
                               label: localizations.translate(
@@ -480,6 +491,8 @@ class CustomHouseholdLocationPageState
         Validators.delegate(
             (validator) => CustomValidator.requiredMin(validator)),
         Validators.maxLength(64),
+        Validators.delegate((validator) =>
+            local_utils.CustomValidator.onlyAlphabetsAndDigits(validator)),
       ]),
       _postalCodeKey:
           FormControl<String>(value: addressModel?.pincode, validators: [

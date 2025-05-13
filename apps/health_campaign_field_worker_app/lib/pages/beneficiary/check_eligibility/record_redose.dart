@@ -4,6 +4,7 @@ import 'package:digit_components/widgets/atoms/digit_reactive_dropdown.dart';
 import 'package:digit_components/widgets/atoms/digit_toaster.dart';
 import 'package:digit_components/widgets/digit_dialog.dart' as digit_dialog;
 import 'package:digit_components/widgets/digit_elevated_button.dart';
+import 'package:digit_components/widgets/digit_text_field.dart';
 import 'package:digit_data_model/data_model.dart';
 import 'package:digit_ui_components/enum/app_enums.dart';
 import 'package:digit_ui_components/utils/component_utils.dart';
@@ -66,8 +67,11 @@ class _RecordRedosePageState extends LocalizedState<RecordRedosePage> {
   static const _dateOfAdministrationKey = 'dateOfAdministration';
   static const _doseAdministeredByKey = 'doseAdministeredBy';
   static const _deliveryCommentKey = 'deliveryComment';
+  static const _otherDeliveryCommentKey = 'otherDeliveryComment';
   //static key for recording redose
   static const _reDoseQuantityKey = Constants.reDoseQuantityKey;
+
+  bool otherDeliveryComment = false;
 
   // Variable to track dose administration status
   bool doseAdministered = true;
@@ -79,6 +83,12 @@ class _RecordRedosePageState extends LocalizedState<RecordRedosePage> {
   void checkDoseAdministration(bool newValue) {
     setState(() {
       doseAdministered = newValue;
+    });
+  }
+
+  void checkOtherDeliveryComment(bool newValue) {
+    setState(() {
+      otherDeliveryComment = newValue;
     });
   }
 
@@ -182,6 +192,36 @@ class _RecordRedosePageState extends LocalizedState<RecordRedosePage> {
                                                   if (!form.valid) {
                                                     return;
                                                   }
+                                                  if (form
+                                                              .control(
+                                                                  _deliveryCommentKey)
+                                                              .value ==
+                                                          "Others" &&
+                                                      (form
+                                                                  .control(
+                                                                      _otherDeliveryCommentKey)
+                                                                  .value ==
+                                                              null ||
+                                                          form
+                                                                  .control(
+                                                                      _otherDeliveryCommentKey)
+                                                                  .value ==
+                                                              "")) {
+                                                    await DigitToast.show(
+                                                      context,
+                                                      options:
+                                                          DigitToastOptions(
+                                                        localizations.translate(
+                                                            i18_local
+                                                                .deliverIntervention
+                                                                .enterReasonForRedoseLabel),
+                                                        true,
+                                                        theme,
+                                                      ),
+                                                    );
+                                                    return;
+                                                  }
+
                                                   if (((form.control(
                                                     _resourceDeliveredKey,
                                                   ) as FormArray)
@@ -548,41 +588,169 @@ class _RecordRedosePageState extends LocalizedState<RecordRedosePage> {
                                                             .deliveryCommentOptions ??
                                                         <DeliveryCommentOptions>[];
 
-                                                    return DigitReactiveDropdown<
-                                                        String>(
-                                                      label: localizations
-                                                          .translate(
-                                                        i18_local
-                                                            .deliverIntervention
-                                                            .reasonForRedoseLabel,
-                                                      ),
-                                                      isDisabled: false,
-                                                      isRequired: true,
-                                                      validationMessages: {
-                                                        'required': (object) =>
-                                                            localizations
-                                                                .translate(
-                                                              i18_local
-                                                                  .deliverIntervention
-                                                                  .selectReasonForRedoseLabel,
-                                                            ),
-                                                      },
-                                                      valueMapper: (value) =>
-                                                          localizations
+                                                    // return DigitReactiveDropdown<
+                                                    //     String>(
+                                                    //   label: localizations
+                                                    //       .translate(
+                                                    //     i18_local
+                                                    //         .deliverIntervention
+                                                    //         .reasonForRedoseLabel,
+                                                    //   ),
+                                                    //   isDisabled: false,
+                                                    //   isRequired: true,
+                                                    //   validationMessages: {
+                                                    //     'required': (object) =>
+                                                    //         localizations
+                                                    //             .translate(
+                                                    //           i18_local
+                                                    //               .deliverIntervention
+                                                    //               .selectReasonForRedoseLabel,
+                                                    //         ),
+                                                    //   },
+                                                    //   valueMapper: (value) =>
+                                                    //       localizations
+                                                    //           .translate(
+                                                    //     value,
+                                                    //   ),
+                                                    //   initialValue:
+                                                    //       deliveryCommentOptions
+                                                    //           .firstOrNull
+                                                    //           ?.name,
+                                                    //   menuItems:
+                                                    //       deliveryCommentOptions
+                                                    //           .map((e) {
+                                                    //     return e.code;
+                                                    //   }).toList(),
+                                                    //   formControlName:
+                                                    //       _deliveryCommentKey,
+                                                    // );
+
+                                                    return Column(
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .start,
+                                                      children: [
+                                                        DigitReactiveDropdown<
+                                                            String>(
+                                                          label: localizations
                                                               .translate(
-                                                        value,
-                                                      ),
-                                                      initialValue:
-                                                          deliveryCommentOptions
-                                                              .firstOrNull
-                                                              ?.name,
-                                                      menuItems:
-                                                          deliveryCommentOptions
-                                                              .map((e) {
-                                                        return e.code;
-                                                      }).toList(),
-                                                      formControlName:
-                                                          _deliveryCommentKey,
+                                                            i18_local
+                                                                .deliverIntervention
+                                                                .reasonForRedoseLabel,
+                                                          ),
+                                                          isDisabled: false,
+                                                          isRequired: true,
+                                                          validationMessages: {
+                                                            'required': (object) =>
+                                                                localizations
+                                                                    .translate(
+                                                                  i18_local
+                                                                      .deliverIntervention
+                                                                      .selectReasonForRedoseLabel,
+                                                                ),
+                                                          },
+                                                          valueMapper: (value) =>
+                                                              localizations
+                                                                  .translate(
+                                                                      value),
+                                                          initialValue:
+                                                              deliveryCommentOptions
+                                                                  .firstOrNull
+                                                                  ?.name,
+                                                          onChanged: (value) {
+                                                            if (value != null) {
+                                                              if (value ==
+                                                                  "Others") {
+                                                                checkOtherDeliveryComment(
+                                                                    true);
+                                                              } else {
+                                                                checkOtherDeliveryComment(
+                                                                    false);
+                                                              }
+                                                            }
+                                                          },
+                                                          menuItems:
+                                                              deliveryCommentOptions
+                                                                  .map((e) {
+                                                            return e.code;
+                                                          }).toList(),
+                                                          formControlName:
+                                                              _deliveryCommentKey,
+                                                        ),
+
+                                                        /// Show input if "Other" is selected
+                                                        ReactiveValueListenableBuilder<
+                                                            String>(
+                                                          formControlName:
+                                                              _deliveryCommentKey,
+                                                          builder: (context,
+                                                              control, _) {
+                                                            final value =
+                                                                control.value;
+                                                            if (value ==
+                                                                'Others') {
+                                                              return Padding(
+                                                                  padding:
+                                                                      const EdgeInsets
+                                                                          .only(
+                                                                          top:
+                                                                              12.0),
+                                                                  child:
+                                                                      ReactiveWrapperField<
+                                                                          String>(
+                                                                    formControlName:
+                                                                        _otherDeliveryCommentKey,
+                                                                    showErrors: (control) =>
+                                                                        control
+                                                                            .touched ||
+                                                                        control
+                                                                            .invalid,
+                                                                    validationMessages: {
+                                                                      'required': (object) => localizations.translate(i18_local
+                                                                          .deliverIntervention
+                                                                          .enterReasonForRedoseLabel),
+                                                                      'minLength': (object) => localizations.translate(i18_local
+                                                                          .deliverIntervention
+                                                                          .enterReasonForRedoseLabelMinLength),
+                                                                      'maxLength': (object) => localizations.translate(i18_local
+                                                                          .deliverIntervention
+                                                                          .enterReasonForRedoseLabelMaxLength),
+                                                                    },
+                                                                    builder:
+                                                                        (field) {
+                                                                      return LabeledField(
+                                                                        isRequired:
+                                                                            true,
+                                                                        label: localizations
+                                                                            .translate(
+                                                                          i18_local
+                                                                              .deliverIntervention
+                                                                              .otherReasonLabel,
+                                                                        ),
+                                                                        child:
+                                                                            DigitTextFormInput(
+                                                                          isRequired:
+                                                                              true,
+                                                                          readOnly:
+                                                                              false,
+                                                                          onChange: (val) => form
+                                                                              .control(
+                                                                                _otherDeliveryCommentKey,
+                                                                              )
+                                                                              .value = val,
+                                                                          errorMessage:
+                                                                              field.errorText,
+                                                                        ),
+                                                                      );
+                                                                    },
+                                                                  ));
+                                                            } else {
+                                                              return const SizedBox
+                                                                  .shrink();
+                                                            }
+                                                          },
+                                                        ),
+                                                      ],
                                                     );
                                                   },
                                                 ),
@@ -669,9 +837,17 @@ class _RecordRedosePageState extends LocalizedState<RecordRedosePage> {
                   ),
                 );
         }
-        if (form.control(_deliveryCommentKey).value != null) {
+        if (form.control(_deliveryCommentKey).value != null &&
+            form.control(_deliveryCommentKey).value != "Others") {
           updatedResource = updatedResource.copyWith(
             deliveryComment: form.control(_deliveryCommentKey).value,
+          );
+        }
+        if (form.control(_deliveryCommentKey).value != null &&
+            form.control(_deliveryCommentKey).value == "Others" &&
+            form.control(_otherDeliveryCommentKey).value != null) {
+          updatedResource = updatedResource.copyWith(
+            deliveryComment: form.control(_otherDeliveryCommentKey).value,
           );
         }
         updatedTaskResources.add(updatedResource);
@@ -817,6 +993,16 @@ class _RecordRedosePageState extends LocalizedState<RecordRedosePage> {
         validators: [
           Validators.required,
         ],
+      ),
+      _otherDeliveryCommentKey: FormControl<String>(
+        validators: [
+          // if (otherDeliveryComment) ...[
+          Validators.required,
+          Validators.minLength(3),
+          Validators.maxLength(100),
+          // ],
+        ],
+        disabled: otherDeliveryComment,
       ),
       _doseAdministeredByKey: FormControl<String>(
         validators: [],

@@ -17,7 +17,8 @@ import 'package:survey_form/survey_form.dart';
 
 import 'package:referral_reconciliation/blocs/search_referral_reconciliations.dart';
 import 'package:referral_reconciliation/models/entities/hf_referral.dart';
-import 'package:referral_reconciliation/router/referral_reconciliation_router.gm.dart';
+// import 'package:referral_reconciliation/router/referral_reconciliation_router.gm.dart';
+import 'package:health_campaign_field_worker_app/router/app_router.dart';
 import 'package:referral_reconciliation/utils/i18_key_constants.dart' as i18;
 import 'package:referral_reconciliation/utils/utils.dart';
 import 'package:referral_reconciliation/widgets/localized.dart';
@@ -181,7 +182,7 @@ class _CustomSearchReferralReconciliationsPageState
                                                 ),
                                               );
                                           context.router.push(
-                                            HFCreateReferralWrapperRoute(
+                                            CustomHFCreateReferralWrapperRoute(
                                               viewOnly: true,
                                               referralReconciliation: i,
                                               projectId:
@@ -219,7 +220,7 @@ class _CustomSearchReferralReconciliationsPageState
                             FocusManager.instance.primaryFocus?.unfocus();
                             final bloc = context.read<SearchReferralsBloc>();
                             router.push(
-                              HFCreateReferralWrapperRoute(
+                              CustomHFCreateReferralWrapperRoute(
                                 viewOnly: false,
                                 referralReconciliation: HFReferralModel(
                                   clientReferenceId: IdGen.i.identifier,
@@ -241,8 +242,6 @@ class _CustomSearchReferralReconciliationsPageState
                               i18.referralReconciliation.createReferralLabel,
                             ),
                             mainAxisSize: MainAxisSize.max,
-                            isDisabled: !(searchController.text.isNotEmpty &&
-                                searchController.text.length >= 2),
                             onPressed: () {
                               if (onPressed != null) {
                                 onPressed();
@@ -254,25 +253,7 @@ class _CustomSearchReferralReconciliationsPageState
                       ),
                       SizedBox(
                         height: theme.spacerTheme.spacer2,
-                      ),
-                      DigitButton(
-                        size: DigitButtonSize.large,
-                        label: localizations
-                            .translate(i18.referralReconciliation.scannerLabel),
-                        onPressed: () async {
-                          context.read<DigitScannerBloc>().add(
-                                const DigitScannerEvent.handleScanner(),
-                              );
-                          context.router.push(DigitScannerRoute(
-                            quantity: 1,
-                            isGS1code: false,
-                            singleValue: true,
-                          ));
-                        },
-                        type: DigitButtonType.secondary,
-                        prefixIcon: Icons.qr_code,
-                        mainAxisSize: MainAxisSize.max,
-                      ),
+                      )
                     ],
                   ),
                 ),

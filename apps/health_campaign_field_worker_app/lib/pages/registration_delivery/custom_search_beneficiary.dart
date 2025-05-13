@@ -597,24 +597,19 @@ class _CustomSearchBeneficiaryPageState
   }
 
   void triggerGlobalSearchEvent({bool isPagination = false}) {
-    // if (!isPagination) {
-    //   blocWrapper.clearEvent();
-    // }
-    customSearchHouseholdsBloc.add(
-      const SearchHouseholdsClearEvent(),
-    );
+    if (!isPagination) {
+      customSearchHouseholdsBloc.add(
+        const SearchHouseholdsClearEvent(),
+      );
+    }
 
     if (searchController.text.trim().length < 3 && !isProximityEnabled) {
       customSearchHouseholdsBloc.add(
         const SearchHouseholdsClearEvent(),
       );
-
       return;
     } else {
       if (isProximityEnabled && searchController.text.trim().length < 3) {
-        customSearchHouseholdsBloc.add(
-          const SearchHouseholdsClearEvent(),
-        );
         customSearchHouseholdsBloc.add(
           const SearchHouseholdsLoadingEvent(),
         );
@@ -624,13 +619,11 @@ class _CustomSearchBeneficiaryPageState
           longititude: long,
           projectId: RegistrationDeliverySingleton().projectId!,
           maxRadius: RegistrationDeliverySingleton().maxRadius!,
-          limit: customSearchHouseholdsBloc.state.limit,
-          offset: 0,
+          offset:
+              isPagination ? customSearchHouseholdsBloc.state.offset : offset,
+          limit: isPagination ? customSearchHouseholdsBloc.state.limit : limit,
         ));
       } else {
-        customSearchHouseholdsBloc.add(
-          const SearchHouseholdsClearEvent(),
-        );
         customSearchHouseholdsBloc.add(
           const SearchHouseholdsLoadingEvent(),
         );
@@ -642,8 +635,10 @@ class _CustomSearchBeneficiaryPageState
             longitude: long,
             isProximityEnabled: isProximityEnabled,
             maxRadius: RegistrationDeliverySingleton().maxRadius,
-            limit: customSearchHouseholdsBloc.state.limit,
-            offset: 0,
+            offset:
+                isPagination ? customSearchHouseholdsBloc.state.offset : offset,
+            limit:
+                isPagination ? customSearchHouseholdsBloc.state.limit : limit,
           ),
         );
       }

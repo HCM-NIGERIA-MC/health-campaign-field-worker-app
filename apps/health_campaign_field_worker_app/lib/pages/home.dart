@@ -370,7 +370,7 @@ class _HomePageState extends LocalizedState<HomePage> {
               triggerLocalization();
               isTriggerLocalisation = false;
             }
-            context.router.push(SearchReferralReconciliationsRoute());
+            context.router.push(CustomSearchReferralReconciliationsRoute());
           },
         ),
       ),
@@ -416,7 +416,7 @@ class _HomePageState extends LocalizedState<HomePage> {
         icon: Icons.supervised_user_circle_rounded,
         label: i18.home.beneficiaryReferralLabel,
         onPressed: () async {
-          await context.router.push(SearchReferralReconciliationsRoute());
+          await context.router.push(CustomSearchReferralReconciliationsRoute());
         },
       ),
       i18.home.syncDataLabel: homeShowcaseData.distributorSyncData.buildWith(

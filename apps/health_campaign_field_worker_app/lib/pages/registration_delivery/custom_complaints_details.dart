@@ -1,11 +1,13 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:complaints/blocs/complaints_registration/complaints_registration.dart';
 import 'package:complaints/models/complaints.dart';
+import 'package:complaints/models/pgr_address.dart';
 import 'package:complaints/router/complaints_router.gm.dart';
 import 'package:complaints/utils/utils.dart';
 import 'package:digit_data_model/data_model.dart';
 import 'package:digit_ui_components/digit_components.dart';
 import 'package:digit_ui_components/models/RadioButtonModel.dart';
+import 'package:digit_ui_components/services/location_bloc.dart';
 import 'package:digit_ui_components/theme/digit_extended_theme.dart';
 import 'package:digit_ui_components/widgets/atoms/pop_up_card.dart';
 import 'package:digit_ui_components/widgets/molecules/digit_card.dart';
@@ -44,6 +46,8 @@ class CustomComplaintsDetailsPageState
   static const _supervisorContactNumber = 'supervisorContactNumber';
   static const _complaintDescription = 'complaintDescription';
   static const _complaintDetailsForm = 'complaintDetailsForm';
+  static const _latKey = 'latKey';
+  static const _lngKey = 'lngKey';
 
   @override
   Widget build(BuildContext context) {
@@ -64,10 +68,29 @@ class CustomComplaintsDetailsPageState
               throw const InvalidComplaintsRegistrationStateException(),
           view: (value) => buildForm(value),
         ),
-        builder: (_, form, __) => BlocListener<BoundaryBloc, BoundaryState>(
-          listener: (context, state) {
-            context.navigateTo(const ComplaintsInboxWrapperRoute());
-          },
+        builder: (_, form, __) => MultiBlocListener(
+          listeners: [
+            BlocListener<BoundaryBloc, BoundaryState>(
+              listener: (context, state) {
+                context.navigateTo(const ComplaintsInboxWrapperRoute());
+              },
+            ),
+            BlocListener<LocationBloc, LocationState>(
+              listener: (context, locationState) {
+                final lat = locationState.latitude;
+                final lng = locationState.longitude;
+
+                form.control(_latKey).value ??= lat;
+                form.control(_lngKey).value ??= lng;
+              },
+              listenWhen: (previous, current) {
+                final lat = form.control(_latKey).value;
+                final lng = form.control(_lngKey).value;
+
+                return lat != null || lng != null ? false : true;
+              },
+            ),
+          ],
           child: BlocConsumer<ComplaintsRegistrationBloc,
               ComplaintsRegistrationState>(
             listener: (context, complaintState) {
@@ -151,6 +174,16 @@ class CustomComplaintsDetailsPageState
                               addressModel,
                               complaintsDetailsModel,
                             ) {
+                              bloc.add(
+                                ComplaintsRegistrationEvent.saveAddress(
+                                  addressModel: PgrAddressModel(
+                                    geoLocation: GeoLocation(
+                                      latitude: form.control(_latKey).value,
+                                      longitude: form.control(_lngKey).value,
+                                    ),
+                                  ),
+                                ),
+                              );
                               bloc.add(
                                 ComplaintsRegistrationEvent
                                     .saveComplaintDetails(
@@ -508,8 +541,12 @@ class CustomComplaintsDetailsPageState
     final complaintDetails = state.mapOrNull(
       view: (value) => value.complaintsDetailsModel,
     );
+    final addressModel = state.mapOrNull(
+      view: (value) => value.addressModel,
+    );
 
-    final shouldDisableForm = complaintDetails != null;
+    final shouldDisableForm =
+        (complaintDetails != null && addressModel != null);
 
     return fb.group(<String, Object>{
       _dateOfComplaint: FormControl<DateTime>(
@@ -567,6 +604,16 @@ class CustomComplaintsDetailsPageState
       ),
       _complaintDetailsForm: FormControl<String>(
         disabled: shouldDisableForm,
+      ),
+      _latKey: FormControl<double>(
+        value: addressModel?.geoLocation?.latitude,
+        validators: [
+          Validators.delegate(
+              (validator) => CustomValidator.requiredMin(validator)),
+        ],
+      ),
+      _lngKey: FormControl<double>(
+        value: addressModel?.geoLocation?.longitude,
       ),
     });
   }

@@ -13,6 +13,8 @@ import 'package:registration_delivery/models/entities/task.dart';
 import '../../models/entities/additional_fields_type.dart'
     as additional_fields_local;
 import '../app_enums.dart';
+import '../../../models/entities/assessment_checklist/status.dart'
+    as status_local;
 
 bool checkStatusSMC(List<TaskModel>? tasks, ProjectCycle? currentCycle) {
   if (currentCycle == null) {
@@ -137,11 +139,10 @@ bool redosePending(List<TaskModel>? tasks, ProjectCycle? selectedCycle) {
           .isEmpty;
 
   return redosePending &&
-      (selectedCycle.mandatoryWaitSinceLastCycleInDays == null ||
-          diff <=
-              (selectedCycle.mandatoryWaitSinceLastCycleInDays ?? 0) *
-                  60 *
-                  1000);
+      ( // selectedCycle.mandatoryWaitSinceLastCycleInDays == null ||
+          diff <= 30 * 60 * 1000
+      // * (selectedCycle.mandatoryWaitSinceLastCycleInDays ?? 0)
+      );
 }
 
 bool checkBeneficiaryReferredSMC(List<TaskModel>? tasks) {
@@ -159,6 +160,54 @@ bool checkBeneficiaryReferredSMC(List<TaskModel>? tasks) {
                               .AdditionalFieldsType.deliveryType
                               .toValue() &&
                       e.value == EligibilityAssessmentStatus.smcDone.name,
+                ) !=
+                null,
+      )
+      .lastOrNull;
+
+  return successfulTask != null;
+}
+
+bool checkBeneficiaryInEligibleSMC(List<TaskModel>? tasks) {
+  if ((tasks ?? []).isEmpty) {
+    return false;
+  }
+  var successfulTask = tasks!
+      .where(
+        (element) =>
+            element.status ==
+                status_local.Status.beneficiaryInEligible.toValue() &&
+            element.additionalFields?.fields.firstWhereOrNull(
+                  (e) =>
+                      e.key ==
+                          additional_fields_local
+                              .AdditionalFieldsType.deliveryType
+                              .toValue() &&
+                      e.value == EligibilityAssessmentStatus.smcDone.name,
+                ) !=
+                null,
+      )
+      .lastOrNull;
+
+  return successfulTask != null;
+}
+
+bool checkBeneficiaryInEligibleVAS(List<TaskModel>? tasks) {
+  if ((tasks ?? []).isEmpty) {
+    return false;
+  }
+  var successfulTask = tasks!
+      .where(
+        (element) =>
+            element.status ==
+                status_local.Status.beneficiaryInEligible.toValue() &&
+            element.additionalFields?.fields.firstWhereOrNull(
+                  (e) =>
+                      e.key ==
+                          additional_fields_local
+                              .AdditionalFieldsType.deliveryType
+                              .toValue() &&
+                      e.value == EligibilityAssessmentStatus.vasDone.name,
                 ) !=
                 null,
       )

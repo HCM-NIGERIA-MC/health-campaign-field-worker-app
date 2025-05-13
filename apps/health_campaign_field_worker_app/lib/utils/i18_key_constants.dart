@@ -174,6 +174,11 @@ class HouseholdOverView {
   String get householdOverViewBeneficiaryReferredSMCLabel =>
       'HOUSEHOLD_OVER_VIEW_BENEFICIARY_REFERRED_SMC_LABEL';
 
+  String get householdOverViewBeneficiaryInEligibleSMCLabel =>
+      'HOUSEHOLD_OVER_VIEW_BENEFICIARY_INELIGIBLE_SMC_LABEL';
+  String get householdOverViewBeneficiaryInEligibleVASLabel =>
+      'HOUSEHOLD_OVER_VIEW_BENEFICIARY_INELIGIBLE_VAS_LABEL';
+
   String get householdOverViewBeneficiaryReferredVASLabel =>
       'HOUSEHOLD_OVER_VIEW_BENEFICIARY_REFERRED_VAS_LABEL';
 }
@@ -181,12 +186,22 @@ class HouseholdOverView {
 class DeliverIntervention {
   const DeliverIntervention();
 
+  String get otherReasonLabel =>
+      'DELIVER_INTERVENTION_OTHER_REASON_FOR_REDOSE_LABEL';
+  String get deliverInterventionSMCLabel => 'DELIVER_INTERVENTION_SMC_LABEL';
+  String get deliverInterventionVASLabel => 'DELIVER_INTERVENTION_VAS_LABEL';
   String get recordRedoseLabel => 'DELIVER_INTERVENTION_RECORD_REDOSE_LABEL';
   String get selectTheResourcDeliveredLabel => 'Select the Resource delivered';
   String get reasonForRedoseLabel =>
       'DELIVER_INTERVENTION_REASON_FOR_REDOSE_LABEL';
   String get selectReasonForRedoseLabel =>
       'DELIVER_INTERVENTION_SELECT_REASON_FOR_REDOSE_LABEL';
+  String get enterReasonForRedoseLabel =>
+      'DELIVER_INTERVENTION_ENTER_REASON_FOR_REDOSE_LABEL';
+  String get enterReasonForRedoseLabelMinLength =>
+      'DELIVER_INTERVENTION_ENTER_REASON_FOR_REDOSE_LABEL_MIN_LENGTH';
+  String get enterReasonForRedoseLabelMaxLength =>
+      'DELIVER_INTERVENTION_ENTER_REASON_FOR_REDOSE_LABEL_MAX_LENGTH';
   String get redoseQuantityLabel =>
       'DELIVER_INTERVENTION_REDOSE_QUANTITY_LABEL';
   String get dose => 'DELIVER_INTERVENTION_DOSE';
@@ -202,7 +217,7 @@ class DeliverIntervention {
   String get deliversmcintervention => 'DELIVER_SMC_INTERVENTION';
   String get deliverVASIntervention => 'DELIVER_VAS_INTERVENTION';
   String get recordsmcdeliverdetails => 'RECORD_SMC_DELIVER_DETAILS';
-  String get doseadministeredby => 'DOSE_ADMINISTERED_BY';
+  String get doseadministeredby => 'DOSE_ADMINISTERED_BY_LABEL';
   String get proceedToVASLabel => 'PROCEED_TO_VAS_LABEL';
   String get proceedToVASDescription => 'PROCEED_TO_VAS_DESCRIPTION';
 }
@@ -1112,7 +1127,7 @@ class SearchBeneficiary {
   String get beneficiaryIndividualSearchHintText =>
       'BENEFICIARY_INDIVIDUAL_SEARCH_HINT_TEXT';
 
-  String get beneficiaryInfoDescription => 'BENEFICIARY_INFO_DESCRIPTION';
+  String get beneficiaryInfoDescription => 'BENEFICIARY_INFO_DESCRIPTION_TEXT';
 
   String get beneficiaryInfoTitle => 'BENEFICIARY_INFO_TITLE';
 
@@ -1137,6 +1152,12 @@ class IndividualDetails {
       'INDIVIDUAL_DETAILS_ONLY_ALPHABETS_VALIDATION_MESSAGE';
   String get mobileNumberLengthValidationMessageSMC =>
       'INDIVIDUAL_DETAILS_MOBILE_NUMBER_LENGTH_SMC';
+  String get landmarkValidationMessage =>
+      'INDIVIDUAL_DETAILS_LANDMARK_VALIDATION_MESSAGE';
+
+  // String get onlyAlphabetsValidationMessage =>
+  //     'INDIVIDUAL_DETAILS_ONLY_ALPHABETS_VALIDATION_MESSAGE';
+  // String get headAgeValidError => "HEAD_AGE_VALID_ERROR";
 
   String get individualsDetailsLabelText => 'INDIVIDUAL_LABEL_TEXT';
 
@@ -1195,10 +1216,10 @@ class BeneficiaryDetails {
   String get insufficientStockHeading => 'INSUFFICIENT_STOCK_HEADING';
   String get insufficientAZTStockMessage => 'INSUFFICIENT_AZT_STOCK_MESSAGE';
   String get insufficientAZTStockMessageDelivery =>
-      'INSUFFICIENT_AZT_STOCK_MESSAGE_DELIVERY';
+      'INSUFFICIENT_STOCK_MESSAGE_ADMINISTRATION';
 
-  String get householdId => 'HOUSEHOLD_ID';
-  String get beneficiaryId => 'BENEFICIARY_ID';
+  String get householdId => 'HOUSEHOLD_ID_TEXT';
+  String get beneficiaryId => 'BENEFICIARY_ID_TEXT';
   String get backToHouseholdDetails => 'BACK_TO_HOUSEHOLD_DETAILS';
   String get beneficiaryDoseUnit => 'BENEFICIARY_DETAILS_DOSE_UNIT';
 
