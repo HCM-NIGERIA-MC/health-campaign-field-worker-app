@@ -1,4 +1,5 @@
 import 'package:collection/collection.dart';
+import 'package:digit_data_model/data_model.dart';
 import 'package:digit_data_model/models/entities/individual.dart';
 import 'package:digit_data_model/models/entities/project_type.dart';
 import 'package:digit_data_model/models/project_type/project_type_model.dart';
@@ -405,19 +406,46 @@ bool allDosesDelivered(
   }
 }
 
-
-
 Map<String, dynamic>? minimumAgeValidator(AbstractControl control) {
   final date = control.value;
   if (date is! DateTime) return null;
 
   final today = DateTime.now();
-  final age = today.year - date.year -
-      ((today.month < date.month || (today.month == date.month && today.day < date.day)) ? 1 : 0);
+  final age = today.year -
+      date.year -
+      ((today.month < date.month ||
+              (today.month == date.month && today.day < date.day))
+          ? 1
+          : 0);
 
   if (age < 18) {
     return {'minAge': true};
   }
 
   return null;
+}
+
+// intervention point check
+
+String? getInterventionType(List<AdditionalField> fields) {
+  int i = 0;
+  String? value;
+  while (i < fields.length) {
+    if (fields[i].key == Constants.pointKey) {
+      value = fields[i].value;
+      break;
+    }
+  }
+
+  return value;
+}
+
+String getInterventionTypeHeader(String pointType) {
+  for (var element in Constants.interventionPointList) {
+    if (element == pointType) {
+      return element;
+    }
+  }
+
+  return "";
 }

@@ -87,6 +87,13 @@ class _CustomHouseholdOverviewPageState
         },
         child: BlocBuilder<HouseholdOverviewBloc, HouseholdOverviewState>(
           builder: (ctx, state) {
+            String? headerType;
+            if (state.householdMemberWrapper.household!.additionalFields !=
+                null) {
+              headerType = getInterventionType(state
+                  .householdMemberWrapper.household!.additionalFields!.fields);
+            }
+
             return Scaffold(
               body: state.loading
                   ? const Center(child: CircularProgressIndicator())
@@ -311,9 +318,18 @@ class _CustomHouseholdOverviewPageState
                                                     ? localizations.translate(
                                                         i18.householdOverView
                                                             .clfOverviewLabel)
-                                                    : localizations.translate(i18
-                                                        .householdOverView
-                                                        .householdOverViewLabel),
+                                                    : (state
+                                                                    .householdMemberWrapper
+                                                                    .household!
+                                                                    .additionalFields !=
+                                                                null &&
+                                                            headerType != null)
+                                                        ? localizations.translate(
+                                                            getInterventionTypeHeader(
+                                                                headerType))
+                                                        : localizations.translate(i18
+                                                            .householdOverView
+                                                            .householdOverViewLabel),
                                                 style: textTheme.headingXl
                                                     .copyWith(
                                                         color: theme.colorTheme

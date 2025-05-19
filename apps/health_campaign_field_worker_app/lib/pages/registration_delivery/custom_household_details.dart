@@ -8,6 +8,7 @@ import 'package:digit_ui_components/widgets/molecules/digit_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:health_campaign_field_worker_app/utils/registration_delivery/utils_smc.dart';
 import 'package:health_campaign_field_worker_app/widgets/custom_back_navigation.dart';
 import 'package:intl/intl.dart';
 import 'package:reactive_forms/reactive_forms.dart';
@@ -29,12 +30,15 @@ import 'package:registration_delivery/widgets/showcase/showcase_button.dart';
 import '../../blocs/registration_delivery/custom_beneficairy_registration.dart';
 import '../../router/app_router.dart';
 import '../../utils/registration_delivery/registration_delivery_utils.dart';
+import '../../utils/constants.dart' as local;
 
 @RoutePage()
 class CustomHouseHoldDetailsPage extends LocalizedStatefulWidget {
+  final String pointType;
   const CustomHouseHoldDetailsPage({
     super.key,
     super.appLocalizations,
+    required this.pointType,
   });
 
   @override
@@ -242,7 +246,12 @@ class CustomHouseHoldDetailsPageState
                                   address: addressModel,
                                   id: householdid,
                                   additionalFields: HouseholdAdditionalFields(
-                                      version: 1, fields: []));
+                                      version: 1,
+                                      fields: [
+                                        AdditionalField(
+                                            local.Constants.pointKey,
+                                            widget.pointType),
+                                      ]));
 
                               bloc.add(
                                 BeneficiaryRegistrationSaveHouseholdDetailsEvent(
@@ -292,7 +301,9 @@ class CustomHouseHoldDetailsPageState
                                               .additionalFields?.version ??
                                           1,
                                       fields: [
-                                        //[TODO: Use pregnant women form value based on project config
+                                        AdditionalField(
+                                            local.Constants.pointKey,
+                                            widget.pointType),
                                       ]));
 
                               bloc.add(

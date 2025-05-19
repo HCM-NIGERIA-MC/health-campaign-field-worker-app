@@ -3,6 +3,7 @@ import 'package:attendance_management/router/attendance_router.gm.dart';
 import 'package:complaints/router/complaints_router.dart';
 import 'package:complaints/router/complaints_router.gm.dart';
 import 'package:health_campaign_field_worker_app/blocs/registration_delivery/custom_beneficairy_registration.dart';
+import 'package:health_campaign_field_worker_app/pages/registration_delivery/custom_intervention_point.dart';
 import 'package:referral_reconciliation/pages/search_referral_reconciliations.dart';
 import 'package:referral_reconciliation/router/referral_reconciliation_router.gm.dart';
 import 'package:referral_reconciliation/router/referral_reconciliation_router.dart';
@@ -286,6 +287,12 @@ class AppRouter extends _$AppRouter {
                   AutoRoute(
                     page: CaregiverConsentRoute.page,
                     path: 'house-details',
+                  ),
+                  // intervention point
+
+                   AutoRoute(
+                    page: CustomInterventionPointRoute.page,
+                    path: 'intervention-point',
                   ),
                   AutoRoute(
                     page: HouseDetailsRoute.page,

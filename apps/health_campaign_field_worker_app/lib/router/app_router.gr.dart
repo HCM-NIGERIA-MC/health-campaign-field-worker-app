@@ -196,13 +196,13 @@ abstract class _$AppRouter extends RootStackRouter {
       );
     },
     CustomHouseHoldDetailsRoute.name: (routeData) {
-      final args = routeData.argsAs<CustomHouseHoldDetailsRouteArgs>(
-          orElse: () => const CustomHouseHoldDetailsRouteArgs());
+      final args = routeData.argsAs<CustomHouseHoldDetailsRouteArgs>();
       return AutoRoutePage<dynamic>(
         routeData: routeData,
         child: CustomHouseHoldDetailsPage(
           key: args.key,
           appLocalizations: args.appLocalizations,
+          pointType: args.pointType,
         ),
       );
     },
@@ -262,6 +262,17 @@ abstract class _$AppRouter extends RootStackRouter {
           key: args.key,
           appLocalizations: args.appLocalizations,
           isHeadOfHousehold: args.isHeadOfHousehold,
+        ),
+      );
+    },
+    CustomInterventionPointRoute.name: (routeData) {
+      final args = routeData.argsAs<CustomInterventionPointRouteArgs>(
+          orElse: () => const CustomInterventionPointRouteArgs());
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: CustomInterventionPointPage(
+          key: args.key,
+          appLocalizations: args.appLocalizations,
         ),
       );
     },
@@ -1439,12 +1450,14 @@ class CustomHouseHoldDetailsRoute
   CustomHouseHoldDetailsRoute({
     Key? key,
     RegistrationDeliveryLocalization? appLocalizations,
+    required String pointType,
     List<PageRouteInfo>? children,
   }) : super(
           CustomHouseHoldDetailsRoute.name,
           args: CustomHouseHoldDetailsRouteArgs(
             key: key,
             appLocalizations: appLocalizations,
+            pointType: pointType,
           ),
           initialChildren: children,
         );
@@ -1459,15 +1472,18 @@ class CustomHouseHoldDetailsRouteArgs {
   const CustomHouseHoldDetailsRouteArgs({
     this.key,
     this.appLocalizations,
+    required this.pointType,
   });
 
   final Key? key;
 
   final RegistrationDeliveryLocalization? appLocalizations;
 
+  final String pointType;
+
   @override
   String toString() {
-    return 'CustomHouseHoldDetailsRouteArgs{key: $key, appLocalizations: $appLocalizations}';
+    return 'CustomHouseHoldDetailsRouteArgs{key: $key, appLocalizations: $appLocalizations, pointType: $pointType}';
   }
 }
 
@@ -1688,6 +1704,45 @@ class CustomIndividualDetailsRouteArgs {
   @override
   String toString() {
     return 'CustomIndividualDetailsRouteArgs{key: $key, appLocalizations: $appLocalizations, isHeadOfHousehold: $isHeadOfHousehold}';
+  }
+}
+
+/// generated route for
+/// [CustomInterventionPointPage]
+class CustomInterventionPointRoute
+    extends PageRouteInfo<CustomInterventionPointRouteArgs> {
+  CustomInterventionPointRoute({
+    Key? key,
+    AppLocalizations? appLocalizations,
+    List<PageRouteInfo>? children,
+  }) : super(
+          CustomInterventionPointRoute.name,
+          args: CustomInterventionPointRouteArgs(
+            key: key,
+            appLocalizations: appLocalizations,
+          ),
+          initialChildren: children,
+        );
+
+  static const String name = 'CustomInterventionPointRoute';
+
+  static const PageInfo<CustomInterventionPointRouteArgs> page =
+      PageInfo<CustomInterventionPointRouteArgs>(name);
+}
+
+class CustomInterventionPointRouteArgs {
+  const CustomInterventionPointRouteArgs({
+    this.key,
+    this.appLocalizations,
+  });
+
+  final Key? key;
+
+  final AppLocalizations? appLocalizations;
+
+  @override
+  String toString() {
+    return 'CustomInterventionPointRouteArgs{key: $key, appLocalizations: $appLocalizations}';
   }
 }
 

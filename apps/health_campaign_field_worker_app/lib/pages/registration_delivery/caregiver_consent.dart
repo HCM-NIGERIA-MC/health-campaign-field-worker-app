@@ -168,7 +168,9 @@ class CaregiverConsentPageState extends LocalizedState<CaregiverConsentPage> {
                   mainAxisSize: MainAxisSize.max,
                   onPressed: () {
                     if (selectedConsent == CaregiverConsentEnum.yes) {
-                      router.push(CustomHouseHoldDetailsRoute());
+                      //TODO: testing
+                      //router.push(CustomHouseHoldDetailsRoute());
+                      router.push(CustomInterventionPointRoute());
                     } else {
                       registrationState.maybeWhen(orElse: () {
                         return;

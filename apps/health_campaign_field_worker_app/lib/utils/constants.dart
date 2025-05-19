@@ -110,6 +110,12 @@ class Constants {
   static const String blueVAS= "Blue VAS";
   static const String redVAS= "Red VAS";
 
+  // intervention point
+
+  static List<String> get interventionPointList =>
+      ["HEAD_TO_HEAD", "CHURCH", "MOSQUE"];
+  static const String pointKey = "interventionPoint";
+
   // todo enable before cycle2
   static const bool isDownSyncEnabled = false;
   static const String dashboardAnalyticsPath =
