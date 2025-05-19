@@ -58,7 +58,7 @@ class CustomDeliverySummaryPageState
               enableFixedDigitButton: true,
               header: Column(children: [
                 const BackNavigationHelpHeaderWidget(
-                  showHelp: true,
+                  showHelp: false,
                 ),
                 Padding(
                   padding: const EdgeInsets.all(spacer2),

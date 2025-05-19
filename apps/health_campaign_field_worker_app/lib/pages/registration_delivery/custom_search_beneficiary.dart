@@ -1,9 +1,9 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:digit_components/widgets/digit_dialog.dart';
+import 'package:digit_components/widgets/digit_info_card.dart';
 import 'package:digit_data_model/data_model.dart';
 import 'package:digit_data_model/models/entities/household_type.dart';
 import 'package:digit_scanner/blocs/scanner.dart';
-import 'package:digit_scanner/pages/qr_scanner.dart';
 import 'package:digit_ui_components/digit_components.dart';
 import 'package:digit_ui_components/services/location_bloc.dart';
 import 'package:digit_ui_components/theme/digit_extended_theme.dart';
@@ -12,30 +12,33 @@ import 'package:digit_ui_components/widgets/atoms/digit_search_bar.dart';
 import 'package:digit_ui_components/widgets/atoms/pop_up_card.dart';
 import 'package:digit_ui_components/widgets/atoms/switch.dart';
 import 'package:digit_ui_components/widgets/molecules/digit_card.dart';
+import 'package:digit_ui_components/widgets/molecules/show_pop_up.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
-import 'package:health_campaign_field_worker_app/blocs/registration_delivery/custom_beneficairy_registration.dart';
-import 'package:health_campaign_field_worker_app/widgets/custom_back_navigation.dart';
+import '../../blocs/registration_delivery/custom_beneficairy_registration.dart';
+import '../../widgets/custom_back_navigation.dart';
 import 'package:registration_delivery/blocs/search_households/search_bloc_common_wrapper.dart';
 import 'package:registration_delivery/blocs/search_households/search_households.dart'
     as registration_delivery;
 
 import 'package:registration_delivery/utils/i18_key_constants.dart' as i18;
+import '../../utils/extensions/extensions.dart';
+import '../../blocs/search/individual_global_search_smc.dart';
+import '../../blocs/search/search_households_smc.dart'
+    as searchHouseholdSMCBloc;
 import '../../utils/i18_key_constants.dart' as i18_local;
 import 'package:registration_delivery/models/entities/status.dart';
 import 'package:registration_delivery/router/registration_delivery_router.gm.dart';
-// import 'package:registration_delivery/utils/global_search_parameters.dart';
 import 'package:registration_delivery/utils/utils.dart';
-import 'package:registration_delivery/widgets/back_navigation_help_header.dart';
 import 'package:registration_delivery/widgets/beneficiary/view_beneficiary_card.dart';
 import 'package:registration_delivery/widgets/localized.dart';
 import 'package:registration_delivery/widgets/status_filter/status_filter.dart';
 
 import '../../blocs/registration_delivery/custom_search_household.dart';
 import '../../router/app_router.dart';
-import '../../utils/extensions/extensions.dart';
-import '../../utils/i18_key_constants.dart' as i18_local;
+import '../../utils/search/global_search_parameters_smc.dart';
+import '../../widgets/showcase/showcase_wrappers.dart';
 
 @RoutePage()
 class CustomSearchBeneficiaryPage extends LocalizedStatefulWidget {
@@ -53,8 +56,11 @@ class _CustomSearchBeneficiaryPageState
     extends LocalizedState<CustomSearchBeneficiaryPage> {
   final TextEditingController searchController = TextEditingController();
   bool isProximityEnabled = false;
+  bool isSearchByBeneficaryIdEnabled = false;
+
   int offset = 0;
   int limit = 10;
+  RegExp pattern = RegExp(r'^[0-9A-Z-]+$');
 
   double lat = 0.0;
   double long = 0.0;
@@ -63,17 +69,28 @@ class _CustomSearchBeneficiaryPageState
   // late final SearchBlocWrapper blocWrapper; // Declare BlocWrapper
   late final CustomSearchHouseholdsBloc customSearchHouseholdsBloc;
 
+  searchHouseholdSMCBloc.SearchHouseholdsSMCState searchHouseholdsSMCState =
+      const searchHouseholdSMCBloc.SearchHouseholdsSMCState(
+          loading: false, householdMembers: []);
+
+  late final SearchBlocWrapper blocWrapper; // Declare BlocWrapper
+
   @override
   void initState() {
     // Initialize the BlocWrapper with instances of SearchHouseholdsBloc, SearchMemberBloc, and ProximitySearchBloc
     customSearchHouseholdsBloc = context.read<CustomSearchHouseholdsBloc>();
     context.read<LocationBloc>().add(const LoadLocationEvent());
+    blocWrapper = context.read<SearchBlocWrapper>();
 
+    context
+        .read<IndividualGlobalSearchSMCBloc>()
+        .add(const searchHouseholdSMCBloc.SearchHouseholdsSMCEvent.clear());
     super.initState();
   }
 
   @override
   void dispose() {
+    blocWrapper.clearEvent();
     super.dispose();
   }
 
@@ -100,7 +117,7 @@ class _CustomSearchBeneficiaryPageState
               return ScrollableContent(
                 header: const Column(children: [
                   CustomBackNavigationHelpHeaderWidget(
-                    showHelp: true,
+                    showHelp: false,
                   ),
                 ]),
                 slivers: [
@@ -147,6 +164,7 @@ class _CustomSearchBeneficiaryPageState
                                     padding: const EdgeInsets.all(spacer2),
                                     child: DigitSearchBar(
                                       controller: searchController,
+                                      icon: const SizedBox.shrink(),
                                       hintText: (RegistrationDeliverySingleton()
                                                   .householdType ==
                                               HouseholdType.community)
@@ -160,85 +178,153 @@ class _CustomSearchBeneficiaryPageState
                                       textCapitalization:
                                           TextCapitalization.words,
                                       onChanged: (value) {
-                                        if (value.isEmpty ||
-                                            value.trim().length > 2) {
+                                        if (isSearchByBeneficaryIdEnabled &&
+                                            isBeneficiaryIdValid(
+                                                value.trim()) &&
+                                            searchController.text
+                                                    .trim()
+                                                    .length ==
+                                                14) {
+                                          searchByBeneficiaryId(
+                                              beneficiaryId: value.trim());
+                                        } else if (isSearchByBeneficaryIdEnabled &&
+                                            searchController.text
+                                                    .trim()
+                                                    .length <
+                                                14) {
+                                          blocWrapper.clearEvent();
+                                          context
+                                              .read<
+                                                  IndividualGlobalSearchSMCBloc>()
+                                              .add(const searchHouseholdSMCBloc
+                                                  .SearchHouseholdsSMCEvent.clear());
+                                        } else if (!isSearchByBeneficaryIdEnabled &&
+                                            (value.isEmpty ||
+                                                value.trim().length > 2)) {
                                           triggerGlobalSearchEvent();
                                         }
                                       },
                                     ),
                                   ),
-                                  RegistrationDeliverySingleton()
-                                                  .searchHouseHoldFilter !=
-                                              null &&
-                                          RegistrationDeliverySingleton()
-                                              .searchHouseHoldFilter!
-                                              .isNotEmpty &&
-                                          RegistrationDeliverySingleton()
-                                                  .householdType !=
-                                              HouseholdType.community
-                                      ? Align(
-                                          alignment: Alignment.topLeft,
-                                          child: Padding(
-                                            padding:
-                                                const EdgeInsets.all(spacer2),
-                                            child: DigitButton(
-                                              label: getFilterIconNLabel()[
-                                                  'label'],
-                                              size: DigitButtonSize.medium,
-                                              type: DigitButtonType.tertiary,
-                                              suffixIcon:
-                                                  getFilterIconNLabel()['icon'],
-                                              onPressed: () =>
-                                                  showFilterDialog(),
+                                  if (!isSearchByBeneficaryIdEnabled)
+                                    RegistrationDeliverySingleton()
+                                                    .searchHouseHoldFilter !=
+                                                null &&
+                                            RegistrationDeliverySingleton()
+                                                .searchHouseHoldFilter!
+                                                .isNotEmpty &&
+                                            RegistrationDeliverySingleton()
+                                                    .householdType !=
+                                                HouseholdType.community
+                                        ? Align(
+                                            alignment: Alignment.topLeft,
+                                            child: Padding(
+                                              padding:
+                                                  const EdgeInsets.all(spacer2),
+                                              child: DigitButton(
+                                                label: getFilterIconNLabel()[
+                                                    'label'],
+                                                size: DigitButtonSize.medium,
+                                                type: DigitButtonType.tertiary,
+                                                suffixIcon:
+                                                    getFilterIconNLabel()[
+                                                        'icon'],
+                                                onPressed: () =>
+                                                    showFilterDialog(),
+                                              ),
                                             ),
-                                          ),
-                                        )
-                                      : const Offstage(),
+                                          )
+                                        : const Offstage(),
                                   locationState.latitude != null
-                                      ? Padding(
-                                          padding:
-                                              const EdgeInsets.all(spacer2),
-                                          child: DigitSwitch(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.start,
-                                            label:
-                                                (RegistrationDeliverySingleton()
-                                                            .householdType ==
-                                                        HouseholdType.community)
-                                                    ? localizations.translate(
-                                                        i18.searchBeneficiary
-                                                            .communityProximityLabel,
-                                                      )
-                                                    : localizations.translate(
-                                                        i18.searchBeneficiary
-                                                            .proximityLabel,
-                                                      ),
-                                            value: isProximityEnabled,
-                                            onChanged: (value) {
-                                              searchController.clear();
-                                              setState(() {
-                                                isProximityEnabled = value;
-                                                lat = locationState.latitude!;
-                                                long = locationState.longitude!;
-                                              });
+                                      ? Column(
+                                          children: [
+                                            Row(children: [
+                                              Padding(
+                                                padding: const EdgeInsets.all(
+                                                    spacer2),
+                                                child: DigitSwitch(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.start,
+                                                  label: (RegistrationDeliverySingleton()
+                                                              .householdType ==
+                                                          HouseholdType
+                                                              .community)
+                                                      ? localizations.translate(
+                                                          i18.searchBeneficiary
+                                                              .communityProximityLabel,
+                                                        )
+                                                      : localizations.translate(
+                                                          i18.searchBeneficiary
+                                                              .proximityLabel,
+                                                        ),
+                                                  value: isProximityEnabled,
+                                                  onChanged: (value) {
+                                                    searchController.clear();
+                                                    setState(() {
+                                                      isProximityEnabled =
+                                                          value;
+                                                      isSearchByBeneficaryIdEnabled =
+                                                          false;
+                                                      lat = locationState
+                                                          .latitude!;
+                                                      long = locationState
+                                                          .longitude!;
+                                                    });
 
-                                              if (locationState
-                                                      .hasPermissions &&
-                                                  value &&
-                                                  locationState.latitude !=
-                                                      null &&
-                                                  locationState.longitude !=
-                                                      null &&
-                                                  RegistrationDeliverySingleton()
-                                                          .maxRadius !=
-                                                      null &&
-                                                  isProximityEnabled) {
-                                                triggerGlobalSearchEvent();
-                                              } else {
-                                                triggerGlobalSearchEvent();
-                                              }
-                                            },
-                                          ),
+                                                    if (locationState
+                                                            .hasPermissions &&
+                                                        value &&
+                                                        locationState
+                                                                .latitude !=
+                                                            null &&
+                                                        locationState
+                                                                .longitude !=
+                                                            null &&
+                                                        RegistrationDeliverySingleton()
+                                                                .maxRadius !=
+                                                            null &&
+                                                        isProximityEnabled) {
+                                                      triggerGlobalSearchEvent();
+                                                    } else {
+                                                      triggerGlobalSearchEvent();
+                                                    }
+                                                  },
+                                                ),
+                                              )
+                                            ]),
+                                            Row(
+                                              children: [
+                                                Switch(
+                                                  value:
+                                                      isSearchByBeneficaryIdEnabled,
+                                                  onChanged: (value) {
+                                                    customSearchHouseholdsBloc
+                                                        .add(
+                                                      const SearchHouseholdsClearEvent(),
+                                                    );
+                                                    searchController.clear();
+                                                    context
+                                                        .read<
+                                                            IndividualGlobalSearchSMCBloc>()
+                                                        .add(const searchHouseholdSMCBloc
+                                                            .SearchHouseholdsSMCEvent.clear());
+                                                    setState(() {
+                                                      isSearchByBeneficaryIdEnabled =
+                                                          value;
+                                                      isProximityEnabled =
+                                                          false;
+                                                      searchController.clear();
+                                                      blocWrapper.clearEvent();
+                                                    });
+                                                  },
+                                                ),
+                                                Text(
+                                                  localizations.translate(
+                                                      'SEARCH_BY_BENEFICIARY_ID'),
+                                                ),
+                                              ],
+                                            )
+                                          ],
                                         )
                                       : const Offstage(),
                                   selectedFilters.isNotEmpty
@@ -285,7 +371,8 @@ class _CustomSearchBeneficiaryPageState
                               );
                             },
                           ),
-                          if (searchHouseholdsState.resultsNotFound &&
+                          if (!isSearchByBeneficaryIdEnabled &&
+                              searchHouseholdsState.resultsNotFound &&
                               !searchHouseholdsState.loading)
                             Padding(
                               padding: const EdgeInsets.only(
@@ -306,11 +393,25 @@ class _CustomSearchBeneficiaryPageState
                                 ),
                               ),
                             ),
+                          if (isSearchByBeneficaryIdEnabled &&
+                              searchController.text.trim().isNotEmpty &&
+                              !isBeneficiaryIdValidPattern(
+                                  searchController.text.trim()))
+                            DigitInfoCard(
+                              description: localizations.translate(
+                                i18_local.searchBeneficiary
+                                    .beneficiaryIdValidInfoDescription,
+                              ),
+                              title: localizations.translate(
+                                i18.searchBeneficiary.beneficiaryInfoTitle,
+                              ),
+                            ),
                         ],
                       ),
                     ),
                   ),
-                  if (searchHouseholdsState.loading)
+                  if (!isSearchByBeneficaryIdEnabled &&
+                      searchHouseholdsState.loading)
                     const SliverFillRemaining(
                       child: Center(
                         child: CircularProgressIndicator(),
@@ -449,6 +550,110 @@ class _CustomSearchBeneficiaryPageState
                       },
                     ),
                   ),
+                  if (isSearchByBeneficaryIdEnabled)
+                    BlocConsumer<IndividualGlobalSearchSMCBloc,
+                        searchHouseholdSMCBloc.SearchHouseholdsSMCState>(
+                      listener: (context, searchSMCstate) {},
+                      builder: (context, searchSMCstate) {
+                        if (searchSMCstate.loading) {
+                          return const Center(
+                              child: CircularProgressIndicator());
+                        } else {
+                          return SliverList(
+                            delegate: SliverChildBuilderDelegate(
+                              (ctx, index) {
+                                final i =
+                                    searchSMCstate.householdMembers[index];
+                                return Container(
+                                  margin:
+                                      const EdgeInsets.only(bottom: kPadding),
+                                  child: ViewBeneficiaryCard(
+                                    householdMember: i,
+                                    onOpenPressed: () async {
+                                      final scannerBloc =
+                                          context.read<DigitScannerBloc>();
+
+                                      scannerBloc.add(
+                                        const DigitScannerEvent.handleScanner(),
+                                      );
+
+                                      if ((i.tasks != null &&
+                                              i.tasks?.last.status ==
+                                                  Status.closeHousehold
+                                                      .toValue() &&
+                                              (i.tasks ?? []).isNotEmpty) ||
+                                          (i.projectBeneficiaries ?? [])
+                                              .isEmpty) {
+                                        setState(() {
+                                          selectedFilters = [];
+                                        });
+                                        blocWrapper.clearEvent();
+                                        await context.router.push(
+                                          CustomBeneficiaryRegistrationWrapperRoute(
+                                            initialState: BeneficiaryRegistrationState.editHousehold(
+                                                householdModel: i.household!,
+                                                individualModel: i.members!,
+                                                registrationDate:
+                                                    DateTime.now(),
+                                                projectBeneficiaryModel:
+                                                    (i.projectBeneficiaries ??
+                                                                [])
+                                                            .isNotEmpty
+                                                        ? i.projectBeneficiaries
+                                                            ?.lastOrNull
+                                                        : null,
+                                                addressModel:
+                                                    (RegistrationDeliverySingleton()
+                                                                .householdType ==
+                                                            HouseholdType
+                                                                .community)
+                                                        ? i.household!.address!
+                                                        : i
+                                                            .headOfHousehold!
+                                                            .address!
+                                                            .lastOrNull!,
+                                                headOfHousehold:
+                                                    i.headOfHousehold),
+                                          ),
+                                        );
+                                      } else {
+                                        await context.router.push(
+                                            BeneficiaryWrapperRoute(
+                                                wrapper: i));
+                                      }
+                                      setState(() {
+                                        isProximityEnabled = false;
+                                        isSearchByBeneficaryIdEnabled = false;
+                                      });
+                                      searchController.clear();
+                                      selectedFilters.clear();
+                                      blocWrapper.clearEvent();
+                                    },
+                                  ),
+                                );
+                              },
+                              childCount:
+                                  searchSMCstate.householdMembers.length,
+                            ),
+                          );
+                        }
+                      },
+                    ),
+                  if (isSearchByBeneficaryIdEnabled &&
+                      searchController.text.trim().isNotEmpty &&
+                      !isBeneficiaryIdValid(searchController.text.trim()))
+                    SliverList(
+                        delegate: SliverChildBuilderDelegate((ctx, index) {
+                      return DigitInfoCard(
+                        description: localizations.translate(
+                          i18_local.searchBeneficiary
+                              .beneficiaryIdValidInfoDescription,
+                        ),
+                        title: localizations.translate(
+                          i18.searchBeneficiary.beneficiaryInfoTitle,
+                        ),
+                      );
+                    }, childCount: 1))
                 ],
               );
             },
@@ -479,12 +684,37 @@ class _CustomSearchBeneficiaryPageState
                       size: DigitButtonSize.large,
                       isDisabled: false,
                       onPressed: () {
-                        FocusManager.instance.primaryFocus?.unfocus();
+                        int spaq1 = context.spaq1;
+                        int spaq2 = context.spaq2;
+                        int blueVas = context.blueVas;
+                        int redVas = context.redVas;
 
-                        final spaq1 = context.spaq1;
-                        final spaq2 = context.spaq2;
+                        String descriptionText = localizations.translate(
+                            i18_local
+                                .beneficiaryDetails.insufficientStockMessage);
 
-                        if (spaq1 > 0 || spaq2 > 0) {
+                        if (spaq1 == 0) {
+                          descriptionText +=
+                              "\n ${localizations.translate(i18_local.beneficiaryDetails.spaq1DoseUnit)}";
+                        }
+                        if (spaq2 == 0) {
+                          descriptionText +=
+                              "\n ${localizations.translate(i18_local.beneficiaryDetails.spaq2DoseUnit)}";
+                        }
+                        if (blueVas == 0) {
+                          descriptionText +=
+                              "\n ${localizations.translate(i18_local.beneficiaryDetails.blueVasZeroQuantity)}";
+                        }
+                        if (redVas == 0) {
+                          descriptionText +=
+                              "\n ${localizations.translate(i18_local.beneficiaryDetails.redVasZeroQuantity)}";
+                        }
+
+                        if ((spaq1 > 0 ||
+                            spaq2 > 0 ||
+                            blueVas > 0 ||
+                            redVas > 0)) {
+                          FocusManager.instance.primaryFocus?.unfocus();
                           context.read<DigitScannerBloc>().add(
                                 const DigitScannerEvent.handleScanner(),
                               );
@@ -500,40 +730,32 @@ class _CustomSearchBeneficiaryPageState
                             const SearchHouseholdsClearEvent(),
                           );
                         } else {
-                          DigitDialog.show(
-                            context,
-                            options: DigitDialogOptions(
-                              titleText: localizations.translate(
-                                i18_local.beneficiaryDetails
-                                    .insufficientStockHeading,
-                              ),
-                              titleIcon: Icon(
-                                Icons.warning,
-                                color: DigitTheme.instance.colorScheme.error,
-                              ),
-                              contentText: localizations
-                                  .translate(
-                                    i18_local.beneficiaryDetails
-                                        .insufficientSMCStockMessageDelivery,
-                                  )
-                                  .replaceAll(
-                                    "{1}",
-                                    0.toString(),
-                                  )
-                                  .replaceAll(
-                                    "{2}",
-                                    0.toString(),
+                          showCustomPopup(
+                            context: context,
+                            builder: (popupContext) => Popup(
+                              title: localizations.translate(i18_local
+                                  .beneficiaryDetails.insufficientStockHeading),
+                              onOutsideTap: () {
+                                Navigator.of(popupContext).pop(false);
+                              },
+                              description: descriptionText,
+                              type: PopUpType.simple,
+                              actions: [
+                                DigitButton(
+                                  label: localizations.translate(
+                                    i18_local.beneficiaryDetails.goToHome,
                                   ),
-                              primaryAction: DigitDialogActions(
-                                label: localizations.translate(
-                                    i18_local.beneficiaryDetails.backToHome),
-                                action: (ctx) {
-                                  Navigator.of(
-                                    ctx,
-                                    rootNavigator: true,
-                                  ).pop();
-                                },
-                              ),
+                                  onPressed: () {
+                                    Navigator.of(
+                                      popupContext,
+                                      rootNavigator: true,
+                                    ).pop();
+//
+                                  },
+                                  type: DigitButtonType.primary,
+                                  size: DigitButtonSize.large,
+                                ),
+                              ],
                             ),
                           );
                         }
@@ -594,6 +816,56 @@ class _CustomSearchBeneficiaryPageState
       );
       triggerGlobalSearchEvent();
     }
+  }
+
+  void searchByBeneficiaryId(
+      {bool isPagination = false, String beneficiaryId = ""}) {
+    final individualglobalsearchSMC =
+        context.read<IndividualGlobalSearchSMCBloc>();
+    individualglobalsearchSMC
+        .add(searchHouseholdSMCBloc.IndividualGlobalSearchSMCEvent(
+            globalSearchParams: GlobalSearchParametersSMC(
+      isProximityEnabled: isProximityEnabled,
+      latitude: lat,
+      longitude: long,
+      maxRadius: RegistrationDeliverySingleton().maxRadius,
+      nameSearch: searchController.text.trim().length > 2
+          ? searchController.text.trim()
+          : blocWrapper.searchHouseholdsBloc.state.searchQuery,
+      beneficiaryId: beneficiaryId,
+      filter: selectedFilters,
+      offset: isPagination
+          ? blocWrapper.individualGlobalSearchBloc.state.offset
+          : offset,
+      limit: isPagination
+          ? blocWrapper.individualGlobalSearchBloc.state.limit
+          : limit,
+      projectId: RegistrationDeliverySingleton().projectId!,
+    )));
+  }
+
+  bool isBeneficiaryIdValid(String value) {
+    if (value.trim().length != 14) return false;
+    for (var i = 0; i < value.length; i++) {
+      if ((i == 4 || i == 9) && value[i] != '-')
+        return false;
+      else if (isLowerCase(value[i])) return false;
+    }
+    return true;
+  }
+
+  bool isLowerCase(String ch) {
+    return ch.codeUnitAt(0) >= 97 && ch.codeUnitAt(0) <= 122;
+  }
+
+  bool isBeneficiaryIdValidPattern(String value) {
+    bool isValid = true;
+    if (value.trim().length > 14) {
+      isValid = false;
+    } else if (!pattern.hasMatch(value.trim())) {
+      isValid = false;
+    }
+    return isValid;
   }
 
   void triggerGlobalSearchEvent({bool isPagination = false}) {

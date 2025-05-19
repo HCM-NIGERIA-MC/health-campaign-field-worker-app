@@ -70,27 +70,27 @@ class CustomHouseHoldDetailsPageState
     final bool isCommunity = RegistrationDeliverySingleton().householdType ==
         HouseholdType.community;
 
-      Future<String> generateHouseholdId() async {
-        final userId = RegistrationDeliverySingleton().loggedInUserUuid;
+    Future<String> generateHouseholdId() async {
+      final userId = RegistrationDeliverySingleton().loggedInUserUuid;
 
-        final boundaryBloc = context.read<BoundaryBloc>().state;
-        final code = boundaryBloc.boundaryList.first.code;
-        final bname = boundaryBloc.boundaryList.first.name;
+      final boundaryBloc = context.read<BoundaryBloc>().state;
+      final code = boundaryBloc.boundaryList.first.code;
+      final bname = boundaryBloc.boundaryList.first.name;
 
-        final locality = (code == null || bname == null)
-            ? null
-            : LocalityModel(code: code, name: bname);
+      final locality = (code == null || bname == null)
+          ? null
+          : LocalityModel(code: code, name: bname);
 
-        final localityCode = locality!.code;
+      final localityCode = locality!.code;
 
-        final ids = await UniqueIdGeneration().generateUniqueId(
-          localityCode: localityCode,
-          loggedInUserId: userId!,
-          returnCombinedIds: false,
-        );
+      final ids = await UniqueIdGeneration().generateUniqueId(
+        localityCode: localityCode,
+        loggedInUserId: userId!,
+        returnCombinedIds: false,
+      );
 
-        return ids.first;
-      }
+      return ids.first;
+    }
 
     return Scaffold(
       body: ReactiveFormBuilder(
@@ -129,7 +129,7 @@ class CustomHouseHoldDetailsPageState
                   Padding(
                     padding: EdgeInsets.only(bottom: spacer2),
                     child: CustomBackNavigationHelpHeaderWidget(
-                      showHelp: true,
+                      showHelp: false,
                     ),
                   ),
                 ]),
@@ -172,9 +172,10 @@ class CustomHouseHoldDetailsPageState
                               loading,
                               isHeadOfHousehold,
                             ) async {
-                              final  String householdid = await  generateHouseholdId();
+                              final String householdid =
+                                  await generateHouseholdId();
                               var household = householdModel;
-     
+
                               household ??= HouseholdModel(
                                 tenantId:
                                     RegistrationDeliverySingleton().tenantId,
@@ -361,8 +362,8 @@ class CustomHouseHoldDetailsPageState
                                 : localizations.translate(
                                     i18.householdDetails.householdDetailsLabel,
                                   ),
-                            headingStyle: textTheme.headingXl.copyWith(
-                                color: theme.colorTheme.text.primary),
+                            headingStyle: textTheme.headingXl
+                                .copyWith(color: theme.colorTheme.text.primary),
                           ),
                           householdDetailsShowcaseData.dateOfRegistration
                               .buildWith(

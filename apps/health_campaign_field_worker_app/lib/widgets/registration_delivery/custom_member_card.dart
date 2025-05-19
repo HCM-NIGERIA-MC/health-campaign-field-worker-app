@@ -29,6 +29,7 @@ import '../../models/entities/additional_fields_type.dart'
     as additional_fields_local;
 
 class CustomMemberCard extends StatelessWidget {
+  final List<ProductVariantModel> variant;
   final String name;
   final String? gender;
   final int? years;
@@ -75,6 +76,7 @@ class CustomMemberCard extends StatelessWidget {
     this.isBeneficiaryIneligible = false,
     this.isBeneficiaryReferred = false,
     this.sideEffects,
+    required this.variant,
   });
 
   List<TaskModel>? _getSMCStatusData() {
@@ -291,18 +293,47 @@ class CustomMemberCard extends StatelessWidget {
                     .lastOrNull;
                 if (redosePendingStatus) {
                   final spaq1 = context.spaq1;
+                  final spaq2 = context.spaq2;
+                  // final blueVas = context.blueVas;
+                  // final redVas = context.redVas;
 
                   int doseCount = double.parse(
                     successfulTask?.resources?.first.quantity ?? "0",
                   ).round();
 
-                  if (successfulTask != null && spaq1 >= doseCount) {
+                  final value = variant
+                      .firstWhere(
+                        (element) =>
+                            element.id ==
+                            successfulTask!.resources!.first.productVariantId,
+                      )
+                      .sku;
+
+                  if (successfulTask != null &&
+                      value != null &&
+                      ((value.contains(
+                                Constants.spaq1,
+                              ) &&
+                              spaq1 > 0) ||
+                          (value.contains(
+                                Constants.spaq2,
+                              ) &&
+                              spaq2 > 0))) {
                     context.router.push(
                       RecordRedoseRoute(
-                        tasks: [successfulTask],
+                        tasks: [successfulTask!],
                       ),
                     );
-                  } else {
+                  }
+
+                  // if (successfulTask != null && spaq1 >= doseCount) {
+                  //   context.router.push(
+                  //     RecordRedoseRoute(
+                  //       tasks: [successfulTask],
+                  //     ),
+                  //   );
+                  // }
+                  else {
                     DigitDialog.show(
                       context,
                       options: DigitDialogOptions(
@@ -313,12 +344,32 @@ class CustomMemberCard extends StatelessWidget {
                           Icons.warning,
                           color: DigitTheme.instance.colorScheme.error,
                         ),
-                        contentText: "${localizations.translate(
-                          i18_local.beneficiaryDetails
-                              .insufficientAZTStockMessageDelivery,
-                        )}=$spaq1${localizations.translate(
-                          i18_local.beneficiaryDetails.beneficiaryDoseUnit,
-                        )}",
+                        contentText: (value == Constants.spaq1)
+                            ? "${localizations.translate(
+                                i18_local.beneficiaryDetails
+                                    .insufficientAZTStockMessageDelivery,
+                              )} \n ${localizations.translate(
+                                i18_local.beneficiaryDetails.spaq1DoseUnit,
+                              )}"
+                            : "${localizations.translate(
+                                i18_local.beneficiaryDetails
+                                    .insufficientAZTStockMessageDelivery,
+                              )} \n ${localizations.translate(
+                                i18_local.beneficiaryDetails.spaq2DoseUnit,
+                              )}",
+                        // contentText: (spaq1 < doseCountSpaq1)
+                        //     ? "${localizations.translate(
+                        //         i18_local.beneficiaryDetails
+                        //             .insufficientAZTStockMessageDelivery,
+                        //       )} \n ${localizations.translate(
+                        //         i18_local.beneficiaryDetails.spaq1DoseUnit,
+                        //       )}"
+                        //     : "${localizations.translate(
+                        //         i18_local.beneficiaryDetails
+                        //             .insufficientAZTStockMessageDelivery,
+                        //       )} \n ${localizations.translate(
+                        //         i18_local.beneficiaryDetails.spaq2DoseUnit,
+                        //       )}",
                         primaryAction: DigitDialogActions(
                           label: localizations.translate(i18_local
                               .beneficiaryDetails.backToHouseholdDetails),
@@ -423,14 +474,20 @@ class CustomMemberCard extends StatelessWidget {
                   ),
                 ],
               ),
-              (tasks ?? [])
-                          .where(
-                            (element) =>
-                                element.status ==
-                                Status.administeredSuccess.toValue(),
-                          )
-                          .lastOrNull ==
-                      null
+              ((tasks ?? [])
+                              .where(
+                                (element) =>
+                                    element.status ==
+                                    Status.administeredSuccess.toValue(),
+                              )
+                              .lastOrNull ==
+                          null &&
+                      !isSMCDelivered &&
+                     // !isVASDelivered &&
+                      // !isNotEligibleSMC &&
+                      // !isNotEligibleVAS &&
+                      !isBeneficiaryIneligible &&
+                      !isBeneficiaryReferred)
                   ? Positioned(
                       child: Align(
                         alignment: Alignment.topRight,

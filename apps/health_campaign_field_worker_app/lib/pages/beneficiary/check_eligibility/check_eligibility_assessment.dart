@@ -144,7 +144,7 @@ class _EligibilityChecklistViewPage
                           if (!(context.isHealthFacilitySupervisor &&
                               widget.referralClientRefId != null))
                             const CustomBackNavigationHelpHeaderWidget(
-                              showHelp: true,
+                              showHelp: false,
                             ),
                         ]),
                         enableFixedButton: true,
@@ -241,8 +241,11 @@ class _EligibilityChecklistViewPage
                               final shouldSubmit = await DigitDialog.show(
                                 context,
                                 options: DigitDialogOptions(
-                                  titleText: widget.eligibilityAssessmentType ==
-                                          EligibilityAssessmentType.smc
+                                  titleText: (widget
+                                                  .eligibilityAssessmentType ==
+                                              EligibilityAssessmentType.smc ||
+                                          ifIneligible ||
+                                          ifReferral)
                                       ? localizations.translate(
                                           i18_local.checklist
                                               .submitButtonDialogLabelText,
@@ -259,14 +262,20 @@ class _EligibilityChecklistViewPage
                                                 .checklistDialogDynamicDescription,
                                           )
                                           .replaceFirst('{}', descriptionText))
-                                      // : Text(localizations.translate(i18_local
-                                      //     .deliverIntervention
-                                      //     .proceedToVASDescription)),
-                                      : getHighlightedText(
-                                          localizations.translate(
-                                          i18_local.deliverIntervention
-                                              .proceedToVASDescription,
-                                        )),
+                                      : (ifReferral || ifIneligible)
+                                          ? getHighlightedText(localizations
+                                              .translate(
+                                                i18_local.checklist
+                                                    .checklistDialogDynamicDescription,
+                                              )
+                                              .replaceFirst(
+                                                  '{}', descriptionText))
+                                          : getHighlightedText(
+                                              localizations.translate(
+                                                i18_local.deliverIntervention
+                                                    .proceedToVASDescription,
+                                              ),
+                                            ),
                                   primaryAction: DigitDialogActions(
                                     label: widget.eligibilityAssessmentType ==
                                             EligibilityAssessmentType.smc
@@ -982,6 +991,11 @@ class _EligibilityChecklistViewPage
     int startIndex = description.indexOf('Proceed');
     int endIndex = startIndex + 'Proceed'.length;
 
+    if (startIndex == -1) {
+      // If "Proceed" is not found, return the original description
+      return Text(description);
+    }
+
     // Split the description into parts
     String partBefore = description.substring(0, startIndex);
     String partHighlighted = description.substring(startIndex, endIndex);
@@ -1021,7 +1035,7 @@ class _EligibilityChecklistViewPage
     var q3Key = "KBEA3";
     var q5Key = "KBEA4";
     var q6Key = "KBEA5";
-    var q7Key = "KBEA6";
+    var q7Key = "KBEA7";
 
     Map<String, String> keyVsReason = {
       q3Key: "NOT_ADMINISTERED_IN_PREVIOUS_CYCLE",
@@ -1060,10 +1074,10 @@ class _EligibilityChecklistViewPage
       //     (responses.containsKey(q6Key) && responses[q6Key]!.isNotEmpty)) {
       //   isIneligible = responses[q6Key] == yes ? true : false;
       // }
-      //       if (!isIneligible &&
-      //     (responses.containsKey(q7Key) && responses[q7Key]!.isNotEmpty)) {
-      //   isIneligible = responses[q7Key] == yes ? true : false;
-      // }
+      if (!isIneligible &&
+          (responses.containsKey(q7Key) && responses[q7Key]!.isNotEmpty)) {
+        isIneligible = responses[q7Key] == yes ? true : false;
+      }
       // passing all the reasons which have response as true
       if (isIneligible) {
         for (var entry in responses.entries) {
@@ -1089,14 +1103,16 @@ class _EligibilityChecklistViewPage
     var q4Key = "KBEA3.NO.ADT1";
     var q6Key = "KBEA5";
     var q7Key = "KBEA6";
+    // var q8Key = "KBEA7";
     // var q3Key = "KBEA3";
     Map<String, String> referralKeysVsCode = {
       q1Key: "SICK",
       q2Key: "FEVER",
       q4Key: "DRUG_SE_PC",
       q6Key: "RESPIRATORY_INFECTION",
-      q7Key: "TAKEN_VITAMIN_A",
-      // q3Key: "DRUG_SE_PC",
+      // q7Key: "TAKEN_VITAMIN_A",
+      // q8Key: "SIDE_EFFECTS_TO_VITAMIN_A",
+      q7Key: "DRUG_SE_PC",
     };
     // TODO Configure the reasons ,verify hardcoded strings
 
@@ -1113,11 +1129,17 @@ class _EligibilityChecklistViewPage
         isReferral = responses[q4Key] == yes ? true : false;
       }
       if (!isReferral &&
-          (responses.containsKey(q6Key) && responses[q6Key]!.isNotEmpty) &&
-          (responses.containsKey(q7Key) && responses[q7Key]!.isNotEmpty)) {
-        isReferral = (responses[q6Key] == yes) && (responses[q7Key] == yes)
+              (responses.containsKey(q6Key) && responses[q6Key]!.isNotEmpty)
+          // && (responses.containsKey(q7Key) && responses[q7Key]!.isNotEmpty)
+          ) {
+        isReferral = (responses[q6Key] == yes)
+            // && (responses[q7Key] == yes)
             ? true
             : false;
+      }
+      if (!isReferral &&
+          (responses.containsKey(q7Key) && responses[q7Key]!.isNotEmpty)) {
+        isReferral = responses[q7Key] == yes ? true : false;
       }
     }
     if (isReferral) {
@@ -1142,10 +1164,12 @@ class _EligibilityChecklistViewPage
     var q1Key = "KBEA5";
     var q2Key = "KBEA6";
     // var q3Key = "KBEA3";
+    // var q4Key = "KBEA7";
     Map<String, String> referralKeysVsCode = {
       q1Key: "RESPIRATORY_INFECTION",
-      q2Key: "TAKEN_VITAMIN_A",
-      // q3Key: "DRUG_SE_PC",
+      // q2Key: "TAKEN_VITAMIN_A",
+      q2Key: "DRUG_SE_PC",
+      // qKey: "SIDE_EFFECTS_TO_VITAMIN_A",
     };
     // TODO Configure the reasons ,verify hardcoded strings
 
@@ -1174,7 +1198,12 @@ class _EligibilityChecklistViewPage
 
   bool isDelivery(Map<String?, String> responses) {
     var isDeliver = true;
+    var q1Key = "KBEA7";
+
     for (var entry in responses.entries) {
+      if (entry.key == q1Key) {
+        continue;
+      }
       if (entry.value == yes) {
         isDeliver = false;
         break;

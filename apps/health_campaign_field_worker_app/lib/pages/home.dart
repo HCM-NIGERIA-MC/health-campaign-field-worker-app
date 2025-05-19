@@ -1,3 +1,4 @@
+import 'package:recase/recase.dart';
 import 'package:referral_reconciliation/referral_reconciliation.dart';
 import 'package:referral_reconciliation/router/referral_reconciliation_router.gm.dart';
 
@@ -37,6 +38,8 @@ import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:survey_form/models/entities/service.dart';
+import 'package:survey_form/router/survey_form_router.gm.dart';
+import 'package:survey_form/utils/utils.dart';
 import 'package:sync_service/blocs/sync/sync.dart';
 
 import '../blocs/app_initialization/app_initialization.dart';
@@ -117,6 +120,7 @@ class _HomePageState extends LocalizedState<HomePage> {
     });
 
     if (!(roles.contains(RolesType.distributor.toValue()) ||
+        roles.contains(RolesType.communityDistributor.toValue()) ||
         roles.contains(RolesType.registrar.toValue()))) {
       skipProgressBar = true;
     }
@@ -150,12 +154,9 @@ class _HomePageState extends LocalizedState<HomePage> {
           ],
           header: Column(
             children: [
-              BackNavigationHelpHeaderWidget(
+              const BackNavigationHelpHeaderWidget(
                 showBackNavigation: false,
                 showHelp: false,
-                showcaseButton: ShowcaseButton(
-                  showcaseFor: showcaseKeys.toSet().toList(),
-                ),
               ),
               skipProgressBar
                   ? const SizedBox.shrink()
@@ -503,6 +504,23 @@ class _HomePageState extends LocalizedState<HomePage> {
           },
         ),
       ),
+      i18.home.mySurveyForm: homeShowcaseData.supervisorMySurveyForm.buildWith(
+        child: HomeItemCard(
+          enableCustomIcon: true,
+          customIcon: mySurveyFormSvg,
+          iconPadding: const EdgeInsets.all(spacer1),
+          icon: Icons.checklist,
+          customIconSize: spacer8,
+          label: i18.home.mySurveyForm,
+          onPressed: () {
+            if (isTriggerLocalisation) {
+              triggerLocalization();
+              isTriggerLocalisation = false;
+            }
+            context.router.push(CustomSurveyFormWrapperRoute());
+          },
+        ),
+      ),
     };
 
     final Map<String, GlobalKey> homeItemsShowcaseMap = {
@@ -527,6 +545,8 @@ class _HomePageState extends LocalizedState<HomePage> {
       i18.home.db: homeShowcaseData.db.showcaseKey,
       i18.home.dashboard: homeShowcaseData.dashBoard.showcaseKey,
       i18.home.clfLabel: homeShowcaseData.clf.showcaseKey,
+      i18.home.mySurveyForm:
+          homeShowcaseData.supervisorMySurveyForm.showcaseKey,
     };
 
     final homeItemsLabel = <String>[
@@ -534,9 +554,8 @@ class _HomePageState extends LocalizedState<HomePage> {
       i18.home.manageAttendanceLabel,
 
       i18.home.beneficiaryReferralLabel,
-
+      i18.home.mySurveyForm,
       i18.home.beneficiaryLabel,
-
       i18.home.manageStockLabel,
       i18.home.stockReconciliationLabel,
       i18.home.viewReportsLabel,
@@ -784,7 +803,9 @@ void setPackagesSingleton(BuildContext context) {
               .isNotEmpty,
           isDistributor: context.loggedInUserRoles
               .where(
-                (role) => role.code == RolesType.distributor.toValue(),
+                (role) =>
+                    role.code == RolesType.distributor.toValue() ||
+                    role.code == RolesType.communityDistributor.toValue(),
               )
               .toList()
               .isNotEmpty,
@@ -821,7 +842,9 @@ void setPackagesSingleton(BuildContext context) {
               .isNotEmpty,
           isDistributor: context.loggedInUserRoles
               .where(
-                (role) => role.code == RolesType.distributor.toValue(),
+                (role) =>
+                    role.code == RolesType.distributor.toValue() ||
+                    role.code == RolesType.communityDistributor.toValue(),
               )
               .toList()
               .isNotEmpty,
@@ -845,6 +868,20 @@ void setPackagesSingleton(BuildContext context) {
           userName: context.loggedInUser.name ?? '',
         );
         ComplaintsSingleton().setBoundary(boundary: context.boundary);
+        SurveyFormSingleton().setInitialData(
+          projectId: context.projectId,
+          projectName: context.selectedProject.name,
+          loggedInIndividualId: context.loggedInIndividualId ?? '',
+          loggedInUserUuid: context.loggedInUserUuid,
+          appVersion: Constants().version,
+          roles: context.read<AuthBloc>().state.maybeMap(
+              orElse: () => const Offstage(),
+              authenticated: (res) {
+                return res.userModel.roles
+                    .map((e) => e.code.snakeCase.toUpperCase())
+                    .toList();
+              }),
+        );
       });
 }
 

@@ -15,18 +15,23 @@ import 'package:registration_delivery/models/entities/deliver_strategy_type.dart
 import 'package:registration_delivery/models/entities/status.dart';
 import 'package:registration_delivery/models/entities/task.dart';
 import 'package:registration_delivery/utils/i18_key_constants.dart' as i18;
+import '../../../utils/i18_key_constants.dart' as i18_local;
 import 'package:registration_delivery/widgets/localized.dart';
+
+import '../../../utils/app_enums.dart';
 
 class CustomRecordDeliveryCycle extends LocalizedStatefulWidget {
   final List<TaskModel>? taskData;
   final List<ProjectCycle> projectCycles;
   final IndividualModel? individualModel;
+  final EligibilityAssessmentType eligibilityAssessmentType;
 
   const CustomRecordDeliveryCycle({
     super.key,
     this.taskData,
     required this.projectCycles,
     required this.individualModel,
+    required this.eligibilityAssessmentType,
   });
 
   @override
@@ -212,8 +217,12 @@ class RecordDeliveryCycleState
                 alignment: Alignment.centerLeft,
                 child: Text(
                   isCurrentCycle
-                      ? localizations
-                          .translate(i18.beneficiaryDetails.currentCycleLabel)
+                      ? (widget.eligibilityAssessmentType ==
+                              EligibilityAssessmentType.smc)
+                          ? localizations.translate(
+                              i18_local.beneficiaryDetails.currentSmcCycleLabel)
+                          : localizations.translate(
+                              i18.beneficiaryDetails.currentCycleLabel)
                       : '${localizations.translate(i18.beneficiaryDetails.beneficiaryCycle)} ${e.id}',
                   style: textTheme.headingL.copyWith(
                     color: theme.colorTheme.text.primary,

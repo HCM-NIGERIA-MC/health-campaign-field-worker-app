@@ -1,6 +1,8 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:collection/collection.dart';
-import 'package:digit_components/utils/date_utils.dart' as digits;
+import 'package:dart_mappable/dart_mappable.dart';
+// import 'package:digit_components/utils/date_utils.dart' as digits;
+import '../../utils/date_utils.dart' as digits;
 import 'package:digit_components/widgets/atoms/digit_toaster.dart';
 import 'package:digit_ui_components/theme/ComponentTheme/checkbox_theme.dart';
 import 'package:health_campaign_field_worker_app/utils/registration_delivery/utils_smc.dart';
@@ -138,7 +140,7 @@ class CustomIndividualDetailsPageState
                 Padding(
                   padding: const EdgeInsets.only(bottom: spacer2),
                   child: CustomBackNavigationHelpHeaderWidget(
-                    showHelp: true,
+                    showHelp: false,
                     handleback: () {
                       if (isEditIndividual) {
                         final parent = context.router.parent() as StackRouter;

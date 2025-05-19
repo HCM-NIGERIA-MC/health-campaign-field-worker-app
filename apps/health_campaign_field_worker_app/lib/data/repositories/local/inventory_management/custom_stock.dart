@@ -39,7 +39,7 @@ class CustomStockLocalRepository
                 [
                   if (query.id != null) sql.stock.id.equals(query.id!),
                   if (query.receiverId != null)
-                    sql.stock.receiverId.equals(query.receiverId!),
+                    sql.stock.receiverId.isIn(query.receiverId!),
                   if (query.senderId != null)
                     sql.stock.senderId.equals(query.senderId!),
                   if (query.productVariantId != null)
@@ -134,6 +134,24 @@ class CustomStockLocalRepository
       });
 
       return super.update(entity, createOpLog: createOpLog);
+    });
+  }
+
+  // info : method added to perform bulk create
+
+  FutureOr<void> bulkStockCreate(
+    List<StockModel> entities,
+  ) async {
+    return retryLocalCallOperation(() async {
+      final stockCompanions = entities.map((e) => e.companion).toList();
+
+      await sql.batch((batch) async {
+        batch.insertAll(
+          sql.stock,
+          stockCompanions,
+          mode: InsertMode.insertOrReplace,
+        );
+      });
     });
   }
 

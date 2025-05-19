@@ -55,6 +55,7 @@ class _ProjectSelectionPageState extends LocalizedState<ProjectSelectionPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const BackNavigationHelpHeaderWidget(
+              showHelp: false,
               showBackNavigation: false,
               showLogoutCTA: true,
             ),

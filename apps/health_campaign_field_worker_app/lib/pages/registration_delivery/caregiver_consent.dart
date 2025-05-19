@@ -1,4 +1,3 @@
-import 'package:auto_route/auto_route.dart';
 import 'package:digit_data_model/data_model.dart';
 import 'package:digit_data_model/models/entities/household_type.dart';
 import 'package:digit_ui_components/digit_components.dart';
@@ -6,25 +5,20 @@ import 'package:digit_ui_components/models/RadioButtonModel.dart';
 import 'package:digit_ui_components/services/location_bloc.dart';
 import 'package:digit_ui_components/theme/digit_extended_theme.dart';
 import 'package:digit_ui_components/widgets/atoms/pop_up_card.dart';
-import 'package:digit_ui_components/widgets/atoms/selection_card.dart';
 import 'package:digit_ui_components/widgets/atoms/text_block.dart';
 import 'package:digit_ui_components/widgets/molecules/digit_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:health_campaign_field_worker_app/widgets/custom_back_navigation.dart';
-import 'package:reactive_forms/reactive_forms.dart';
+import '../../widgets/custom_back_navigation.dart';
 
 import 'package:registration_delivery/models/entities/household.dart';
 import 'package:registration_delivery/router/registration_delivery_router.gm.dart';
 import 'package:registration_delivery/utils/i18_key_constants.dart' as i18;
 import 'package:registration_delivery/utils/utils.dart';
 import 'package:registration_delivery/widgets/localized.dart';
-import 'package:registration_delivery/widgets/showcase/config/showcase_constants.dart';
-import 'package:registration_delivery/widgets/showcase/showcase_button.dart';
 
 import '../../blocs/registration_delivery/custom_beneficairy_registration.dart';
 import '../../router/app_router.dart';
-import '../../utils/environment_config.dart';
 import '../../utils/extensions/extensions.dart';
 import '../../utils/i18_key_constants.dart' as i18_local;
 import '../../utils/registration_delivery/registration_delivery_utils.dart';
@@ -147,8 +141,6 @@ class CaregiverConsentPageState extends LocalizedState<CaregiverConsentPage> {
     final theme = Theme.of(context);
     final textTheme = theme.digitTextTheme(context);
     final router = context.router;
-    final bool isCommunity = RegistrationDeliverySingleton().householdType ==
-        HouseholdType.community;
 
     return Scaffold(
       body: BlocBuilder<CustomBeneficiaryRegistrationBloc,
@@ -160,7 +152,7 @@ class CaregiverConsentPageState extends LocalizedState<CaregiverConsentPage> {
               Padding(
                 padding: EdgeInsets.only(bottom: spacer2),
                 child: CustomBackNavigationHelpHeaderWidget(
-                  showHelp: true,
+                  showHelp: false,
                 ),
               ),
             ],
@@ -246,9 +238,9 @@ class CaregiverConsentPageState extends LocalizedState<CaregiverConsentPage> {
                       i18_local.caregiverConsent.caregiverConsentLabelText),
                   headingStyle: textTheme.headingXl
                       .copyWith(color: theme.colorTheme.text.primary),
-                  description: localizations.translate(
+                  description: "${localizations.translate(
                     i18_local.caregiverConsent.caregiverConsentDescriptionTextSMC,
-                  ),
+                  )} *",
                   descriptionStyle: textTheme.bodyL.copyWith(
                     color: theme.colorTheme.text.primary,
                     fontWeight: FontWeight.bold,

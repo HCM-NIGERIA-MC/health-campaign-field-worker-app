@@ -39,7 +39,9 @@ class _CustomReferralReasonChecklistPreviewPageState
     return Scaffold(
       body: ScrollableContent(
         header: const Column(children: [
-          CustomBackNavigationHelpHeaderWidget(),
+          CustomBackNavigationHelpHeaderWidget(
+            showHelp: false,
+          ),
         ]),
         footer: BlocBuilder<ServiceBloc, ServiceState>(
           builder: (context, state) {
@@ -63,7 +65,8 @@ class _CustomReferralReasonChecklistPreviewPageState
                                     );
                                 context.router.popUntil((route) =>
                                     route.settings.name ==
-                                    CustomSearchReferralReconciliationsRoute.name);
+                                    CustomSearchReferralReconciliationsRoute
+                                        .name);
                                 context.router.maybePop();
                               },
                               type: DigitButtonType.primary,

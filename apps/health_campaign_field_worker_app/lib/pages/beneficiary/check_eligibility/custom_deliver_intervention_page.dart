@@ -14,6 +14,8 @@ import 'package:digit_ui_components/widgets/molecules/show_pop_up.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:health_campaign_field_worker_app/blocs/auth/auth.dart';
+import 'package:health_campaign_field_worker_app/utils/constants.dart';
 import 'package:intl/intl.dart';
 import 'package:reactive_forms/reactive_forms.dart';
 import 'package:registration_delivery/models/entities/deliver_strategy_type.dart';
@@ -115,6 +117,39 @@ class CustomDeliverInterventionPageState
               navigateToSummary: true,
               householdMemberWrapper: householdMember),
         );
+
+    final productvariantList =
+        ((form.control(_resourceDeliveredKey) as FormArray).value
+            as List<ProductVariantModel?>);
+
+    final qty =
+        (((form.control(_quantityDistributedKey) as FormArray).value)?[0])
+            .toString();
+
+    int spaq1 = 0;
+    int spaq2 = 0;
+    int blueVas = 0;
+    int redVas = 0;
+
+    if (productvariantList!.first?.sku! == Constants.spaq1) {
+      spaq1 = int.parse(qty) * -1;
+    } else if (productvariantList!.first?.sku! == Constants.spaq2) {
+      spaq2 = int.parse(qty) * -1;
+    } else if (productvariantList!.first?.sku! == Constants.blueVAS) {
+      blueVas = int.parse(qty) * -1;
+    } else {
+      redVas = int.parse(qty) * -1;
+    }
+
+    context.read<AuthBloc>().add(
+          AuthAddSpaqCountsEvent(
+            spaq1Count: spaq1,
+            spaq2Count: spaq2,
+            blueVasCount: blueVas,
+            redVasCount: redVas,
+          ),
+        );
+
     await handleSubmit(context, taskModel, deliverInterventionState);
   }
 
@@ -464,6 +499,8 @@ class CustomDeliverInterventionPageState
                                                               false) {
                                                             if (context
                                                                 .mounted) {
+                                                              // vas
+
                                                               context
                                                                   .read<
                                                                       LocationBloc>()
@@ -495,7 +532,7 @@ class CustomDeliverInterventionPageState
                                             EdgeInsets.only(bottom: spacer2),
                                         child:
                                             CustomBackNavigationHelpHeaderWidget(
-                                          showHelp: true,
+                                          showHelp: false,
                                         ),
                                       ),
                                     ]),
@@ -520,7 +557,7 @@ class CustomDeliverInterventionPageState
                                                               .deliverIntervention
                                                               .deliverInterventionVASLabel,
                                                         ),
-                                                  style: textTheme.headingXl
+                                                  style: textTheme.headingL
                                                       .copyWith(
                                                           color: theme
                                                               .colorTheme
@@ -633,7 +670,7 @@ class CustomDeliverInterventionPageState
                                                     i18.deliverIntervention
                                                         .deliverInterventionResourceLabel,
                                                   ),
-                                                  style: textTheme.headingXl
+                                                  style: textTheme.headingL
                                                       .copyWith(
                                                           color: theme
                                                               .colorTheme
@@ -1004,9 +1041,9 @@ class CustomResourceBeneficiaryCardState
                       readOnly: true,
                       selectedOption: DropdownItem(
                         code: getFormattedSku(
-                            selectedVariant?.sku ?? selectedVariant!.id),
+                            selectedVariant?.sku ?? selectedVariant?.id ?? ''),
                         name: getFormattedSku(
-                            selectedVariant?.sku ?? selectedVariant!.id),
+                            selectedVariant?.sku ?? selectedVariant?.id ?? ''),
                       ),
                       items: productVariants
                           .map((variant) => DropdownItem(

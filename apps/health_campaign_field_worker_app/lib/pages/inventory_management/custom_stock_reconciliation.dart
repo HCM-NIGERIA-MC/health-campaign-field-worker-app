@@ -111,7 +111,9 @@ class CustomStockReconciliationPageState
                         return Scaffold(
                           body: ScrollableContent(
                             enableFixedDigitButton: true,
-                            header: const BackNavigationHelpHeaderWidget(showHelp: true,),
+                            header: const BackNavigationHelpHeaderWidget(
+                              showHelp: false,
+                            ),
                             footer: SizedBox(
                               child: DigitCard(
                                   margin: const EdgeInsets.fromLTRB(

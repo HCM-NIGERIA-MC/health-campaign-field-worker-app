@@ -1,5 +1,5 @@
 import 'package:digit_components/digit_components.dart';
-import 'package:digit_components/utils/date_utils.dart';
+import '../../../utils/date_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:reactive_forms/reactive_forms.dart';
@@ -18,6 +18,7 @@ class CustomDigitDobPicker extends StatelessWidget {
   final String cancelText;
   final String confirmText;
   final DateTime? initialDate;
+  final DateTime? finalDate;
   final void Function(FormControl<dynamic>)? onChangeOfFormControl;
   final String headAgeValidError;
 
@@ -33,8 +34,9 @@ class CustomDigitDobPicker extends StatelessWidget {
     required this.separatorLabel,
     required this.yearsAndMonthsErrMsg,
     this.initialDate,
-    required this.confirmText,
-    required this.cancelText,
+    this.finalDate,
+    this.confirmText = 'OK',
+    this.cancelText = 'Cancel',
     this.onChangeOfFormControl,
     required this.headAgeValidError,
   });
@@ -55,12 +57,10 @@ class CustomDigitDobPicker extends StatelessWidget {
           bottom: 8,
         ),
         decoration: BoxDecoration(
-          color: Colors.grey.withOpacity(0.10),
+          color: theme.colorScheme.surface,
           borderRadius: BorderRadius.circular(4),
           border: Border.all(
-              color: Colors.grey.withOpacity(0.10),
-              style: BorderStyle.solid,
-              width: 1.0),
+              color: Colors.grey, style: BorderStyle.solid, width: 1.0),
         ),
         child: Column(
           children: [
@@ -76,7 +76,7 @@ class CustomDigitDobPicker extends StatelessWidget {
               cancelText: cancelText,
               confirmText: confirmText,
               onChangeOfFormControl: onChangeOfFormControl,
-              end: DateTime.now(),
+              end: finalDate ?? DateTime.now(),
             ),
             const SizedBox(height: 16),
             // Text widget to display a separator label between the date picker and age fields
@@ -93,6 +93,7 @@ class CustomDigitDobPicker extends StatelessWidget {
                         'customMinAge': (_) => "",
                       },
                       padding: EdgeInsets.zero,
+                      maxLength: 3,
                       inputFormatters: [
                         FilteringTextInputFormatter.digitsOnly,
                       ],
@@ -102,7 +103,13 @@ class CustomDigitDobPicker extends StatelessWidget {
                       label: ageFieldLabel,
                       isRequired: true,
                       keyboardType: TextInputType.number,
-                      hint: yearsHintLabel,
+                      suffix: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          yearsHintLabel,
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
                       readOnly: isVerified,
                       onChanged: onChangeOfFormControl),
                 ),
@@ -116,6 +123,7 @@ class CustomDigitDobPicker extends StatelessWidget {
                         'customMinAge': (_) => "",
                       },
                       padding: EdgeInsets.zero,
+                      maxLength: 2,
                       inputFormatters: [
                         FilteringTextInputFormatter.digitsOnly,
                       ],
@@ -124,7 +132,13 @@ class CustomDigitDobPicker extends StatelessWidget {
                       formControlName: datePickerFormControl,
                       label: '',
                       keyboardType: TextInputType.number,
-                      hint: monthsHintLabel,
+                      suffix: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          monthsHintLabel,
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
                       readOnly: isVerified,
                       onChanged: onChangeOfFormControl),
                 ),
@@ -174,19 +188,10 @@ class DobValueAccessor extends ControlValueAccessor<DateTime, DigitDOBAge> {
     if (viewValue == null || (viewValue.years == 0 && viewValue.months == 0)) {
       return null;
     } else {
-      final months = viewValue.months;
-      final days = DigitDateUtils.yearsMonthsDaysToDays(
-          viewValue.years, viewValue.months, viewValue.days);
-
-      final calculatedDate = DateTime.now().subtract(Duration(days: days));
-
-      return (viewValue.years == 0 && months == 0) || months > 11
+      return (viewValue.years == 0 && viewValue.months == 0) ||
+              viewValue.months > 11
           ? null
-          : DateTime(
-              calculatedDate.year,
-              calculatedDate.month,
-              1,
-            );
+          : DigitDateUtils.calculateDob(viewValue);
     }
   }
 }

@@ -56,7 +56,7 @@ class ProjectFacilitySelectionPage extends StatelessWidget {
               return ScrollableContent(
                 backgroundColor: Colors.white,
                 header: const BackNavigationHelpHeaderWidget(
-                  showHelp: true,
+                  showHelp: false,
                 ),
                 slivers: [
                   SliverToBoxAdapter(

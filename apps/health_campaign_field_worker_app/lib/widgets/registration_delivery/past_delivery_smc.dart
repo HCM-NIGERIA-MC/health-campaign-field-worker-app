@@ -128,9 +128,46 @@ Widget buildTableContentSMC(
                         : DigitTableData('', cellKey: ''),
                     // Display the SKU value in the second column.
                     DigitTableData(
-                      localizations.translate(value.toString()),
+                      '', // label left empty since we're using widget instead
                       cellKey: 'resources',
-                    ),
+                      widget: RichText(
+                        text: TextSpan(
+                          children: () {
+                            final translated =
+                                localizations.translate(value.toString());
+
+                            if (translated == 'SPAQ 1') {
+                              return [
+                                TextSpan(
+                                  text: translated,
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.orange,
+                                  ),
+                                ),
+                              ];
+                            } else if (translated == 'SPAQ 2') {
+                              return [
+                                TextSpan(
+                                  text: translated,
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.red,
+                                  ),
+                                ),
+                              ];
+                            } else {
+                              return [
+                                TextSpan(
+                                  text: translated,
+                                  style: const TextStyle(color: Colors.black),
+                                ),
+                              ];
+                            }
+                          }(),
+                        ),
+                      ),
+                    )
                   ]);
                 },
               ),

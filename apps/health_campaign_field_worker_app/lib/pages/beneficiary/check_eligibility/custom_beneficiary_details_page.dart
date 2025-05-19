@@ -176,7 +176,7 @@ class CustomBeneficiaryDetailsPageState
                         enableFixedDigitButton: true,
                         header: const Column(children: [
                           CustomBackNavigationHelpHeaderWidget(
-                            showHelp: true,
+                            showHelp: false,
                           ),
                         ]),
                         footer: BlocBuilder<DeliverInterventionBloc,
@@ -423,6 +423,9 @@ class CustomBeneficiaryDetailsPageState
                                                 (projectType?.cycles ?? [])
                                                         .isNotEmpty
                                                     ? CustomRecordDeliveryCycle(
+                                                        eligibilityAssessmentType:
+                                                            widget
+                                                                .eligibilityAssessmentType,
                                                         projectCycles:
                                                             projectType
                                                                     ?.cycles ??

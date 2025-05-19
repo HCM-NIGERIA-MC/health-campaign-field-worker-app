@@ -62,7 +62,7 @@ class CustomInventoryFacilitySelectionSMCPageState
                 return ScrollableContent(
                   backgroundColor: Colors.white,
                   header: const BackNavigationHelpHeaderWidget(
-                    showHelp: true,
+                    showHelp: false,
                   ),
                   slivers: [
                     SliverToBoxAdapter(

@@ -21,8 +21,10 @@ class LocalSecureStore {
   static const selectedProjectTypeKey = 'selectedProjectType';
   static const spaq1Key = 'spaq1';
   static const spaq2Key = 'spaq2';
+  static const blueVasKey = 'blueVas';
+  static const redVasKey = 'redVas';
 
-  List<String> keysToKeep = [spaq1Key, spaq2Key];
+  List<String> keysToKeep = [spaq1Key, spaq2Key,blueVasKey,redVasKey];
 
   final storage = const FlutterSecureStorage();
 
@@ -186,7 +188,43 @@ class LocalSecureStore {
     }
   }
 
-  Future<void> setSpaqCounts(int spaq1, int spaq2) async {
+// for VAS
+  Future<int> get blueVas async {
+    final userBody = await storage.read(key: userObjectKey);
+    if (userBody == null) return 0;
+    final blueVasMapString = await storage.read(key: blueVasKey);
+
+    if (blueVasMapString == null) return 0;
+
+    try {
+      final user = UserRequestModel.fromJson(json.decode(userBody));
+
+      Map<String, dynamic> blueVasMap = json.decode(blueVasMapString);
+
+      return blueVasMap[user.uuid] != null ? blueVasMap[user.uuid] as int : 0;
+    } catch (_) {
+      return 0;
+    }
+  }
+  Future<int> get redVas async {
+    final userBody = await storage.read(key: userObjectKey);
+    if (userBody == null) return 0;
+    final redVasMapString = await storage.read(key: redVasKey);
+
+    if (redVasMapString == null) return 0;
+
+    try {
+      final user = UserRequestModel.fromJson(json.decode(userBody));
+
+      Map<String, dynamic> redVasMap = json.decode(redVasMapString);
+
+      return redVasMap[user.uuid] != null ? redVasMap[user.uuid] as int : 0;
+    } catch (_) {
+      return 0;
+    }
+  }
+
+  Future<void> setSpaqCounts(int spaq1, int spaq2, int blueVas,int redVas) async {
     final userBody = await storage.read(key: userObjectKey);
     if (userBody == null) return;
 
@@ -195,8 +233,13 @@ class LocalSecureStore {
 
       final spaq1MapString = await storage.read(key: spaq1Key);
       final spaq2MapString = await storage.read(key: spaq2Key);
+      final blueVasMapString = await storage.read(key: blueVasKey);
+      final redVasMapString = await storage.read(key: redVasKey);
       Map<String, dynamic> spaq1Map = {};
       Map<String, dynamic> spaq2Map = {};
+
+      Map<String, dynamic> blueVasMap = {};
+      Map<String, dynamic> redVasMap = {};
 
       if (spaq1MapString != null) {
         try {
@@ -210,8 +253,23 @@ class LocalSecureStore {
         } catch (_) {}
       }
 
+      if (blueVasMapString != null) {
+        try {
+          blueVasMap = json.decode(blueVasMapString);
+        } catch (_) {}
+      }
+
+      if (redVasMapString != null) {
+        try {
+          redVasMap = json.decode(redVasMapString);
+        } catch (_) {}
+      }
+
       spaq1Map[user.uuid] = spaq1;
       spaq2Map[user.uuid] = spaq2;
+
+      blueVasMap[user.uuid] = blueVas;
+      redVasMap[user.uuid] = redVas;
 
       await storage.write(
         key: spaq1Key,
@@ -221,6 +279,15 @@ class LocalSecureStore {
       await storage.write(
         key: spaq2Key,
         value: json.encode(spaq2Map),
+      );
+
+      await storage.write(
+        key: blueVasKey,
+        value: json.encode(blueVasMap),
+      );
+      await storage.write(
+        key: redVasKey,
+        value: json.encode(redVasMap),
       );
     } catch (_) {
       return;
@@ -304,7 +371,18 @@ class LocalSecureStore {
   }
 
   Future<void> deleteAll() async {
-    await storage.deleteAll();
+
+   // await storage.deleteAll();
+
+    Map<String, String> allValues = await storage.readAll();
+    List<String> allKeys = allValues.keys.toList();
+
+    List<String> keysToDelete =
+        allKeys.where((key) => !keysToKeep.contains(key)).toList();
+
+    for (String key in keysToDelete) {
+      await storage.delete(key: key);
+    }
   }
 
   /*Sets the bool value of project setup as true once project data is downloaded*/

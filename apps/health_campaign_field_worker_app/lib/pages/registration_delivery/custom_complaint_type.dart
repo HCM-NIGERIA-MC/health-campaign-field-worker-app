@@ -54,7 +54,9 @@ class CustomComplaintTypePageState
           builder: (context, state) {
             return ScrollableContent(
               header: const Column(children: [
-                BackNavigationHelpHeaderWidget(),
+                BackNavigationHelpHeaderWidget(
+                  showHelp: false,
+                ),
               ]),
               enableFixedDigitButton: true,
               footer: DigitCard(

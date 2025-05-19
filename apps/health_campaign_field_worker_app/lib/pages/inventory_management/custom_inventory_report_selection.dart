@@ -41,7 +41,9 @@ class CustomInventoryReportSelectionPageState
     return Scaffold(
       body: ScrollableContent(
         header: const Column(children: [
-          BackNavigationHelpHeaderWidget(showHelp: true,),
+          BackNavigationHelpHeaderWidget(
+            showHelp: false,
+          ),
         ]),
         children: [
           Column(
@@ -78,101 +80,70 @@ class CustomInventoryReportSelectionPageState
                     ),
                   ),
                 ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: spacer2),
+                  child: MenuCard(
+                    heading: localizations.translate(
+                      context.isCDD
+                          ? i18.inventoryReportSelection
+                              .inventoryReportReturnedLabel
+                          : i18.inventoryReportSelection
+                              .inventoryReportIssuedLabel,
+                    ),
+                    description: localizations.translate(context.isCDD
+                        ? i18.inventoryReportSelection
+                            .inventoryReportReturnedDescription
+                        : i18.inventoryReportSelection
+                            .inventoryReportIssuedDescription),
+                    icon: Icons.logout,
+                    onTap: () => context.router.push(
+                      CustomInventoryReportDetailsRoute(
+                        reportType: InventoryReportType.dispatch,
+                      ),
+                    ),
+                  ),
+                ),
+                if (!context.isCDD) const SizedBox(height: spacer4),
+                if (!context.isCDD)
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: spacer2),
+                    child: MenuCard(
+                      heading: localizations.translate(i18
+                          .inventoryReportSelection
+                          .inventoryReportReturnedLabel),
+                      description: localizations.translate(
+                        i18.inventoryReportSelection
+                            .inventoryReportReturnedDescription,
+                      ),
+                      icon: Icons.settings_backup_restore,
+                      onTap: () => context.router.push(
+                        CustomInventoryReportDetailsRoute(
+                          reportType: InventoryReportType.returned,
+                        ),
+                      ),
+                    ),
+                  ),
                 if (!context.isCDD) const SizedBox(height: spacer4),
                 if (!context.isCDD)
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: spacer2),
                     child: MenuCard(
                       heading: localizations.translate(
-                        i18.inventoryReportSelection.inventoryReportIssuedLabel,
+                        i18.inventoryReportSelection
+                            .inventoryReportReconciliationLabel,
                       ),
-                      description: localizations.translate(i18
-                          .inventoryReportSelection
-                          .inventoryReportIssuedDescription),
-                      icon: Icons.logout,
+                      description: localizations.translate(
+                        i18.inventoryReportSelection
+                            .inventoryReportReconciliationDescription,
+                      ),
+                      icon: Icons.store,
                       onTap: () => context.router.push(
                         CustomInventoryReportDetailsRoute(
-                          reportType: InventoryReportType.dispatch,
+                          reportType: InventoryReportType.reconciliation,
                         ),
                       ),
                     ),
                   ),
-                const SizedBox(height: spacer4),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: spacer2),
-                  child: MenuCard(
-                    heading: localizations.translate(i18
-                        .inventoryReportSelection.inventoryReportReturnedLabel),
-                    description: localizations.translate(
-                      i18.inventoryReportSelection
-                          .inventoryReportReturnedDescription,
-                    ),
-                    icon: Icons.settings_backup_restore,
-                    onTap: () => context.router.push(
-                      CustomInventoryReportDetailsRoute(
-                        reportType: InventoryReportType.returned,
-                      ),
-                    ),
-                  ),
-                ),
-                // const SizedBox(height: spacer4),
-                // Padding(
-                //   padding: const EdgeInsets.symmetric(horizontal: spacer2),
-                //   child: MenuCard(
-                //     heading: localizations.translate(
-                //       i18.inventoryReportSelection.inventoryReportDamagedLabel,
-                //     ),
-                //     description: localizations.translate(
-                //       i18.inventoryReportSelection
-                //           .inventoryReportDamagedDescription,
-                //     ),
-                //     icon: Icons.store,
-                //     onTap: () => context.router.push(
-                //       CustomInventoryReportDetailsRoute(
-                //         reportType: InventoryReportType.damage,
-                //       ),
-                //     ),
-                //   ),
-                // ),
-                // const SizedBox(height: spacer4),
-                // Padding(
-                //   padding: const EdgeInsets.symmetric(horizontal: spacer2),
-                //   child: MenuCard(
-                //     heading: localizations.translate(
-                //       i18.inventoryReportSelection.inventoryReportLossLabel,
-                //     ),
-                //     description: localizations.translate(
-                //       i18.inventoryReportSelection
-                //           .inventoryReportLossDescription,
-                //     ),
-                //     icon: Icons.store,
-                //     onTap: () => context.router.push(
-                //       CustomInventoryReportDetailsRoute(
-                //         reportType: InventoryReportType.loss,
-                //       ),
-                //     ),
-                //   ),
-                // ),
-                const SizedBox(height: spacer4),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: spacer2),
-                  child: MenuCard(
-                    heading: localizations.translate(
-                      i18.inventoryReportSelection
-                          .inventoryReportReconciliationLabel,
-                    ),
-                    description: localizations.translate(
-                      i18.inventoryReportSelection
-                          .inventoryReportReconciliationDescription,
-                    ),
-                    icon: Icons.store,
-                    onTap: () => context.router.push(
-                      CustomInventoryReportDetailsRoute(
-                        reportType: InventoryReportType.reconciliation,
-                      ),
-                    ),
-                  ),
-                ),
               ]),
               const SizedBox(height: spacer4),
             ],

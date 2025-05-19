@@ -13,6 +13,7 @@ import 'package:referral_reconciliation/utils/constants.dart';
 
 import 'package:referral_reconciliation/utils/date_utils.dart';
 import 'package:referral_reconciliation/utils/i18_key_constants.dart' as i18;
+import '../../utils/i18_key_constants.dart' as i18_local;
 import 'package:referral_reconciliation/blocs/referral_recon_record.dart';
 import 'package:referral_reconciliation/utils/utils.dart';
 import 'package:referral_reconciliation/widgets/back_navigation_help_header.dart';
@@ -28,10 +29,12 @@ class CustomReferralFacilityPage extends LocalizedStatefulWidget {
       {super.key, super.appLocalizations, this.isEditing = false});
 
   @override
-  State<CustomReferralFacilityPage> createState() => _CustomReferralFacilityPageState();
+  State<CustomReferralFacilityPage> createState() =>
+      _CustomReferralFacilityPageState();
 }
 
-class _CustomReferralFacilityPageState extends LocalizedState<CustomReferralFacilityPage> {
+class _CustomReferralFacilityPageState
+    extends LocalizedState<CustomReferralFacilityPage> {
   static const _dateOfEvaluationKey = 'dateOfEvaluation';
   static const _administrativeUnitKey = 'administrativeUnit';
   static const _hfCoordinatorKey = 'healthFacilityCoordinatorKey';
@@ -77,6 +80,13 @@ class _CustomReferralFacilityPageState extends LocalizedState<CustomReferralFaci
             final projectFacilities = facilities
                 .where((e) => e.id != 'N/A' && e.id != 'Delivery Team')
                 .toList();
+            selectedProjectFacilityId ??= facilities
+                .where((e) =>
+                    e.boundaryCode ==
+                    ReferralReconSingleton().boundary?.boundaryCode)
+                .first
+                .id
+                .toString();
 
             return facilities.isNotEmpty
                 ? Scaffold(
@@ -93,7 +103,9 @@ class _CustomReferralFacilityPageState extends LocalizedState<CustomReferralFaci
                           builder: (context, form, child) => ScrollableContent(
                             enableFixedDigitButton: true,
                             header: const Column(children: [
-                              CustomBackNavigationHelpHeaderWidget(),
+                              CustomBackNavigationHelpHeaderWidget(
+                                showHelp: false,
+                              ),
                             ]),
                             footer: DigitCard(
                                 margin: EdgeInsets.fromLTRB(
@@ -211,7 +223,7 @@ class _CustomReferralFacilityPageState extends LocalizedState<CustomReferralFaci
                                             return LabeledField(
                                               isRequired: true,
                                               label: localizations.translate(
-                                                i18.referralReconciliation
+                                                i18_local.referBeneficiary
                                                     .administrationUnitFormLabel,
                                               ),
                                               child: DigitTextFormInput(
@@ -253,7 +265,7 @@ class _CustomReferralFacilityPageState extends LocalizedState<CustomReferralFaci
                                                           .getFormattedDateToDateTime(
                                                               val),
                                                 },
-                                                readOnly: viewOnly,
+                                                readOnly: true,
                                                 errorMessage: field.errorText,
                                                 initialValue: DigitDateUtils
                                                     .getDateString(form
@@ -273,34 +285,6 @@ class _CustomReferralFacilityPageState extends LocalizedState<CustomReferralFaci
                                             );
                                           }),
                                       InkWell(
-                                        onTap: viewOnly
-                                            ? null
-                                            : () async {
-                                                final facility =
-                                                    await Navigator.of(context)
-                                                        .push(
-                                                  MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        CustomReferralReconProjectFacilitySelectionPage(
-                                                      projectFacilities:
-                                                          facilities,
-                                                    ),
-                                                  ),
-                                                );
-
-                                                if (facility == null) return;
-                                                form
-                                                        .control(
-                                                          _evaluationFacilityKey,
-                                                        )
-                                                        .value =
-                                                    localizations.translate(
-                                                        'PJ_FAC_${facility.id}');
-                                                setState(() {
-                                                  selectedProjectFacilityId =
-                                                      facility.id;
-                                                });
-                                              },
                                         child: IgnorePointer(
                                           child: ReactiveWrapperField<String>(
                                               validationMessages: {
@@ -324,7 +308,7 @@ class _CustomReferralFacilityPageState extends LocalizedState<CustomReferralFaci
                                                     i18.referralReconciliation
                                                         .evaluationFacilityLabel,
                                                   ),
-                                                  child: DigitSearchFormInput(
+                                                  child: DigitTextFormInput(
                                                     onChange: (val) => {
                                                       form
                                                           .control(
@@ -335,7 +319,7 @@ class _CustomReferralFacilityPageState extends LocalizedState<CustomReferralFaci
                                                               _evaluationFacilityKey)
                                                           .value = val,
                                                     },
-                                                    readOnly: viewOnly,
+                                                    readOnly: true,
                                                     errorMessage:
                                                         field.errorText,
                                                     initialValue: form
@@ -366,7 +350,7 @@ class _CustomReferralFacilityPageState extends LocalizedState<CustomReferralFaci
                                                             _hfCoordinatorKey)
                                                         .value = val,
                                                   },
-                                                  readOnly: viewOnly,
+                                                  readOnly: true,
                                                   initialValue: form
                                                       .control(
                                                           _hfCoordinatorKey)
@@ -496,7 +480,9 @@ class _CustomReferralFacilityPageState extends LocalizedState<CustomReferralFaci
                         (e) => e.id == value.hfReferralModel?.projectFacilityId,
                       ).first.id.toString()}',
                 )
-              : null,
+              : localizations.translate(
+                  'PJ_FAC_${facilities.where((e) => e.boundaryCode == ReferralReconSingleton().boundary?.boundaryCode).first.id.toString()}',
+                ),
         ),
         validators: [Validators.required],
       ),

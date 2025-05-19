@@ -189,9 +189,7 @@ class _RecordRedosePageState extends LocalizedState<RecordRedosePage> {
                                               DigitElevatedButton(
                                                 onPressed: () async {
                                                   form.markAllAsTouched();
-                                                  if (!form.valid) {
-                                                    return;
-                                                  }
+
                                                   if (form
                                                               .control(
                                                                   _deliveryCommentKey)
@@ -221,7 +219,9 @@ class _RecordRedosePageState extends LocalizedState<RecordRedosePage> {
                                                     );
                                                     return;
                                                   }
-
+                                                  if (!form.valid) {
+                                                    return;
+                                                  }
                                                   if (((form.control(
                                                     _resourceDeliveredKey,
                                                   ) as FormArray)
@@ -355,6 +355,8 @@ class _RecordRedosePageState extends LocalizedState<RecordRedosePage> {
                                                         if (context.mounted) {
                                                           int spaq1 = 0;
                                                           int spaq2 = 0;
+                                                          int blueVas = 0;
+                                                          int redVas = 0;
 
                                                           var productVariantId =
                                                               updatedTask
@@ -385,12 +387,48 @@ class _RecordRedosePageState extends LocalizedState<RecordRedosePage> {
                                                                   .split(
                                                                       " ")[0];
 
-                                                          spaq1 = quantity !=
-                                                                  'null'
-                                                              ? int.parse(quantity
-                                                                      .toString()) *
-                                                                  -1
-                                                              : 0;
+                                                          if (productVariant!
+                                                                  ?.sku! ==
+                                                              'SPAQ 1') {
+                                                            spaq1 = quantity !=
+                                                                    'null'
+                                                                ? int.parse(quantity
+                                                                        .toString()) *
+                                                                    -1
+                                                                : 0;
+                                                          } else if (productVariant
+                                                                  ?.sku! ==
+                                                              'SPAQ 2') {
+                                                            spaq2 = quantity !=
+                                                                    'null'
+                                                                ? int.parse(quantity
+                                                                        .toString()) *
+                                                                    -1
+                                                                : 0;
+                                                          } else if (productVariant
+                                                                  ?.sku! ==
+                                                              'Blue VAS') {
+                                                            blueVas = quantity !=
+                                                                    'null'
+                                                                ? int.parse(quantity
+                                                                        .toString()) *
+                                                                    -1
+                                                                : 0;
+                                                          } else {
+                                                            redVas = quantity !=
+                                                                    'null'
+                                                                ? int.parse(quantity
+                                                                        .toString()) *
+                                                                    -1
+                                                                : 0;
+                                                          }
+
+                                                          // spaq1 = quantity !=
+                                                          //         'null'
+                                                          //     ? int.parse(quantity
+                                                          //             .toString()) *
+                                                          //         -1
+                                                          //     : 0;
 
                                                           context
                                                               .read<AuthBloc>()
@@ -400,6 +438,11 @@ class _RecordRedosePageState extends LocalizedState<RecordRedosePage> {
                                                                       spaq1,
                                                                   spaq2Count:
                                                                       spaq2,
+                                                                  // TODO: need to work here [pitabash]
+                                                                  blueVasCount:
+                                                                      blueVas,
+                                                                  redVasCount:
+                                                                      redVas,
                                                                 ),
                                                               );
                                                           final reloadState =
@@ -482,7 +525,7 @@ class _RecordRedosePageState extends LocalizedState<RecordRedosePage> {
                                     ),
                                     header: const Column(children: [
                                       BackNavigationHelpHeaderWidget(
-                                        showHelp: true,
+                                        showHelp: false,
                                       ),
                                     ]),
                                     children: [
@@ -677,79 +720,81 @@ class _RecordRedosePageState extends LocalizedState<RecordRedosePage> {
                                                           formControlName:
                                                               _deliveryCommentKey,
                                                         ),
-
-                                                        /// Show input if "Other" is selected
-                                                        ReactiveValueListenableBuilder<
-                                                            String>(
-                                                          formControlName:
-                                                              _deliveryCommentKey,
-                                                          builder: (context,
-                                                              control, _) {
-                                                            final value =
-                                                                control.value;
-                                                            if (value ==
-                                                                'Others') {
-                                                              return Padding(
-                                                                  padding:
-                                                                      const EdgeInsets
-                                                                          .only(
-                                                                          top:
-                                                                              12.0),
-                                                                  child:
-                                                                      ReactiveWrapperField<
-                                                                          String>(
-                                                                    formControlName:
-                                                                        _otherDeliveryCommentKey,
-                                                                    showErrors: (control) =>
-                                                                        control
-                                                                            .touched ||
-                                                                        control
-                                                                            .invalid,
-                                                                    validationMessages: {
-                                                                      'required': (object) => localizations.translate(i18_local
-                                                                          .deliverIntervention
-                                                                          .enterReasonForRedoseLabel),
-                                                                      'minLength': (object) => localizations.translate(i18_local
-                                                                          .deliverIntervention
-                                                                          .enterReasonForRedoseLabelMinLength),
-                                                                      'maxLength': (object) => localizations.translate(i18_local
-                                                                          .deliverIntervention
-                                                                          .enterReasonForRedoseLabelMaxLength),
-                                                                    },
-                                                                    builder:
-                                                                        (field) {
-                                                                      return LabeledField(
+                                                        Offstage(
+                                                            offstage:
+                                                                !otherDeliveryComment,
+                                                            child: Padding(
+                                                                padding:
+                                                                    const EdgeInsets
+                                                                        .only(
+                                                                        top:
+                                                                            12.0),
+                                                                child:
+                                                                    ReactiveWrapperField<
+                                                                        String>(
+                                                                  formControlName:
+                                                                      _otherDeliveryCommentKey,
+                                                                  showErrors: (control) =>
+                                                                      control
+                                                                          .touched ||
+                                                                      control
+                                                                          .invalid,
+                                                                  validationMessages: {
+                                                                    'required': (object) =>
+                                                                        localizations.translate(i18_local
+                                                                            .deliverIntervention
+                                                                            .enterReasonForRedoseLabel),
+                                                                    'minLength': (object) =>
+                                                                        localizations.translate(i18_local
+                                                                            .deliverIntervention
+                                                                            .enterReasonForRedoseLabelMinLength),
+                                                                    'maxLength': (object) =>
+                                                                        localizations.translate(i18_local
+                                                                            .deliverIntervention
+                                                                            .enterReasonForRedoseLabelMaxLength),
+                                                                  },
+                                                                  builder:
+                                                                      (field) {
+                                                                    return LabeledField(
+                                                                      isRequired:
+                                                                          true,
+                                                                      label: localizations
+                                                                          .translate(
+                                                                        i18_local
+                                                                            .deliverIntervention
+                                                                            .otherReasonLabel,
+                                                                      ),
+                                                                      child:
+                                                                          DigitTextFormInput(
                                                                         isRequired:
                                                                             true,
-                                                                        label: localizations
-                                                                            .translate(
-                                                                          i18_local
-                                                                              .deliverIntervention
-                                                                              .otherReasonLabel,
-                                                                        ),
-                                                                        child:
-                                                                            DigitTextFormInput(
-                                                                          isRequired:
-                                                                              true,
-                                                                          readOnly:
-                                                                              false,
-                                                                          onChange: (val) => form
+                                                                        readOnly:
+                                                                            false,
+                                                                        onChange:
+                                                                            (val) =>
+                                                                                {
+                                                                          form
+                                                                              .control(
+                                                                                _otherDeliveryCommentKey,
+                                                                              )
+                                                                              .markAllAsTouched(),
+                                                                          form
                                                                               .control(
                                                                                 _otherDeliveryCommentKey,
                                                                               )
                                                                               .value = val,
-                                                                          errorMessage:
-                                                                              field.errorText,
-                                                                        ),
-                                                                      );
-                                                                    },
-                                                                  ));
-                                                            } else {
-                                                              return const SizedBox
-                                                                  .shrink();
-                                                            }
-                                                          },
-                                                        ),
+                                                                        },
+                                                                        initialValue: form
+                                                                            .control(
+                                                                              _otherDeliveryCommentKey,
+                                                                            )
+                                                                            .value,
+                                                                        errorMessage:
+                                                                            field.errorText,
+                                                                      ),
+                                                                    );
+                                                                  },
+                                                                ))),
                                                       ],
                                                     );
                                                   },
@@ -995,14 +1040,13 @@ class _RecordRedosePageState extends LocalizedState<RecordRedosePage> {
         ],
       ),
       _otherDeliveryCommentKey: FormControl<String>(
-        validators: [
-          // if (otherDeliveryComment) ...[
-          Validators.required,
-          Validators.minLength(3),
-          Validators.maxLength(100),
-          // ],
-        ],
-        disabled: otherDeliveryComment,
+        validators: otherDeliveryComment
+            ? [
+                Validators.required,
+                Validators.minLength(3),
+                Validators.maxLength(100),
+              ]
+            : [],
       ),
       _doseAdministeredByKey: FormControl<String>(
         validators: [],

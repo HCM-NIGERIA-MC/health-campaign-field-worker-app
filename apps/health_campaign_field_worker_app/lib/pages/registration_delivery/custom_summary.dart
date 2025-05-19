@@ -91,7 +91,7 @@ class CustomSummaryPageState extends LocalizedState<CustomSummaryPage> {
                 const Padding(
                   padding: EdgeInsets.only(bottom: spacer2),
                   child: BackNavigationHelpHeaderWidget(
-                    showHelp: true,
+                    showHelp: false,
                   ),
                 ),
                 Padding(

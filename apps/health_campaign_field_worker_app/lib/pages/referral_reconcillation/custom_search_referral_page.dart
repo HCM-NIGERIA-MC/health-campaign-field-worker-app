@@ -20,6 +20,7 @@ import 'package:referral_reconciliation/models/entities/hf_referral.dart';
 // import 'package:referral_reconciliation/router/referral_reconciliation_router.gm.dart';
 import 'package:health_campaign_field_worker_app/router/app_router.dart';
 import 'package:referral_reconciliation/utils/i18_key_constants.dart' as i18;
+import '../../utils/i18_key_constants.dart' as i18_local;
 import 'package:referral_reconciliation/utils/utils.dart';
 import 'package:referral_reconciliation/widgets/localized.dart';
 import 'package:referral_reconciliation/widgets/view_referral_card.dart';
@@ -88,7 +89,9 @@ class _CustomSearchReferralReconciliationsPageState
                         builder: (context, searchState) {
                           return ScrollableContent(
                             header: const Column(children: [
-                              CustomBackNavigationHelpHeaderWidget(showHelp: true,),
+                              CustomBackNavigationHelpHeaderWidget(
+                                showHelp: false,
+                              ),
                             ]),
                             slivers: [
                               SliverToBoxAdapter(
@@ -104,10 +107,11 @@ class _CustomSearchReferralReconciliationsPageState
                                           alignment: Alignment.topLeft,
                                           child: Text(
                                             localizations.translate(
-                                              i18.referralReconciliation
-                                                  .searchReferralsHeader,
+                                              i18_local.searchBeneficiary.searchBeneficiaryLabelText,
                                             ),
-                                            style: textTheme.headingXl.copyWith(color: theme.colorTheme.text.primary),
+                                            style: textTheme.headingXl.copyWith(
+                                                color: theme
+                                                    .colorTheme.text.primary),
                                             textAlign: TextAlign.left,
                                           ),
                                         ),
@@ -117,8 +121,8 @@ class _CustomSearchReferralReconciliationsPageState
                                           DigitSearchBar(
                                             controller: searchController,
                                             hintText: localizations.translate(
-                                              i18.referralReconciliation
-                                                  .referralSearchHintText,
+                                              i18_local.searchBeneficiary
+                                                  .searchBeneficiaryReferralHintText,
                                             ),
                                             textCapitalization:
                                                 TextCapitalization.words,

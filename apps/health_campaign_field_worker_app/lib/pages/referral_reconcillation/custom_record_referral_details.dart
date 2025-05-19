@@ -102,7 +102,9 @@ class _CustomRecordReferralDetailsPageState
                       return ScrollableContent(
                         enableFixedDigitButton: true,
                         header: const Column(children: [
-                          CustomBackNavigationHelpHeaderWidget(),
+                          CustomBackNavigationHelpHeaderWidget(
+                            showHelp: false,
+                          ),
                         ]),
                         footer: BlocBuilder<ServiceBloc, ServiceState>(
                           builder: (context, serviceState) {
@@ -151,6 +153,18 @@ class _CustomRecordReferralDetailsPageState
                                                             _referralReason)
                                                         .setErrors({'': true});
                                                   }
+                                                  else if (form
+                                                          .control(
+                                                              _beneficiaryIdKey)
+                                                          .value ==
+                                                      null) {
+                                                    clickedStatus.value = false;
+                                                    form
+                                                        .control(
+                                                            _beneficiaryIdKey)
+                                                        .setErrors({'': true});
+                                                  }
+                                                  
                                                   form.markAllAsTouched();
 
                                                   if (viewOnly) {
@@ -173,7 +187,7 @@ class _CustomRecordReferralDetailsPageState
                                                           ServiceSearchEvent(
                                                             serviceSearchModel:
                                                                 ServiceSearchModel(
-                                                              clientId:
+                                                              relatedClientReferenceId:
                                                                   recordState
                                                                       .mapOrNull(
                                                                 create: (value) => value
@@ -469,7 +483,7 @@ class _CustomRecordReferralDetailsPageState
                                                               ServiceSearchEvent(
                                                                 serviceSearchModel:
                                                                     ServiceSearchModel(
-                                                                  clientId:
+                                                                  relatedClientReferenceId:
                                                                       recordState
                                                                           .mapOrNull(
                                                                     create: (value) => value
@@ -675,9 +689,9 @@ class _CustomRecordReferralDetailsPageState
                                                                     dateOfEvaluation,
                                                                   ),
                                                                 if (nameOfChild
-                                                                        .toString()
-                                                                        .trim()
-                                                                        .isNotEmpty)
+                                                                    .toString()
+                                                                    .trim()
+                                                                    .isNotEmpty)
                                                                   AdditionalField(
                                                                     ReferralReconEnums
                                                                         .nameOfReferral
@@ -685,9 +699,9 @@ class _CustomRecordReferralDetailsPageState
                                                                     nameOfChild,
                                                                   ),
                                                                 if (age
-                                                                        .toString()
-                                                                        .trim()
-                                                                        .isNotEmpty)
+                                                                    .toString()
+                                                                    .trim()
+                                                                    .isNotEmpty)
                                                                   AdditionalField(
                                                                     ReferralReconEnums
                                                                         .age
@@ -695,9 +709,9 @@ class _CustomRecordReferralDetailsPageState
                                                                     age,
                                                                   ),
                                                                 if (gender
-                                                                        .toString()
-                                                                        .trim()
-                                                                        .isNotEmpty)
+                                                                    .toString()
+                                                                    .trim()
+                                                                    .isNotEmpty)
                                                                   AdditionalField(
                                                                     ReferralReconEnums
                                                                         .gender
@@ -798,9 +812,19 @@ class _CustomRecordReferralDetailsPageState
                                             );
                                           }),
                                       ReactiveWrapperField<String>(
+                                          validationMessages: {
+                                            'required': (_) =>
+                                                localizations.translate(
+                                                  i18.common.corecommonRequired,
+                                                ),
+                                          },
                                           formControlName: _beneficiaryIdKey,
+                                          showErrors: (control) =>
+                                              control.invalid &&
+                                              control.touched,
                                           builder: (field) {
                                             return LabeledField(
+                                              isRequired: true,
                                               label: localizations.translate(
                                                 i18.referralReconciliation
                                                     .beneficiaryIdLabel,
@@ -820,33 +844,10 @@ class _CustomRecordReferralDetailsPageState
                                                     .control(_beneficiaryIdKey)
                                                     .value,
                                                 readOnly: viewOnly,
+                                                errorMessage: field.errorText,
                                               ),
                                             );
                                           }),
-                                      // ReactiveWrapperField<String>(
-                                      //     formControlName: _referralCodeKey,
-                                      //     builder: (field) {
-                                      //       return LabeledField(
-                                      //         label: localizations.translate(
-                                      //           i18.referralReconciliation
-                                      //               .referralCodeLabel,
-                                      //         ),
-                                      //         child: DigitTextFormInput(
-                                      //           onChange: (val) => {
-                                      //             form
-                                      //                 .control(_referralCodeKey)
-                                      //                 .markAsTouched(),
-                                      //             form
-                                      //                 .control(_referralCodeKey)
-                                      //                 .value = val,
-                                      //           },
-                                      //           initialValue: form
-                                      //               .control(_referralCodeKey)
-                                      //               .value,
-                                      //           readOnly: viewOnly,
-                                      //         ),
-                                      //       );
-                                      //     }),
                                       ReactiveWrapperField<int>(
                                           formControlName: _ageKey,
                                           validationMessages: {
@@ -986,7 +987,8 @@ class _CustomRecordReferralDetailsPageState
                                           }),
                                     ]),
                                 StatefulBuilder(builder: (context, set) {
-                                  print("Current referral reason: ${ReferralReconSingleton().referralReasons}");
+                                  print(
+                                      "Current referral reason: ${ReferralReconSingleton().referralReasons}");
                                   form.control(_referralReason).value =
                                       recordState.mapOrNull(
                                     create: (value) => value.viewOnly
@@ -1110,6 +1112,7 @@ class _CustomRecordReferralDetailsPageState
         ],
       ),
       _beneficiaryIdKey: FormControl<String>(
+        validators: [Validators.required],
         value: referralState.mapOrNull(
           create: (value) => value.hfReferralModel?.beneficiaryId,
         ),
