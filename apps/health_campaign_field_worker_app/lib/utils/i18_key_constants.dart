@@ -15,6 +15,8 @@ const dashBoard = Dashboard();
 
 const caregiverConsent = CaregiverConsent();
 
+const interventionPoint = InterventionPoint();
+
 const householdLocationShowcase = HouseholdLocationShowcase();
 const householdLocation = HouseholdLocation();
 const searchBeneficiary = SearchBeneficiary();
@@ -630,6 +632,24 @@ class ComplaintTypeShowcase {
     return 'COMPLAINT_TYPE_SHOWCASE_COMPLAINT_TYPE_NEXT';
   }
 }
+
+
+
+class InterventionPoint{
+  const InterventionPoint();
+
+  String get pointLabelText =>
+      'INTERVENTION_POINT_LABEL_TEXT_DROP_DOWN';
+
+  String get pointInterventionHeaderLabel => 'INTERVENTION_POINT_HEADER_LABEL';
+
+  String get caregiverConsentDescriptionText =>
+      'CARE_GIVER_CONSENT_DESCRIPTION_TEXT';
+
+  String get caregiverConsentActionLabelText =>
+      'CARE_GIVER_CONSENT_ACTION_LABEL_TEXT';
+}
+
 
 class CaregiverConsent {
   const CaregiverConsent();

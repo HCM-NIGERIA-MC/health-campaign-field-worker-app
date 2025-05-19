@@ -8,6 +8,7 @@ import 'package:digit_ui_components/widgets/molecules/digit_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:health_campaign_field_worker_app/utils/registration_delivery/utils_smc.dart';
 import 'package:health_campaign_field_worker_app/widgets/custom_back_navigation.dart';
 import 'package:intl/intl.dart';
 import 'package:reactive_forms/reactive_forms.dart';
@@ -29,12 +30,15 @@ import 'package:registration_delivery/widgets/showcase/showcase_button.dart';
 import '../../blocs/registration_delivery/custom_beneficairy_registration.dart';
 import '../../router/app_router.dart';
 import '../../utils/registration_delivery/registration_delivery_utils.dart';
+import '../../utils/constants.dart' as local;
 
 @RoutePage()
 class CustomHouseHoldDetailsPage extends LocalizedStatefulWidget {
+  final String pointType;
   const CustomHouseHoldDetailsPage({
     super.key,
     super.appLocalizations,
+    required this.pointType,
   });
 
   @override
@@ -70,27 +74,27 @@ class CustomHouseHoldDetailsPageState
     final bool isCommunity = RegistrationDeliverySingleton().householdType ==
         HouseholdType.community;
 
-      Future<String> generateHouseholdId() async {
-        final userId = RegistrationDeliverySingleton().loggedInUserUuid;
+    Future<String> generateHouseholdId() async {
+      final userId = RegistrationDeliverySingleton().loggedInUserUuid;
 
-        final boundaryBloc = context.read<BoundaryBloc>().state;
-        final code = boundaryBloc.boundaryList.first.code;
-        final bname = boundaryBloc.boundaryList.first.name;
+      final boundaryBloc = context.read<BoundaryBloc>().state;
+      final code = boundaryBloc.boundaryList.first.code;
+      final bname = boundaryBloc.boundaryList.first.name;
 
-        final locality = (code == null || bname == null)
-            ? null
-            : LocalityModel(code: code, name: bname);
+      final locality = (code == null || bname == null)
+          ? null
+          : LocalityModel(code: code, name: bname);
 
-        final localityCode = locality!.code;
+      final localityCode = locality!.code;
 
-        final ids = await UniqueIdGeneration().generateUniqueId(
-          localityCode: localityCode,
-          loggedInUserId: userId!,
-          returnCombinedIds: false,
-        );
+      final ids = await UniqueIdGeneration().generateUniqueId(
+        localityCode: localityCode,
+        loggedInUserId: userId!,
+        returnCombinedIds: false,
+      );
 
-        return ids.first;
-      }
+      return ids.first;
+    }
 
     return Scaffold(
       body: ReactiveFormBuilder(
@@ -172,9 +176,10 @@ class CustomHouseHoldDetailsPageState
                               loading,
                               isHeadOfHousehold,
                             ) async {
-                              final  String householdid = await  generateHouseholdId();
+                              final String householdid =
+                                  await generateHouseholdId();
                               var household = householdModel;
-     
+
                               household ??= HouseholdModel(
                                 tenantId:
                                     RegistrationDeliverySingleton().tenantId,
@@ -241,7 +246,12 @@ class CustomHouseHoldDetailsPageState
                                   address: addressModel,
                                   id: householdid,
                                   additionalFields: HouseholdAdditionalFields(
-                                      version: 1, fields: []));
+                                      version: 1,
+                                      fields: [
+                                        AdditionalField(
+                                            local.Constants.pointKey,
+                                            widget.pointType),
+                                      ]));
 
                               bloc.add(
                                 BeneficiaryRegistrationSaveHouseholdDetailsEvent(
@@ -291,7 +301,9 @@ class CustomHouseHoldDetailsPageState
                                               .additionalFields?.version ??
                                           1,
                                       fields: [
-                                        //[TODO: Use pregnant women form value based on project config
+                                        AdditionalField(
+                                            local.Constants.pointKey,
+                                            widget.pointType),
                                       ]));
 
                               bloc.add(
@@ -359,10 +371,12 @@ class CustomHouseHoldDetailsPageState
                                     i18.householdDetails.clfDetailsLabel,
                                   )
                                 : localizations.translate(
-                                    i18.householdDetails.householdDetailsLabel,
-                                  ),
-                            headingStyle: textTheme.headingXl.copyWith(
-                                color: theme.colorTheme.text.primary),
+                                    "${getInterventionTypeHeader(widget.pointType)}_DETAILS_LABEL"),
+                            // : localizations.translate(
+                            //     i18.householdDetails.householdDetailsLabel,
+                            //   ),
+                            headingStyle: textTheme.headingXl
+                                .copyWith(color: theme.colorTheme.text.primary),
                           ),
                           householdDetailsShowcaseData.dateOfRegistration
                               .buildWith(
