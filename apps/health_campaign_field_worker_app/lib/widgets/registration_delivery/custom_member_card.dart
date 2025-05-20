@@ -38,7 +38,6 @@ class CustomMemberCard extends StatelessWidget {
   final IndividualModel individual;
   final List<ProjectBeneficiaryModel>? projectBeneficiaries;
   final bool isSMCDelivered;
-  //final bool isVASDelivered;
 
   final VoidCallback setAsHeadAction;
   final VoidCallback editMemberAction;
@@ -47,7 +46,7 @@ class CustomMemberCard extends StatelessWidget {
   final List<TaskModel>? tasks;
   final List<SideEffectModel>? sideEffects;
   final bool isNotEligibleSMC;
-  //final bool isNotEligibleVAS;
+
   final bool isBeneficiaryRefused;
   final bool isBeneficiaryIneligible;
   final bool isBeneficiaryReferred;
@@ -64,13 +63,11 @@ class CustomMemberCard extends StatelessWidget {
     this.months = 0,
     required this.localizations,
     required this.isSMCDelivered,
-    //required this.isVASDelivered,
     required this.setAsHeadAction,
     required this.editMemberAction,
     required this.deleteMemberAction,
     this.tasks,
     this.isNotEligibleSMC = false,
-   // this.isNotEligibleVAS = false,
     this.projectBeneficiaryClientReferenceId,
     this.isBeneficiaryRefused = false,
     this.isBeneficiaryIneligible = false,
@@ -93,26 +90,13 @@ class CustomMemberCard extends StatelessWidget {
         .toList();
   }
 
-//TODO: remove
-  // List<TaskModel>? _getVACStatusData() {
-  //   return tasks
-  //       ?.where((e) =>
-  //           e.additionalFields?.fields.firstWhereOrNull(
-  //             (element) =>
-  //                 element.key ==
-  //                     additional_fields_local.AdditionalFieldsType.deliveryType
-  //                         .toValue() &&
-  //                 element.value == EligibilityAssessmentStatus.vasDone.name,
-  //           ) !=
-  //           null)
-  //       .toList();
-  // }
-
   Widget statusWidget(context) {
     List<TaskModel>? smcTasks = _getSMCStatusData();
-   // List<TaskModel>? vasTasks = _getVACStatusData();
+
     bool isBeneficiaryReferredSMC = checkBeneficiaryReferredSMC(smcTasks);
-   // bool isBeneficiaryReferredVAS = checkBeneficiaryReferredVAS(vasTasks);
+
+    bool isBeneficiaryInEligibleSMC = checkBeneficiaryInEligibleSMC(smcTasks);
+
     final theme = Theme.of(context);
     if (isHead) {
       return Align(
@@ -128,33 +112,42 @@ class CustomMemberCard extends StatelessWidget {
       );
     }
     if ((isSMCDelivered ||
-        
-        isBeneficiaryReferredSMC 
-        )) {
+        //isVASDelivered ||
+        isBeneficiaryReferredSMC ||
+        // isBeneficiaryReferredVAS ||
+        // isBeneficiaryInEligibleVAS ||
+        isBeneficiaryInEligibleSMC)) {
       return Column(
         children: [
-          if (isSMCDelivered || isBeneficiaryReferredSMC)
+          if (isSMCDelivered ||
+              isBeneficiaryReferredSMC ||
+              isBeneficiaryInEligibleSMC)
             Align(
               alignment: Alignment.centerLeft,
               child: DigitIconButton(
                 icon: Icons.check_circle,
                 iconText: localizations.translate(
-                  isBeneficiaryReferredSMC
+                  isBeneficiaryInEligibleSMC
                       ? i18_local.householdOverView
-                          .householdOverViewBeneficiaryReferredSMCLabel
-                      : i18_local.householdOverView
-                          .householdOverViewSMCDeliveredIconLabel,
+                          .householdOverViewBeneficiaryInEligibleSMCLabel
+                      : isBeneficiaryReferredSMC
+                          ? i18_local.householdOverView
+                              .householdOverViewBeneficiaryReferredSMCLabel
+                          : i18_local.householdOverView
+                              .householdOverViewSMCDeliveredIconLabel,
                 ),
                 iconSize: 20,
-                iconTextColor: isBeneficiaryReferredSMC
-                    ? DigitTheme.instance.colorScheme.error
-                    : DigitTheme.instance.colorScheme.onSurfaceVariant,
-                iconColor: isBeneficiaryReferredSMC
-                    ? DigitTheme.instance.colorScheme.error
-                    : DigitTheme.instance.colorScheme.onSurfaceVariant,
+                iconTextColor:
+                    (isBeneficiaryReferredSMC || isBeneficiaryInEligibleSMC)
+                        ? DigitTheme.instance.colorScheme.error
+                        : DigitTheme.instance.colorScheme.onSurfaceVariant,
+                iconColor:
+                    (isBeneficiaryReferredSMC || isBeneficiaryInEligibleSMC)
+                        ? DigitTheme.instance.colorScheme.error
+                        : DigitTheme.instance.colorScheme.onSurfaceVariant,
               ),
             ),
-            ],
+        ],
       );
     } else if (isNotEligibleSMC || isBeneficiaryIneligible) {
       return Column(
@@ -217,24 +210,28 @@ class CustomMemberCard extends StatelessWidget {
     final theme = Theme.of(context);
     final textTheme = theme.digitTextTheme(context);
     List<TaskModel>? smcTasks = _getSMCStatusData();
-    //List<TaskModel>? vasTasks = _getVACStatusData();
+
     final doseStatus = checkStatus(smcTasks, context.selectedCycle);
     bool smcAssessmentPendingStatus = assessmentSMCPending(smcTasks);
-   // bool vasAssessmentPendingStatus = assessmentVASPending(vasTasks);
+
     bool isBeneficiaryReferredSMC = checkBeneficiaryReferredSMC(smcTasks);
-   // bool isBeneficiaryReferredVAS = checkBeneficiaryReferredVAS(vasTasks);
+
+    bool isBeneficiaryInEligibleSMC = checkBeneficiaryInEligibleSMC(smcTasks);
+
     final redosePendingStatus = smcAssessmentPendingStatus
         ? true
         : redosePending(smcTasks, context.selectedCycle);
-    if ((isNotEligibleSMC || isBeneficiaryIneligible) && !doseStatus)
+    if ((isNotEligibleSMC || isBeneficiaryIneligible) && !doseStatus) {
       return const Offstage();
-    if (isNotEligibleSMC ||
-        ( !redosePendingStatus)) {
+    }
+    if (isNotEligibleSMC || (!redosePendingStatus)) {
       return const Offstage();
     }
     return Column(
       children: [
-        if (smcAssessmentPendingStatus && !isBeneficiaryReferredSMC)
+        if (smcAssessmentPendingStatus &&
+            !isBeneficiaryReferredSMC &&
+            !isBeneficiaryInEligibleSMC)
           DigitElevatedButton(
             child: Center(
               child: Text(
@@ -387,7 +384,7 @@ class CustomMemberCard extends StatelessWidget {
               }
             },
           ),
-          ],
+      ],
     );
   }
 
@@ -483,7 +480,8 @@ class CustomMemberCard extends StatelessWidget {
                               .lastOrNull ==
                           null &&
                       !isSMCDelivered &&
-                     // !isVASDelivered &&
+                      // &&
+                      // !isVASDelivered &&
                       // !isNotEligibleSMC &&
                       // !isNotEligibleVAS &&
                       !isBeneficiaryIneligible &&
