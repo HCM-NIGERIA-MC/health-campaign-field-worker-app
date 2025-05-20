@@ -1108,9 +1108,13 @@ class _CustomHouseholdOverviewPageState
                                   DigitButton(
                                     mainAxisSize: MainAxisSize.max,
                                     onPressed: () => (context.spaq1 > 0 ||
-                                            context.spaq2 > 0 ||
-                                            context.blueVas > 0 ||
-                                            context.redVas > 0)
+                                            context.spaq2 > 0
+                                            //TODO: comment the VAS as it not relevant[pitabash]
+                                            //  ||
+                                            // context.blueVas > 0 ||
+                                            // context.redVas > 0
+                                            
+                                            )
                                         ? addIndividual(
                                             context,
                                             state.householdMemberWrapper
