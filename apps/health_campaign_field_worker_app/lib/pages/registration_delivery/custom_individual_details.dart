@@ -408,6 +408,7 @@ class CustomIndividualDetailsPageState
                                     );
                                     onSubmit(individual.name?.givenName ?? "",
                                         false);
+                                    context.router.maybePop();
                                   }
                                 },
                                 addMember: (
