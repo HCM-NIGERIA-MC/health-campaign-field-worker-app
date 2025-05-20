@@ -609,7 +609,6 @@ class _DynamicTabsPageState extends LocalizedState<DynamicTabsPage>
                           if (form.invalid) {
                             _tabController.animateTo(index);
                             return;
-
                           }
                           index++;
                         }
@@ -795,10 +794,9 @@ class _DynamicTabsPageState extends LocalizedState<DynamicTabsPage>
               ).pop(true);
               (context.router.parent() as StackRouter).maybePop();
               context.router.push(CustomAcknowledgementRoute(
-                mrnNumber: _sharedMRN,
-                stockRecords: _tabStocks.values.toList(),
-                entryType : entryType
-              ));
+                  mrnNumber: _sharedMRN,
+                  stockRecords: _tabStocks.values.toList(),
+                  entryType: entryType));
             },
             type: DigitButtonType.primary,
             size: DigitButtonSize.large,
@@ -876,6 +874,7 @@ class _DynamicTabsPageState extends LocalizedState<DynamicTabsPage>
                   redVasCount: redVasCount,
                 ),
               );
+          await Future.delayed(const Duration(milliseconds: 500));
         }
       }
 
