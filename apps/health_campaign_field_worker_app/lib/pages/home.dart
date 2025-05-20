@@ -834,29 +834,29 @@ void setPackagesSingleton(BuildContext context) {
           projectId: context.projectId,
           loggedInUserUuid: context.loggedInUserUuid,
         );
-        InventorySingleton().setInitialData(
-          isWareHouseMgr: context.loggedInUserRoles
-              .where(
-                  (role) => role.code == RolesType.warehouseManager.toValue())
-              .toList()
-              .isNotEmpty,
-          isDistributor: context.loggedInUserRoles
-              .where(
-                (role) =>
-                    role.code == RolesType.distributor.toValue() ||
-                    role.code == RolesType.communityDistributor.toValue(),
-              )
-              .toList()
-              .isNotEmpty,
-          loggedInUser: context.loggedInUserModel,
-          projectId: context.projectId,
-          loggedInUserUuid: context.loggedInUserUuid,
-          transportTypes: appConfiguration.transportTypes
-              ?.map((e) => InventoryTransportTypes()
-                ..name = e.code
-                ..code = e.code)
-              .toList(),
-        );
+        // InventorySingleton().setInitialData(
+        //   isWareHouseMgr: context.loggedInUserRoles
+        //       .where(
+        //           (role) => role.code == RolesType.warehouseManager.toValue())
+        //       .toList()
+        //       .isNotEmpty,
+        //   isDistributor: context.loggedInUserRoles
+        //       .where(
+        //         (role) =>
+        //             role.code == RolesType.distributor.toValue() ||
+        //             role.code == RolesType.communityDistributor.toValue(),
+        //       )
+        //       .toList()
+        //       .isNotEmpty,
+        //   loggedInUser: context.loggedInUserModel,
+        //   projectId: context.projectId,
+        //   loggedInUserUuid: context.loggedInUserUuid,
+        //   transportTypes: appConfiguration.transportTypes
+        //       ?.map((e) => InventoryTransportTypes()
+        //         ..name = e.code
+        //         ..code = e.code)
+        //       .toList(),
+        // );
         InventorySingleton().setBoundary(boundary: context.boundary);
         ComplaintsSingleton().setInitialData(
           tenantId: envConfig.variables.tenantId,
