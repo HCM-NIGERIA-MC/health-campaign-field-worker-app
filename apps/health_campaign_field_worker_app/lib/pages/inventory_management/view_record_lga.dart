@@ -154,6 +154,7 @@ class _ViewStockRecordsLGAPageState
                   redVasCount: redVasCount,
                 ),
               );
+          await Future.delayed(const Duration(milliseconds: 500));
           // _tabController.animateTo(_tabController.index + 1);
 
           context.read<RecordStockBloc>().add(
@@ -179,13 +180,14 @@ class _ViewStockRecordsLGAPageState
     //using the same as downloaded stock data
     // and this flow is for stock receipt for LGA
     final senderIdToShowOnTab = widget.stockRecords.first.senderId;
-    
 
     return Scaffold(
       body: ScrollableContent(
-        header: const Column(children: [
-          CustomBackNavigationHelpHeaderWidget(),
-        ],),
+        header: const Column(
+          children: [
+            CustomBackNavigationHelpHeaderWidget(),
+          ],
+        ),
         children: [
           ReactiveForm(
             formGroup: _form,
