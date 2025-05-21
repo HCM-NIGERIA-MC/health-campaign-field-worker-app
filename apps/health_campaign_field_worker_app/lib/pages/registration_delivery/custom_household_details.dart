@@ -70,27 +70,28 @@ class CustomHouseHoldDetailsPageState
     final bool isCommunity = RegistrationDeliverySingleton().householdType ==
         HouseholdType.community;
 
-    Future<String> generateHouseholdId() async {
-      final userId = RegistrationDeliverySingleton().loggedInUserUuid;
+// TODO: commented code as householdId not required
+    // Future<String> generateHouseholdId() async {
+    //   final userId = RegistrationDeliverySingleton().loggedInUserUuid;
 
-      final boundaryBloc = context.read<BoundaryBloc>().state;
-      final code = boundaryBloc.boundaryList.first.code;
-      final bname = boundaryBloc.boundaryList.first.name;
+    //   final boundaryBloc = context.read<BoundaryBloc>().state;
+    //   final code = boundaryBloc.boundaryList.first.code;
+    //   final bname = boundaryBloc.boundaryList.first.name;
 
-      final locality = (code == null || bname == null)
-          ? null
-          : LocalityModel(code: code, name: bname);
+    //   final locality = (code == null || bname == null)
+    //       ? null
+    //       : LocalityModel(code: code, name: bname);
 
-      final localityCode = locality!.code;
+    //   final localityCode = locality!.code;
 
-      final ids = await UniqueIdGeneration().generateUniqueId(
-        localityCode: localityCode,
-        loggedInUserId: userId!,
-        returnCombinedIds: false,
-      );
+    //   final ids = await UniqueIdGeneration().generateUniqueId(
+    //     localityCode: localityCode,
+    //     loggedInUserId: userId!,
+    //     returnCombinedIds: false,
+    //   );
 
-      return ids.first;
-    }
+    //   return ids.first;
+    // }
 
     return Scaffold(
       body: ReactiveFormBuilder(
@@ -172,8 +173,8 @@ class CustomHouseHoldDetailsPageState
                               loading,
                               isHeadOfHousehold,
                             ) async {
-                              final String householdid =
-                                  await generateHouseholdId();
+                              // final String householdid =
+                              //     await generateHouseholdId();
                               var household = householdModel;
 
                               household ??= HouseholdModel(
@@ -240,7 +241,7 @@ class CustomHouseHoldDetailsPageState
                                         context.millisecondsSinceEpoch(),
                                   ),
                                   address: addressModel,
-                                  id: householdid,
+                                 // id: householdid,
                                   additionalFields: HouseholdAdditionalFields(
                                       version: 1, fields: []));
 
