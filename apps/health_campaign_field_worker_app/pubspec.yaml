@@ -74,6 +74,7 @@ dependencies:
   complaints: ^1.0.2
   logger: ^2.5.0
   mobile_scanner: ^3.4.1
+  change_app_package_name: ^1.5.0
   # qr_code_scanner: ^1.0.1
 
 dev_dependencies:
