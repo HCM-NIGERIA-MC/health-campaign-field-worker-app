@@ -223,18 +223,18 @@ class CustomManageStocksPageState
               children: [
                 GestureDetector(
                   onTap: () {
-                    if (InventorySingleton().isDistributor) {
-                      context.router.push(QRScannerRoute());
-                      Navigator.of(context).pop();
-                    } else {
-                      context.router.push(
-                        RecordStockWrapperRoute(
-                          type: StockRecordEntryType.receipt,
-                        ),
-                      );
+                    // todo commenting the code to remove qr scanner mandatorily
+                    // if (InventorySingleton().isDistributor) {
+                    //   context.router.push(QRScannerRoute());
+                    //   Navigator.of(context).pop();
+                    // } else {
+                    context.router.push(
+                      RecordStockWrapperRoute(
+                        type: StockRecordEntryType.receipt,
+                      ),
+                    );
 
-                      Navigator.of(context).pop();
-                    }
+                    Navigator.of(context).pop();
                   },
                   child: Container(
                     width: double.infinity,

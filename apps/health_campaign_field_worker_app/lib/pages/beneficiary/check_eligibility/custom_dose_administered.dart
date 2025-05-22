@@ -331,8 +331,31 @@ class CustomDoseAdministeredPageState
                                   leading: Text("1"),
                                 ),
                                 ListTile(
-                                  title: Text(
-                                    "Have you written this ID $beneficiaryId in the child for $name (To be used in the next cycle)",
+                                  title: Text.rich(
+                                    TextSpan(
+                                      text: 'Have you written this ID ',
+                                      style:
+                                          const TextStyle(color: Colors.black),
+                                      children: [
+                                        TextSpan(
+                                          text: beneficiaryId,
+                                          style: const TextStyle(
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                        const TextSpan(
+                                          text: ' in the child Card for ',
+                                        ),
+                                        TextSpan(
+                                          text: name,
+                                          style: const TextStyle(
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                        const TextSpan(
+                                          text:
+                                              ' (To be used in the next cycle)',
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                   leading: const Text("2"),
                                 ),

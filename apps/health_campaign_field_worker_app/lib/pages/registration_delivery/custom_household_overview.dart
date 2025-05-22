@@ -32,6 +32,7 @@ import 'package:registration_delivery/models/entities/registration_delivery_enum
 import 'package:registration_delivery/models/entities/status.dart';
 import 'package:registration_delivery/router/registration_delivery_router.gm.dart';
 import 'package:registration_delivery/utils/i18_key_constants.dart' as i18;
+import '../../utils/i18_key_constants.dart' as i18_local;
 import 'package:registration_delivery/utils/utils.dart';
 import '../../utils/extensions/extensions.dart';
 import '../../widgets/custom_back_navigation.dart';
@@ -1141,8 +1142,7 @@ class _CustomHouseholdOverviewPageState
                                             ),
                                           ),
                                     label: localizations.translate(
-                                      i18.householdOverView
-                                          .householdOverViewAddActionText,
+                                      i18_local.householdDetails.addBeneficiartText
                                     ),
                                     prefixIcon: Icons.add_circle,
                                     type: DigitButtonType.tertiary,

@@ -15,6 +15,7 @@ class MinNumberCard extends StatelessWidget {
   final List<Map<String, String>> items;
   final String data;
   String? waybillNumber;
+  final Color? backgroundColor;
 
   MinNumberCard({
     super.key,
@@ -24,6 +25,7 @@ class MinNumberCard extends StatelessWidget {
     required this.items,
     required this.data,
     this.waybillNumber,
+    this.backgroundColor,
   });
 
   @override
@@ -33,7 +35,7 @@ class MinNumberCard extends StatelessWidget {
 
     return Container(
       decoration: BoxDecoration(
-        color: Colors.grey[200],
+        color: backgroundColor ?? Colors.grey[200],
         border: Border.all(
           color: Colors.grey[400]!,
           width: 1,
