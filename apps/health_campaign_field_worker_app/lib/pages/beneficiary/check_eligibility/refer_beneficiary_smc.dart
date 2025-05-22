@@ -190,7 +190,15 @@ class CustomReferBeneficiarySMCPageState
                                       return;
                                     }
                                     clickedStatus.value = true;
+                                    final recipient =
+                                        form.control(_referredToKey).value  as FacilityModel;
                                     final reason = reasons.first;
+                                    final recipientType = recipient.id == 'APS'
+                                        ? 'STAFF'
+                                        : 'FACILITY';
+                                    final recipientId = recipient.id == 'APS'
+                                        ? context.loggedInUserUuid
+                                        : recipient.id;
 
                                     final event = context.read<ReferralBloc>();
                                     event.add(ReferralSubmitEvent(
@@ -201,6 +209,8 @@ class CustomReferBeneficiarySMCPageState
                                             widget
                                                 .projectBeneficiaryClientRefId,
                                         referrerId: context.loggedInUserUuid,
+                                        recipientId: recipientId,
+                                        recipientType: recipientType,
                                         reasons: [reason],
                                         tenantId: envConfig.variables.tenantId,
                                         rowVersion: 1,
@@ -230,6 +240,11 @@ class CustomReferBeneficiarySMCPageState
                                               referralReasons,
                                               reasons.join(","),
                                             ),
+                                            // if (referralCodeValue != null)
+                                            //   AdditionalField(
+                                            //     _referralCode,
+                                            //     referralCodeValue,
+                                            //   )
                                           ],
                                         ),
                                       ),
@@ -384,7 +399,8 @@ class CustomReferBeneficiarySMCPageState
                           ),
                           Column(children: [
                             DigitDateFormPicker(
-                              margin: const EdgeInsets.symmetric(vertical: spacer2),
+                              margin:
+                                  const EdgeInsets.symmetric(vertical: spacer2),
                               isEnabled: false,
                               formControlName: _dateOfReferralKey,
                               label: localizations.translate(
@@ -455,13 +471,20 @@ class CustomReferBeneficiarySMCPageState
         value: context.loggedInUser.userName,
         validators: [Validators.required],
       ),
-      _referredToKey: FormControl<String>(
-        value: healthFacilities
-            .where((e) =>
-                e.boundaryCode == context.loggedInUserModel?.boundaryCode)
-            .first
-            .id
-            .toString(),
+      // _referredToKey: FormControl<String>(
+      //   value: healthFacilities
+      //       .where((e) =>
+      //           e.boundaryCode == context.loggedInUserModel?.boundaryCode)
+      //       .first
+      //       .id
+      //       .toString(),
+      //   validators: [
+      //     Validators.required,
+      //   ],
+      // ),
+      _referredToKey: FormControl<FacilityModel>(
+        value:
+            healthFacilities.length >= 1 ? null : healthFacilities.firstOrNull,
         validators: [
           Validators.required,
         ],

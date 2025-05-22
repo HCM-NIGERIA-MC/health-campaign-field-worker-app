@@ -543,6 +543,10 @@ class _DynamicTabsPageState extends LocalizedState<DynamicTabsPage>
                               ),
                               onChange: (val) {
                                 field.control.markAsTouched();
+                                if (val == "") {
+                                  field.control.value = null;
+                                  return;
+                                }
                                 if (int.parse(val) > 10000000000) {
                                   field.control.value = 10000;
                                 } else {
