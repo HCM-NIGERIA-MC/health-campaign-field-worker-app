@@ -709,6 +709,10 @@ class _RecordRedosePageState extends LocalizedState<RecordRedosePage> {
                                                               } else {
                                                                 checkOtherDeliveryComment(
                                                                     false);
+                                                                form
+                                                                    .control(
+                                                                        _otherDeliveryCommentKey)
+                                                                    .value = null;
                                                               }
                                                             }
                                                           },

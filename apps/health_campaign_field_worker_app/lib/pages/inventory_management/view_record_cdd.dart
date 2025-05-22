@@ -168,14 +168,16 @@ class _ViewStockRecordsCDDPageState
         if (int.parse(stock.quantity!) > stockReceived) {
           Toast.showToast(
             context,
-            message: localizations.translate(i18_local.inventoryReportDetails.commentIsRequiredText),
+            message: localizations.translate(
+                i18_local.inventoryReportDetails.commentIsRequiredText),
             type: ToastType.error,
             position: ToastPosition.aboveOneButtonFooter,
           );
         } else if (int.parse(stock.quantity!) < stockReceived) {
           Toast.showToast(
             context,
-            message: localizations.translate(i18_local.inventoryReportDetails.checkTheQuantityReceivedText),
+            message: localizations.translate(
+                i18_local.inventoryReportDetails.checkTheQuantityReceivedText),
             type: ToastType.error,
             position: ToastPosition.aboveOneButtonFooter,
           );
@@ -225,6 +227,7 @@ class _ViewStockRecordsCDDPageState
                     redVasCount: redVasCount,
                   ),
                 );
+            await Future.delayed(const Duration(milliseconds: 500));
           }
         }
 
@@ -299,7 +302,8 @@ class _ViewStockRecordsCDDPageState
                   const SizedBox(height: 12),
                   InputField(
                     type: InputType.text,
-                    label: i18_local.inventoryReportDetails.quantityReceivedByWarehouse,
+                    label: i18_local
+                        .inventoryReportDetails.quantityReceivedByWarehouse,
                     initialValue: stock.quantity ?? '',
                     isDisabled: true,
                     readOnly: true,
@@ -309,7 +313,8 @@ class _ViewStockRecordsCDDPageState
                     formControlName: 'quantityReceived',
                     builder: (field) => InputField(
                       type: InputType.text,
-                      label: i18_local.inventoryReportDetails.actualQuantityReceived,
+                      label: i18_local
+                          .inventoryReportDetails.actualQuantityReceived,
                       errorMessage: field.errorText,
                       keyboardType: TextInputType.number,
                       onChange: (value) {
@@ -378,20 +383,26 @@ class _ViewStockRecordsCDDPageState
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    localizations.translate(i18_local.inventoryReportDetails.stockReceiptDetailsText),
-                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    localizations.translate(i18_local
+                        .inventoryReportDetails.stockReceiptDetailsText),
+                    style: const TextStyle(
+                        fontSize: 16, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 12),
                   Row(
                     children: [
-                      Expanded(child: Text(localizations.translate(i18_local.acknowledgementSuccess.mrnNumberLabel))),
+                      Expanded(
+                          child: Text(localizations.translate(i18_local
+                              .acknowledgementSuccess.mrnNumberLabel))),
                       Expanded(child: Text(widget.mrnNumber)),
                     ],
                   ),
                   const SizedBox(height: 8),
                   Row(
                     children: [
-                      Expanded(child: Text(i18_local.inventoryReportDetails.receivedFromText)),
+                      Expanded(
+                          child: Text(i18_local
+                              .inventoryReportDetails.receivedFromText)),
                       Expanded(
                         child: Text(localizations
                             .translate('FAC_$senderIdToShowOnTab')),
