@@ -112,55 +112,54 @@ class _ViewStockRecordsLGAPageState
         context.read<RecordStockBloc>().add(
               const RecordStockCreateStockEntryEvent(),
             );
-        if (InventorySingleton().isDistributor) {
-          final totalQty =
-              int.parse(_form.control('quantityReceived').value.toString());
+        // if (InventorySingleton().isDistributor) {
+        final totalQty =
+            int.parse(_form.control('quantityReceived').value.toString());
 
-          int spaq1Count = context.spaq1;
-          int spaq2Count = context.spaq2;
+        int spaq1Count = context.spaq1;
+        int spaq2Count = context.spaq2;
 
-          int blueVasCount = context.blueVas;
-          int redVasCount = context.redVas;
-          String productName = stock.additionalFields?.fields
-              .firstWhereOrNull((element) => element.key == "productName")
-              ?.value;
-          // Custom logic based on productName
-          if (productName == Constants.spaq1) {
-            spaq1Count = totalQty;
-            spaq2Count = 0;
-            redVasCount = 0;
-            blueVasCount = 0;
-          } else if (productName == Constants.spaq2) {
-            spaq2Count = totalQty;
-            spaq1Count = 0;
-            redVasCount = 0;
-            blueVasCount = 0;
-          } else if (productName == Constants.blueVAS) {
-            blueVasCount = totalQty;
-            spaq1Count = 0;
-            spaq2Count = 0;
-            redVasCount = 0;
-          } else {
-            blueVasCount = 0;
-            spaq1Count = 0;
-            spaq2Count = 0;
-            redVasCount = totalQty;
-          }
-          context.read<AuthBloc>().add(
-                AuthAddSpaqCountsEvent(
-                  spaq1Count: spaq1Count,
-                  spaq2Count: spaq2Count,
-                  blueVasCount: blueVasCount,
-                  redVasCount: redVasCount,
-                ),
-              );
-          await Future.delayed(const Duration(milliseconds: 500));
-          // _tabController.animateTo(_tabController.index + 1);
-
-          context.read<RecordStockBloc>().add(
-                const RecordStockCreateStockEntryEvent(),
-              );
+        int blueVasCount = context.blueVas;
+        int redVasCount = context.redVas;
+        String productName = stock.additionalFields?.fields
+            .firstWhereOrNull((element) => element.key == "productName")
+            ?.value;
+        // Custom logic based on productName
+        if (productName == Constants.spaq1) {
+          spaq1Count = totalQty;
+          spaq2Count = 0;
+          redVasCount = 0;
+          blueVasCount = 0;
+        } else if (productName == Constants.spaq2) {
+          spaq2Count = totalQty;
+          spaq1Count = 0;
+          redVasCount = 0;
+          blueVasCount = 0;
+        } else if (productName == Constants.blueVAS) {
+          blueVasCount = totalQty;
+          spaq1Count = 0;
+          spaq2Count = 0;
+          redVasCount = 0;
+        } else {
+          blueVasCount = 0;
+          spaq1Count = 0;
+          spaq2Count = 0;
+          redVasCount = totalQty;
         }
+        context.read<AuthBloc>().add(
+              AuthAddSpaqCountsEvent(
+                spaq1Count: spaq1Count,
+                spaq2Count: spaq2Count,
+                blueVasCount: blueVasCount,
+                redVasCount: redVasCount,
+              ),
+            );
+        // _tabController.animateTo(_tabController.index + 1);
+        await Future.delayed(const Duration(milliseconds: 500));
+        context.read<RecordStockBloc>().add(
+              const RecordStockCreateStockEntryEvent(),
+            );
+        // }
       }
 
       context.router.push(

@@ -36,6 +36,7 @@ class CustomMinNumberPage extends LocalizedStatefulWidget {
 }
 
 class CustomMinNumberPageState extends LocalizedState<CustomMinNumberPage> {
+  int? pressedIndex;
   List<StockModel> stockList = [];
 
   @override
@@ -173,10 +174,12 @@ class CustomMinNumberPageState extends LocalizedState<CustomMinNumberPage> {
                                 final compressed =
                                     zlib.encode(utf8.encode(jsonStr));
                                 final encoded = base64Url.encode(compressed);
-
-                                return Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: GestureDetector(
+                                return Material(
+                                  color: pressedIndex == index
+                                      ? Colors.orange[300]
+                                      : Colors.white,
+                                  borderRadius: BorderRadius.circular(8),
+                                  child: InkWell(
                                     onTap: () {
                                       context.router.push(
                                         ViewStockRecordsRoute(
@@ -185,42 +188,62 @@ class CustomMinNumberPageState extends LocalizedState<CustomMinNumberPage> {
                                         ),
                                       );
                                     },
-                                    child: MinNumberCard(
-                                      data: encoded,
-                                      minNumber: mrn,
-                                      cddCode: InventorySingleton()
-                                              .loggedInUser
-                                              ?.name ??
-                                          stocks.first.senderId ??
-                                          "",
-                                      date: formatDateFromMillis(stocks.first
-                                              .auditDetails?.createdTime ??
-                                          0),
-                                      items: stocks.map((s) {
-                                        final name = (s.additionalFields?.fields
-                                                    .firstWhere(
-                                                        (f) =>
-                                                            f.key ==
-                                                            'productName',
-                                                        orElse: () =>
-                                                            const AdditionalField(
-                                                                '', ''))
-                                                    .value ??
-                                                'N/A')
-                                            .toString();
+                                    onTapDown: (_) =>
+                                        setState(() => pressedIndex = index),
+                                    onTapUp: (_) =>
+                                        setState(() => pressedIndex = null),
+                                    onTapCancel: () =>
+                                        setState(() => pressedIndex = null),
+                                    borderRadius: BorderRadius.circular(8),
+                                    customBorder: const RoundedRectangleBorder(
+                                      side: BorderSide(
+                                        color: Colors.grey,
+                                        width: 1,
+                                      ),
+                                    ),
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: MinNumberCard(
+                                        backgroundColor: pressedIndex == index
+                                            ? Colors.orange[300]
+                                            : Colors.grey[200],
+                                        data: encoded,
+                                        minNumber: mrn,
+                                        cddCode: InventorySingleton()
+                                                .loggedInUser
+                                                ?.name ??
+                                            stocks.first.senderId ??
+                                            "",
+                                        date: formatDateFromMillis(stocks.first
+                                                .auditDetails?.createdTime ??
+                                            0),
+                                        items: stocks.map((s) {
+                                          final name = (s
+                                                      .additionalFields?.fields
+                                                      .firstWhere(
+                                                          (f) =>
+                                                              f.key ==
+                                                              'productName',
+                                                          orElse: () =>
+                                                              const AdditionalField(
+                                                                  '', ''))
+                                                      .value ??
+                                                  'N/A')
+                                              .toString();
 
-                                        final quantity =
-                                            (s.quantity ?? 0).toString();
+                                          final quantity =
+                                              (s.quantity ?? 0).toString();
 
-                                        return {
-                                          'name': name,
-                                          'quantity': quantity,
-                                        };
-                                      }).toList(),
-                                      waybillNumber: InventorySingleton()
-                                              .isDistributor
-                                          ? null
-                                          : stocks.first.wayBillNumber ?? "",
+                                          return {
+                                            'name': name,
+                                            'quantity': quantity,
+                                          };
+                                        }).toList(),
+                                        waybillNumber: InventorySingleton()
+                                                .isDistributor
+                                            ? null
+                                            : stocks.first.wayBillNumber ?? "",
+                                      ),
                                     ),
                                   ),
                                 );

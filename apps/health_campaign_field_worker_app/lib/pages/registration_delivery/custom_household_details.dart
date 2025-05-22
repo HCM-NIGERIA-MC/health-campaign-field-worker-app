@@ -27,6 +27,7 @@ import 'package:registration_delivery/widgets/showcase/config/showcase_constants
 import 'package:registration_delivery/widgets/showcase/showcase_button.dart';
 
 import '../../blocs/registration_delivery/custom_beneficairy_registration.dart';
+import '../../models/entities/identifier_types.dart';
 import '../../router/app_router.dart';
 import '../../utils/registration_delivery/registration_delivery_utils.dart';
 
@@ -241,7 +242,7 @@ class CustomHouseHoldDetailsPageState
                                         context.millisecondsSinceEpoch(),
                                   ),
                                   address: addressModel,
-                                 // id: householdid,
+                                  // id: householdid,
                                   additionalFields: HouseholdAdditionalFields(
                                       version: 1, fields: []));
 

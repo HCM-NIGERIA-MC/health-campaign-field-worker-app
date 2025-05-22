@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:registration_delivery/blocs/search_households/search_households.dart'
     as registration_delivery;
+import 'package:registration_delivery/models/entities/household.dart';
 
 import 'package:registration_delivery/utils/i18_key_constants.dart' as i18;
 import 'package:registration_delivery/widgets/localized.dart';
@@ -43,29 +44,34 @@ class CustomBeneficiaryAcknowledgementPageState
   }
 
   Map<String, String>? subtitleMap(
-      registration_delivery.HouseholdMemberWrapper? householdMember,
-      String? householdId) {
-    String? beneficiaryId = householdMember?.members?.lastOrNull?.identifiers
-        ?.lastWhereOrNull((e) =>
-            e.identifierType == IdentifierTypes.uniqueBeneficiaryID.toValue())
-        ?.identifierId;
-    String? beneficiaryName =
+      registration_delivery.HouseholdMemberWrapper? householdMember,HouseholdModel? household) {
+        String? beneficiaryName =
         householdMember?.members?.lastOrNull?.name?.givenName;
 
     if (widget.acknowledgementType == AcknowledgementType.addHousehold) {
-      return householdId == null || beneficiaryName == null
+      final householdId = household?.additionalFields?.fields.where((field) =>
+              field.key == IdentifierTypes.uniqueBeneficiaryID.toValue()).first.value;
+
+               
+      return householdId == null || beneficiaryName==null
           ? null
           : {
-              'id': i18_local.beneficiaryDetails.householdId,
-              'value': '$beneficiaryName - $householdId'
+              'id': localizations.translate(i18_local.beneficiaryDetails.householdId),
+              'value': "$beneficiaryName-$householdId",
+            };
+    } else {
+      String? beneficiaryId = householdMember?.members?.lastOrNull?.identifiers
+          ?.lastWhereOrNull((e) =>
+              e.identifierType == IdentifierTypes.uniqueBeneficiaryID.toValue())
+          ?.identifierId;
+      return beneficiaryId == null || beneficiaryName==null
+          ? null
+          : {
+              'id': localizations
+                  .translate(i18_local.beneficiaryDetails.beneficiaryId),
+              'value': "$beneficiaryName-$beneficiaryId",
             };
     }
-    return beneficiaryId == null || beneficiaryName == null
-        ? null
-        : {
-            'id': i18_local.beneficiaryDetails.beneficiaryId,
-            'value': '$beneficiaryName - $beneficiaryId',
-          };
   }
 
   @override
@@ -104,8 +110,7 @@ class CustomBeneficiaryAcknowledgementPageState
                   type: PanelType.success,
                   title: localizations.translate(
                       i18.acknowledgementSuccess.acknowledgementLabelText),
-                  subTitle: subtitleMap(
-                      householdMemberWrapper, state.householdModel?.id),
+                  subTitle: subtitleMap(householdMemberWrapper, state.householdModel),
                   actions: [
                     if (householdMemberWrapper != null)
                       DigitButton(
