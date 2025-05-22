@@ -146,7 +146,16 @@ class CustomReferBeneficiaryVASPageState
                                     return;
                                   } else {
                                     clickedStatus.value = true;
+                                    final recipient = form
+                                        .control(_referredToKey)
+                                        .value as FacilityModel;
                                     final reason = reasons.first;
+                                    final recipientType = recipient.id == 'APS'
+                                        ? 'STAFF'
+                                        : 'FACILITY';
+                                    final recipientId = recipient.id == 'APS'
+                                        ? context.loggedInUserUuid
+                                        : recipient.id;
 
                                     final event = context.read<ReferralBloc>();
                                     event.add(ReferralSubmitEvent(
@@ -158,6 +167,8 @@ class CustomReferBeneficiaryVASPageState
                                                 .projectBeneficiaryClientRefId,
                                         referrerId: context.loggedInUserUuid,
                                         reasons: [reason],
+                                        recipientId: recipientId,
+                                        recipientType: recipientType,
                                         tenantId: envConfig.variables.tenantId,
                                         rowVersion: 1,
                                         auditDetails: AuditDetails(
@@ -443,13 +454,21 @@ class CustomReferBeneficiaryVASPageState
         value: context.loggedInUser.userName,
         validators: [Validators.required],
       ),
-      _referredToKey: FormControl<String>(
-        value: healthFacilities
-            .where((e) =>
-                e.boundaryCode == context.loggedInUserModel?.boundaryCode)
-            .first
-            .id
-            .toString(),
+      // _referredToKey: FormControl<String>(
+      //   value: healthFacilities
+      //       .where((e) =>
+      //           e.boundaryCode == context.loggedInUserModel?.boundaryCode)
+      //       .first
+      //       .id
+      //       .toString(),
+      //   validators: [
+      //     Validators.required,
+      //   ],
+      // ),
+
+      _referredToKey: FormControl<FacilityModel>(
+        value:
+            healthFacilities.length >= 1 ? null : healthFacilities.firstOrNull,
         validators: [
           Validators.required,
         ],
