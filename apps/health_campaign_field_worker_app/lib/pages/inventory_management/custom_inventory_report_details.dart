@@ -504,9 +504,10 @@ class CustomInventoryReportDetailsPageState
                                                           DigitGridCell(
                                                               key:
                                                                   transactingPartyKey,
-                                                              value: widget.reportType ==
-                                                                          InventoryReportType
-                                                                              .receipt ||
+                                                              value: 
+                                                              // widget.reportType ==
+                                                              //             InventoryReportType
+                                                              //                 .receipt ||
                                                                       widget.reportType ==
                                                                           InventoryReportType
                                                                               .dispatch

@@ -18,6 +18,7 @@ import 'package:registration_delivery/utils/utils.dart';
 import 'package:registration_delivery/widgets/localized.dart';
 
 import '../../blocs/registration_delivery/custom_beneficairy_registration.dart';
+import '../../models/entities/identifier_types.dart';
 import '../../router/app_router.dart';
 import '../../utils/extensions/extensions.dart';
 import '../../utils/i18_key_constants.dart' as i18_local;
@@ -92,12 +93,13 @@ class CaregiverConsentPageState extends LocalizedState<CaregiverConsentPage> {
           lastModifiedTime: context.millisecondsSinceEpoch(),
         ),
         address: addressModel,
-       // id: householdid,
+        // id: householdid,
         additionalFields: HouseholdAdditionalFields(version: 1, fields: [
           const AdditionalField(
             "caregiver_consent_registration",
             false,
           ),
+          
         ]));
 
     bloc.add(

@@ -538,7 +538,7 @@ class _RecordRedosePageState extends LocalizedState<RecordRedosePage> {
                                                 kPadding * 2,
                                                 kPadding,
                                                 kPadding * 2,
-                                                kPadding,
+                                                0,
                                               ),
                                               child: Row(
                                                 children: [
@@ -557,6 +557,7 @@ class _RecordRedosePageState extends LocalizedState<RecordRedosePage> {
                                               ),
                                             ),
                                           ]),
+                                          const SizedBox(height: 16),
                                           DigitCard(children: [
                                             Column(
                                               crossAxisAlignment:
