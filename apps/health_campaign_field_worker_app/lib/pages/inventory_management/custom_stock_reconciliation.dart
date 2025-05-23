@@ -463,6 +463,26 @@ class CustomStockReconciliationPageState
                                                           ),
                                                         );
                                                   },
+                                                  selectedOption: (form
+                                                              .control(
+                                                                  _productVariantKey)
+                                                              .value !=
+                                                          null)
+                                                      ? DropdownItem(
+                                                          name: localizations.translate((form
+                                                                          .control(
+                                                                              _productVariantKey)
+                                                                          .value
+                                                                      as ProductVariantModel)
+                                                                  .sku ??
+                                                              (form.control(_productVariantKey).value
+                                                                      as ProductVariantModel)
+                                                                  .id),
+                                                          code: (form.control(_productVariantKey).value
+                                                                  as ProductVariantModel)
+                                                              .id)
+                                                      : const DropdownItem(
+                                                          name: '', code: ''),
                                                 ),
                                               );
                                             },
@@ -588,6 +608,8 @@ class CustomStockReconciliationPageState
                                             onChange: (value) {
                                               field.control.markAsTouched();
                                               field.control.value = value;
+
+                                              
                                             },
                                           ),
                                         );
@@ -622,3 +644,5 @@ class CustomStockReconciliationPageState
           );
   }
 }
+
+
