@@ -1,6 +1,8 @@
 import 'dart:math';
 
 import 'package:auto_route/auto_route.dart';
+import 'package:collection/collection.dart';
+import 'package:digit_components/widgets/digit_text_field.dart';
 import 'package:digit_data_model/data_model.dart';
 import 'package:digit_ui_components/digit_components.dart';
 import 'package:digit_ui_components/models/RadioButtonModel.dart';
@@ -21,6 +23,8 @@ import 'package:survey_form/survey_form.dart';
 import 'package:referral_reconciliation/blocs/referral_recon_service_definition.dart';
 import 'package:referral_reconciliation/utils/date_utils.dart';
 import 'package:referral_reconciliation/utils/i18_key_constants.dart' as i18;
+import 'package:survey_form/utils/i18_key_constants.dart' as i18_survey_form;
+import '../../utils/i18_key_constants.dart' as i18_local;
 import 'package:referral_reconciliation/utils/utils.dart';
 import 'package:referral_reconciliation/widgets/localized.dart';
 
@@ -50,6 +54,8 @@ class _CustomReferralReasonChecklistPageState
   bool isControllersInitialized = false;
   List<int> visibleChecklistIndexes = [];
   GlobalKey<FormState> checklistFormKey = GlobalKey<FormState>();
+  String othersText = "OTHERS";
+  String multiSelectionSeparator = ".";
 
   @override
   void initState() {
@@ -80,6 +86,7 @@ class _CustomReferralReasonChecklistPageState
                 if (!isControllersInitialized) {
                   initialAttributes?.forEach((e) {
                     controller.add(TextEditingController());
+                    additionalController.add(TextEditingController());
                   });
 
                   // Set the flag to true after initializing controllers
@@ -162,6 +169,38 @@ class _CustomReferralReasonChecklistPageState
                                               i < controller.length;
                                               i++) {
                                             final attribute = initialAttributes;
+                                            String? additionalDetailValue =
+                                                ((attribute?[i]
+                                                                .values
+                                                                ?.firstWhereOrNull(
+                                                                  (element) =>
+                                                                      element
+                                                                          .toUpperCase() ==
+                                                                      othersText,
+                                                                ) !=
+                                                            null &&
+                                                        controller[i]
+                                                                .text
+                                                                .split(
+                                                                  multiSelectionSeparator,
+                                                                )
+                                                                .firstWhereOrNull(
+                                                                  (element) =>
+                                                                      element
+                                                                          .toUpperCase() ==
+                                                                      othersText,
+                                                                ) !=
+                                                            null))
+                                                    ? additionalController[i]
+                                                            .text
+                                                            .toString()
+                                                            .isEmpty
+                                                        ? null
+                                                        : additionalController[
+                                                                i]
+                                                            .text
+                                                            .toString()
+                                                    : null;
                                             attributes
                                                 .add(ServiceAttributesModel(
                                               attributeCode:
@@ -170,25 +209,57 @@ class _CustomReferralReasonChecklistPageState
                                               clientReferenceId:
                                                   IdGen.i.identifier,
                                               referenceId: referenceId,
-                                              value: attribute?[i].dataType !=
-                                                      'SingleValueList'
+                                              value: attribute?[i].dataType ==
+                                                      'MultiValueList'
                                                   ? controller[i]
                                                           .text
                                                           .toString()
-                                                          .trim()
                                                           .isNotEmpty
                                                       ? controller[i]
                                                           .text
                                                           .toString()
-                                                      : ''
-                                                  : visibleChecklistIndexes
-                                                          .contains(i)
+                                                          .substring(1)
+                                                      : i18_survey_form
+                                                          .surveyForm
+                                                          .notSelectedKey
+                                                  : attribute?[i].dataType !=
+                                                          'SingleValueList'
                                                       ? controller[i]
-                                                          .text
-                                                          .toString()
-                                                      : i18.checklist
-                                                          .notSelectedKey,
+                                                              .text
+                                                              .toString()
+                                                              .trim()
+                                                              .isNotEmpty
+                                                          ? controller[i]
+                                                              .text
+                                                              .toString()
+                                                          : (attribute?[i]
+                                                                      .dataType !=
+                                                                  'Number'
+                                                              ? i18_survey_form
+                                                                  .surveyForm
+                                                                  .notSelectedKey
+                                                              : '0')
+                                                      : visibleChecklistIndexes
+                                                              .contains(i)
+                                                          ? controller[i]
+                                                              .text
+                                                              .toString()
+                                                          : i18_survey_form
+                                                              .surveyForm
+                                                              .notSelectedKey,
                                               rowVersion: 1,
+                                              additionalDetails:
+                                                  additionalDetailValue,
+                                              additionalFields:
+                                                  additionalDetailValue != null
+                                                      ? ServiceAttributesAdditionalFields(
+                                                          version: 1,
+                                                          fields: [
+                                                              AdditionalField(
+                                                                  'additionalValue',
+                                                                  additionalDetailValue)
+                                                            ])
+                                                      : null,
                                               tenantId: attribute?[i].tenantId,
                                             ));
                                           }
@@ -418,6 +489,11 @@ class _CustomReferralReasonChecklistPageState
                                     builder: (context, state) {
                                       return Column(
                                         children: e.values!
+                                            .where((e1) =>
+                                                e1 !=
+                                                i18_survey_form
+                                                    .surveyForm.notSelectedKey)
+                                            .toList()
                                             .map((e) => Column(
                                                   children: [
                                                     DigitCheckbox(
@@ -466,6 +542,70 @@ class _CustomReferralReasonChecklistPageState
                                                   ],
                                                 ))
                                             .toList(),
+                                      );
+                                    },
+                                  ),
+                                  BlocBuilder<ServiceBloc, ServiceState>(
+                                    builder: (context, state) {
+                                      return (e.values?.firstWhereOrNull(
+                                                    (element) =>
+                                                        element.toUpperCase() ==
+                                                        othersText,
+                                                  ) !=
+                                                  null &&
+                                              controller[index]
+                                                  .text
+                                                  .contains(othersText))
+                                          ? Padding(
+                                              padding: const EdgeInsets.only(
+                                                left: 4.0,
+                                                right: 4.0,
+                                                bottom: 16,
+                                              ),
+                                              child: DigitTextField(
+                                                maxLength: 1000,
+                                                controller:
+                                                    additionalController[index],
+                                                label:
+                                                    '${localizations.translate(
+                                                  '${selectedServiceDefinition?.code}.${e.code}.ADDITIONAL_FIELD',
+                                                )}*',
+                                                validator: (value1) {
+                                                  if (value1 == null ||
+                                                      value1 == '') {
+                                                    return localizations
+                                                        .translate(
+                                                      i18_local.common
+                                                          .coreCommonOthersRequired,
+                                                    );
+                                                  }
+
+                                                  return null;
+                                                },
+                                              ),
+                                            )
+                                          : const SizedBox();
+                                    },
+                                  ),
+                                  BlocBuilder<ServiceBloc, ServiceState>(
+                                    builder: (context, state) {
+                                      final hasError = (e.required == true &&
+                                          controller[index].text.isEmpty &&
+                                          submitTriggered);
+
+                                      return Offstage(
+                                        offstage: !hasError,
+                                        child: Align(
+                                          alignment: Alignment.centerLeft,
+                                          child: Text(
+                                            localizations.translate(
+                                              i18.common.corecommonRequired,
+                                            ),
+                                            style: TextStyle(
+                                              color: theme.colorScheme.error,
+                                            ),
+                                          ),
+                                        ),
                                       );
                                     },
                                   ),
@@ -719,6 +859,8 @@ class _CustomReferralReasonChecklistPageState
         BlocBuilder<ServiceBloc, ServiceState>(builder: (context, state) {
           return Column(
             children: item.values!
+                .where((e1) => e1 != i18_survey_form.surveyForm.notSelectedKey)
+                .toList()
                 .map((e) => Column(
                       children: [
                         DigitCheckbox(
@@ -754,7 +896,62 @@ class _CustomReferralReasonChecklistPageState
                     ))
                 .toList(),
           );
-        })
+        }),
+        BlocBuilder<ServiceBloc, ServiceState>(
+          builder: (context, state) {
+            return item.values?.firstWhereOrNull(
+                          (element) => element.toUpperCase() == othersText,
+                        ) !=
+                        null &&
+                    controller[index].text.contains(othersText)
+                ? Padding(
+                    padding: const EdgeInsets.only(
+                      left: 4.0,
+                      right: 4.0,
+                      bottom: 16,
+                    ),
+                    child: DigitTextField(
+                      maxLength: 1000,
+                      controller: additionalController[index],
+                      label: '${localizations.translate(
+                        '${selectedServiceDefinition?.code}.${item.code}.ADDITIONAL_FIELD',
+                      )}*',
+                      validator: (value1) {
+                        if (value1 == null || value1 == '') {
+                          return localizations.translate(
+                            i18_local.common.coreCommonOthersRequired,
+                          );
+                        }
+
+                        return null;
+                      },
+                    ),
+                  )
+                : const SizedBox();
+          },
+        ),
+        BlocBuilder<ServiceBloc, ServiceState>(
+          builder: (context, state) {
+            final hasError = (item.required == true &&
+                controller[index].text.isEmpty &&
+                submitTriggered);
+
+            return Offstage(
+              offstage: !hasError,
+              child: Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  localizations.translate(
+                    i18.common.corecommonRequired,
+                  ),
+                  style: TextStyle(
+                    color: theme.colorScheme.error,
+                  ),
+                ),
+              ),
+            );
+          },
+        ),
       ]);
     } else {
       return const SizedBox.shrink();

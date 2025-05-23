@@ -438,9 +438,7 @@ class ProjectBloc extends Bloc<ProjectEvent, ProjectState> {
     try {
       if (context.loggedInUserRoles
           .where(
-            (role) =>
-                role.code == RolesType.districtSupervisor.toValue() ||
-                role.code == RolesType.attendanceStaff.toValue(),
+            (role) => role.code == RolesType.attendanceStaff.toValue(),
           )
           .toList()
           .isNotEmpty) {
