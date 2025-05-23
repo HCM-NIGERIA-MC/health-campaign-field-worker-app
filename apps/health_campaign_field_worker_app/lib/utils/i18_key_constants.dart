@@ -428,6 +428,8 @@ class HomeShowcase {
 class StockDetails {
   const StockDetails();
 
+String get reconciliationCommentRequired => 'RECONCILIATION_COMMENT_REQUIRED';
+
   String get cddCodeLabel => 'CDD_CODE_LABEL';
 
   String get quantityCapsuleReceivedLabel =>

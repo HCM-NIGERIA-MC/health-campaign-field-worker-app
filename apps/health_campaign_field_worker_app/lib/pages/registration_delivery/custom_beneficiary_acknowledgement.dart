@@ -53,11 +53,11 @@ class CustomBeneficiaryAcknowledgementPageState
     String? beneficiaryName =
         householdMember?.members?.lastOrNull?.name?.givenName;
     if (widget.acknowledgementType == AcknowledgementType.addHousehold) {
-      return householdId == null || beneficiaryName == null
+      return beneficiaryId == null || beneficiaryName == null
           ? null
           : {
               'id': i18_local.beneficiaryDetails.householdId,
-              'value': '$beneficiaryName - $householdId'
+              'value': '$beneficiaryName - $beneficiaryId'
             };
     }
     return beneficiaryId == null || beneficiaryName == null
