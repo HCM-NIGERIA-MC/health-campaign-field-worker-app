@@ -190,15 +190,16 @@ class CustomReferBeneficiarySMCPageState
                                       return;
                                     }
                                     clickedStatus.value = true;
-                                    final recipient =
-                                        form.control(_referredToKey).value  as FacilityModel;
+                                    final recipient = form
+                                        .control(_referredToKey)
+                                        .value as String;
                                     final reason = reasons.first;
-                                    final recipientType = recipient.id == 'APS'
+                                    final recipientType = recipient == 'APS'
                                         ? 'STAFF'
                                         : 'FACILITY';
-                                    final recipientId = recipient.id == 'APS'
+                                    final recipientId = recipient == 'APS'
                                         ? context.loggedInUserUuid
-                                        : recipient.id;
+                                        : recipient;
 
                                     final event = context.read<ReferralBloc>();
                                     event.add(ReferralSubmitEvent(
@@ -482,9 +483,8 @@ class CustomReferBeneficiarySMCPageState
       //     Validators.required,
       //   ],
       // ),
-      _referredToKey: FormControl<FacilityModel>(
-        value:
-            healthFacilities.length >= 1 ? null : healthFacilities.firstOrNull,
+      _referredToKey: FormControl<String>(
+        value: healthFacilities.length >= 1 ? healthFacilities.first.id : null,
         validators: [
           Validators.required,
         ],

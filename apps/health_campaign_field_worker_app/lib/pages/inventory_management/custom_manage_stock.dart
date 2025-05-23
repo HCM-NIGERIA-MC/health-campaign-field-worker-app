@@ -235,6 +235,7 @@ class CustomManageStocksPageState
                     );
 
                     Navigator.of(context).pop();
+                    // }
                   },
                   child: Container(
                     width: double.infinity,
