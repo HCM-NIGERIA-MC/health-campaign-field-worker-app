@@ -56,14 +56,16 @@ class CustomBeneficiaryAcknowledgementPageState
       return beneficiaryId == null || beneficiaryName == null
           ? null
           : {
-              'id': i18_local.beneficiaryDetails.householdId,
+              'id': localizations
+                  .translate(i18_local.beneficiaryDetails.householdId),
               'value': '$beneficiaryName - $beneficiaryId'
             };
     }
     return beneficiaryId == null || beneficiaryName == null
         ? null
         : {
-            'id': i18_local.beneficiaryDetails.beneficiaryId,
+            'id': localizations
+                .translate(i18_local.beneficiaryDetails.beneficiaryId),
             'value': '$beneficiaryName - $beneficiaryId',
           };
   }

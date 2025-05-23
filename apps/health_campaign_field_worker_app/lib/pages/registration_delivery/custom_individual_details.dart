@@ -591,8 +591,8 @@ class CustomIndividualDetailsPageState
                             confirmText: localizations
                                 .translate(i18.common.coreCommonOk),
                             monthsHintLabel: 'Month',
-                            headAgeValidError:
-                                i18_local.individualDetails.headAgeValidError,
+                            headAgeValidError: localizations.translate(
+                                i18_local.individualDetails.headAgeValidError),
                           ),
                         ),
                         dropdown.DigitDropdown<String>(
