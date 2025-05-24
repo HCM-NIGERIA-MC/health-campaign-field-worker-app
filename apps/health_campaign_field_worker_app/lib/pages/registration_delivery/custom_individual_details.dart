@@ -478,8 +478,11 @@ class CustomIndividualDetailsPageState
                       children: [
                         Text(
                           localizations.translate(
-                            
-                            widget.isHeadOfHousehold ? i18_local.individualDetails.caregiverDetailsLabelText : i18_local.individualDetails.individualsDetailsLabelTextNewUpdate,
+                            widget.isHeadOfHousehold
+                                ? i18_local
+                                    .individualDetails.caregiverDetailsLabelText
+                                : i18_local.individualDetails
+                                    .individualsDetailsLabelTextNewUpdate,
                           ),
                           style: textTheme.headingXl.copyWith(
                             color: theme.colorTheme.text.primary,
@@ -507,7 +510,11 @@ class CustomIndividualDetailsPageState
                                 },
                                 builder: (field) => LabeledField(
                                   label: localizations.translate(
-                                    widget.isHeadOfHousehold ? i18_local.individualDetails.caregiverNameLabelText : i18_local.individualDetails.nameLabelTextNewUpdate,
+                                    widget.isHeadOfHousehold
+                                        ? i18_local.individualDetails
+                                            .caregiverNameLabelText
+                                        : i18_local.individualDetails
+                                            .nameLabelTextNewUpdate,
                                   ),
                                   isRequired: true,
                                   child: DigitTextFormInput(
@@ -536,7 +543,8 @@ class CustomIndividualDetailsPageState
                                     ? localizations.translate(i18
                                         .individualDetails.clfCheckboxLabelText)
                                     : localizations.translate(
-                                        i18_local.individualDetails.checkboxLabelTextUpdate,
+                                        i18_local.individualDetails
+                                            .checkboxLabelTextUpdate,
                                       ),
                                 value: widget.isHeadOfHousehold,
                                 readOnly: widget.isHeadOfHousehold,
@@ -574,10 +582,7 @@ class CustomIndividualDetailsPageState
                               digits.DigitDOBAge age =
                                   digits.DigitDateUtils.calculateAge(value);
                               if (widget.isHeadOfHousehold &&
-                                  (age.years < 18 ||
-                                      (age.years == 18 &&
-                                          age.months == 0 &&
-                                          age.days == 0))) {
+                                  (age.years < 18)) {
                                 formControl.setErrors({'customMinAge': true});
                               } else if ((age.years == 0 && age.months == 0) ||
                                   age.months > 11 ||
@@ -673,7 +678,6 @@ class CustomIndividualDetailsPageState
       ),
     );
   }
-
 
   IndividualModel _getIndividualModel(
     BuildContext context, {
