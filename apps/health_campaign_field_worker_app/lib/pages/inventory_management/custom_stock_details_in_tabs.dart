@@ -494,8 +494,8 @@ class _DynamicTabsPageState extends LocalizedState<DynamicTabsPage>
                         Expanded(
                           child: Text((entryType ==
                                   StockRecordEntryType.returned)
-                              ? localizations.translate(i18
-                                  .stockDetails.selectTransactingPartyReturned)
+                              ? localizations.translate(i18_local.stockDetails
+                                  .selectTransactingPartyReturnedFrom)
                               : localizations.translate(
                                   '${pageTitle}_${i18.stockReconciliationDetails.stockLabel}')),
                         ),

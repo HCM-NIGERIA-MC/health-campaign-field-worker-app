@@ -258,7 +258,8 @@ class CustomManageStocksPageState
                           ),
                           const SizedBox(width: 8),
                           Text(
-                            "Create New Transaction",
+                            localizations.translate(
+                                i18.manageStock.createNewTransactionLabel),
                             style: TextStyle(
                               fontSize: 16,
                               color: Colors.orange[800],
@@ -301,7 +302,8 @@ class CustomManageStocksPageState
                           ),
                           const SizedBox(width: 8),
                           Text(
-                            "View Created Transaction",
+                            localizations.translate(
+                                i18.manageStock.viewCreatedTransactionLabel),
                             style: TextStyle(
                               fontSize: 16,
                               color: Colors.orange[800],
@@ -366,7 +368,8 @@ class CustomManageStocksPageState
                           ),
                           const SizedBox(width: 8),
                           Text(
-                            "Create New Transaction",
+                            localizations.translate(
+                                i18.manageStock.createNewTransactionLabel),
                             style: TextStyle(
                               fontSize: 16,
                               color: Colors.orange[800],
@@ -417,7 +420,8 @@ class CustomManageStocksPageState
                           ),
                           const SizedBox(width: 8),
                           Text(
-                            "View Created Transaction",
+                            localizations.translate(
+                                i18.manageStock.viewCreatedTransactionLabel),
                             style: TextStyle(
                               fontSize: 16,
                               color: Colors.orange[800],
@@ -473,7 +477,8 @@ class CustomManageStocksPageState
                           ),
                           const SizedBox(width: 8),
                           Text(
-                            "Create New Transaction",
+                            localizations.translate(
+                                i18.manageStock.createNewTransactionLabel),
                             style: TextStyle(
                               fontSize: 16,
                               color: Colors.orange[800],
@@ -516,7 +521,8 @@ class CustomManageStocksPageState
                           ),
                           const SizedBox(width: 8),
                           Text(
-                            "View Created Transaction",
+                            localizations.translate(
+                                i18.manageStock.viewCreatedTransactionLabel),
                             style: TextStyle(
                               fontSize: 16,
                               color: Colors.orange[800],

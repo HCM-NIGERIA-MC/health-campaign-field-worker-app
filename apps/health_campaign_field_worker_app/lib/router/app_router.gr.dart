@@ -742,7 +742,6 @@ abstract class _$AppRouter extends RootStackRouter {
           appLocalizations: args.appLocalizations,
           mrnNumber: args.mrnNumber,
           stockRecords: args.stockRecords,
-          entryType: args.entryType,
         ),
       );
     },
@@ -3409,7 +3408,6 @@ class ViewStockRecordsRoute extends PageRouteInfo<ViewStockRecordsRouteArgs> {
     RegistrationDeliveryLocalization? appLocalizations,
     required String mrnNumber,
     required List<StockModel> stockRecords,
-    StockRecordEntryType entryType = StockRecordEntryType.dispatch,
     List<PageRouteInfo>? children,
   }) : super(
           ViewStockRecordsRoute.name,
@@ -3418,7 +3416,6 @@ class ViewStockRecordsRoute extends PageRouteInfo<ViewStockRecordsRouteArgs> {
             appLocalizations: appLocalizations,
             mrnNumber: mrnNumber,
             stockRecords: stockRecords,
-            entryType: entryType,
           ),
           initialChildren: children,
         );
@@ -3435,7 +3432,6 @@ class ViewStockRecordsRouteArgs {
     this.appLocalizations,
     required this.mrnNumber,
     required this.stockRecords,
-    this.entryType = StockRecordEntryType.dispatch,
   });
 
   final Key? key;
@@ -3446,11 +3442,9 @@ class ViewStockRecordsRouteArgs {
 
   final List<StockModel> stockRecords;
 
-  final StockRecordEntryType entryType;
-
   @override
   String toString() {
-    return 'ViewStockRecordsRouteArgs{key: $key, appLocalizations: $appLocalizations, mrnNumber: $mrnNumber, stockRecords: $stockRecords, entryType: $entryType}';
+    return 'ViewStockRecordsRouteArgs{key: $key, appLocalizations: $appLocalizations, mrnNumber: $mrnNumber, stockRecords: $stockRecords}';
   }
 }
 

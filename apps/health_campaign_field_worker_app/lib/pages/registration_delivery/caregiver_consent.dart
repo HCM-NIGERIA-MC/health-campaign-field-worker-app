@@ -1,3 +1,4 @@
+import 'package:digit_components/widgets/atoms/digit_toaster.dart';
 import 'package:digit_data_model/data_model.dart';
 import 'package:digit_data_model/models/entities/household_type.dart';
 import 'package:digit_ui_components/digit_components.dart';
@@ -42,7 +43,7 @@ class CaregiverConsentPage extends LocalizedStatefulWidget {
 }
 
 class CaregiverConsentPageState extends LocalizedState<CaregiverConsentPage> {
-  CaregiverConsentEnum selectedConsent = CaregiverConsentEnum.yes;
+  CaregiverConsentEnum? selectedConsent = null;
   final clickedStatus = ValueNotifier<bool>(false);
   TextEditingController consentComment = TextEditingController();
   String? commentErrorText;
@@ -118,8 +119,7 @@ class CaregiverConsentPageState extends LocalizedState<CaregiverConsentPage> {
             consentComment.text,
           ),
 
-         // AdditionalField(IdentifierTypes.uniqueBeneficiaryID.toValue(), householdid),
-
+          // AdditionalField(IdentifierTypes.uniqueBeneficiaryID.toValue(), householdid),
         ]));
 
     bloc.add(
@@ -190,6 +190,16 @@ class CaregiverConsentPageState extends LocalizedState<CaregiverConsentPage> {
                   size: DigitButtonSize.large,
                   mainAxisSize: MainAxisSize.max,
                   onPressed: () {
+                    if (selectedConsent == null) {
+                      DigitToast.show(context,
+                          options: DigitToastOptions(
+                            localizations.translate(
+                                i18_local.caregiverConsent.caregiveroption),
+                            true,
+                            theme,
+                          ));
+                      return;
+                    }
                     if (selectedConsent == CaregiverConsentEnum.yes) {
                       router.push(CustomHouseHoldDetailsRoute());
                     } else if (validateReason()) {
@@ -262,7 +272,8 @@ class CaregiverConsentPageState extends LocalizedState<CaregiverConsentPage> {
                   headingStyle: textTheme.headingXl
                       .copyWith(color: theme.colorTheme.text.primary),
                   description: "${localizations.translate(
-                    i18_local.caregiverConsent.caregiverConsentDescriptionTextSMC,
+                    i18_local
+                        .caregiverConsent.caregiverConsentDescriptionTextSMC,
                   )} *",
                   descriptionStyle: textTheme.bodyL.copyWith(
                     color: theme.colorTheme.text.primary,
@@ -287,7 +298,9 @@ class CaregiverConsentPageState extends LocalizedState<CaregiverConsentPage> {
                             ),
                           ),
                         ],
-                        groupValue: selectedConsent.name,
+                        groupValue: selectedConsent == null
+                            ? ''
+                            : selectedConsent!.name,
                         onChanged: (value) {
                           setState(() {
                             if (value.code == CaregiverConsentEnum.yes.name) {
@@ -299,7 +312,7 @@ class CaregiverConsentPageState extends LocalizedState<CaregiverConsentPage> {
                         },
                       );
                     }),
-                     if (selectedConsent == CaregiverConsentEnum.no)
+                if (selectedConsent == CaregiverConsentEnum.no)
                   LabeledField(
                     isRequired: true,
                     label: localizations.translate(
