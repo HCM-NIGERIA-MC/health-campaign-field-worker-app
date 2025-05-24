@@ -182,6 +182,9 @@ class CustomViewBeneficiaryCardState
         print(
             "The current status of SMC and VAS is $isSMCDelivered and $isVASDelivered $ageInMonths");
 
+        final isHead = e.clientReferenceId ==
+            householdMember.headOfHousehold?.clientReferenceId;
+
         final isStatusReset = checkStatus(taskData, currentCycle);
 
         final rowTableData = [
@@ -195,6 +198,9 @@ class CustomViewBeneficiaryCardState
             cellKey: 'beneficiary',
           ),
           DigitTableData(
+            isHead?localizations.translate(
+                    i18_local.householdOverView.householdOverViewHouseholderHeadLabel,
+                  ):
             getTableCellText(
               CustomStatusKeys(
                   isNotEligible,
@@ -207,7 +213,8 @@ class CustomViewBeneficiaryCardState
             ),
             cellKey: 'delivery',
             style: TextStyle(
-              color: getTableCellTextColor(
+              color: isHead
+                  ? theme.colorScheme.surfaceTint: getTableCellTextColor(
                 isNotEligible: isNotEligible,
                 taskdata: taskData,
                 isBeneficiaryRefused:
