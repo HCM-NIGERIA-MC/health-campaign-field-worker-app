@@ -64,10 +64,11 @@ class CustomMinNumberPageState extends LocalizedState<CustomMinNumberPage> {
       transactionReason = 'RETURNED';
     } else if (widget.type == StockRecordEntryType.receipt) {
       transactionType = 'RECEIVED';
+      transactionReason = 'RECEIVED';
     } else if (widget.type == StockRecordEntryType.dispatch) {
       transactionType = 'DISPATCHED';
     }
-
+    // || (widget.type == StockRecordEntryType.receipt)
     final filteredResult = result.where((stock) {
       if (transactionType == null) return false;
 

@@ -49,7 +49,7 @@ class CustomManageStocksPageState
     return Scaffold(
       body: ScrollableContent(
         header: const CustomBackNavigationHelpHeaderWidget(
-          showHelp: true,
+          showHelp: false,
         ),
         children: [
           Column(
@@ -135,7 +135,7 @@ class CustomManageStocksPageState
                                   ? Icons.settings_backup_restore
                                   : Icons.file_upload_outlined,
                               onTap: () {
-                                showStockIssueOrReturnDialog(context);
+                                showStockIssueDialog(context);
                               }),
                         ),
                       ),
@@ -146,7 +146,7 @@ class CustomManageStocksPageState
                         child: Center(
                             child: GestureDetector(
                           onTap: () {
-                            showStockIssueOrReturnDialog(context);
+                            showStockIssueDialog(context);
                           },
                           child: Icon(
                             Icons.arrow_circle_right,
@@ -319,7 +319,7 @@ class CustomManageStocksPageState
         });
   }
 
-  void showStockIssueOrReturnDialog(BuildContext context) {
+  void showStockIssueDialog(BuildContext context) {
     showDialog(
         context: context,
         builder: (context) {
@@ -329,19 +329,20 @@ class CustomManageStocksPageState
               children: [
                 GestureDetector(
                   onTap: () {
-                    if (context.isCDD) {
-                      context.router.push(
-                        RecordStockWrapperRoute(
-                          type: StockRecordEntryType.returned,
-                        ),
-                      );
-                    } else {
+                    //TODO: commented for  there is no return only dispatch
+                    // if (context.isCDD) {
+                    //   context.router.push(
+                    //     RecordStockWrapperRoute(
+                    //       type: StockRecordEntryType.returned,
+                    //     ),
+                    //   );
+                    // } else {
                       context.router.push(
                         RecordStockWrapperRoute(
                           type: StockRecordEntryType.dispatch,
                         ),
                       );
-                    }
+                    //}
                     Navigator.of(context).pop();
                   },
                   child: Container(
@@ -367,7 +368,7 @@ class CustomManageStocksPageState
                           Text(
                             "Create New Transaction",
                             style: TextStyle(
-                              fontSize: 20,
+                              fontSize: 16,
                               color: Colors.orange[800],
                               fontWeight: FontWeight.bold,
                             ),
