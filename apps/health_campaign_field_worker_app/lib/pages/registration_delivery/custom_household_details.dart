@@ -171,6 +171,7 @@ class CustomHouseHoldDetailsPageState
                               var household = householdModel;
 
                               household ??= HouseholdModel(
+                                memberCount: 1,
                                 tenantId:
                                     RegistrationDeliverySingleton().tenantId,
                                 clientReferenceId:
@@ -200,6 +201,7 @@ class CustomHouseHoldDetailsPageState
                               );
 
                               household = household.copyWith(
+                                  memberCount: 1,
                                   rowVersion: 1,
                                   tenantId:
                                       RegistrationDeliverySingleton().tenantId,
@@ -352,7 +354,8 @@ class CustomHouseHoldDetailsPageState
                                     i18.householdDetails.clfDetailsLabel,
                                   )
                                 : localizations.translate(
-                                    i18_local.householdDetails.dateOfHouseholdRegistrationLabelUpdate,
+                                    i18_local.householdDetails
+                                        .dateOfHouseholdRegistrationLabelUpdate,
                                   ),
                             headingStyle: textTheme.headingXl
                                 .copyWith(color: theme.colorTheme.text.primary),
