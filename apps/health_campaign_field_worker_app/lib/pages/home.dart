@@ -579,8 +579,7 @@ class _HomePageState extends LocalizedState<HomePage> {
         .map((label) => homeItemsShowcaseMap[label]!)
         .toList();
 
-    if ((envConfig.variables.envType == EnvType.demo && kReleaseMode) ||
-        envConfig.variables.envType == EnvType.uat) {
+    if (envConfig.variables.envType == EnvType.prod) {
       filteredLabels.remove(i18.home.db);
     }
 
@@ -606,16 +605,11 @@ class _HomePageState extends LocalizedState<HomePage> {
                     LocalRepository<HFReferralModel, HFReferralSearchModel>>(),
 
                 context.read<
-                    LocalRepository<HFReferralModel, HFReferralSearchModel>>(),
-
-                context.read<
                     LocalRepository<AttendanceLogModel,
                         AttendanceLogSearchModel>>(),
 
                 context.read<
                     LocalRepository<PgrServiceModel, PgrServiceSearchModel>>(),
-                context.read<
-                    LocalRepository<HFReferralModel, HFReferralSearchModel>>(),
 
                 context
                     .read<LocalRepository<ServiceModel, ServiceSearchModel>>(),
@@ -646,12 +640,6 @@ class _HomePageState extends LocalizedState<HomePage> {
               ],
               remoteRepositories: [
                 // INFO : Need to add repo repo of package Here
-                context.read<
-                    RemoteRepository<HFReferralModel, HFReferralSearchModel>>(),
-
-                context.read<
-                    RemoteRepository<HFReferralModel, HFReferralSearchModel>>(),
-
                 context.read<
                     RemoteRepository<AttendanceLogModel,
                         AttendanceLogSearchModel>>(),

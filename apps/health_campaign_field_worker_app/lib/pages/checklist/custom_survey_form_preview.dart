@@ -198,13 +198,22 @@ class CustomSurveyFormPreviewPageState
                                                         localizations.translate(
                                                       "${item2?.code ?? ''}.${e.attributeCode!}",
                                                     ),
-                                                    value: e.dataType ==
-                                                            'SingleValueList'
-                                                        ? localizations
-                                                            .translate(
-                                                            '${item2?.code ?? ''}.${e.value.toString().toUpperCase()}',
-                                                          )
-                                                        : e.value ?? "",
+                                                    value: e.value != null &&
+                                                            e.dataType ==
+                                                                'MultiValueList'
+                                                        ? getMultiValueString(e
+                                                            .value
+                                                            .toString()
+                                                            .split('.'))
+                                                        : e.dataType ==
+                                                                'SingleValueList'
+                                                            ? localizations
+                                                                .translate(
+                                                                e.value
+                                                                    .toString()
+                                                                    .toUpperCase(),
+                                                              )
+                                                            : e.value ?? "",
                                                     isInline: false,
                                                   ),
                                                   if (e.additionalDetails !=
@@ -242,5 +251,16 @@ class CustomSurveyFormPreviewPageState
         ],
       ),
     );
+  }
+
+  String getMultiValueString(List<String> list) {
+    String multiValueText = '';
+
+    for (var i = 0; i < list.length; i++) {
+      multiValueText =
+          '$multiValueText${localizations.translate(list[i].toUpperCase())},';
+    }
+
+    return multiValueText.substring(0, multiValueText.length - 1);
   }
 }
