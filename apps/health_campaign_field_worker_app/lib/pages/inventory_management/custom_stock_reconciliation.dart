@@ -422,6 +422,26 @@ class CustomStockReconciliationPageState
                                                       .productLabel,
                                                 ),
                                                 child: DigitDropdown(
+                                                  selectedOption: (form
+                                                              .control(
+                                                                  _productVariantKey)
+                                                              .value !=
+                                                          null)
+                                                      ? DropdownItem(
+                                                          name: localizations.translate((form
+                                                                          .control(
+                                                                              _productVariantKey)
+                                                                          .value
+                                                                      as ProductVariantModel)
+                                                                  .sku ??
+                                                              (form.control(_productVariantKey).value
+                                                                      as ProductVariantModel)
+                                                                  .id),
+                                                          code: (form.control(_productVariantKey).value
+                                                                  as ProductVariantModel)
+                                                              .id)
+                                                      : const DropdownItem(
+                                                          name: '', code: ''),
                                                   emptyItemText:
                                                       localizations.translate(
                                                     i18.common.noMatchFound,
