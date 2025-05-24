@@ -208,6 +208,17 @@ class DeliverIntervention {
       'DELIVER_INTERVENTION_REDOSE_QUANTITY_LABEL';
   String get dose => 'DELIVER_INTERVENTION_DOSE';
 
+  String get doseCompletionChecksText1 =>
+      'DELIVER_INTERVENTION_DOSE_COMPLETION_CHECKS_TEXT1';
+  String get doseCompletionChecksText2 =>
+      'DELIVER_INTERVENTION_DOSE_COMPLETION_CHECKS_TEXT2';
+  String get doseCompletionChecksText3 =>
+      'DELIVER_INTERVENTION_DOSE_COMPLETION_CHECKS_TEXT3';
+  String get doseCompletionChecksText4 =>
+      'DELIVER_INTERVENTION_DOSE_COMPLETION_CHECKS_TEXT4';
+  String get doseCompletionChecksText5 =>
+      'DELIVER_INTERVENTION_DOSE_COMPLETION_CHECKS_TEXT5';
+
   String get quantityAdministratedLabel => 'QUANTITY_ADMINISTRATED_LABEL';
 
   String get selectTheResourceDeliveredLabel =>
@@ -317,6 +328,10 @@ class HouseholdDetails {
   String get addBeneficiartText => 'ADD_BENEFICIARY_TEXT';
 
   String get householdDetailsLabel => 'HOUSEHOLD_DETAILS_LABEL';
+
+  String get dateOfHouseholdRegistrationLabelUpdate =>
+      'DATE_OF_HOUSEHOLD_REGISTRATION_LABEL';
+
   String get actionLabel => 'HOUSEHOLD_ACTION_LABEL';
   String get dateOfRegistrationLabel =>
       'HOUSEHOLD_DETAILS_DATE_OF_REGISTRATION_LABEL';
@@ -692,6 +707,8 @@ class CaregiverConsent {
 
   String get caregiverConsentActionLabelText =>
       'CARE_GIVER_CONSENT_ACTION_LABEL_TEXT';
+
+  String get caregiverConsentReason => 'CARE_GIVER_CONSENT_REASON_FOR_NO';
 }
 
 class ComplaintsDetailsShowcase {
@@ -877,6 +894,9 @@ class Home {
 
 class AcknowledgementSuccess {
   const AcknowledgementSuccess();
+
+  String get acknowledgementSuccessUpdateLabelText =>
+      "ACKNOWLEDGEMENT_SUCCESS_UPDATE_LABEL_TEXT";
 
   String get mrrnNumberDescription => "MRRN_NUMBER_DESCRIPTION";
 
@@ -1236,13 +1256,20 @@ class IndividualDetails {
   const IndividualDetails();
 
   String get headAgeValidError => "INDIVIDUAL_HEAD_MIN_AGE_VALIDATION_MESSAGE";
+  String get individualDetailsLabelTextUpdate =>
+      'INDIVIDUAL_DETAILS_LABEL_TEXT_UPDATE';
+  String get individualDetailsNameLabelTextUpdate =>
+      'INDIVIDUAL_DETAILS_NAME_LABEL_TEXT_UPDATE';
+  String get individualsDetailsLabelTextNewUpdate =>
+      'INDIVIDUALS_DETAILS_LABEL_TEXT_NEW_UPDATE';
+  String get nameLabelTextNewUpdate => 'NAME_LABEL_TEXT_NEW_UPDATE';
+  String get landmarkValidationMessage =>
+      'INDIVIDUAL_DETAILS_LANDMARK_VALIDATION_MESSAGE';
 
   String get onlyAlphabetsValidationMessage =>
       'INDIVIDUAL_DETAILS_ONLY_ALPHABETS_VALIDATION_MESSAGE';
   String get mobileNumberLengthValidationMessageSMC =>
       'INDIVIDUAL_DETAILS_MOBILE_NUMBER_LENGTH_SMC';
-  String get landmarkValidationMessage =>
-      'INDIVIDUAL_DETAILS_LANDMARK_VALIDATION_MESSAGE';
 
   // String get onlyAlphabetsValidationMessage =>
   //     'INDIVIDUAL_DETAILS_ONLY_ALPHABETS_VALIDATION_MESSAGE';
@@ -1250,9 +1277,15 @@ class IndividualDetails {
 
   String get individualsDetailsLabelText => 'INDIVIDUAL_LABEL_TEXT';
 
+  String get caregiverDetailsLabelText => 'CAREGIVER_LABEL_TEXT';
+
   String get nameLabelText => 'INDIVIDUAL_NAME_LABEL_TEXT';
 
+  String get caregiverNameLabelText => 'CAREGIVER_NAME_LABEL_TEXT';
+
   String get checkboxLabelText => 'HEAD_OF_HOUSEHOLD_LABEL_TEXT';
+
+  String get checkboxLabelTextUpdate => "HEAD_OF_HOUSEHOLD_CHECKBOX_LABEL_TEXT";
 
   String get idTypeLabelText => 'ID_TYPE_LABEL_TEXT';
 

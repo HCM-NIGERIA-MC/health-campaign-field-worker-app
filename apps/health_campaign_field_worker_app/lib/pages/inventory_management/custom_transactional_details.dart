@@ -814,7 +814,7 @@ class CustomTransactionalDetailsPageState
                                                 return DropdownItem(
                                                   name: localizations.translate(
                                                     variant.sku ?? variant.id,
-                                                  ),
+                                                  ).toUpperCase(),
                                                   code: variant.id,
                                                 );
                                               }).toList(),
@@ -832,7 +832,7 @@ class CustomTransactionalDetailsPageState
                                                               .sku ??
                                                           (form.control(_productVariantKey).value
                                                                   as ProductVariantModel)
-                                                              .id),
+                                                              .id).toUpperCase(),
                                                       code: (form.control(_productVariantKey).value
                                                               as ProductVariantModel)
                                                           .id)

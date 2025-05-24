@@ -72,6 +72,10 @@ class _DynamicTabsPageState extends LocalizedState<DynamicTabsPage>
   static const _typeOfTransportKey = 'typeOfTransport';
   static const _commentsKey = 'comments';
   static const _deliveryTeamKey = 'deliveryTeam';
+  static const _unusedBlistersReturnedKey = 'unusedBlistersReturned';
+  static const _partiallyUsedBlistersReturnedKey =
+      'partiallyUsedBlistersReturned';
+  static const _wastedBlistersReturnedKey = 'wastedBlistersReturned';
   List<InventoryTransportTypes> transportTypes = [];
 
   @override
@@ -123,41 +127,94 @@ class _DynamicTabsPageState extends LocalizedState<DynamicTabsPage>
   }
 
   void _initializeForms() {
+    final state = context.read<RecordStockBloc>().state;
+    StockRecordEntryType entryType = state.entryType;
+
     final selectedProducts =
         products.map((variant) => variant.sku).whereType<String>().toList();
 
     _forms.addAll({
       for (final product in selectedProducts)
-        product: FormGroup({
-          'materialNoteNumber': FormControl<String>(value: _sharedMRN),
-          _transactionReasonKey: FormControl<String>(),
-          _waybillNumberKey: FormControl<String>(
-            validators: InventorySingleton().isWareHouseMgr
-                ? [
-                    Validators.minLength(2),
-                    Validators.maxLength(200),
-                    Validators.required
-                  ]
-                : [],
-          ),
-          _transactionQuantityKey: FormControl<int>(
+        product: FormGroup(
+          {
+            'materialNoteNumber': FormControl<String>(value: _sharedMRN),
+            _transactionReasonKey: FormControl<String>(),
+            _waybillNumberKey: FormControl<String>(
               validators: InventorySingleton().isWareHouseMgr
                   ? [
-                      Validators.number(),
-                      Validators.required,
-                      Validators.min(0),
+                      Validators.minLength(2),
+                      Validators.maxLength(200),
+                      Validators.required
                     ]
-                  : [
-                      Validators.number(),
-                      Validators.required,
-                      Validators.min(0),
-                      Validators.max(10000),
-                    ]),
-          // _waybillQuantityKey:
-          //     FormControl<String>(validators: [Validators.required]),
-          _batchNumberKey: FormControl<String>(),
-          _commentsKey: FormControl<String>(),
-        }),
+                  : [],
+            ),
+            _transactionQuantityKey: FormControl<int>(
+                validators: InventorySingleton().isWareHouseMgr
+                    ? [
+                        Validators.number(),
+                        Validators.required,
+                        Validators.min(0),
+                      ]
+                    : [
+                        Validators.number(),
+                        Validators.required,
+                        Validators.min(0),
+                        Validators.max(10000),
+                      ]),
+            // _waybillQuantityKey:
+            //     FormControl<String>(validators: [Validators.required]),
+            _batchNumberKey: FormControl<String>(),
+            _commentsKey: FormControl<String>(),
+
+            if (context.read<RecordStockBloc>().state.entryType ==
+                StockRecordEntryType.returned) ...{
+              _unusedBlistersReturnedKey: FormControl<int>(
+                  validators: InventorySingleton().isWareHouseMgr
+                      ? [
+                          Validators.number(),
+                          Validators.required,
+                          Validators.min(0),
+                        ]
+                      : [
+                          Validators.number(),
+                          Validators.required,
+                          Validators.min(0),
+                          Validators.max(10000),
+                        ]),
+              _partiallyUsedBlistersReturnedKey: FormControl<int>(
+                  validators: InventorySingleton().isWareHouseMgr
+                      ? [
+                          Validators.number(),
+                          Validators.required,
+                          Validators.min(0),
+                        ]
+                      : [
+                          Validators.number(),
+                          Validators.required,
+                          Validators.min(0),
+                          Validators.max(10000),
+                        ]),
+              _wastedBlistersReturnedKey: FormControl<int>(
+                  validators: InventorySingleton().isWareHouseMgr
+                      ? [
+                          Validators.number(),
+                          Validators.required,
+                          Validators.min(0),
+                        ]
+                      : [
+                          Validators.number(),
+                          Validators.required,
+                          Validators.min(0),
+                          Validators.max(10000),
+                        ]),
+            }
+            else ...{
+              _unusedBlistersReturnedKey: FormControl<int>(),
+              _partiallyUsedBlistersReturnedKey: FormControl<int>(),
+              _wastedBlistersReturnedKey: FormControl<int>(),
+            }
+          },
+        ),
     });
   }
 
@@ -249,7 +306,7 @@ class _DynamicTabsPageState extends LocalizedState<DynamicTabsPage>
               ?.toString() ??
           '0',
       wayBillNumber:
-          _forms[productSku]?.control(_waybillNumberKey)?.value?.toString(),
+          _forms[productSku]!.control(_waybillNumberKey).value?.toString(),
       transactionReason: transactionReason ??
           _forms[productSku]?.control(_transactionReasonKey)?.value?.toString(),
       clientReferenceId: IdGen.i.identifier,
@@ -514,52 +571,183 @@ class _DynamicTabsPageState extends LocalizedState<DynamicTabsPage>
                             );
                           }),
                     const SizedBox(height: 16),
-                    ReactiveWrapperField(
-                        formControlName: _transactionQuantityKey,
-                        validationMessages: {
-                          "number": (object) => localizations.translate(
-                                '${quantityCountLabel}_ERROR',
+                    // if (entryType == StockRecordEntryType.returned) ...[
+                    Offstage(
+                      offstage: entryType != StockRecordEntryType.returned,
+                      child: Column(
+                        children: [
+                          ReactiveWrapperField(
+                            formControlName: _unusedBlistersReturnedKey,
+                            validationMessages: {
+                              "number": (object) => localizations.translate(
+                                    '${quantityCountLabel}_ERROR',
+                                  ),
+                              "max": (object) => localizations.translate(
+                                    '${quantityCountLabel}_MAX_ERROR',
+                                  ),
+                              "min": (object) => localizations.translate(
+                                    '${quantityCountLabel}_MIN_ERROR',
+                                  ),
+                            },
+                            showErrors: (control) =>
+                                control.invalid && control.touched,
+                            builder: (field) {
+                              return LabeledField(
+                                label: "Quantity of Unused Blister’s returned",
+                                isRequired: true,
+                                child: BaseDigitFormInput(
+                                  errorMessage: field.errorText,
+                                  keyboardType:
+                                      const TextInputType.numberWithOptions(
+                                          decimal: false),
+                                  onChange: (val) {
+                                    field.control.markAsTouched();
+                                    if (int.parse(val) > 10000000000) {
+                                      field.control.value = 10000;
+                                    } else {
+                                      if (val != '') {
+                                        field.control.value = int.parse(val);
+                                      } else {
+                                        field.control.value = null;
+                                      }
+                                    }
+                                  },
+                                ),
+                              );
+                            },
+                          ),
+                          const SizedBox(height: 16),
+                          ReactiveWrapperField(
+                            formControlName: _partiallyUsedBlistersReturnedKey,
+                            validationMessages: {
+                              "number": (object) => localizations.translate(
+                                    '${quantityCountLabel}_ERROR',
+                                  ),
+                              "max": (object) => localizations.translate(
+                                    '${quantityCountLabel}_MAX_ERROR',
+                                  ),
+                              "min": (object) => localizations.translate(
+                                    '${quantityCountLabel}_MIN_ERROR',
+                                  ),
+                            },
+                            showErrors: (control) =>
+                                control.invalid && control.touched,
+                            builder: (field) {
+                              return LabeledField(
+                                label:
+                                    "Quantity of Partially Used Blister’s returned",
+                                isRequired: true,
+                                child: BaseDigitFormInput(
+                                  errorMessage: field.errorText,
+                                  keyboardType:
+                                      const TextInputType.numberWithOptions(
+                                          decimal: false),
+                                  onChange: (val) {
+                                    field.control.markAsTouched();
+                                    if (int.parse(val) > 10000000000) {
+                                      field.control.value = 10000;
+                                    } else {
+                                      if (val != '') {
+                                        field.control.value = int.parse(val);
+                                      } else {
+                                        field.control.value = null;
+                                      }
+                                    }
+                                  },
+                                ),
+                              );
+                            },
+                          ),
+                          const SizedBox(height: 16),
+                          ReactiveWrapperField(
+                            formControlName: _wastedBlistersReturnedKey,
+                            validationMessages: {
+                              "number": (object) => localizations.translate(
+                                    '${quantityCountLabel}_ERROR',
+                                  ),
+                              "max": (object) => localizations.translate(
+                                    '${quantityCountLabel}_MAX_ERROR',
+                                  ),
+                              "min": (object) => localizations.translate(
+                                    '${quantityCountLabel}_MIN_ERROR',
+                                  ),
+                            },
+                            showErrors: (control) =>
+                                control.invalid && control.touched,
+                            builder: (field) {
+                              return LabeledField(
+                                label: "Quantity of Wasted Blister’s returned",
+                                isRequired: true,
+                                child: BaseDigitFormInput(
+                                  errorMessage: field.errorText,
+                                  keyboardType:
+                                      const TextInputType.numberWithOptions(
+                                          decimal: false),
+                                  onChange: (val) {
+                                    field.control.markAsTouched();
+                                    if (int.parse(val) > 10000000000) {
+                                      field.control.value = 10000;
+                                    } else {
+                                      if (val != '') {
+                                        field.control.value = int.parse(val);
+                                      } else {
+                                        field.control.value = null;
+                                      }
+                                    }
+                                  },
+                                ),
+                              );
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    Offstage(
+                      offstage: entryType == StockRecordEntryType.returned,
+                      child: ReactiveWrapperField(
+                          formControlName: _transactionQuantityKey,
+                          validationMessages: {
+                            "number": (object) => localizations.translate(
+                                  '${quantityCountLabel}_ERROR',
+                                ),
+                            "max": (object) => localizations.translate(
+                                  '${quantityCountLabel}_MAX_ERROR',
+                                ),
+                            "min": (object) => localizations.translate(
+                                  '${quantityCountLabel}_MIN_ERROR',
+                                ),
+                          },
+                          showErrors: (control) =>
+                              control.invalid && control.touched,
+                          builder: (field) {
+                            return LabeledField(
+                              label: localizations.translate(
+                                quantityCountLabel,
                               ),
-                          "max": (object) => localizations.translate(
-                                '${quantityCountLabel}_MAX_ERROR',
-                              ),
-                          "min": (object) => localizations.translate(
-                                '${quantityCountLabel}_MIN_ERROR',
-                              ),
-                        },
-                        showErrors: (control) =>
-                            control.invalid && control.touched,
-                        builder: (field) {
-                          return LabeledField(
-                            label: localizations.translate(
-                              quantityCountLabel,
-                            ),
-                            isRequired: true,
-                            child: BaseDigitFormInput(
-                              errorMessage: field.errorText,
-                              keyboardType:
-                                  const TextInputType.numberWithOptions(
-                                decimal: true,
-                              ),
-                              onChange: (val) {
-                                field.control.markAsTouched();
-                                if (val == "") {
-                                  field.control.value = null;
-                                  return;
-                                }
-                                if (int.parse(val) > 10000000000) {
-                                  field.control.value = 10000;
-                                } else {
-                                  if (val != '') {
-                                    field.control.value = int.parse(val);
+                              isRequired: true,
+                              child: BaseDigitFormInput(
+                                errorMessage: field.errorText,
+                                keyboardType:
+                                    const TextInputType.numberWithOptions(
+                                  decimal: true,
+                                ),
+                                onChange: (val) {
+                                  field.control.markAsTouched();
+                                  if (int.parse(val) > 10000000000) {
+                                    field.control.value = 10000;
                                   } else {
-                                    field.control.value = null;
+                                    if (val != '') {
+                                      field.control.value = int.parse(val);
+                                    } else {
+                                      field.control.value = null;
+                                    }
                                   }
-                                }
-                              },
-                            ),
-                          );
-                        }),
+                                },
+                              ),
+                            );
+                          }),
+                    ),
                     // ReactiveWrapperField(
                     //   formControlName: _waybillQuantityKey,
                     //   builder: (field) {
@@ -578,6 +766,8 @@ class _DynamicTabsPageState extends LocalizedState<DynamicTabsPage>
                     //     );
                     //   },
                     // ),
+
+                    // ],
                     const SizedBox(height: 16),
                     ReactiveWrapperField(
                       formControlName: _commentsKey,
@@ -604,6 +794,28 @@ class _DynamicTabsPageState extends LocalizedState<DynamicTabsPage>
                   size: DigitButtonSize.large,
                   type: DigitButtonType.primary,
                   onPressed: () async {
+                    if (entryType == StockRecordEntryType.returned) {
+                      if (form.control(_unusedBlistersReturnedKey).value !=
+                              null &&
+                          form
+                                  .control(_partiallyUsedBlistersReturnedKey)
+                                  .value !=
+                              null &&
+                          form.control(_wastedBlistersReturnedKey).value !=
+                              null) {
+                        form.control(_transactionQuantityKey).value =
+                            form.control(_unusedBlistersReturnedKey).value +
+                                form
+                                    .control(_partiallyUsedBlistersReturnedKey)
+                                    .value +
+                                form.control(_wastedBlistersReturnedKey).value;
+                        if(form.control(_transactionQuantityKey).value == 0) {
+                          await DigitToast.show(context ,options: DigitToastOptions("Sum of the total quantity returned must be greater than 0", true, theme));
+                          return;
+                        }
+                        form.markAllAsTouched();
+                      }
+                    }
                     if (form.valid) {
                       bool isValid =
                           await _saveCurrentTabData(productName, entryType);
@@ -673,6 +885,26 @@ class _DynamicTabsPageState extends LocalizedState<DynamicTabsPage>
       additionalFields: currentStock.additionalFields?.copyWith(
         fields: [
           ...(currentStock.additionalFields?.fields ?? []),
+          if (entryType == StockRecordEntryType.returned) ...[
+            AdditionalField(
+                'unusedBlistersReturned',
+                _forms[productName]
+                    ?.control(_unusedBlistersReturnedKey)
+                    ?.value
+                    ?.toString()),
+            AdditionalField(
+                'partiallyUsedBlistersReturned',
+                _forms[productName]
+                    ?.control(_partiallyUsedBlistersReturnedKey)
+                    ?.value
+                    ?.toString()),
+            AdditionalField(
+                'wastedBlistersReturned',
+                _forms[productName]
+                    ?.control(_wastedBlistersReturnedKey)
+                    ?.value
+                    ?.toString()),
+          ],
           if (form.control(_batchNumberKey).value != null) ...[
             AdditionalField('batchNumber', form.control(_batchNumberKey).value),
           ] else if ((_forms[productName]?.value)?["batchNumberKey"] !=
@@ -862,7 +1094,18 @@ class _DynamicTabsPageState extends LocalizedState<DynamicTabsPage>
 
   Future<void> _handleFinalSubmission(
       BuildContext context, StockRecordEntryType entryType) async {
+    final theme = Theme.of(context);
     final lastProduct = products.last.sku ?? '';
+
+    for (StockModel stock in _tabStocks.values) {
+      String productName = stock.additionalFields?.fields
+          .firstWhereOrNull((element) => element.key == 'productName')
+          ?.value;
+      bool valid = await _saveCurrentTabData(productName, entryType);
+      if (!valid) {
+        return;
+      }
+    }
 
     final submit = await showCustomPopup(
       context: context,
@@ -910,13 +1153,6 @@ class _DynamicTabsPageState extends LocalizedState<DynamicTabsPage>
     ) as bool;
 
     if (submit && context.mounted) {
-      for (StockModel stock in _tabStocks.values) {
-        String productName = stock.additionalFields?.fields
-            .firstWhereOrNull((element) => element.key == 'productName')
-            ?.value;
-        await _saveCurrentTabData(productName, entryType);
-      }
-
       int spaq1Count = 0;
       int spaq2Count = 0;
 

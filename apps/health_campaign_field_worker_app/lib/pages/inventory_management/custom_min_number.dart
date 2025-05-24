@@ -36,8 +36,9 @@ class CustomMinNumberPage extends LocalizedStatefulWidget {
 }
 
 class CustomMinNumberPageState extends LocalizedState<CustomMinNumberPage> {
-  int? pressedIndex;
   List<StockModel> stockList = [];
+  String? selectedMRN;
+  List<StockModel> selectedStockList = [];
 
   @override
   void initState() {
@@ -70,14 +71,18 @@ class CustomMinNumberPageState extends LocalizedState<CustomMinNumberPage> {
     final filteredResult = result.where((stock) {
       if (transactionType == null) return false;
 
-      if ((widget.type == StockRecordEntryType.dispatch) ||
-          (widget.type == StockRecordEntryType.receipt)) {
+      if ((widget.type == StockRecordEntryType.dispatch)) {
         return stock.transactionType == transactionType;
+      } else if (widget.type == StockRecordEntryType.receipt) {
+        return stock.transactionType == transactionType &&
+            stock.transactionReason != 'RETURNED';
       } else {
         return stock.transactionType == transactionType &&
             stock.transactionReason == transactionReason;
       }
     }).toList();
+
+    filteredResult.reversed.toList();
 
     Logger().i("Filtered Stock Count: ${filteredResult.length}");
     Logger().i(
@@ -132,7 +137,23 @@ class CustomMinNumberPageState extends LocalizedState<CustomMinNumberPage> {
                   label: localizations.translate(
                     i18.householdDetails.actionLabel,
                   ),
-                  onPressed: () {},
+                  onPressed: () {
+                    if (selectedMRN != null && selectedStockList.isNotEmpty) {
+                      context.router.push(
+                        ViewStockRecordsRoute(
+                          mrnNumber: selectedMRN!,
+                          stockRecords: selectedStockList,
+                        ),
+                      );
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text("Please select a record"),
+                          duration: Duration(seconds: 1),
+                        ),
+                      );
+                    }
+                  },
                 ),
               ],
             ),
@@ -169,81 +190,63 @@ class CustomMinNumberPageState extends LocalizedState<CustomMinNumberPage> {
                                       .add(condenseStockObject(stockModel));
                                 }
                                 final stocks = groupedEntries[index].value;
+                                final isSelected = selectedMRN == mrn;
                                 final jsonStr = jsonEncode(finalStocks);
 
                                 final compressed =
                                     zlib.encode(utf8.encode(jsonStr));
                                 final encoded = base64Url.encode(compressed);
-                                return Material(
-                                  color: pressedIndex == index
-                                      ? Colors.orange[300]
-                                      : Colors.white,
-                                  borderRadius: BorderRadius.circular(8),
-                                  child: InkWell(
+                              return Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: GestureDetector(
                                     onTap: () {
-                                      context.router.push(
-                                        ViewStockRecordsRoute(
-                                          mrnNumber: mrn,
-                                          stockRecords: stocks,
-                                        ),
-                                      );
+                                      
+                                      setState(() {
+                                        if (selectedMRN == mrn) {
+                                          selectedMRN = null;
+                                          selectedStockList = [];
+                                        } else {
+                                          selectedMRN = mrn;
+                                          selectedStockList = stocks;
+                                        }
+                                      });
                                     },
-                                    onTapDown: (_) =>
-                                        setState(() => pressedIndex = index),
-                                    onTapUp: (_) =>
-                                        setState(() => pressedIndex = null),
-                                    onTapCancel: () =>
-                                        setState(() => pressedIndex = null),
-                                    borderRadius: BorderRadius.circular(8),
-                                    customBorder: const RoundedRectangleBorder(
-                                      side: BorderSide(
-                                        color: Colors.grey,
-                                        width: 1,
-                                      ),
-                                    ),
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: MinNumberCard(
-                                        backgroundColor: pressedIndex == index
-                                            ? Colors.orange[300]
-                                            : Colors.grey[200],
-                                        data: encoded,
-                                        minNumber: mrn,
-                                        cddCode: InventorySingleton()
-                                                .loggedInUser
-                                                ?.name ??
-                                            stocks.first.senderId ??
-                                            "",
-                                        date: formatDateFromMillis(stocks.first
-                                                .auditDetails?.createdTime ??
-                                            0),
-                                        items: stocks.map((s) {
-                                          final name = (s
-                                                      .additionalFields?.fields
-                                                      .firstWhere(
-                                                          (f) =>
-                                                              f.key ==
-                                                              'productName',
-                                                          orElse: () =>
-                                                              const AdditionalField(
-                                                                  '', ''))
-                                                      .value ??
-                                                  'N/A')
-                                              .toString();
+                                    child: MinNumberCard(
+                                      data: encoded,
+                                      minNumber: mrn,
+                                      cddCode: InventorySingleton()
+                                              .loggedInUser
+                                              ?.name ??
+                                          stocks.first.senderId ??
+                                          "",
+                                      date: formatDateFromMillis(stocks.first
+                                              .auditDetails?.createdTime ??
+                                          0),
+                                      items: stocks.map((s) {
+                                        final name = (s.additionalFields?.fields
+                                                    .firstWhere(
+                                                        (f) =>
+                                                            f.key ==
+                                                            'productName',
+                                                        orElse: () =>
+                                                            const AdditionalField(
+                                                                '', ''))
+                                                    .value ??
+                                                'N/A')
+                                            .toString();
+                                        final quantity =
+                                            (s.quantity ?? 0).toString();
+                                        return {
+                                          'name': name,
+                                          'quantity': quantity,
+                                        };
+                                      }).toList(),
+                                      waybillNumber: InventorySingleton()
+                                              .isDistributor
+                                          ? null
+                                          : stocks.first.wayBillNumber ?? "",
+                                      isSelected: isSelected,
 
-                                          final quantity =
-                                              (s.quantity ?? 0).toString();
-
-                                          return {
-                                            'name': name,
-                                            'quantity': quantity,
-                                          };
-                                        }).toList(),
-                                        waybillNumber: InventorySingleton()
-                                                .isDistributor
-                                            ? null
-                                            : stocks.first.wayBillNumber ?? "",
-                                      ),
                                     ),
                                   ),
                                 );

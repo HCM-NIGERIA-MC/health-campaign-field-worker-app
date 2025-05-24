@@ -641,11 +641,11 @@ class _HomePageState extends LocalizedState<HomePage> {
               remoteRepositories: [
                 // INFO : Need to add repo repo of package Here
                 context.read<
-                    RemoteRepository<AttendanceLogModel,
-                        AttendanceLogSearchModel>>(),
+                    RemoteRepository<HFReferralModel, HFReferralSearchModel>>(),
 
                 context.read<
-                    RemoteRepository<HFReferralModel, HFReferralSearchModel>>(),
+                    RemoteRepository<AttendanceLogModel,
+                        AttendanceLogSearchModel>>(),
 
                 context.read<
                     RemoteRepository<HouseholdModel, HouseholdSearchModel>>(),

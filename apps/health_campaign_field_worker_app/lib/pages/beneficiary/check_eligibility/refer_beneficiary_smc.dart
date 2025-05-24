@@ -10,11 +10,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 // import 'package:health_campaign_field_worker_app/pages/pages-SMC/beneficiary/custom_facility_selection_smc.dart';
 import 'package:reactive_forms/reactive_forms.dart';
+import 'package:referral_reconciliation/referral_reconciliation.dart';
 import 'package:registration_delivery/models/entities/referral.dart';
 import 'package:registration_delivery/models/entities/status.dart';
 import 'package:registration_delivery/models/entities/task.dart';
 import 'package:registration_delivery/pages/beneficiary/facility_selection.dart';
 import 'package:registration_delivery/router/registration_delivery_router.gm.dart';
+import 'package:registration_delivery/utils/utils.dart';
 import 'package:registration_delivery/widgets/inventory/no_facilities_assigned_dialog.dart';
 
 import '../../../utils/app_enums.dart';
@@ -241,11 +243,7 @@ class CustomReferBeneficiarySMCPageState
                                               referralReasons,
                                               reasons.join(","),
                                             ),
-                                            // if (referralCodeValue != null)
-                                            //   AdditionalField(
-                                            //     _referralCode,
-                                            //     referralCodeValue,
-                                            //   )
+                                            const AdditionalField('referralType', 'smcReferred')
                                           ],
                                         ),
                                       ),

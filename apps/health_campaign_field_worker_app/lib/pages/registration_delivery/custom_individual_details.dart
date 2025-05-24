@@ -478,7 +478,8 @@ class CustomIndividualDetailsPageState
                       children: [
                         Text(
                           localizations.translate(
-                            i18.individualDetails.individualsDetailsLabelText,
+                            
+                            widget.isHeadOfHousehold ? i18_local.individualDetails.caregiverDetailsLabelText : i18_local.individualDetails.individualsDetailsLabelTextNewUpdate,
                           ),
                           style: textTheme.headingXl.copyWith(
                             color: theme.colorTheme.text.primary,
@@ -493,7 +494,7 @@ class CustomIndividualDetailsPageState
                                 validationMessages: {
                                   'required': (object) =>
                                       localizations.translate(
-                                        '${i18.individualDetails.nameLabelText}_IS_REQUIRED',
+                                        '${widget.isHeadOfHousehold ? i18_local.individualDetails.caregiverNameLabelText : i18.individualDetails.nameLabelText}_IS_REQUIRED',
                                       ),
                                   'maxLength': (object) => localizations
                                       .translate(i18.common.maxCharsRequired)
@@ -506,7 +507,7 @@ class CustomIndividualDetailsPageState
                                 },
                                 builder: (field) => LabeledField(
                                   label: localizations.translate(
-                                    i18.individualDetails.nameLabelText,
+                                    widget.isHeadOfHousehold ? i18_local.individualDetails.caregiverNameLabelText : i18_local.individualDetails.nameLabelTextNewUpdate,
                                   ),
                                   isRequired: true,
                                   child: DigitTextFormInput(
@@ -535,7 +536,7 @@ class CustomIndividualDetailsPageState
                                     ? localizations.translate(i18
                                         .individualDetails.clfCheckboxLabelText)
                                     : localizations.translate(
-                                        i18.individualDetails.checkboxLabelText,
+                                        i18_local.individualDetails.checkboxLabelTextUpdate,
                                       ),
                                 value: widget.isHeadOfHousehold,
                                 readOnly: widget.isHeadOfHousehold,
@@ -672,6 +673,7 @@ class CustomIndividualDetailsPageState
       ),
     );
   }
+
 
   IndividualModel _getIndividualModel(
     BuildContext context, {

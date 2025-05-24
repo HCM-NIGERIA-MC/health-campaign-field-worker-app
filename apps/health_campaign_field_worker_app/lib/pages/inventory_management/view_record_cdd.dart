@@ -119,6 +119,7 @@ class _ViewStockRecordsCDDPageState
               field.key != 'quantityReceived' && field.key != 'comments'),
           AdditionalField('quantityReceived',
               form.control('quantityReceived').value.toString()),
+          AdditionalField('quantitySent', stock.quantity ?? ''),
           if (form.control('comments').value != null)
             AdditionalField('comments', form.control('comments').value),
           AdditionalField('received', 'true'),
