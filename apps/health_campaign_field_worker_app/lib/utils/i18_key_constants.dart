@@ -445,6 +445,10 @@ class HomeShowcase {
 class StockDetails {
   const StockDetails();
 
+//TODO:
+  String get quantityCapsulePartialReturnedLabel => "";
+  String get quantityCapsulePartialWastedLabel => "";
+
   String get reconciliationCommentRequired => 'RECONCILIATION_COMMENT_REQUIRED';
 
   String get cddCodeLabel => 'CDD_CODE_LABEL';
