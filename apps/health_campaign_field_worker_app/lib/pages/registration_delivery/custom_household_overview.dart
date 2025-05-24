@@ -543,13 +543,13 @@ class _CustomHouseholdOverviewPageState
                                                           .locality
                                                           ?.code ??
                                                       i18.common.coreCommonNA),
-                                                  localizations.translate(
-                                                    i18.deliverIntervention
-                                                        .memberCountText,
-                                                  ): state
-                                                      .householdMemberWrapper
-                                                      .household
-                                                      ?.memberCount,
+                                                  // localizations.translate(
+                                                  //   i18.deliverIntervention
+                                                  //       .memberCountText,
+                                                  // ): state
+                                                  // .householdMemberWrapper
+                                                  // .household
+                                                  // ?.memberCount,
                                                   if (shouldShowStatus)
                                                     localizations.translate(i18
                                                             .beneficiaryDetails
@@ -1120,8 +1120,7 @@ class _CustomHouseholdOverviewPageState
                                       //       "\n ${localizations.translate(i18_local.beneficiaryDetails.redVasZeroQuantity)}";
                                       // }
 
-                                      if (context.spaq1 > 0 ||
-                                          context.spaq2 > 0 
+                                      if (context.spaq1 > 0 || context.spaq2 > 0
                                           //TODO: comment for VAS
                                           // ||
                                           // context.blueVas > 0 ||
@@ -1166,9 +1165,8 @@ class _CustomHouseholdOverviewPageState
                                         );
                                       }
                                     },
-                                    label: localizations.translate(
-                                      i18_local.householdDetails.addBeneficiartText
-                                    ),
+                                    label: localizations.translate(i18_local
+                                        .householdDetails.addBeneficiartText),
                                     prefixIcon: Icons.add_circle,
                                     type: DigitButtonType.tertiary,
                                     size: DigitButtonSize.large,
