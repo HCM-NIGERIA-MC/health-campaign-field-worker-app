@@ -49,7 +49,7 @@ class CustomTransactionalDetailsPageState
   static const _productVariantKey = 'productVariant';
   static const _secondaryPartyKey = 'secondaryParty';
   static const _transactionQuantityKey = 'quantity';
-  static const _transactionPartialQuantityKey = 'partialQuantity';
+  static const _transactionPartialQuantityKey = 'partialBlistersReturned';
   static const _transactionReasonKey = 'transactionReason';
   // static const _waybillNumberKey = 'waybillNumber';
   // static const _waybillQuantityKey = 'waybillQuantity';
@@ -662,7 +662,7 @@ class CustomTransactionalDetailsPageState
                                                             quantity.toString(),
                                                           ),
                                                           AdditionalField(
-                                                            'partial_quantity',
+                                                            'partialBlistersReturned',
                                                             partialQuantity
                                                                 .toString(),
                                                           ),
@@ -812,9 +812,12 @@ class CustomTransactionalDetailsPageState
                                               items: productVariants
                                                   .map((variant) {
                                                 return DropdownItem(
-                                                  name: localizations.translate(
-                                                    variant.sku ?? variant.id,
-                                                  ).toUpperCase(),
+                                                  name: localizations
+                                                      .translate(
+                                                        variant.sku ??
+                                                            variant.id,
+                                                      )
+                                                      .toUpperCase(),
                                                   code: variant.id,
                                                 );
                                               }).toList(),
@@ -824,16 +827,24 @@ class CustomTransactionalDetailsPageState
                                                           .value !=
                                                       null)
                                                   ? DropdownItem(
-                                                      name: localizations.translate((form
-                                                                      .control(
-                                                                          _productVariantKey)
-                                                                      .value
-                                                                  as ProductVariantModel)
-                                                              .sku ??
-                                                          (form.control(_productVariantKey).value
-                                                                  as ProductVariantModel)
-                                                              .id).toUpperCase(),
-                                                      code: (form.control(_productVariantKey).value
+                                                      name: localizations
+                                                          .translate((form
+                                                                          .control(
+                                                                              _productVariantKey)
+                                                                          .value
+                                                                      as ProductVariantModel)
+                                                                  .sku ??
+                                                              (form
+                                                                          .control(
+                                                                              _productVariantKey)
+                                                                          .value
+                                                                      as ProductVariantModel)
+                                                                  .id)
+                                                          .toUpperCase(),
+                                                      code: (form
+                                                                  .control(
+                                                                      _productVariantKey)
+                                                                  .value
                                                               as ProductVariantModel)
                                                           .id)
                                                   : const DropdownItem(

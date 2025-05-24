@@ -13,6 +13,8 @@ import 'package:registration_delivery/models/entities/household.dart';
 import 'package:registration_delivery/registration_delivery.dart';
 import 'package:survey_form/survey_form.init.dart' as surveyForm_mappers;
 import 'package:complaints/complaints.init.dart' as complaints_mappers;
+import '../../utils/i18_key_constants.dart' as i18_local;
+import 'package:inventory_management/utils/i18_key_constants.dart' as i18_stock;
 
 import 'dart:convert';
 
@@ -82,11 +84,13 @@ class CustomValidator {
       return null;
     }
 
-    const pattern = r'^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s\./0-9]*$';
+    const pattern = r'[0-9]';
+
+    if (control.value.toString().length != 11) {
+      return {'mobileNumber': true};
+    }
 
     if (RegExp(pattern).hasMatch(control.value.toString())) return null;
-
-    if (control.value.toString().length < 11) return {'mobileNumber': true};
 
     return {'mobileNumber': true};
   }
@@ -431,6 +435,47 @@ Future<bool> getIsConnected() async {
   } on SocketException catch (_) {
     return false;
   }
+}
+
+String getEntryTypeLabel(StockModel? stock) {
+  String label =
+      '${i18_stock.stockDetails.receivedPageTitle}_${i18_stock.stockReconciliationDetails.stockLabel}';
+
+  if (stock != null) {
+    if (stock.transactionType == "RECEIVED" &&
+        stock.transactionReason == "RETURNED") {
+      label = i18_local.stockDetails.selectTransactingPartyReturnedFrom;
+    } else if (stock.transactionType == "DISPATCHED" &&
+        stock.senderType == "STAFF") {
+      label = i18_local.stockDetails.returnedTo;
+    } else if (stock.transactionType == "DISPATCHED") {
+      label =
+          '${i18_stock.stockDetails.issuedPageTitle}_${i18_stock.stockReconciliationDetails.stockLabel}';
+    }
+  }
+
+  return label;
+}
+
+String getSecondaryPartyValue(StockModel? stock) {
+  String value = stock?.receiverId ?? "";
+
+  if (stock != null) {
+    if ((stock.transactionType == "RECEIVED" && stock.senderType == "STAFF") ||
+        (stock.transactionType == "DISPATCHED" &&
+            stock.receiverType == "STAFF")) {
+      value = stock.additionalFields?.fields
+              .firstWhereOrNull((e) => e.key == "distributorName")
+              ?.value ??
+          "Delivery Team";
+    } else {
+      value = stock.transactionType == "RECEIVED"
+          ? 'FAC_${stock.senderId}'
+          : 'FAC_${stock.receiverId}';
+    }
+  }
+
+  return value;
 }
 
 void showDownloadDialog(

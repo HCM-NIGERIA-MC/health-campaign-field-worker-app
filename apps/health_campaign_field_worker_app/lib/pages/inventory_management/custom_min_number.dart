@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:auto_route/auto_route.dart';
+import 'package:collection/collection.dart';
 import 'package:digit_data_model/data_model.dart';
 import 'package:digit_ui_components/digit_components.dart';
 import 'package:digit_ui_components/theme/digit_extended_theme.dart';
@@ -53,7 +54,8 @@ class CustomMinNumberPageState extends LocalizedState<CustomMinNumberPage> {
         context.read<LocalRepository<StockModel, StockSearchModel>>()
             as CustomStockLocalRepository;
 
-    final result = await repository.search(StockSearchModel());
+    final result =
+        await repository.search(StockSearchModel(), context.loggedInUserUuid);
 
     // Define correct values
     String? transactionType;
@@ -122,6 +124,7 @@ class CustomMinNumberPageState extends LocalizedState<CustomMinNumberPage> {
       body: GestureDetector(
         onTap: () => FocusScope.of(context).unfocus(),
         child: ScrollableContent(
+          enableFixedDigitButton: true,
           header: const Column(
             children: [
               CustomBackNavigationHelpHeaderWidget(showHelp: false),
@@ -180,7 +183,7 @@ class CustomMinNumberPageState extends LocalizedState<CustomMinNumberPage> {
                           SizedBox(
                             height: MediaQuery.of(context).size.height * 0.7,
                             child: ListView.builder(
-                              reverse: true,
+                              reverse: false,
                               itemCount: groupedEntries.length,
                               itemBuilder: (context, index) {
                                 final mrn = groupedEntries[index].key;
@@ -197,11 +200,10 @@ class CustomMinNumberPageState extends LocalizedState<CustomMinNumberPage> {
                                 final compressed =
                                     zlib.encode(utf8.encode(jsonStr));
                                 final encoded = base64Url.encode(compressed);
-                              return Padding(
+                                return Padding(
                                   padding: const EdgeInsets.all(8.0),
                                   child: GestureDetector(
                                     onTap: () {
-                                      
                                       setState(() {
                                         if (selectedMRN == mrn) {
                                           selectedMRN = null;
@@ -214,11 +216,13 @@ class CustomMinNumberPageState extends LocalizedState<CustomMinNumberPage> {
                                     },
                                     child: MinNumberCard(
                                       data: encoded,
+                                      entryType: widget.type,
                                       minNumber: mrn,
-                                      cddCode: InventorySingleton()
-                                              .loggedInUser
-                                              ?.name ??
-                                          stocks.first.senderId ??
+                                      cddCode: stocks
+                                              .first.additionalFields?.fields
+                                              .firstWhereOrNull((e) =>
+                                                  e.key == 'distributorName')
+                                              ?.value ??
                                           "",
                                       date: formatDateFromMillis(stocks.first
                                               .auditDetails?.createdTime ??
@@ -247,7 +251,6 @@ class CustomMinNumberPageState extends LocalizedState<CustomMinNumberPage> {
                                           ? null
                                           : stocks.first.wayBillNumber ?? "",
                                       isSelected: isSelected,
-
                                     ),
                                   ),
                                 );

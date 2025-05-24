@@ -191,6 +191,9 @@ class CustomReferBeneficiarySMCPageState
                                     if (submit == null || !submit) {
                                       return;
                                     }
+                                    if (healthFacilities.isEmpty) {
+                                      return;
+                                    }
                                     clickedStatus.value = true;
                                     final recipient = form
                                         .control(_referredToKey)
@@ -201,7 +204,7 @@ class CustomReferBeneficiarySMCPageState
                                         : 'FACILITY';
                                     final recipientId = recipient == 'APS'
                                         ? context.loggedInUserUuid
-                                        : recipient;
+                                        : healthFacilities.first.id;
 
                                     final event = context.read<ReferralBloc>();
                                     event.add(ReferralSubmitEvent(
@@ -243,7 +246,8 @@ class CustomReferBeneficiarySMCPageState
                                               referralReasons,
                                               reasons.join(","),
                                             ),
-                                            const AdditionalField('referralType', 'smcReferred')
+                                            const AdditionalField(
+                                                'referralType', 'smcReferred')
                                           ],
                                         ),
                                       ),
@@ -482,7 +486,9 @@ class CustomReferBeneficiarySMCPageState
       //   ],
       // ),
       _referredToKey: FormControl<String>(
-        value: healthFacilities.length >= 1 ? healthFacilities.first.id : null,
+        value: healthFacilities.isNotEmpty
+            ? localizations.translate('FAC_${healthFacilities.first.id}')
+            : null,
         validators: [
           Validators.required,
         ],

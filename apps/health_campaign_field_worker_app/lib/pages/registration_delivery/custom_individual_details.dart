@@ -637,6 +637,10 @@ class CustomIndividualDetailsPageState
                                 'required': (_) => localizations.translate(
                                       i18.common.corecommonRequired,
                                     ),
+                                'mobileNumber': (object) =>
+                                    localizations.translate(i18_local
+                                        .individualDetails
+                                        .mobileNumberLengthValidationMessage),
                                 'minLength': (object) =>
                                     localizations.translate(i18_local
                                         .individualDetails
@@ -842,11 +846,8 @@ class CustomIndividualDetailsPageState
       _genderKey: FormControl<String>(value: getGenderOptions(individual)),
       _mobileNumberKey:
           FormControl<String>(value: individual?.mobileNumber, validators: [
-        Validators.delegate(
-            (validator) => CustomValidator.validMobileNumber(validator)),
-        // Validators.pattern(Constants.mobileNumberRegExp,
-        //     validationMessage:
-        //         localizations.translate(i18.common.coreCommonMobileNumber)),
+        Validators.delegate((validator) =>
+            local_utils.CustomValidator.validMobileNumber(validator)),
         Validators.minLength(11),
         Validators.maxLength(11),
         if (widget.isHeadOfHousehold) Validators.required,
