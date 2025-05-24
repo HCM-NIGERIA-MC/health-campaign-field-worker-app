@@ -150,13 +150,14 @@ class _DynamicTabsPageState extends LocalizedState<DynamicTabsPage>
                   ? [
                       Validators.number(),
                       Validators.required,
-                      Validators.min(0),
+                      Validators.min(1),
+                      Validators.max(1000000),
                     ]
                   : [
                       Validators.number(),
                       Validators.required,
-                      Validators.min(0),
-                      Validators.max(10000),
+                      Validators.min(1),
+                      Validators.max(1000000),
                     ]),
           // _waybillQuantityKey:
           //     FormControl<String>(validators: [Validators.required]),
