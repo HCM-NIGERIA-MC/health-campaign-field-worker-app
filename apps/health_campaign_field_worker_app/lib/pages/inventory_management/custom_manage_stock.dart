@@ -258,8 +258,8 @@ class CustomManageStocksPageState
                           ),
                           const SizedBox(width: 8),
                           Text(
-                            localizations.translate(
-                                i18.manageStock.createNewTransactionLabel),
+                            localizations.translate(i18_local
+                                .stockDetails.createNewTransactionLabel),
                             style: TextStyle(
                               fontSize: 16,
                               color: Colors.orange[800],
@@ -302,8 +302,8 @@ class CustomManageStocksPageState
                           ),
                           const SizedBox(width: 8),
                           Text(
-                            localizations.translate(
-                                i18.manageStock.viewCreatedTransactionLabel),
+                            localizations.translate(i18_local
+                                .stockDetails.viewCreatedTransactionLabel),
                             style: TextStyle(
                               fontSize: 16,
                               color: Colors.orange[800],
@@ -339,11 +339,11 @@ class CustomManageStocksPageState
                     //     ),
                     //   );
                     // } else {
-                      context.router.push(
-                        RecordStockWrapperRoute(
-                          type: StockRecordEntryType.dispatch,
-                        ),
-                      );
+                    context.router.push(
+                      RecordStockWrapperRoute(
+                        type: StockRecordEntryType.dispatch,
+                      ),
+                    );
                     //}
                     Navigator.of(context).pop();
                   },
@@ -368,8 +368,8 @@ class CustomManageStocksPageState
                           ),
                           const SizedBox(width: 8),
                           Text(
-                            localizations.translate(
-                                i18.manageStock.createNewTransactionLabel),
+                            localizations.translate(i18_local
+                                .stockDetails.createNewTransactionLabel),
                             style: TextStyle(
                               fontSize: 16,
                               color: Colors.orange[800],
@@ -420,8 +420,8 @@ class CustomManageStocksPageState
                           ),
                           const SizedBox(width: 8),
                           Text(
-                            localizations.translate(
-                                i18.manageStock.viewCreatedTransactionLabel),
+                            localizations.translate(i18_local
+                                .stockDetails.viewCreatedTransactionLabel),
                             style: TextStyle(
                               fontSize: 16,
                               color: Colors.orange[800],
@@ -477,8 +477,8 @@ class CustomManageStocksPageState
                           ),
                           const SizedBox(width: 8),
                           Text(
-                            localizations.translate(
-                                i18.manageStock.createNewTransactionLabel),
+                            localizations.translate(i18_local
+                                .stockDetails.createNewTransactionLabel),
                             style: TextStyle(
                               fontSize: 16,
                               color: Colors.orange[800],
@@ -521,8 +521,8 @@ class CustomManageStocksPageState
                           ),
                           const SizedBox(width: 8),
                           Text(
-                            localizations.translate(
-                                i18.manageStock.viewCreatedTransactionLabel),
+                            localizations.translate(i18_local
+                                .stockDetails.viewCreatedTransactionLabel),
                             style: TextStyle(
                               fontSize: 16,
                               color: Colors.orange[800],
