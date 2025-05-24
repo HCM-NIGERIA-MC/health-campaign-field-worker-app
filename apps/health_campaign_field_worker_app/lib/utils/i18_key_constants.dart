@@ -447,6 +447,10 @@ class StockDetails {
   String get selectTransactingPartyReturnedFrom =>
       'STOCK_DETAILS_RETURNED_FROM';
 
+  String get viewCreatedTransactionLabel => 'VIEW_CREATED_TRANSACTION';
+
+  String get createNewTransactionLabel => 'CREATE_NEW_TRANSACTION';
+
 //TODO:
   String get quantityCapsulePartialReturnedLabel => "";
   String get quantityCapsulePartialWastedLabel => "";
