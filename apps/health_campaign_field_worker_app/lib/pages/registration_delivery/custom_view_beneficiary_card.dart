@@ -175,8 +175,10 @@ class CustomViewBeneficiaryCardState
         );
         final isSMCDelivered =
             util_local.checkStatusSMC(taskData, currentCycle);
-        final isVASDelivered =
-            util_local.checkStatusVAS(taskData, currentCycle);
+        //TODO Comment this beacuse not using in smc campaign
+        // final isVASDelivered =
+        // util_local.checkStatusVAS(taskData, currentCycle);
+        final isVASDelivered = false;
         print(
             "The current status of SMC and VAS is $isSMCDelivered and $isVASDelivered $ageInMonths");
 

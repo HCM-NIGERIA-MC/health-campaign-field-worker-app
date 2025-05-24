@@ -327,7 +327,9 @@ class _CustomSearchBeneficiaryPageState
                                                 ),
                                                 Text(
                                                   localizations.translate(
-                                                      'SEARCH_BY_BENEFICIARY_ID'),
+                                                      i18_local
+                                                          .beneficiaryDetails
+                                                          .benficiarySearchId),
                                                 ),
                                               ],
                                             )

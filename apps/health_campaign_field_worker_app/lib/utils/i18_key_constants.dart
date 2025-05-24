@@ -1342,6 +1342,8 @@ class IndividualDetails {
 class BeneficiaryDetails {
   const BeneficiaryDetails();
 
+  String get benficiarySearchId => "SEARCH_BY_BENEFICIARY_ID";
+
   String get backToHome => "BACK_TO_HOME";
 
   String get validationForExcessStock =>
