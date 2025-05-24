@@ -57,6 +57,11 @@ class _ViewAllTransactionsScreenState extends State<ViewAllTransactionsScreen> {
           transactionType: [TransactionType.dispatched.toValue()],
           transactionReason: [],
           receiverId: warehouseId == null ? [] : [warehouseId]));
+      if (isHFUser(context)) {
+        result = result.where((stock) {
+          return stock.senderType == 'WAREHOUSE';
+        }).toList();
+      }
       receivedResult = await repository.search(StockSearchModel(
           transactionType: [TransactionType.received.toValue()],
           transactionReason: [TransactionReason.received.toValue()],

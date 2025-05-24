@@ -12,6 +12,7 @@ import 'package:inventory_management/router/inventory_router.gm.dart';
 import 'package:reactive_forms/reactive_forms.dart';
 
 import 'package:inventory_management/utils/i18_key_constants.dart' as i18;
+import '../../utils/i18_key_constants.dart' as i18_local;
 import 'package:inventory_management/widgets/component_wrapper/facility_bloc_wrapper.dart';
 import 'package:inventory_management/widgets/component_wrapper/product_variant_bloc_wrapper.dart';
 import 'package:inventory_management/widgets/inventory/no_facilities_assigned_dialog.dart';
@@ -26,6 +27,7 @@ import 'package:inventory_management/utils/utils.dart';
 import 'package:inventory_management/widgets/back_navigation_help_header.dart';
 
 import '../../blocs/inventory_management/custom_inventory_report.dart';
+import '../../utils/constants.dart';
 import '../../utils/extensions/extensions.dart';
 
 @RoutePage()
@@ -217,13 +219,91 @@ class CustomInventoryReportDetailsPageState
                                               ),
                                             ),
                                             builder: (context, state) {
-                                              final facilities =
-                                                  state.whenOrNull(
-                                                        fetched: (facilities,
-                                                                allFacilities) =>
-                                                            facilities,
-                                                      ) ??
-                                                      [];
+                                              final facilities = state
+                                                      .whenOrNull(
+                                                    fetched: (facilities,
+                                                        allfacilities) {
+                                                      if (ctx
+                                                              .selectedProject
+                                                              .address
+                                                              ?.boundaryType ==
+                                                          Constants
+                                                              .stateBoundaryLevel) {
+                                                        List<FacilityModel>
+                                                            filteredFacilities =
+                                                            facilities
+                                                                .where(
+                                                                  (element) =>
+                                                                      element
+                                                                          .usage ==
+                                                                      Constants
+                                                                          .stateFacility,
+                                                                )
+                                                                .toList();
+                                                        facilities =
+                                                            filteredFacilities
+                                                                    .isEmpty
+                                                                ? facilities
+                                                                : filteredFacilities;
+                                                      } else if (ctx
+                                                              .selectedProject
+                                                              .address
+                                                              ?.boundaryType ==
+                                                          Constants
+                                                              .lgaBoundaryLevel) {
+                                                        List<FacilityModel>
+                                                            filteredFacilities =
+                                                            facilities
+                                                                .where(
+                                                                  (element) =>
+                                                                      element
+                                                                          .usage ==
+                                                                      Constants
+                                                                          .lgaFacility,
+                                                                )
+                                                                .toList();
+                                                        facilities =
+                                                            filteredFacilities
+                                                                    .isEmpty
+                                                                ? facilities
+                                                                : filteredFacilities;
+                                                      } else {
+                                                        List<FacilityModel>
+                                                            filteredFacilities =
+                                                            facilities
+                                                                .where(
+                                                                  (element) =>
+                                                                      element
+                                                                          .usage ==
+                                                                      Constants
+                                                                          .healthFacility,
+                                                                )
+                                                                .toList();
+                                                        facilities =
+                                                            filteredFacilities
+                                                                    .isEmpty
+                                                                ? facilities
+                                                                : filteredFacilities;
+                                                      }
+                                                      final teamFacilities = [
+                                                        FacilityModel(
+                                                          id: 'Delivery Team',
+                                                          name: 'Delivery Team',
+                                                        ),
+                                                      ];
+                                                      teamFacilities.addAll(
+                                                        facilities,
+                                                      );
+
+                                                      return context
+                                                                  .isDistributor &&
+                                                              !InventorySingleton()
+                                                                  .isWareHouseMgr
+                                                          ? teamFacilities
+                                                          : facilities;
+                                                    },
+                                                  ) ??
+                                                  [];
 
                                               return InkWell(
                                                 onTap: () async {
@@ -427,7 +507,7 @@ class CustomInventoryReportDetailsPageState
                                             const waybillKey = 'waybillNumber';
                                             const quantityKey = 'quantity';
                                             const partialQuantityKey =
-                                                'partialQuantity';
+                                                'partialBlistersReturned';
                                             const transactingPartyKey =
                                                 'transactingParty';
 
@@ -504,29 +584,32 @@ class CustomInventoryReportDetailsPageState
                                                           DigitGridCell(
                                                               key:
                                                                   transactingPartyKey,
-                                                              value: 
-                                                              // widget.reportType ==
-                                                              //             InventoryReportType
-                                                              //                 .receipt ||
-                                                                      widget.reportType ==
+                                                              value:
+                                                                  // widget.reportType ==
+                                                                  //             InventoryReportType
+                                                                  //                 .receipt ||
+                                                                  widget.reportType ==
                                                                           InventoryReportType
                                                                               .dispatch
-                                                                  ? model.receiverId ==
-                                                                          null
-                                                                      ? localizations.translate(i18
-                                                                          .common
-                                                                          .noMatchFound)
-                                                                      : localizations
-                                                                          .translate(
-                                                                              'FAC_${model.receiverId}')
-                                                                  : model.senderId ==
-                                                                          null
-                                                                      ? localizations.translate(i18
-                                                                          .common
-                                                                          .noMatchFound)
-                                                                      : localizations
-                                                                          .translate(
-                                                                              'FAC_${model.senderId}')),
+                                                                      ? model.receiverId ==
+                                                                              null
+                                                                          ? localizations.translate(i18
+                                                                              .common
+                                                                              .noMatchFound)
+                                                                          : model.receiverType ==
+                                                                                  'STAFF'
+                                                                              ? (model.additionalFields?.fields.firstWhereOrNull((e) => e.key == 'distributorName')?.value ??
+                                                                                  'Delivery Team')
+                                                                              : localizations.translate(
+                                                                                  'FAC_${model.receiverId}')
+                                                                      : model.senderId ==
+                                                                              null
+                                                                          ? localizations.translate(i18
+                                                                              .common
+                                                                              .noMatchFound)
+                                                                          : model.senderType == 'STAFF'
+                                                                              ? (model.additionalFields?.fields.firstWhereOrNull((e) => e.key == 'distributorName')?.value ?? 'Delivery Team')
+                                                                              : localizations.translate('FAC_${model.senderId}')),
                                                         ],
                                                       ),
                                                   ],
@@ -699,7 +782,9 @@ class CustomInventoryReportDetailsPageState
         value = i18.inventoryReportDetails.receiptReportTitle;
         break;
       case InventoryReportType.dispatch:
-        value = i18.inventoryReportDetails.dispatchReportTitle;
+        value = context.isCDD
+            ? i18.inventoryReportDetails.returnedReportTitle
+            : i18.inventoryReportDetails.dispatchReportTitle;
         break;
       case InventoryReportType.returned:
         value = i18.inventoryReportDetails.returnedReportTitle;
@@ -752,7 +837,7 @@ class CustomInventoryReportDetailsPageState
         break;
       case InventoryReportType.dispatch:
         value = context.isCDD
-            ? i18.inventoryReportDetails.returnedTransactingPartyLabel
+            ? i18_local.stockDetails.returnedTo
             : i18.inventoryReportDetails.dispatchTransactingPartyLabel;
         break;
       case InventoryReportType.returned:

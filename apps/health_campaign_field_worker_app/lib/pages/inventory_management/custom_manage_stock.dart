@@ -223,11 +223,6 @@ class CustomManageStocksPageState
               children: [
                 GestureDetector(
                   onTap: () {
-                    // todo commenting the code to remove qr scanner mandatorily
-                    // if (InventorySingleton().isDistributor) {
-                    //   context.router.push(QRScannerRoute());
-                    //   Navigator.of(context).pop();
-                    // } else {
                     context.router.push(
                       RecordStockWrapperRoute(
                         type: StockRecordEntryType.receipt,
@@ -235,7 +230,6 @@ class CustomManageStocksPageState
                     );
 
                     Navigator.of(context).pop();
-                    // }
                   },
                   child: Container(
                     width: double.infinity,
@@ -331,20 +325,11 @@ class CustomManageStocksPageState
               children: [
                 GestureDetector(
                   onTap: () {
-                    //TODO: commented for  there is no return only dispatch
-                    // if (context.isCDD) {
-                    //   context.router.push(
-                    //     RecordStockWrapperRoute(
-                    //       type: StockRecordEntryType.returned,
-                    //     ),
-                    //   );
-                    // } else {
                     context.router.push(
                       RecordStockWrapperRoute(
                         type: StockRecordEntryType.dispatch,
                       ),
                     );
-                    //}
                     Navigator.of(context).pop();
                   },
                   child: Container(
@@ -384,19 +369,12 @@ class CustomManageStocksPageState
                 const SizedBox(height: 16), // Add spacing between buttons
                 GestureDetector(
                   onTap: () {
-                    if (context.isCDD) {
-                      context.router.push(
-                        CustomMinNumberRoute(
-                          type: StockRecordEntryType.returned,
-                        ),
-                      );
-                    } else {
-                      context.router.push(
-                        CustomMinNumberRoute(
-                          type: StockRecordEntryType.dispatch,
-                        ),
-                      );
-                    }
+                    context.router.push(
+                      CustomMinNumberRoute(
+                        type: StockRecordEntryType.dispatch,
+                      ),
+                    );
+
                     Navigator.of(context).pop();
                   },
                   child: Container(
