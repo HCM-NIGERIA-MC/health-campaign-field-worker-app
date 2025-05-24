@@ -444,6 +444,8 @@ class HomeShowcase {
 
 class StockDetails {
   const StockDetails();
+  String get selectTransactingPartyReturnedFrom =>
+      'STOCK_DETAILS_RETURNED_FROM';
 
 //TODO:
   String get quantityCapsulePartialReturnedLabel => "";
@@ -713,6 +715,8 @@ class CaregiverConsent {
       'CARE_GIVER_CONSENT_ACTION_LABEL_TEXT';
 
   String get caregiverConsentReason => 'CARE_GIVER_CONSENT_REASON_FOR_NO';
+
+  String get caregiveroption => 'CARECARE_GIVER_CONSENT_REASON_NOT_SELECTED';
 }
 
 class ComplaintsDetailsShowcase {
