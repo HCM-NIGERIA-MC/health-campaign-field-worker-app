@@ -1040,7 +1040,7 @@ class _DynamicTabsPageState extends LocalizedState<DynamicTabsPage>
 //     //   ) as bool;
 //     // }
 
-     return true;
+    return true;
   }
 
   Future<void> _handleFinalSubmission(BuildContext context,
@@ -1122,14 +1122,14 @@ class _DynamicTabsPageState extends LocalizedState<DynamicTabsPage>
       // int redVasCount = 0;
       // Loop through all stocks and dispatch individual events
       for (final stockModel in _tabStocks.values) {
-        context.read<RecordStockBloc>().add(
-              RecordStockSaveStockDetailsEvent(
-                stockModel: stockModel,
-              ),
-            );
-        context.read<RecordStockBloc>().add(
-              const RecordStockCreateStockEntryEvent(),
-            );
+        // context.read<RecordStockBloc>().add(
+        //       RecordStockSaveStockDetailsEvent(
+        //         stockModel: stockModel,
+        //       ),
+        //     );
+        // context.read<RecordStockBloc>().add(
+        //       const RecordStockCreateStockEntryEvent(),
+        //     );
 
 //TODO:
         // final ss = int.parse(stockModel.quantity.toString());
@@ -1226,6 +1226,15 @@ class _DynamicTabsPageState extends LocalizedState<DynamicTabsPage>
         } else if (productName == Constants.spaq2) {
           currentSpaq2Count += totalQty;
         }
+
+        context.read<RecordStockBloc>().add(
+              RecordStockSaveStockDetailsEvent(
+                stockModel: stockModel,
+              ),
+            );
+        context.read<RecordStockBloc>().add(
+              const RecordStockCreateStockEntryEvent(),
+            );
       }
 
       context.read<AuthBloc>().add(
@@ -1279,7 +1288,8 @@ class _DynamicTabsPageState extends LocalizedState<DynamicTabsPage>
       body: TabBarView(
         controller: _tabController,
         children: selectedProducts
-            .map((product) => _buildTabContent(context, product, receivedFrom,selectedProducts))
+            .map((product) => _buildTabContent(
+                context, product, receivedFrom, selectedProducts))
             .toList(),
       ),
     );
@@ -1291,7 +1301,7 @@ class _DynamicTabsPageState extends LocalizedState<DynamicTabsPage>
     }
   }
 
-//TODO: 
+//TODO:
   // String? wastageQuantity(FormGroup form, BuildContext context) {
   //   final quantity = form.control(_transactionQuantityKey).value;
   //   final partialBlisters = form.control(_transactionQuantityKey).value;
