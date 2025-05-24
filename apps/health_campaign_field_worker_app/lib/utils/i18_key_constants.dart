@@ -452,8 +452,10 @@ class StockDetails {
   String get createNewTransactionLabel => 'CREATE_NEW_TRANSACTION';
 
 //TODO:
-  String get quantityCapsulePartialReturnedLabel => "";
-  String get quantityCapsulePartialWastedLabel => "";
+  String get quantityCapsulePartialReturnedLabel =>
+      "QTY_PARTIAL_RETURNED_LABEL_STOCK";
+  String get quantityCapsulePartialWastedLabel =>
+      "QTY_PARTIAL_WASTED_LABEL_STOCK";
 
   String get reconciliationCommentRequired => 'RECONCILIATION_COMMENT_REQUIRED';
 
