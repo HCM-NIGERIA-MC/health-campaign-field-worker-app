@@ -2,7 +2,6 @@ import 'package:collection/collection.dart';
 import 'package:digit_data_model/data_model.dart';
 import 'package:digit_data_model/models/entities/household_type.dart';
 import 'package:digit_ui_components/digit_components.dart';
-import 'package:digit_ui_components/theme/digit_extended_theme.dart';
 import 'package:digit_ui_components/utils/date_utils.dart';
 import 'package:digit_ui_components/widgets/atoms/table_cell.dart';
 import 'package:digit_ui_components/widgets/molecules/digit_card.dart';
@@ -13,7 +12,6 @@ import 'package:registration_delivery/models/entities/project_beneficiary.dart';
 import 'package:registration_delivery/blocs/search_households/search_households.dart';
 import 'package:registration_delivery/models/entities/status.dart';
 import 'package:registration_delivery/models/entities/task.dart';
-import 'package:registration_delivery/utils/constants.dart';
 import 'package:registration_delivery/utils/i18_key_constants.dart' as i18;
 import '../../utils/i18_key_constants.dart' as i18_local;
 import 'package:registration_delivery/utils/utils.dart';
@@ -21,6 +19,7 @@ import 'package:registration_delivery/widgets/beneficiary/beneficiary_card.dart'
 import 'package:registration_delivery/widgets/localized.dart';
 
 import '../../utils/registration_delivery/utils_smc.dart' as util_local;
+import '../../utils/registration_delivery/utils_smc.dart';
 
 class CustomViewBeneficiaryCard extends LocalizedStatefulWidget {
   final HouseholdMemberWrapper householdMember;
@@ -163,21 +162,13 @@ class CustomViewBeneficiaryCardState
           (taskData ?? []).isNotEmpty ? taskData?.last : null,
           sideEffects,
         );
-        final isSideEffectRecorded = recordedSideEffect(
-          currentCycle,
-          (taskData ?? []).isNotEmpty ? taskData?.last : null,
-          sideEffects,
-        );
+
         final isBeneficiaryRefused = checkIfBeneficiaryRefused(taskData);
-        final isBeneficiaryReferred = checkIfBeneficiaryReferred(
-          referralData,
-          currentCycle,
-        );
+        final isBeneficiaryIneligible = checkBeneficiaryInEligibleSMC(taskData);
+        final isBeneficiaryReferred = checkBeneficiaryReferredSMC(taskData);
         final isSMCDelivered =
             util_local.checkStatusSMC(taskData, currentCycle);
-        //TODO Comment this beacuse not using in smc campaign
-        // final isVASDelivered =
-        // util_local.checkStatusVAS(taskData, currentCycle);
+
         final isVASDelivered = false;
         print(
             "The current status of SMC and VAS is $isSMCDelivered and $isVASDelivered $ageInMonths");
@@ -198,30 +189,35 @@ class CustomViewBeneficiaryCardState
             cellKey: 'beneficiary',
           ),
           DigitTableData(
-            isHead?localizations.translate(
-                    i18_local.householdOverView.householdOverViewHouseholderHeadLabel,
-                  ):
-            getTableCellText(
-              CustomStatusKeys(
-                  isNotEligible,
-                  isBeneficiaryRefused,
-                  isBeneficiaryReferred,
-                  isStatusReset,
-                  isVASDelivered,
-                  isSMCDelivered),
-              taskData,
-            ),
+            isHead
+                ? localizations.translate(
+                    i18_local.householdOverView
+                        .householdOverViewHouseholderHeadLabel,
+                  )
+                : getTableCellText(
+                    CustomStatusKeys(
+                        isNotEligible,
+                        isBeneficiaryRefused,
+                        isBeneficiaryReferred,
+                        isBeneficiaryIneligible,
+                        isStatusReset,
+                        isVASDelivered,
+                        isSMCDelivered),
+                    taskData,
+                  ),
             cellKey: 'delivery',
             style: TextStyle(
               color: isHead
-                  ? theme.colorScheme.surfaceTint: getTableCellTextColor(
-                isNotEligible: isNotEligible,
-                taskdata: taskData,
-                isBeneficiaryRefused:
-                    isBeneficiaryRefused || isBeneficiaryReferred,
-                isStatusReset: isStatusReset,
-                theme: theme,
-              ),
+                  ? theme.colorScheme.surfaceTint
+                  : getTableCellTextColor(
+                      isNotEligible: isNotEligible,
+                      taskdata: taskData,
+                      isBeneficiaryRefused:
+                          isBeneficiaryRefused || isBeneficiaryReferred,
+                      isBeneficiaryIneligible: isBeneficiaryIneligible,
+                      isStatusReset: isStatusReset,
+                      theme: theme,
+                    ),
             ),
           ),
           DigitTableData(
@@ -410,6 +406,9 @@ class CustomViewBeneficiaryCardState
           i18.householdOverView.householdOverViewNotEligibleIconLabel);
     } else if (statusKeys.isBeneficiaryReferred) {
       return localizations.translate(Status.beneficiaryReferred.toValue());
+    } else if (statusKeys.isBeneficiaryIneligible) {
+      return localizations.translate(
+          i18.householdOverView.householdOverViewNotEligibleIconLabel);
     } else if (taskData != null) {
       if (taskData.isEmpty) {
         return localizations.translate(Status.notVisited.toValue());
@@ -436,11 +435,11 @@ class CustomViewBeneficiaryCardState
     }
   }
 
-  // ignore: long-parameter-list
   Color getTableCellTextColor({
     required bool isNotEligible,
     required List<TaskModel>? taskdata,
     required bool isBeneficiaryRefused,
+    required bool isBeneficiaryIneligible,
     required bool isStatusReset,
     required ThemeData theme,
   }) {
@@ -448,9 +447,10 @@ class CustomViewBeneficiaryCardState
             taskdata.isNotEmpty &&
             !isBeneficiaryRefused &&
             !isNotEligible &&
+            !isBeneficiaryIneligible &&
             !isStatusReset
-        ? theme.colorTheme.alert.success
-        : theme.colorTheme.alert.error;
+        ? theme.colorScheme.onSurfaceVariant
+        : theme.colorScheme.error;
   }
 
   getStatus(
@@ -474,6 +474,7 @@ class CustomStatusKeys {
   bool isNotEligible;
   bool isBeneficiaryRefused;
   bool isBeneficiaryReferred;
+  bool isBeneficiaryIneligible;
   bool isStatusReset;
   bool isVASDelivered;
   bool isSMCDelivered;
@@ -481,6 +482,7 @@ class CustomStatusKeys {
       this.isNotEligible,
       this.isBeneficiaryRefused,
       this.isBeneficiaryReferred,
+      this.isBeneficiaryIneligible,
       this.isStatusReset,
       this.isVASDelivered,
       this.isSMCDelivered);

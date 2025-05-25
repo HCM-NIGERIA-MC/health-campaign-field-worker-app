@@ -579,6 +579,10 @@ class CustomIndividualDetailsPageState
                               // Handle changes to the control's value here
                               final value = formControl.value;
 
+                              if (value == null) {
+                                return;
+                              }
+
                               digits.DigitDOBAge age =
                                   digits.DigitDateUtils.calculateAge(value);
                               if (widget.isHeadOfHousehold &&

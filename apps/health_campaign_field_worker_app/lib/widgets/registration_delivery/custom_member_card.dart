@@ -106,8 +106,8 @@ class CustomMemberCard extends StatelessWidget {
           iconSize: 20,
           iconText: localizations.translate(i18_local
               .householdOverView.householdOverViewHouseholderHeadLabel),
-          iconTextColor: theme.colorScheme.error,
-          iconColor: theme.colorScheme.error,
+          iconTextColor: theme.colorScheme.surfaceTint,
+          iconColor: theme.colorScheme.surfaceTint,
         ),
       );
     }
@@ -128,8 +128,8 @@ class CustomMemberCard extends StatelessWidget {
                 icon: Icons.check_circle,
                 iconText: localizations.translate(
                   isBeneficiaryInEligibleSMC
-                      ? i18_local.householdOverView
-                          .householdOverViewBeneficiaryInEligibleSMCLabel
+                      ? i18.householdOverView
+                          .householdOverViewNotEligibleIconLabel
                       : isBeneficiaryReferredSMC
                           ? i18_local.householdOverView
                               .householdOverViewBeneficiaryReferredSMCLabel
@@ -291,8 +291,6 @@ class CustomMemberCard extends StatelessWidget {
                 if (redosePendingStatus) {
                   final spaq1 = context.spaq1;
                   final spaq2 = context.spaq2;
-                  // final blueVas = context.blueVas;
-                  // final redVas = context.redVas;
 
                   int doseCount = double.parse(
                     successfulTask?.resources?.first.quantity ?? "0",
@@ -318,19 +316,10 @@ class CustomMemberCard extends StatelessWidget {
                               spaq2 > 0))) {
                     context.router.push(
                       RecordRedoseRoute(
-                        tasks: [successfulTask!],
+                        tasks: [successfulTask],
                       ),
                     );
-                  }
-
-                  // if (successfulTask != null && spaq1 >= doseCount) {
-                  //   context.router.push(
-                  //     RecordRedoseRoute(
-                  //       tasks: [successfulTask],
-                  //     ),
-                  //   );
-                  // }
-                  else {
+                  } else {
                     DigitDialog.show(
                       context,
                       options: DigitDialogOptions(
@@ -354,19 +343,6 @@ class CustomMemberCard extends StatelessWidget {
                               )} \n ${localizations.translate(
                                 i18_local.beneficiaryDetails.spaq2DoseUnit,
                               )}",
-                        // contentText: (spaq1 < doseCountSpaq1)
-                        //     ? "${localizations.translate(
-                        //         i18_local.beneficiaryDetails
-                        //             .insufficientAZTStockMessageDelivery,
-                        //       )} \n ${localizations.translate(
-                        //         i18_local.beneficiaryDetails.spaq1DoseUnit,
-                        //       )}"
-                        //     : "${localizations.translate(
-                        //         i18_local.beneficiaryDetails
-                        //             .insufficientAZTStockMessageDelivery,
-                        //       )} \n ${localizations.translate(
-                        //         i18_local.beneficiaryDetails.spaq2DoseUnit,
-                        //       )}",
                         primaryAction: DigitDialogActions(
                           label: localizations.translate(i18_local
                               .beneficiaryDetails.backToHouseholdDetails),
@@ -480,10 +456,6 @@ class CustomMemberCard extends StatelessWidget {
                               .lastOrNull ==
                           null &&
                       !isSMCDelivered &&
-                      // &&
-                      // !isVASDelivered &&
-                      // !isNotEligibleSMC &&
-                      // !isNotEligibleVAS &&
                       !isBeneficiaryIneligible &&
                       !isBeneficiaryReferred)
                   ? Positioned(
