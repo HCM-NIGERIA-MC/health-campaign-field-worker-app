@@ -1183,9 +1183,9 @@ class _DynamicTabsPageState extends LocalizedState<DynamicTabsPage>
         }
 
         if (productName == Constants.spaq1) {
-          currentSpaq1Count += totalQty;
+          spaq1Count = totalQty;
         } else if (productName == Constants.spaq2) {
-          currentSpaq2Count += totalQty;
+          spaq2Count = totalQty;
         }
 
         context.read<RecordStockBloc>().add(
