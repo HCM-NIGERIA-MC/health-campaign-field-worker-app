@@ -50,7 +50,7 @@ class _CustomRecordReferralDetailsPageState
   static const _referralReason = 'referralReason';
   static const _referredByKey = 'referredBy';
   static const _genderKey = 'gender';
-  // static const _cycleKey = 'cycle';
+  static const _cycleKey = 'cycle';
   static const _beneficiaryIdKey = 'beneficiaryId';
   static const _referralCodeKey = 'referralCode';
   static const _ageKey = 'ageInMonths';
@@ -152,8 +152,7 @@ class _CustomRecordReferralDetailsPageState
                                                         .control(
                                                             _referralReason)
                                                         .setErrors({'': true});
-                                                  }
-                                                  else if (form
+                                                  } else if (form
                                                           .control(
                                                               _beneficiaryIdKey)
                                                           .value ==
@@ -164,7 +163,7 @@ class _CustomRecordReferralDetailsPageState
                                                             _beneficiaryIdKey)
                                                         .setErrors({'': true});
                                                   }
-                                                  
+
                                                   form.markAllAsTouched();
 
                                                   if (viewOnly) {

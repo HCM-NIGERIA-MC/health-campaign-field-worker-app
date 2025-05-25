@@ -12,11 +12,13 @@ import 'package:digit_ui_components/widgets/molecules/show_pop_up.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
-import 'package:inventory_management/inventory_management.dart';
+import 'package:inventory_management/inventory_management.dart'
+    hide CustomValidator;
 import 'package:inventory_management/router/inventory_router.gm.dart';
 import 'package:reactive_forms/reactive_forms.dart';
 
 import 'package:inventory_management/utils/i18_key_constants.dart' as i18;
+import '../../utils/i18_key_constants.dart' as i18_local;
 import 'package:inventory_management/widgets/inventory/no_facilities_assigned_dialog.dart';
 import 'package:inventory_management/widgets/localized.dart';
 import 'package:inventory_management/blocs/product_variant.dart';
@@ -27,6 +29,7 @@ import 'package:inventory_management/widgets/component_wrapper/product_variant_b
 
 import '../../utils/constants.dart';
 import '../../utils/extensions/extensions.dart';
+import '../../utils/utils.dart' show CustomValidator;
 
 @RoutePage()
 class CustomStockReconciliationPage extends LocalizedStatefulWidget {
@@ -132,13 +135,28 @@ class CustomStockReconciliationPageState
                                         type: DigitButtonType.primary,
                                         onPressed: () async {
                                           if (int.tryParse(form
-                                                  .control(_manualCountKey)
-                                                  .value) !=
-                                              stockState.stockInHand) {
+                                                      .control(_manualCountKey)
+                                                      .value) !=
+                                                  stockState.stockInHand &&
+                                              (form
+                                                          .control(
+                                                            _reconciliationCommentsKey,
+                                                          )
+                                                          .value ==
+                                                      null ||
+                                                  form
+                                                          .control(
+                                                            _reconciliationCommentsKey,
+                                                          )
+                                                          .value
+                                                          .length <
+                                                      2)) {
                                             DigitToast.show(
                                               context,
                                               options: DigitToastOptions(
-                                                "Comment is required",
+                                                localizations.translate(i18_local
+                                                    .stockReconciliationDetails
+                                                    .commentRequiredError),
                                                 true,
                                                 theme,
                                               ),

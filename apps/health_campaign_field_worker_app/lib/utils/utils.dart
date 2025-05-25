@@ -117,6 +117,23 @@ class CustomValidator {
 
     return regExp.hasMatch(value) ? null : {'onlyAlphabetsAndDigits': true};
   }
+
+  static Map<String, dynamic>? validStockCount(
+    AbstractControl<dynamic> control,
+  ) {
+    if (control.value == null || control.value.toString().isEmpty) {
+      return {'required': true};
+    }
+
+    var parsed = int.tryParse(control.value) ?? 0;
+    if (parsed < 0) {
+      return {'min': true};
+    } else if (parsed > 10000000) {
+      return {'max': true};
+    }
+
+    return null;
+  }
 }
 
 Future<void> requestDisableBatteryOptimization() async {

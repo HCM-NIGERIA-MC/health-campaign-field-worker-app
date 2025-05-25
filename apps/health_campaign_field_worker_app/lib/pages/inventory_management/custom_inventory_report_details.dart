@@ -508,6 +508,8 @@ class CustomInventoryReportDetailsPageState
                                             const quantityKey = 'quantity';
                                             const partialQuantityKey =
                                                 'partialBlistersReturned';
+                                            const wastedQuantityKey =
+                                                'wastedBlistersReturned';
                                             const transactingPartyKey =
                                                 'transactingParty';
 
@@ -530,13 +532,32 @@ class CustomInventoryReportDetailsPageState
                                                     width: 200,
                                                   ),
                                                   if (widget.reportType ==
-                                                      InventoryReportType
-                                                          .returned)
+                                                          InventoryReportType
+                                                              .returned ||
+                                                      (widget.reportType ==
+                                                              InventoryReportType
+                                                                  .dispatch &&
+                                                          context
+                                                              .isCommunityDistributor))
                                                     DigitGridColumn(
-                                                      label: localizations.translate(i18
-                                                          .inventoryReportDetails
-                                                          .returnedQuantityLabel),
+                                                      label: localizations
+                                                          .translate(i18_local
+                                                              .stockDetails
+                                                              .quantityPartialReturnedLabel),
                                                       key: partialQuantityKey,
+                                                      width: 200,
+                                                    ),
+                                                  if (widget.reportType ==
+                                                          InventoryReportType
+                                                              .dispatch &&
+                                                      context
+                                                          .isCommunityDistributor)
+                                                    DigitGridColumn(
+                                                      label: localizations
+                                                          .translate(i18_local
+                                                              .stockDetails
+                                                              .quantityWastedReturnedLabel),
+                                                      key: wastedQuantityKey,
                                                       width: 200,
                                                     ),
                                                   DigitGridColumn(
@@ -563,23 +584,44 @@ class CustomInventoryReportDetailsPageState
                                                                     .quantity ??
                                                                 '',
                                                           ),
-                                                          if (widget
-                                                                  .reportType ==
-                                                              InventoryReportType
-                                                                  .returned)
+                                                          if (widget.reportType ==
+                                                                  InventoryReportType
+                                                                      .returned ||
+                                                              (widget.reportType ==
+                                                                      InventoryReportType
+                                                                          .dispatch &&
+                                                                  context
+                                                                      .isCommunityDistributor))
                                                             DigitGridCell(
                                                               key:
                                                                   partialQuantityKey,
                                                               value: model.additionalFields ==
                                                                       null
                                                                   ? "0"
-                                                                  : model.additionalFields!
-                                                                          .fields
-                                                                          .firstWhereOrNull((e) =>
-                                                                              e.key ==
-                                                                              "partial_quantity")
-                                                                          ?.value ??
-                                                                      '',
+                                                                  : (model.additionalFields!
+                                                                              .fields
+                                                                              .firstWhereOrNull((e) => e.key == partialQuantityKey)
+                                                                              ?.value ??
+                                                                          '')
+                                                                      .toString(),
+                                                            ),
+                                                          if (widget.reportType ==
+                                                                  InventoryReportType
+                                                                      .dispatch &&
+                                                              context
+                                                                  .isCommunityDistributor)
+                                                            DigitGridCell(
+                                                              key:
+                                                                  wastedQuantityKey,
+                                                              value: model.additionalFields ==
+                                                                      null
+                                                                  ? "0"
+                                                                  : (model.additionalFields!
+                                                                              .fields
+                                                                              .firstWhereOrNull((e) => e.key == wastedQuantityKey)
+                                                                              ?.value ??
+                                                                          '')
+                                                                      .toString(),
                                                             ),
                                                           DigitGridCell(
                                                               key:

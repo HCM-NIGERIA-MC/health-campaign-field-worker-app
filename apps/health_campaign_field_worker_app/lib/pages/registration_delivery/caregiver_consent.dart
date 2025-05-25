@@ -48,18 +48,6 @@ class CaregiverConsentPageState extends LocalizedState<CaregiverConsentPage> {
   TextEditingController consentComment = TextEditingController();
   String? commentErrorText;
 
-  bool validateReason() {
-    setState(() {
-      commentErrorText = (consentComment.text.isEmpty)
-          ? localizations.translate(i18.common.coreCommonReasonRequired)
-          : null;
-    });
-    if (commentErrorText == null)
-      return true;
-    else
-      return false;
-  }
-
   onSubmit(HouseholdModel? householdModel, AddressModel? addressModel) async {
     final bloc = context.read<CustomBeneficiaryRegistrationBloc>();
     final router = context.router;
@@ -90,7 +78,7 @@ class CaregiverConsentPageState extends LocalizedState<CaregiverConsentPage> {
         tenantId: RegistrationDeliverySingleton().tenantId,
         clientReferenceId:
             householdModel?.clientReferenceId ?? IdGen.i.identifier,
-        memberCount: 0,
+        memberCount: 1,
         clientAuditDetails: ClientAuditDetails(
           createdBy:
               RegistrationDeliverySingleton().loggedInUserUuid.toString(),
@@ -202,7 +190,7 @@ class CaregiverConsentPageState extends LocalizedState<CaregiverConsentPage> {
                     }
                     if (selectedConsent == CaregiverConsentEnum.yes) {
                       router.push(CustomHouseHoldDetailsRoute());
-                    } else if (validateReason()) {
+                    } else if (consentComment.text.length >= 2) {
                       registrationState.maybeWhen(orElse: () {
                         return;
                       }, create: (
@@ -255,6 +243,17 @@ class CaregiverConsentPageState extends LocalizedState<CaregiverConsentPage> {
                           onSubmit(householdModel, addressModel);
                         }
                       });
+                    } else {
+                      DigitToast.show(
+                        context,
+                        options: DigitToastOptions(
+                          localizations.translate(
+                              i18_local.common.coreCommonConsentReasonRequired),
+                          true,
+                          theme,
+                        ),
+                      );
+                      return;
                     }
                   },
                 );
@@ -317,15 +316,7 @@ class CaregiverConsentPageState extends LocalizedState<CaregiverConsentPage> {
                     isRequired: true,
                     label: localizations.translate(
                         i18_local.caregiverConsent.caregiverConsentReason),
-                    child: DigitTextFormInput(
-                      controller: consentComment,
-                      errorMessage: commentErrorText,
-                      onChange: (value) {
-                        setState(() {
-                          commentErrorText = null;
-                        });
-                      },
-                    ),
+                    child: DigitTextFormInput(controller: consentComment),
                   )
               ]),
             ),

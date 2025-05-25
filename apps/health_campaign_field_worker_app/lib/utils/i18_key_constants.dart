@@ -21,6 +21,7 @@ const searchBeneficiary = SearchBeneficiary();
 const individualDetails = IndividualDetails();
 const beneficiaryDetails = BeneficiaryDetails();
 const stockDetails = StockDetails();
+const stockReconciliationDetails = StockReconciliationDetails();
 const inventoryReportDetails = InventoryReportDetails();
 
 const selectStockShowcase = SelectStockShowcase();
@@ -70,6 +71,9 @@ class Common {
   String get corecommonRequired => 'CORE_COMMON_REQUIRED';
 
   String get coreCommonReasonRequired => 'CORE_COMMON_REASON_REQUIRED';
+
+  String get coreCommonConsentReasonRequired =>
+      'CORE_COMMON_CONSENT_REASON_REQUIRED';
 
   String get coreCommonOthersRequired => 'CORE_COMMON_OTHERS_REQUIRED';
 
@@ -483,6 +487,9 @@ class StockDetails {
   String get quantityPartialReturnedLabel =>
       'STOCK_DETAILS_PARTIAL_QUANTITY_RETURNED';
 
+  String get quantityWastedReturnedLabel =>
+      'STOCK_DETAILS_WASTED_QUANTITY_RETURNED';
+
   String get quantityReturnedMaxError =>
       'STOCK_DETAILS_RETURNED_MAX_QUANTITY_ERROR';
 
@@ -492,6 +499,12 @@ class StockDetails {
 
   String get recordStockReturnedDescription =>
       'STOCK_DETAILS_RECORD_STOCK_RETURNED_DESCRIPTION';
+}
+
+class StockReconciliationDetails {
+  const StockReconciliationDetails();
+
+  String get commentRequiredError => 'RECONCILIATION_COMMENT_IS_REQUIRED';
 }
 
 class InventoryReportDetails {
@@ -1454,6 +1467,8 @@ class BeneficiaryDetails {
   String get recordCycle => 'BENEFICIARY_DETAILS_RECORD_CYCLE';
 
   String get currentSmcCycleLabel => 'BENEFICIARY_DETAILS_CURRENT_SMC_CYCLE';
+
+  String get noHealthFacilityError => 'NO_HEALTH_FACILITY_ERROR';
 }
 
 class PrivacyPolicy {

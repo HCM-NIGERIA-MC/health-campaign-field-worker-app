@@ -397,8 +397,7 @@ class _DynamicTabsPageState extends LocalizedState<DynamicTabsPage>
       case StockRecordEntryType.receipt:
         pageTitle = i18.stockDetails.receivedPageTitle;
         if (productName == Constants.spaq1 || productName == Constants.spaq2) {
-          quantityCountLabel =
-              i18_local.stockDetails.quantityCapsuleReceivedLabel;
+          quantityCountLabel = i18.stockDetails.quantityReceivedLabel;
         } else {
           quantityCountLabel = i18.stockDetails.quantityReceivedLabel;
         }
@@ -409,14 +408,14 @@ class _DynamicTabsPageState extends LocalizedState<DynamicTabsPage>
             : i18.stockDetails.returnedPageTitle;
         if (productName == Constants.spaq1 || productName == Constants.spaq2) {
           quantityCountLabel = InventorySingleton().isWareHouseMgr
-              ? i18_local.stockDetails.quantityCapsuleSentLabel
-              : i18_local.stockDetails.quantityCapsuleReturnedLabel;
+              ? i18.stockDetails.quantitySentLabel
+              : i18.stockDetails.quantityReturnedLabel;
 
           quantityPartialCountLabel =
-              i18_local.stockDetails.quantityCapsulePartialReturnedLabel;
+              i18_local.stockDetails.quantityPartialReturnedLabel;
 
           quantityWastedCountLabel =
-              i18_local.stockDetails.quantityCapsulePartialWastedLabel;
+              i18_local.stockDetails.quantityWastedReturnedLabel;
         } else {
           quantityCountLabel = InventorySingleton().isWareHouseMgr
               ? i18.stockDetails.quantitySentLabel
@@ -427,9 +426,9 @@ class _DynamicTabsPageState extends LocalizedState<DynamicTabsPage>
         pageTitle = i18.stockDetails.returnedPageTitle;
         if (productName == Constants.spaq1 || productName == Constants.spaq2) {
           quantityCountLabel =
-              i18_local.stockDetails.quantityCapsuleReturnedLabel;
+              i18_local.stockDetails.quantityUnusedReturnedLabel;
           quantityPartialCountLabel =
-              i18_local.stockDetails.quantityCapsulePartialReturnedLabel;
+              i18_local.stockDetails.quantityPartialReturnedLabel;
         } else {
           quantityCountLabel = i18.stockDetails.quantityReturnedLabel;
         }
@@ -448,38 +447,22 @@ class _DynamicTabsPageState extends LocalizedState<DynamicTabsPage>
     if ((entryType == StockRecordEntryType.dispatch &&
             context.isCommunityDistributor) ||
         entryType == StockRecordEntryType.returned) {
-      form.control(_transactionQuantityPartialKey).setValidators(
-          InventorySingleton().isWareHouseMgr
-              ? [
-                  Validators.number(),
-                  Validators.required,
-                  Validators.min(0),
-                ]
-              : [
-                  Validators.number(),
-                  Validators.required,
-                  Validators.min(0),
-                  Validators.max(10000),
-                ],
-          autoValidate: true);
+      form.control(_transactionQuantityPartialKey).setValidators([
+        Validators.number(),
+        Validators.required,
+        Validators.min(0),
+        Validators.max(1000000),
+      ], autoValidate: true);
     }
 
     if (entryType == StockRecordEntryType.dispatch &&
         context.isCommunityDistributor) {
-      form.control(_transactionQuantityWastedKey).setValidators(
-          InventorySingleton().isWareHouseMgr
-              ? [
-                  Validators.number(),
-                  Validators.required,
-                  Validators.min(0),
-                ]
-              : [
-                  Validators.number(),
-                  Validators.required,
-                  Validators.min(0),
-                  Validators.max(10000),
-                ],
-          autoValidate: true);
+      form.control(_transactionQuantityWastedKey).setValidators([
+        Validators.number(),
+        Validators.required,
+        Validators.min(0),
+        Validators.max(1000000),
+      ], autoValidate: true);
     }
 
     return _KeepAliveTabContent(

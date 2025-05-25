@@ -191,7 +191,19 @@ class CustomReferBeneficiarySMCPageState
                                     if (submit == null || !submit) {
                                       return;
                                     }
-                                    if (healthFacilities.isEmpty) {
+                                    if (healthFacilities.isEmpty &&
+                                        context.mounted) {
+                                      DigitToast.show(
+                                        context,
+                                        options: DigitToastOptions(
+                                          localizations.translate(
+                                            i18_local.beneficiaryDetails
+                                                .noHealthFacilityError,
+                                          ),
+                                          true,
+                                          theme,
+                                        ),
+                                      );
                                       return;
                                     }
                                     clickedStatus.value = true;
