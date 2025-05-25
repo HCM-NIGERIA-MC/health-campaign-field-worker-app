@@ -1101,13 +1101,13 @@ class _DynamicTabsPageState extends LocalizedState<DynamicTabsPage>
     ) as bool;
 
     if (submit && context.mounted) {
-      int spaq1Count = context.spaq1;
+      int currentSpaq1Count = context.spaq1;
 
-      int spaq2Count = context.spaq2;
+      int currentSpaq2Count = context.spaq2;
 
-      int currentSpaq1Count = 0;
+      int spaq1Count = 0;
 
-      int currentSpaq2Count = 0;
+      int spaq2Count = 0;
 
       for (var productName in selectedProducts) {
         await _saveCurrentTabData(productName, entryType);
@@ -1135,7 +1135,8 @@ class _DynamicTabsPageState extends LocalizedState<DynamicTabsPage>
         // Custom logic based on productName
 
         if (entryType == StockRecordEntryType.dispatch) {
-          if (productName == Constants.spaq1 && (spaq1Count + totalQty < 0)) {
+          if (productName == Constants.spaq1 &&
+              (currentSpaq1Count + totalQty < 0)) {
             await DigitToast.show(
               context,
               options: DigitToastOptions(
@@ -1149,7 +1150,7 @@ class _DynamicTabsPageState extends LocalizedState<DynamicTabsPage>
             );
             return;
           } else if (productName == Constants.spaq2 &&
-              (spaq2Count + totalQty < 0)) {
+              (currentSpaq2Count + totalQty < 0)) {
             await DigitToast.show(
               context,
               options: DigitToastOptions(
