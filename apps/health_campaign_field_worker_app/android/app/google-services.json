@@ -159,9 +159,47 @@
     },
     {
       "client_info": {
+        "mobilesdk_app_id": "1:397617237644:android:f88dc37ea312cf5ff6b5a9",
+        "android_client_info": {
+          "package_name": "org.egov.kg"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBzE5f156_ia7HumLb1fDg8A-88uhmQ68Y"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
         "mobilesdk_app_id": "1:397617237644:android:c07e9af3e599533ff6b5a9",
         "android_client_info": {
           "package_name": "org.egov.ng"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBzE5f156_ia7HumLb1fDg8A-88uhmQ68Y"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:397617237644:android:7a527f7eed694679f6b5a9",
+        "android_client_info": {
+          "package_name": "org.egov.ns"
         }
       },
       "oauth_client": [],
@@ -271,7 +309,25 @@
         }
       }
     },
-    
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:397617237644:android:65f82dc21b1ad4d0f6b5a9",
+        "android_client_info": {
+          "package_name": "org.egov.salama"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBzE5f156_ia7HumLb1fDg8A-88uhmQ68Y"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
     {
       "client_info": {
         "mobilesdk_app_id": "1:397617237644:android:d6ec5fc060703191f6b5a9",
