@@ -566,22 +566,16 @@ class _HomePageState extends LocalizedState<HomePage> {
     ];
 
     final List<String> filteredLabels = homeItemsLabel
-        .where((element) =>
-            state.actionsWrapper.actions
-                .map((e) => e.displayName)
-                .toList()
-                .contains(element) ||
-            element == i18.home.db)
+        .where((element) => state.actionsWrapper.actions
+            .map((e) => e.displayName)
+            .toList()
+            .contains(element))
         .toList();
 
     final showcaseKeys = filteredLabels
         .where((f) => f != i18.home.db)
         .map((label) => homeItemsShowcaseMap[label]!)
         .toList();
-
-    if (envConfig.variables.envType == EnvType.prod) {
-      filteredLabels.remove(i18.home.db);
-    }
 
     final List<Widget> widgetList =
         filteredLabels.map((label) => homeItemsMap[label]!).toList();
