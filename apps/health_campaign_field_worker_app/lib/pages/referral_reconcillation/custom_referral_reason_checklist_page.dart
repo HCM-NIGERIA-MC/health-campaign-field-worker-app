@@ -497,7 +497,8 @@ class _CustomReferralReasonChecklistPageState
                                             .map((e) => Column(
                                                   children: [
                                                     DigitCheckbox(
-                                                      label: e,
+                                                      label: localizations
+                                                          .translate(e),
                                                       value: controller[index]
                                                           .text
                                                           .split('.')
@@ -864,7 +865,7 @@ class _CustomReferralReasonChecklistPageState
                 .map((e) => Column(
                       children: [
                         DigitCheckbox(
-                          label: e,
+                          label: localizations.translate(e),
                           value: controller[index].text.split('.').contains(e),
                           onChanged: (value) {
                             context.read<ServiceBloc>().add(

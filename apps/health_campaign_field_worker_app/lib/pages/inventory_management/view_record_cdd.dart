@@ -280,7 +280,8 @@ class _ViewStockRecordsCDDPageState
                   const SizedBox(height: 12),
                   InputField(
                     type: InputType.text,
-                    label: i18_local.inventoryReportDetails.waybillNumberText,
+                    label: localizations.translate(
+                        i18_local.inventoryReportDetails.waybillNumberText),
                     initialValue: stock.wayBillNumber ?? '',
                     isDisabled: true,
                     readOnly: true,
@@ -288,7 +289,8 @@ class _ViewStockRecordsCDDPageState
                   const SizedBox(height: 12),
                   InputField(
                     type: InputType.text,
-                    label: i18_local.inventoryReportDetails.batchNumberText,
+                    label: localizations.translate(
+                        i18_local.inventoryReportDetails.batchNumberText),
                     initialValue: stock.additionalFields?.fields
                             .firstWhere(
                               (field) => field.key == 'batchNumber',
@@ -303,8 +305,8 @@ class _ViewStockRecordsCDDPageState
                   const SizedBox(height: 12),
                   InputField(
                     type: InputType.text,
-                    label: i18_local
-                        .inventoryReportDetails.quantityReceivedByWarehouse,
+                    label: localizations.translate(i18_local
+                        .inventoryReportDetails.quantityReceivedByWarehouse),
                     initialValue: stock.quantity ?? '',
                     isDisabled: true,
                     readOnly: true,
@@ -314,8 +316,8 @@ class _ViewStockRecordsCDDPageState
                     formControlName: 'quantityReceived',
                     builder: (field) => InputField(
                       type: InputType.text,
-                      label: i18_local
-                          .inventoryReportDetails.actualQuantityReceived,
+                      label: localizations.translate(i18_local
+                          .inventoryReportDetails.actualQuantityReceived),
                       errorMessage: field.errorText,
                       keyboardType: TextInputType.number,
                       onChange: (value) {
@@ -337,7 +339,8 @@ class _ViewStockRecordsCDDPageState
                     formControlName: 'comments',
                     builder: (field) => InputField(
                       type: InputType.textArea,
-                      label: i18_local.inventoryReportDetails.commentsText,
+                      label: localizations.translate(
+                          i18_local.inventoryReportDetails.commentsText),
                       errorMessage: field.errorText,
                       onChange: (value) => field.control.value = value,
                     ),
@@ -402,8 +405,8 @@ class _ViewStockRecordsCDDPageState
                   Row(
                     children: [
                       Expanded(
-                          child: Text(i18_local
-                              .inventoryReportDetails.receivedFromText)),
+                          child: Text(localizations.translate(i18_local
+                              .inventoryReportDetails.receivedFromText))),
                       Expanded(
                         child: Text(localizations
                             .translate('FAC_$senderIdToShowOnTab')),
