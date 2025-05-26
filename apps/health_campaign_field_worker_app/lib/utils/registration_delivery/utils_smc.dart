@@ -51,10 +51,12 @@ bool checkStatusSMC(List<TaskModel>? tasks, ProjectCycle? currentCycle) {
       lastTaskCreatedTime <= currentCycle.endDate;
 
   if (isLastCycleRunning) {
-    if (lastTask.status == Status.delivered.name) {
-      return true;
+    if (lastTask.status == Status.delivered.name.toUpperCase() ||
+        lastTask.status == Status.administeredSuccess.name.toUpperCase() ||
+        lastTask.status == Status.visited.name.toUpperCase()) {
+      return false;
     }
-    return diff.inHours >= 24; // [TODO: Move gap between doses to config]
+    return false; // [TODO: Move gap between doses to config]
   }
 
   return true;
@@ -145,7 +147,11 @@ bool redosePending(List<TaskModel>? tasks, ProjectCycle? selectedCycle) {
       );
 }
 
-bool checkBeneficiaryReferredSMC(List<TaskModel>? tasks) {
+bool checkBeneficiaryReferredSMC(
+    List<TaskModel>? tasks, ProjectCycle? currentCycle) {
+  if (currentCycle == null) {
+    return false;
+  }
   if ((tasks ?? []).isEmpty) {
     return false;
   }
@@ -165,18 +171,34 @@ bool checkBeneficiaryReferredSMC(List<TaskModel>? tasks) {
       )
       .lastOrNull;
 
-  return successfulTask != null;
+  final successfulTaskCreatedTime =
+      successfulTask?.clientAuditDetails?.createdTime;
+
+  if (successfulTaskCreatedTime == null) {
+    return false;
+  }
+
+  final date = DateTime.fromMillisecondsSinceEpoch(successfulTaskCreatedTime);
+
+  final isLastCycleRunning =
+      successfulTaskCreatedTime >= currentCycle.startDate &&
+          successfulTaskCreatedTime <= currentCycle.endDate;
+
+  return isLastCycleRunning;
 }
 
-bool checkBeneficiaryInEligibleSMC(List<TaskModel>? tasks) {
+bool checkBeneficiaryInEligibleSMC(
+    List<TaskModel>? tasks, ProjectCycle? currentCycle) {
+   if (currentCycle == null) {
+    return false;
+  }
   if ((tasks ?? []).isEmpty) {
     return false;
   }
   var successfulTask = tasks!
       .where(
         (element) =>
-            element.status ==
-                status_local.Status.beneficiaryInEligible.toValue() &&
+            element.status ==   status_local.Status.beneficiaryInEligible.toValue() &&
             element.additionalFields?.fields.firstWhereOrNull(
                   (e) =>
                       e.key ==
@@ -189,7 +211,20 @@ bool checkBeneficiaryInEligibleSMC(List<TaskModel>? tasks) {
       )
       .lastOrNull;
 
-  return successfulTask != null;
+  final successfulTaskCreatedTime =
+      successfulTask?.clientAuditDetails?.createdTime;
+
+  if (successfulTaskCreatedTime == null) {
+    return false;
+  }
+
+  final date = DateTime.fromMillisecondsSinceEpoch(successfulTaskCreatedTime);
+
+  final isLastCycleRunning =
+      successfulTaskCreatedTime >= currentCycle.startDate &&
+          successfulTaskCreatedTime <= currentCycle.endDate;
+
+  return isLastCycleRunning;
 }
 
 bool checkBeneficiaryInEligibleVAS(List<TaskModel>? tasks) {
@@ -289,8 +324,12 @@ bool checkBeneficiaryReferredVAS(List<TaskModel>? tasks) {
   return successfulTask != null;
 }
 
-bool assessmentSMCPending(List<TaskModel>? tasks) {
+bool assessmentSMCPending(List<TaskModel>? tasks, ProjectCycle? currentCycle) {
   // this task confirms eligibility and dose administrations is done
+
+  if (currentCycle == null) {
+    return true;
+  }
   if ((tasks ?? []).isEmpty) {
     return true;
   }
@@ -310,7 +349,22 @@ bool assessmentSMCPending(List<TaskModel>? tasks) {
       )
       .lastOrNull;
 
-  return successfulTask == null;
+  final successfulTaskCreatedTime =
+      successfulTask?.clientAuditDetails?.createdTime;
+
+  if (successfulTaskCreatedTime == null) {
+    return true;
+  }
+
+  final date = DateTime.fromMillisecondsSinceEpoch(successfulTaskCreatedTime);
+
+  final isLastCycleRunning =
+      successfulTaskCreatedTime >= currentCycle.startDate &&
+          successfulTaskCreatedTime <= currentCycle.endDate;
+
+  return !isLastCycleRunning;
+
+  //return successfulTask == null;
 }
 
 bool assessmentVASPending(List<TaskModel>? tasks) {
@@ -405,15 +459,17 @@ bool allDosesDelivered(
   }
 }
 
-
-
 Map<String, dynamic>? minimumAgeValidator(AbstractControl control) {
   final date = control.value;
   if (date is! DateTime) return null;
 
   final today = DateTime.now();
-  final age = today.year - date.year -
-      ((today.month < date.month || (today.month == date.month && today.day < date.day)) ? 1 : 0);
+  final age = today.year -
+      date.year -
+      ((today.month < date.month ||
+              (today.month == date.month && today.day < date.day))
+          ? 1
+          : 0);
 
   if (age < 18) {
     return {'minAge': true};

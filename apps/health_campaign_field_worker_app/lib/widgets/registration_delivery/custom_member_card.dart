@@ -16,7 +16,7 @@ import 'package:registration_delivery/utils/i18_key_constants.dart' as i18;
 import '../../blocs/localization/app_localization.dart';
 import '../../models/entities/identifier_types.dart';
 // import '../../utils/registration_delivery/utils_smc.dart';
-import 'package:registration_delivery/utils/utils.dart';
+//import 'package:registration_delivery/utils/utils.dart';
 import '../../router/app_router.dart';
 import '../../utils/app_enums.dart';
 import '../../utils/registration_delivery/utils_smc.dart';
@@ -27,6 +27,7 @@ import '../../utils/i18_key_constants.dart' as i18_local;
 
 import '../../models/entities/additional_fields_type.dart'
     as additional_fields_local;
+import '../../utils/extensions/extensions.dart';
 
 class CustomMemberCard extends StatelessWidget {
   final List<ProductVariantModel> variant;
@@ -90,12 +91,14 @@ class CustomMemberCard extends StatelessWidget {
         .toList();
   }
 
-  Widget statusWidget(context) {
+  Widget statusWidget(BuildContext context) {
     List<TaskModel>? smcTasks = _getSMCStatusData();
 
-    bool isBeneficiaryReferredSMC = checkBeneficiaryReferredSMC(smcTasks);
+    bool isBeneficiaryReferredSMC =
+        checkBeneficiaryReferredSMC(smcTasks, context.selectedCycle);
 
-    bool isBeneficiaryInEligibleSMC = checkBeneficiaryInEligibleSMC(smcTasks);
+    bool isBeneficiaryInEligibleSMC =
+        checkBeneficiaryInEligibleSMC(smcTasks, context.selectedCycle);
 
     final theme = Theme.of(context);
     if (isHead) {
@@ -211,12 +214,15 @@ class CustomMemberCard extends StatelessWidget {
     final textTheme = theme.digitTextTheme(context);
     List<TaskModel>? smcTasks = _getSMCStatusData();
 
-    final doseStatus = checkStatus(smcTasks, context.selectedCycle);
-    bool smcAssessmentPendingStatus = assessmentSMCPending(smcTasks);
+    final doseStatus =  checkStatusSMC(smcTasks, context.selectedCycle);
+    bool smcAssessmentPendingStatus =
+        assessmentSMCPending(smcTasks, context.selectedCycle);
 
-    bool isBeneficiaryReferredSMC = checkBeneficiaryReferredSMC(smcTasks);
+    bool isBeneficiaryReferredSMC =
+        checkBeneficiaryReferredSMC(smcTasks, context.selectedCycle);
 
-    bool isBeneficiaryInEligibleSMC = checkBeneficiaryInEligibleSMC(smcTasks);
+    bool isBeneficiaryInEligibleSMC =
+        checkBeneficiaryInEligibleSMC(smcTasks, context.selectedCycle);
 
     final redosePendingStatus = smcAssessmentPendingStatus
         ? true
@@ -250,16 +256,14 @@ class CustomMemberCard extends StatelessWidget {
                 ),
               );
 
-              if ((smcTasks ?? []).isEmpty) {
-                context.router.push(
-                  EligibilityChecklistViewRoute(
-                    projectBeneficiaryClientReferenceId:
-                        projectBeneficiaryClientReferenceId,
-                    individual: individual,
-                    eligibilityAssessmentType: EligibilityAssessmentType.smc,
-                  ),
-                );
-              }
+              context.router.push(
+                EligibilityChecklistViewRoute(
+                  projectBeneficiaryClientReferenceId:
+                      projectBeneficiaryClientReferenceId,
+                  individual: individual,
+                  eligibilityAssessmentType: EligibilityAssessmentType.smc,
+                ),
+              );
             },
           ),
         if ((!smcAssessmentPendingStatus) && redosePendingStatus)
