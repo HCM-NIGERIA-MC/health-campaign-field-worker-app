@@ -45,6 +45,7 @@ import '../../utils/app_enums.dart';
 import '../../utils/registration_delivery/utils_smc.dart';
 import '../../widgets/registration_delivery/custom_member_card.dart';
 import '../../utils/i18_key_constants.dart' as i18_local;
+import '../../utils/utils.dart' as local_utils;
 
 @RoutePage()
 class CustomHouseholdOverviewPage extends LocalizedStatefulWidget {
@@ -613,10 +614,7 @@ class _CustomHouseholdOverviewPageState
                                               taskData,
                                             );
                                             final isBeneficiaryReferred =
-                                                checkIfBeneficiaryReferred(
-                                              referralData,
-                                              currentCycle,
-                                            );
+                                                checkBeneficiaryReferredSMC(taskData, context.selectedCycle);
 
                                             return BlocBuilder<
                                                 ProductVariantBloc,
@@ -878,23 +876,10 @@ class _CustomHouseholdOverviewPageState
                                                                 ).months),
                                                       gender: e.gender?.name,
                                                       isBeneficiaryRefused:
-                                                          isBeneficiaryRefused &&
-                                                              !checkStatusSMC(
-                                                                taskData,
-                                                                currentCycle,
-                                                              ),
+                                                          false,
                                                       isBeneficiaryReferred:
                                                           isBeneficiaryReferred,
-                                                      isSMCDelivered: taskData ==
-                                                              null
-                                                          ? false
-                                                          : taskData.isNotEmpty &&
-                                                                  !checkStatusSMC(
-                                                                    taskData,
-                                                                    currentCycle,
-                                                                  )
-                                                              ? true
-                                                              : false,
+                                                      isSMCDelivered:  !assessmentSMCPending(taskData, context.selectedCycle),
                                                       // isVASDelivered: taskData ==
                                                       //         null
                                                       //     ? false
@@ -931,11 +916,11 @@ class _CustomHouseholdOverviewPageState
                                           localizations.translate(i18_local
                                               .beneficiaryDetails
                                               .insufficientStockMessage);
-                                      if (spaq1 == 0) {
+                                      if (spaq1 <= 0) {
                                         descriptionText +=
                                             "\n ${localizations.translate(i18_local.beneficiaryDetails.spaq1DoseUnit)}";
                                       }
-                                      if (spaq2 == 0) {
+                                      if (spaq2 <= 0) {
                                         descriptionText +=
                                             "\n ${localizations.translate(i18_local.beneficiaryDetails.spaq2DoseUnit)}";
                                       }
