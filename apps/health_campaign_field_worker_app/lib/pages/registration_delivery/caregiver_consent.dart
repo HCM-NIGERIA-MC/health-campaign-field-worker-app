@@ -303,6 +303,7 @@ class CaregiverConsentPageState extends LocalizedState<CaregiverConsentPage> {
                         onChanged: (value) {
                           setState(() {
                             if (value.code == CaregiverConsentEnum.yes.name) {
+                              consentComment.clear();
                               selectedConsent = CaregiverConsentEnum.yes;
                             } else {
                               selectedConsent = CaregiverConsentEnum.no;
