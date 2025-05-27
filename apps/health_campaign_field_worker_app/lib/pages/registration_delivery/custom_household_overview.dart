@@ -290,6 +290,34 @@ class _CustomHouseholdOverviewPageState
                             child: DigitCard(
                                 margin: const EdgeInsets.all(spacer2),
                                 children: [
+                                  Row(
+                                    children: [
+                                      Align(
+                                        alignment: Alignment.centerLeft,
+                                        child: Padding(
+                                          padding:
+                                              const EdgeInsets.all(spacer2),
+                                          child: Text(
+                                            RegistrationDeliverySingleton()
+                                                            .householdType !=
+                                                        null &&
+                                                    RegistrationDeliverySingleton()
+                                                            .householdType ==
+                                                        HouseholdType.community
+                                                ? localizations.translate(i18
+                                                    .householdOverView
+                                                    .clfOverviewLabel)
+                                                : localizations.translate(i18
+                                                    .householdOverView
+                                                    .householdOverViewLabel),
+                                            style: textTheme.headingXl.copyWith(
+                                                color: theme
+                                                    .colorTheme.text.primary),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
                                   Column(
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
@@ -614,7 +642,9 @@ class _CustomHouseholdOverviewPageState
                                               taskData,
                                             );
                                             final isBeneficiaryReferred =
-                                                checkBeneficiaryReferredSMC(taskData, context.selectedCycle);
+                                                checkBeneficiaryReferredSMC(
+                                                    taskData,
+                                                    context.selectedCycle);
 
                                             return BlocBuilder<
                                                 ProductVariantBloc,
@@ -879,7 +909,11 @@ class _CustomHouseholdOverviewPageState
                                                           false,
                                                       isBeneficiaryReferred:
                                                           isBeneficiaryReferred,
-                                                      isSMCDelivered:  !assessmentSMCPending(taskData, context.selectedCycle),
+                                                      isSMCDelivered:
+                                                          !assessmentSMCPending(
+                                                              taskData,
+                                                              context
+                                                                  .selectedCycle),
                                                       // isVASDelivered: taskData ==
                                                       //         null
                                                       //     ? false
