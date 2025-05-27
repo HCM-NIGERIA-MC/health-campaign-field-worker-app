@@ -346,7 +346,9 @@ class AuthenticatedPageWrapper extends StatelessWidget {
                               ),
                             ),
                             child: QrImageView(
-                              data: context.loggedInUserUuid,
+                              data: value.userModel.userName.toString() +
+                                  Constants.pipeSeparator +
+                                  context.loggedInUserUuid,
                               version: QrVersions.auto,
                               size: 150.0,
                             ),

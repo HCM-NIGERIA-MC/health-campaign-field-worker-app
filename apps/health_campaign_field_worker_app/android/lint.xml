@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<lint>
-    <issue id="MissingPermission">
-        <ignore pattern="android.permission.READ_PRIVILEGED_PHONE_STATE"/>
-    </issue>
-</lint>

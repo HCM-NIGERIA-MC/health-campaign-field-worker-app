@@ -414,36 +414,7 @@ class CustomHouseholdLocationPageState
                                             .control(_buildingNameKey)
                                             .value,
                                       )))),
-                        householdLocationShowcaseData.landmark.buildWith(
-                          child: ReactiveWrapperField(
-                            formControlName: _landmarkKey,
-                            validationMessages: {
-                              'required': (_) => localizations.translate(
-                                    i18.common.min2CharsRequired,
-                                  ),
-                              'maxLength': (object) => localizations
-                                  .translate(i18.common.maxCharsRequired)
-                                  .replaceAll('{}', maxLength.toString()),
-                              'onlyAlphabetsAndDigits': (object) =>
-                                  localizations.translate(
-                                    i18_local.individualDetails
-                                        .landmarkValidationMessage,
-                                  ),
-                            },
-                            builder: (field) => LabeledField(
-                              label: localizations.translate(
-                                i18.householdLocation.landmarkFormLabel,
-                              ),
-                              child: DigitTextFormInput(
-                                errorMessage: field.errorText,
-                                onChange: (value) {
-                                  form.control(_landmarkKey).value = value;
-                                },
-                                initialValue: form.control(_landmarkKey).value,
-                              ),
-                            ),
-                          ),
-                        ),
+                       
                       ]),
                 ),
               ],

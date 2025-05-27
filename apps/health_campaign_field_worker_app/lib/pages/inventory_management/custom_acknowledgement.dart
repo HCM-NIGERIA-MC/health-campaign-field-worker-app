@@ -38,20 +38,27 @@ class CustomAcknowledgementPageState
     extends LocalizedState<CustomAcknowledgementPage> {
   @override
   Widget build(BuildContext context) {
+    var showLabel = localizations
+        .translate(i18_local.acknowledgementSuccess.mrnNumberLabel);
+    var showDescription = localizations
+        .translate(i18_local.acknowledgementSuccess.mrrnNumberDescription);
+    var showHeading = localizations
+        .translate(i18_local.acknowledgementSuccess.mrrnNumberHeading);
 
-    var showLabel = localizations.translate(i18_local.acknowledgementSuccess.mrnNumberLabel);
-    var showDescription = localizations.translate(i18_local.acknowledgementSuccess.mrrnNumberDescription);
-    var showHeading = localizations.translate(i18_local.acknowledgementSuccess.mrrnNumberHeading);
-
-    if(widget.entryType == StockRecordEntryType.dispatch) {
-        showLabel = localizations.translate(i18_local.acknowledgementSuccess.minNumberLabel);
-        showDescription = localizations.translate(i18_local.acknowledgementSuccess.minNumberDescription);
-        showHeading = localizations.translate(i18_local.acknowledgementSuccess.minNumberHeading);
-    }
-    else if(widget.entryType == StockRecordEntryType.returned) {
-        showLabel = localizations.translate(i18_local.acknowledgementSuccess.mrnNumberLabel);
-        showDescription = localizations.translate(i18_local.acknowledgementSuccess.mrnNumberDescription);
-        showHeading = localizations.translate(i18_local.acknowledgementSuccess.mrnNumberHeading);
+    if (widget.entryType == StockRecordEntryType.dispatch) {
+      showLabel = localizations
+          .translate(i18_local.acknowledgementSuccess.minNumberLabel);
+      showDescription = localizations
+          .translate(i18_local.acknowledgementSuccess.minNumberDescription);
+      showHeading = localizations
+          .translate(i18_local.acknowledgementSuccess.minNumberHeading);
+    } else if (widget.entryType == StockRecordEntryType.returned) {
+      showLabel = localizations
+          .translate(i18_local.acknowledgementSuccess.mrnNumberLabel);
+      showDescription = localizations
+          .translate(i18_local.acknowledgementSuccess.mrnNumberDescription);
+      showHeading = localizations
+          .translate(i18_local.acknowledgementSuccess.mrnNumberHeading);
     }
 
     Map<String, String> mrnnumber = {
@@ -78,6 +85,7 @@ class CustomAcknowledgementPageState
                     ViewStockRecordsRoute(
                       mrnNumber: widget.mrnNumber,
                       stockRecords: widget.stockRecords,
+                      // entryType: widget.entryType,
                     ),
                   );
                 },

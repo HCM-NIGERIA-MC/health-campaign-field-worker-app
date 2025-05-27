@@ -382,19 +382,21 @@ class ProjectBloc extends Bloc<ProjectEvent, ProjectState> {
       ProjectFacilitySearchModel(
         projectId: projects.map((e) => e.id).toList(),
       ),
+      limit: 1000,
     );
 
     await projectFacilityLocalRepository.bulkCreate(projectFacilities);
 
     try {
-      // info : download the stock data
-      await downloadStockDataBasedOnRole(projectFacilities);
       final facilities = await facilityRemoteRepository.search(
         FacilitySearchModel(tenantId: envConfig.variables.tenantId),
         limit: 1000,
       );
 
       await facilityLocalRepository.bulkCreate(facilities);
+
+      // info : moved to project selection
+      // await downloadStockDataBasedOnRole(projectFacilities, facilities);
     } catch (e) {
       print(e);
     }
@@ -438,9 +440,7 @@ class ProjectBloc extends Bloc<ProjectEvent, ProjectState> {
     try {
       if (context.loggedInUserRoles
           .where(
-            (role) =>
-                role.code == RolesType.districtSupervisor.toValue() ||
-                role.code == RolesType.attendanceStaff.toValue(),
+            (role) => role.code == RolesType.attendanceStaff.toValue(),
           )
           .toList()
           .isNotEmpty) {
@@ -614,6 +614,20 @@ class ProjectBloc extends Bloc<ProjectEvent, ProjectState> {
       ));
     }
 
+    try {
+      final projectFacilities = await projectFacilityLocalRepository
+          .search(ProjectFacilitySearchModel());
+      final facilities =
+          await facilityLocalRepository.search(FacilitySearchModel());
+      await downloadStockDataBasedOnRole(
+          projectFacilities, facilities, event.model.address?.boundaryType);
+    } catch (_) {
+      emit(state.copyWith(
+        loading: false,
+        syncError: ProjectSyncErrorType.projectFacilities,
+      ));
+    }
+
     final getSelectedProjectType = await localSecureStore.selectedProjectType;
     final currentRunningCycle = getSelectedProjectType?.cycles
         ?.where(
@@ -682,14 +696,26 @@ class ProjectBloc extends Bloc<ProjectEvent, ProjectState> {
 
   // info: downloads stock data from remote , based on the user role
   FutureOr<void> downloadStockDataBasedOnRole(
-      List<ProjectFacilityModel> projectFacilities) async {
+      List<ProjectFacilityModel> projectFacilities,
+      List<FacilityModel> allFacilities,
+      String? boundaryType) async {
     final userObject = await localSecureStore.userRequestModel;
     final userRoles = userObject!.roles.map((e) => e.code);
+
+    Map<String, String> facilityIdUsageMap = {};
+
+    for (var element in allFacilities) {
+      facilityIdUsageMap[element.id] = element?.usage ?? "";
+    }
 
     // info : assumption both roles will not be assigned to user
 
     if (userRoles.contains(RolesType.healthFacilitySupervisor.toValue())) {
-      final receiverIds = projectFacilities.map((e) => e.facilityId).toList();
+      List<String> receiverIds =
+          projectFacilities.map((e) => e.facilityId).toList();
+      receiverIds = receiverIds
+          .where((e) => facilityIdUsageMap[e] == Constants.healthFacility)
+          .toList();
       final stockSearchModel = StockSearchModel(
         receiverId: receiverIds,
         transactionType: [TransactionType.dispatched.toValue()],
@@ -699,8 +725,13 @@ class ProjectBloc extends Bloc<ProjectEvent, ProjectState> {
       // info : create entries in the local repository
 
       await createStockDownloadedEntries(stockEntriesDownloaded);
-    } else if (userRoles.contains(RolesType.warehouseManager.toValue())) {
-      final receiverIds = projectFacilities.map((e) => e.facilityId).toList();
+    } else if (userRoles.contains(RolesType.warehouseManager.toValue()) &&
+        boundaryType == Constants.lgaBoundaryLevel) {
+      List<String> receiverIds =
+          projectFacilities.map((e) => e.facilityId).toList();
+      receiverIds = receiverIds
+          .where((e) => facilityIdUsageMap[e] == Constants.lgaFacility)
+          .toList();
       final stockSearchModel = StockSearchModel(
         receiverId: receiverIds,
         transactionType: [TransactionType.dispatched.toValue()],

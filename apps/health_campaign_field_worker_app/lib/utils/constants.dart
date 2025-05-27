@@ -12,9 +12,12 @@ import 'package:digit_location_tracker/location_tracker.dart';
 import 'package:digit_ui_components/utils/app_logger.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:inventory_management/utils/utils.dart';
 import 'package:isar/isar.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:survey_form/survey_form.dart';
+import 'package:survey_form/data/repositories/local/service.dart';
+import 'package:survey_form/data/repositories/oplog/oplog.dart';
+import 'package:survey_form/data/repositories/remote/service.dart';
 import 'package:sync_service/sync_service_lib.dart';
 
 import '../data/local_store/no_sql/schema/app_configuration.dart';
@@ -102,13 +105,14 @@ class Constants {
   static const String lgaFacility = 'LGA Facility';
   static const int mlPerBottle = 30;
   static const int apiCallLimit = 1000;
+  static const String pipeSeparator = '||';
 
   // for stock validation
 
-  static const String spaq1= "SPAQ 1";
-  static const String spaq2= "SPAQ 2";
-  static const String blueVAS= "Blue VAS";
-  static const String redVAS= "Red VAS";
+  static const String spaq1 = "SPAQ 1";
+  static const String spaq2 = "SPAQ 2";
+  static const String blueVAS = "Blue VAS";
+  static const String redVAS = "Red VAS";
 
   // intervention point
 
@@ -177,9 +181,7 @@ class Constants {
         AttendanceLogOpLogManager(isar),
       ),
 
-      HFReferralLocalRepository(sql, HFReferralOpLogManager(isar)),
-
-      HFReferralLocalRepository(sql, HFReferralOpLogManager(isar)),
+      ServiceLocalRepository(sql, ServiceOpLogManager(isar)),
     ];
   }
 
@@ -190,16 +192,15 @@ class Constants {
     final appConfigs = await isar.appConfigurations.where().findAll();
     final config = appConfigs.firstOrNull;
 
-    final enableCrashlytics = false;
-    // config?.firebaseConfig?.enableCrashlytics ?? false;
-    // if (enableCrashlytics) {
-    //   firebase_services.initialize(
-    //     options: DefaultFirebaseOptions.currentPlatform,
-    //     onErrorMessage: (value) {
-    //       AppLogger.instance.error(title: 'CRASHLYTICS', message: value);
-    //     },
-    //   );
-    // }
+    final enableCrashlytics = config?.firebaseConfig?.enableCrashlytics ?? true;
+    if (enableCrashlytics) {
+      firebase_services.initialize(
+        options: DefaultFirebaseOptions.currentPlatform,
+        onErrorMessage: (value) {
+          AppLogger.instance.error(title: 'CRASHLYTICS', message: value);
+        },
+      );
+    }
 
     _version = version;
   }
@@ -264,10 +265,8 @@ class Constants {
           AttendanceLogRemoteRepository(dio, actionMap: actions),
         if (value == DataModelType.complaints)
           PgrServiceRemoteRepository(dio, actionMap: actions),
-        if (value == DataModelType.hFReferral)
-          HFReferralRemoteRepository(dio, actionMap: actions),
-        if (value == DataModelType.hFReferral)
-          HFReferralRemoteRepository(dio, actionMap: actions),
+        if (value == DataModelType.service)
+          ServiceRemoteRepository(dio, actionMap: actions),
       ]);
     }
 

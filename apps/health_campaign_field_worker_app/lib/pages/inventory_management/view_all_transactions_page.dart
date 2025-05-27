@@ -57,6 +57,11 @@ class _ViewAllTransactionsScreenState extends State<ViewAllTransactionsScreen> {
           transactionType: [TransactionType.dispatched.toValue()],
           transactionReason: [],
           receiverId: warehouseId == null ? [] : [warehouseId]));
+      if (isHFUser(context)) {
+        result = result.where((stock) {
+          return stock.senderType == 'WAREHOUSE';
+        }).toList();
+      }
       receivedResult = await repository.search(StockSearchModel(
           transactionType: [TransactionType.received.toValue()],
           transactionReason: [TransactionReason.received.toValue()],
@@ -113,7 +118,7 @@ class _ViewAllTransactionsScreenState extends State<ViewAllTransactionsScreen> {
         filtered.add(stock);
       }
     }
-    return filtered;
+    return filtered.reversed.toList();
   }
 
   void _navigateToDetails(StockModel stock) {
@@ -183,10 +188,11 @@ class _ViewAllTransactionsScreenState extends State<ViewAllTransactionsScreen> {
                       Text("Select the MIN number", style: textTheme.headingL),
                       const SizedBox(height: 16.0),
                       SizedBox(
-                        height: MediaQuery.of(context).size.height * 0.8,
+                        height: MediaQuery.of(context).size.height * 0.7,
                         child: BlocBuilder<StockBloc, StockState>(
                           builder: (context, state) {
                             return ListView.builder(
+                              // reverse: true,
                               itemCount: filteredStock.length,
                               itemBuilder: (context, index) {
                                 final stock = filteredStock[index];

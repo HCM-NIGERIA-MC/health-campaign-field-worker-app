@@ -16,7 +16,7 @@ import 'package:registration_delivery/utils/i18_key_constants.dart' as i18;
 import '../../blocs/localization/app_localization.dart';
 import '../../models/entities/identifier_types.dart';
 // import '../../utils/registration_delivery/utils_smc.dart';
-import 'package:registration_delivery/utils/utils.dart';
+//import 'package:registration_delivery/utils/utils.dart';
 import '../../router/app_router.dart';
 import '../../utils/app_enums.dart';
 import '../../utils/registration_delivery/utils_smc.dart';
@@ -27,6 +27,7 @@ import '../../utils/i18_key_constants.dart' as i18_local;
 
 import '../../models/entities/additional_fields_type.dart'
     as additional_fields_local;
+import '../../utils/extensions/extensions.dart';
 
 class CustomMemberCard extends StatelessWidget {
   final List<ProductVariantModel> variant;
@@ -90,12 +91,14 @@ class CustomMemberCard extends StatelessWidget {
         .toList();
   }
 
-  Widget statusWidget(context) {
+  Widget statusWidget(BuildContext context) {
     List<TaskModel>? smcTasks = _getSMCStatusData();
 
-    bool isBeneficiaryReferredSMC = checkBeneficiaryReferredSMC(smcTasks);
+    bool isBeneficiaryReferredSMC =
+        checkBeneficiaryReferredSMC(smcTasks, context.selectedCycle);
 
-    bool isBeneficiaryInEligibleSMC = checkBeneficiaryInEligibleSMC(smcTasks);
+    bool isBeneficiaryInEligibleSMC =
+        checkBeneficiaryInEligibleSMC(smcTasks, context.selectedCycle);
 
     final theme = Theme.of(context);
     if (isHead) {
@@ -106,8 +109,8 @@ class CustomMemberCard extends StatelessWidget {
           iconSize: 20,
           iconText: localizations.translate(i18_local
               .householdOverView.householdOverViewHouseholderHeadLabel),
-          iconTextColor: theme.colorScheme.error,
-          iconColor: theme.colorScheme.error,
+          iconTextColor: theme.colorScheme.surfaceTint,
+          iconColor: theme.colorScheme.surfaceTint,
         ),
       );
     }
@@ -128,8 +131,8 @@ class CustomMemberCard extends StatelessWidget {
                 icon: Icons.check_circle,
                 iconText: localizations.translate(
                   isBeneficiaryInEligibleSMC
-                      ? i18_local.householdOverView
-                          .householdOverViewBeneficiaryInEligibleSMCLabel
+                      ? i18.householdOverView
+                          .householdOverViewNotEligibleIconLabel
                       : isBeneficiaryReferredSMC
                           ? i18_local.householdOverView
                               .householdOverViewBeneficiaryReferredSMCLabel
@@ -211,12 +214,15 @@ class CustomMemberCard extends StatelessWidget {
     final textTheme = theme.digitTextTheme(context);
     List<TaskModel>? smcTasks = _getSMCStatusData();
 
-    final doseStatus = checkStatus(smcTasks, context.selectedCycle);
-    bool smcAssessmentPendingStatus = assessmentSMCPending(smcTasks);
+    final doseStatus =  checkStatusSMC(smcTasks, context.selectedCycle);
+    bool smcAssessmentPendingStatus =
+        assessmentSMCPending(smcTasks, context.selectedCycle);
 
-    bool isBeneficiaryReferredSMC = checkBeneficiaryReferredSMC(smcTasks);
+    bool isBeneficiaryReferredSMC =
+        checkBeneficiaryReferredSMC(smcTasks, context.selectedCycle);
 
-    bool isBeneficiaryInEligibleSMC = checkBeneficiaryInEligibleSMC(smcTasks);
+    bool isBeneficiaryInEligibleSMC =
+        checkBeneficiaryInEligibleSMC(smcTasks, context.selectedCycle);
 
     final redosePendingStatus = smcAssessmentPendingStatus
         ? true
@@ -250,16 +256,14 @@ class CustomMemberCard extends StatelessWidget {
                 ),
               );
 
-              if ((smcTasks ?? []).isEmpty) {
-                context.router.push(
-                  EligibilityChecklistViewRoute(
-                    projectBeneficiaryClientReferenceId:
-                        projectBeneficiaryClientReferenceId,
-                    individual: individual,
-                    eligibilityAssessmentType: EligibilityAssessmentType.smc,
-                  ),
-                );
-              }
+              context.router.push(
+                EligibilityChecklistViewRoute(
+                  projectBeneficiaryClientReferenceId:
+                      projectBeneficiaryClientReferenceId,
+                  individual: individual,
+                  eligibilityAssessmentType: EligibilityAssessmentType.smc,
+                ),
+              );
             },
           ),
         if ((!smcAssessmentPendingStatus) && redosePendingStatus)
@@ -291,8 +295,6 @@ class CustomMemberCard extends StatelessWidget {
                 if (redosePendingStatus) {
                   final spaq1 = context.spaq1;
                   final spaq2 = context.spaq2;
-                  // final blueVas = context.blueVas;
-                  // final redVas = context.redVas;
 
                   int doseCount = double.parse(
                     successfulTask?.resources?.first.quantity ?? "0",
@@ -318,19 +320,10 @@ class CustomMemberCard extends StatelessWidget {
                               spaq2 > 0))) {
                     context.router.push(
                       RecordRedoseRoute(
-                        tasks: [successfulTask!],
+                        tasks: [successfulTask],
                       ),
                     );
-                  }
-
-                  // if (successfulTask != null && spaq1 >= doseCount) {
-                  //   context.router.push(
-                  //     RecordRedoseRoute(
-                  //       tasks: [successfulTask],
-                  //     ),
-                  //   );
-                  // }
-                  else {
+                  } else {
                     DigitDialog.show(
                       context,
                       options: DigitDialogOptions(
@@ -354,19 +347,6 @@ class CustomMemberCard extends StatelessWidget {
                               )} \n ${localizations.translate(
                                 i18_local.beneficiaryDetails.spaq2DoseUnit,
                               )}",
-                        // contentText: (spaq1 < doseCountSpaq1)
-                        //     ? "${localizations.translate(
-                        //         i18_local.beneficiaryDetails
-                        //             .insufficientAZTStockMessageDelivery,
-                        //       )} \n ${localizations.translate(
-                        //         i18_local.beneficiaryDetails.spaq1DoseUnit,
-                        //       )}"
-                        //     : "${localizations.translate(
-                        //         i18_local.beneficiaryDetails
-                        //             .insufficientAZTStockMessageDelivery,
-                        //       )} \n ${localizations.translate(
-                        //         i18_local.beneficiaryDetails.spaq2DoseUnit,
-                        //       )}",
                         primaryAction: DigitDialogActions(
                           label: localizations.translate(i18_local
                               .beneficiaryDetails.backToHouseholdDetails),
@@ -480,10 +460,6 @@ class CustomMemberCard extends StatelessWidget {
                               .lastOrNull ==
                           null &&
                       !isSMCDelivered &&
-                      // &&
-                      // !isVASDelivered &&
-                      // !isNotEligibleSMC &&
-                      // !isNotEligibleVAS &&
                       !isBeneficiaryIneligible &&
                       !isBeneficiaryReferred)
                   ? Positioned(

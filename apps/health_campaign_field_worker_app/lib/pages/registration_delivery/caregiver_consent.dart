@@ -1,3 +1,4 @@
+import 'package:digit_components/widgets/atoms/digit_toaster.dart';
 import 'package:digit_data_model/data_model.dart';
 import 'package:digit_data_model/models/entities/household_type.dart';
 import 'package:digit_ui_components/digit_components.dart';
@@ -42,8 +43,10 @@ class CaregiverConsentPage extends LocalizedStatefulWidget {
 }
 
 class CaregiverConsentPageState extends LocalizedState<CaregiverConsentPage> {
-  CaregiverConsentEnum selectedConsent = CaregiverConsentEnum.yes;
+  CaregiverConsentEnum? selectedConsent = null;
   final clickedStatus = ValueNotifier<bool>(false);
+  TextEditingController consentComment = TextEditingController();
+  String? commentErrorText;
 
   onSubmit(HouseholdModel? householdModel, AddressModel? addressModel) async {
     final bloc = context.read<CustomBeneficiaryRegistrationBloc>();
@@ -75,7 +78,7 @@ class CaregiverConsentPageState extends LocalizedState<CaregiverConsentPage> {
         tenantId: RegistrationDeliverySingleton().tenantId,
         clientReferenceId:
             householdModel?.clientReferenceId ?? IdGen.i.identifier,
-        memberCount: 0,
+        memberCount: 1,
         clientAuditDetails: ClientAuditDetails(
           createdBy:
               RegistrationDeliverySingleton().loggedInUserUuid.toString(),
@@ -99,7 +102,12 @@ class CaregiverConsentPageState extends LocalizedState<CaregiverConsentPage> {
             "caregiver_consent_registration",
             false,
           ),
-          
+          AdditionalField(
+            "caregiver_consent_comment",
+            consentComment.text,
+          ),
+
+          // AdditionalField(IdentifierTypes.uniqueBeneficiaryID.toValue(), householdid),
         ]));
 
     bloc.add(
@@ -170,11 +178,21 @@ class CaregiverConsentPageState extends LocalizedState<CaregiverConsentPage> {
                   size: DigitButtonSize.large,
                   mainAxisSize: MainAxisSize.max,
                   onPressed: () {
+                    if (selectedConsent == null) {
+                      DigitToast.show(context,
+                          options: DigitToastOptions(
+                            localizations.translate(
+                                i18_local.caregiverConsent.caregiveroption),
+                            true,
+                            theme,
+                          ));
+                      return;
+                    }
                     if (selectedConsent == CaregiverConsentEnum.yes) {
                       //TODO: testing
                       //router.push(CustomHouseHoldDetailsRoute());
                       router.push(CustomInterventionPointRoute());
-                    } else {
+                    }  else if (consentComment.text.length >= 2) {
                       registrationState.maybeWhen(orElse: () {
                         return;
                       }, create: (
@@ -219,7 +237,7 @@ class CaregiverConsentPageState extends LocalizedState<CaregiverConsentPage> {
                                         rootNavigator: true,
                                       ).pop(false),
                                   type: DigitButtonType.secondary,
-                                  size: DigitButtonSize.large)
+                                  size: DigitButtonSize.large),
                             ],
                           ),
                         );
@@ -227,6 +245,17 @@ class CaregiverConsentPageState extends LocalizedState<CaregiverConsentPage> {
                           onSubmit(householdModel, addressModel);
                         }
                       });
+                    } else {
+                      DigitToast.show(
+                        context,
+                        options: DigitToastOptions(
+                          localizations.translate(
+                              i18_local.common.coreCommonConsentReasonRequired),
+                          true,
+                          theme,
+                        ),
+                      );
+                      return;
                     }
                   },
                 );
@@ -244,7 +273,8 @@ class CaregiverConsentPageState extends LocalizedState<CaregiverConsentPage> {
                   headingStyle: textTheme.headingXl
                       .copyWith(color: theme.colorTheme.text.primary),
                   description: "${localizations.translate(
-                    i18_local.caregiverConsent.caregiverConsentDescriptionTextSMC,
+                    i18_local
+                        .caregiverConsent.caregiverConsentDescriptionTextSMC,
                   )} *",
                   descriptionStyle: textTheme.bodyL.copyWith(
                     color: theme.colorTheme.text.primary,
@@ -269,16 +299,28 @@ class CaregiverConsentPageState extends LocalizedState<CaregiverConsentPage> {
                             ),
                           ),
                         ],
-                        groupValue: CaregiverConsentEnum.yes.name,
+                        groupValue: selectedConsent == null
+                            ? ''
+                            : selectedConsent!.name,
                         onChanged: (value) {
-                          if (value.code == CaregiverConsentEnum.yes.name) {
-                            selectedConsent = CaregiverConsentEnum.yes;
-                          } else {
-                            selectedConsent = CaregiverConsentEnum.no;
-                          }
+                          setState(() {
+                            if (value.code == CaregiverConsentEnum.yes.name) {
+                              consentComment.clear();
+                              selectedConsent = CaregiverConsentEnum.yes;
+                            } else {
+                              selectedConsent = CaregiverConsentEnum.no;
+                            }
+                          });
                         },
                       );
-                    })
+                    }),
+                if (selectedConsent == CaregiverConsentEnum.no)
+                  LabeledField(
+                    isRequired: true,
+                    label: localizations.translate(
+                        i18_local.caregiverConsent.caregiverConsentReason),
+                    child: DigitTextFormInput(controller: consentComment),
+                  )
               ]),
             ),
           ],

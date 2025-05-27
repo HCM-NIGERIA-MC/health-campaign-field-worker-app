@@ -51,7 +51,7 @@ class CustomStockLocalRepository
                       query.clientReferenceId!,
                     ),
                   if (userId != null)
-                    sql.stock.auditCreatedBy.equals(
+                    sql.stock.clientCreatedBy.equals(
                       userId,
                     ),
                   if (query.transactionType != null)
@@ -65,7 +65,13 @@ class CustomStockLocalRepository
                     ),
                 ],
               ),
-            ))
+            )
+            ..orderBy([
+              OrderingTerm(
+                expression: sql.stock.clientCreatedTime,
+                mode: OrderingMode.asc,
+              ),
+            ]))
           .get();
 
       return results.map((e) {

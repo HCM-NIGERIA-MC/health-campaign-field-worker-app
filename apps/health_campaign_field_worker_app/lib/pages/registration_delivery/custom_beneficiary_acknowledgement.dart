@@ -44,34 +44,30 @@ class CustomBeneficiaryAcknowledgementPageState
   }
 
   Map<String, String>? subtitleMap(
-      registration_delivery.HouseholdMemberWrapper? householdMember,HouseholdModel? household) {
-        String? beneficiaryName =
+      registration_delivery.HouseholdMemberWrapper? householdMember,
+      String? householdId) {
+    String? beneficiaryId = householdMember?.members?.lastOrNull?.identifiers
+        ?.lastWhereOrNull((e) =>
+            e.identifierType == IdentifierTypes.uniqueBeneficiaryID.toValue())
+        ?.identifierId;
+    String? beneficiaryName =
         householdMember?.members?.lastOrNull?.name?.givenName;
-
     if (widget.acknowledgementType == AcknowledgementType.addHousehold) {
-      final householdId = household?.additionalFields?.fields.where((field) =>
-              field.key == IdentifierTypes.uniqueBeneficiaryID.toValue()).first.value;
-
-               
-      return householdId == null || beneficiaryName==null
-          ? null
-          : {
-              'id': localizations.translate(i18_local.beneficiaryDetails.householdId),
-              'value': "$beneficiaryName-$householdId",
-            };
-    } else {
-      String? beneficiaryId = householdMember?.members?.lastOrNull?.identifiers
-          ?.lastWhereOrNull((e) =>
-              e.identifierType == IdentifierTypes.uniqueBeneficiaryID.toValue())
-          ?.identifierId;
-      return beneficiaryId == null || beneficiaryName==null
+      return beneficiaryId == null || beneficiaryName == null
           ? null
           : {
               'id': localizations
-                  .translate(i18_local.beneficiaryDetails.beneficiaryId),
-              'value': "$beneficiaryName-$beneficiaryId",
+                  .translate(i18_local.beneficiaryDetails.householdId),
+              'value': '$beneficiaryName - $beneficiaryId'
             };
     }
+    return beneficiaryId == null || beneficiaryName == null
+        ? null
+        : {
+            'id': localizations
+                .translate(i18_local.beneficiaryDetails.beneficiaryId),
+            'value': '$beneficiaryName - $beneficiaryId',
+          };
   }
 
   @override
@@ -110,7 +106,8 @@ class CustomBeneficiaryAcknowledgementPageState
                   type: PanelType.success,
                   title: localizations.translate(
                       i18.acknowledgementSuccess.acknowledgementLabelText),
-                  subTitle: subtitleMap(householdMemberWrapper, state.householdModel),
+                  subTitle: subtitleMap(
+                      householdMemberWrapper, state.householdModel?.id),
                   actions: [
                     if (householdMemberWrapper != null)
                       DigitButton(

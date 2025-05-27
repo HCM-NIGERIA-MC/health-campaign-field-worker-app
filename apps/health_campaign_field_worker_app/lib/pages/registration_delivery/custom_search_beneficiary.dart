@@ -39,6 +39,7 @@ import '../../blocs/registration_delivery/custom_search_household.dart';
 import '../../router/app_router.dart';
 import '../../utils/search/global_search_parameters_smc.dart';
 import '../../widgets/showcase/showcase_wrappers.dart';
+import 'custom_view_beneficiary_card.dart';
 
 @RoutePage()
 class CustomSearchBeneficiaryPage extends LocalizedStatefulWidget {
@@ -294,33 +295,41 @@ class _CustomSearchBeneficiaryPageState
                                             ]),
                                             Row(
                                               children: [
-                                                Switch(
-                                                  value:
-                                                      isSearchByBeneficaryIdEnabled,
-                                                  onChanged: (value) {
-                                                    customSearchHouseholdsBloc
-                                                        .add(
-                                                      const SearchHouseholdsClearEvent(),
-                                                    );
-                                                    searchController.clear();
-                                                    context
-                                                        .read<
-                                                            IndividualGlobalSearchSMCBloc>()
-                                                        .add(const searchHouseholdSMCBloc
-                                                            .SearchHouseholdsSMCEvent.clear());
-                                                    setState(() {
-                                                      isSearchByBeneficaryIdEnabled =
-                                                          value;
-                                                      isProximityEnabled =
-                                                          false;
+                                                Padding(
+                                                  padding: const EdgeInsets.all(
+                                                      spacer2),
+                                                  child: DigitSwitch(
+                                                    value:
+                                                        isSearchByBeneficaryIdEnabled,
+                                                    onChanged: (value) {
+                                                      customSearchHouseholdsBloc
+                                                          .add(
+                                                        const SearchHouseholdsClearEvent(),
+                                                      );
                                                       searchController.clear();
-                                                      blocWrapper.clearEvent();
-                                                    });
-                                                  },
+                                                      context
+                                                          .read<
+                                                              IndividualGlobalSearchSMCBloc>()
+                                                          .add(const searchHouseholdSMCBloc
+                                                              .SearchHouseholdsSMCEvent.clear());
+                                                      setState(() {
+                                                        isSearchByBeneficaryIdEnabled =
+                                                            value;
+                                                        isProximityEnabled =
+                                                            false;
+                                                        searchController
+                                                            .clear();
+                                                        blocWrapper
+                                                            .clearEvent();
+                                                      });
+                                                    },
+                                                  ),
                                                 ),
                                                 Text(
                                                   localizations.translate(
-                                                      'SEARCH_BY_BENEFICIARY_ID'),
+                                                      i18_local
+                                                          .beneficiaryDetails
+                                                          .benficiarySearchId),
                                                 ),
                                               ],
                                             )
@@ -467,7 +476,7 @@ class _CustomSearchBeneficiaryPageState
 
                               return Container(
                                 margin: const EdgeInsets.only(bottom: spacer2),
-                                child: ViewBeneficiaryCard(
+                                child: CustomViewBeneficiaryCard(
                                   distance:
                                       isProximityEnabled ? distance : null,
                                   householdMember: householdMemberWrapper,
@@ -567,7 +576,7 @@ class _CustomSearchBeneficiaryPageState
                                 return Container(
                                   margin:
                                       const EdgeInsets.only(bottom: kPadding),
-                                  child: ViewBeneficiaryCard(
+                                  child: CustomViewBeneficiaryCard(
                                     householdMember: i,
                                     onOpenPressed: () async {
                                       final scannerBloc =
@@ -686,8 +695,6 @@ class _CustomSearchBeneficiaryPageState
                       onPressed: () {
                         int spaq1 = context.spaq1;
                         int spaq2 = context.spaq2;
-                        // int blueVas = context.blueVas;
-                        // int redVas = context.redVas;
 
                         String descriptionText = localizations.translate(
                             i18_local
@@ -701,21 +708,8 @@ class _CustomSearchBeneficiaryPageState
                           descriptionText +=
                               "\n ${localizations.translate(i18_local.beneficiaryDetails.spaq2DoseUnit)}";
                         }
-                        // if (blueVas == 0) {
-                        //   descriptionText +=
-                        //       "\n ${localizations.translate(i18_local.beneficiaryDetails.blueVasZeroQuantity)}";
-                        // }
-                        // if (redVas == 0) {
-                        //   descriptionText +=
-                        //       "\n ${localizations.translate(i18_local.beneficiaryDetails.redVasZeroQuantity)}";
-                        // }
 
-                        if ((spaq1 > 0 ||
-                            spaq2 > 0 
-                            // ||
-                            // blueVas > 0 ||
-                            // redVas > 0
-                            )) {
+                        if ((spaq1 > 0 || spaq2 > 0)) {
                           FocusManager.instance.primaryFocus?.unfocus();
                           context.read<DigitScannerBloc>().add(
                                 const DigitScannerEvent.handleScanner(),

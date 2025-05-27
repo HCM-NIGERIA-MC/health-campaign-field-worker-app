@@ -3,7 +3,7 @@ import 'package:complaints/blocs/complaints_registration/complaints_registration
 import 'package:complaints/models/complaints.dart';
 import 'package:complaints/models/pgr_address.dart';
 import 'package:complaints/router/complaints_router.gm.dart';
-import 'package:complaints/utils/utils.dart';
+import 'package:complaints/utils/utils.dart' hide CustomValidator;
 import 'package:digit_data_model/data_model.dart';
 import 'package:digit_ui_components/digit_components.dart';
 import 'package:digit_ui_components/models/RadioButtonModel.dart';
@@ -19,7 +19,7 @@ import 'package:intl/intl.dart';
 import 'package:reactive_forms/reactive_forms.dart';
 
 import '../../../utils/i18_key_constants.dart' as i18;
-// import '../../../utils/utils.dart';
+import '../../../utils/utils.dart' show CustomValidator;
 import '../../../widgets/header/back_navigation_help_header.dart';
 import '../../../widgets/localized.dart';
 
@@ -595,8 +595,6 @@ class CustomComplaintsDetailsPageState
         validators: [
           Validators.delegate(
               (validator) => CustomValidator.validMobileNumber(validator)),
-          Validators.maxLength(11),
-          Validators.minLength(11),
         ],
       ),
       _complaintDescription: FormControl<String>(

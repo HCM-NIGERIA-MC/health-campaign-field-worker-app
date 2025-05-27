@@ -58,7 +58,10 @@ class CustomWarehouseDetailsPageState
           validators: isDistributor ? [] : [Validators.required],
         ),
         _teamCodeKey: FormControl<String>(
-          value: stockState.primaryId ?? context.loggedInUserUuid,
+          value: stockState.primaryId ??
+              context.loggedInUser.userName.toString() +
+                  Constants.pipeSeparator +
+                  context.loggedInUserUuid,
           validators: isDistributor ? [Validators.required] : [],
         ),
       });
@@ -250,19 +253,17 @@ class CustomWarehouseDetailsPageState
                                                                     .toString(),
                                                               )
                                                             : facility,
-                                                        primaryId:
-                                                            InventorySingleton()
-                                                                    .isDistributor
-                                                                ? teamCode ?? ''
-                                                                : facility.id,
-                                                        primaryType: (InventorySingleton()
-                                                                        .isDistributor! &&
-                                                                    !InventorySingleton()
-                                                                        .isWareHouseMgr! &&
-                                                                    deliveryTeamSelected) ||
-                                                                deliveryTeamSelected
-                                                            ? "STAFF"
-                                                            : "WAREHOUSE",
+                                                        primaryId: InventorySingleton()
+                                                                .isDistributor
+                                                            ? (teamCode ?? '')
+                                                                .split(Constants
+                                                                    .pipeSeparator)
+                                                                .last
+                                                            : facility.id,
+                                                        primaryType:
+                                                            context.isCDD
+                                                                ? "STAFF"
+                                                                : "WAREHOUSE",
                                                       ),
                                                     );
                                                     if ((InventorySingleton()
@@ -283,27 +284,30 @@ class CustomWarehouseDetailsPageState
                                                         CustomStockDetailsRoute(),
                                                       );
                                                     } else {
-                                                      context.router.push(
-                                                          ViewAllTransactionsRoute(
-                                                              warehouseId:
-                                                                  InventorySingleton()
-                                                                          .isDistributor
-                                                                      ? teamCode
-                                                                      : selectedFacilityId));
+                                                      context.router.push(ViewAllTransactionsRoute(
+                                                          warehouseId: InventorySingleton()
+                                                                  .isDistributor
+                                                              ? (teamCode ?? '')
+                                                                  .split(Constants
+                                                                      .pipeSeparator)
+                                                                  .last
+                                                              : selectedFacilityId));
                                                     }
                                                   }
                                                 },
                                         );
                                       },
                                     ),
-                                    // if (InventorySingleton().isDistributor)
-                                    //   DigitButton(
-                                    //     label: "Scan Resource",
-                                    //     onPressed: _handleSubmission,
-                                    //     type: DigitButtonType.primary,
-                                    //     mainAxisSize: MainAxisSize.max,
-                                    //     size: DigitButtonSize.large,
-                                    //   ),
+                                    if (InventorySingleton().isDistributor &&
+                                        stockState.entryType !=
+                                            StockRecordEntryType.dispatch)
+                                      DigitButton(
+                                        label: "Scan Resource",
+                                        onPressed: _handleSubmission,
+                                        type: DigitButtonType.primary,
+                                        mainAxisSize: MainAxisSize.max,
+                                        size: DigitButtonSize.large,
+                                      ),
                                   ]),
                             ),
                             children: [

@@ -1,4 +1,5 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:digit_components/widgets/atoms/digit_toaster.dart';
 import 'package:digit_data_model/data_model.dart';
 import 'package:digit_ui_components/digit_components.dart';
 import 'package:digit_ui_components/theme/digit_extended_theme.dart';
@@ -11,12 +12,13 @@ import 'package:digit_ui_components/widgets/molecules/show_pop_up.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
-import 'package:inventory_management/inventory_management.dart';
+import 'package:inventory_management/inventory_management.dart'
+    hide CustomValidator;
 import 'package:inventory_management/router/inventory_router.gm.dart';
-import 'package:inventory_management/utils/extensions/extensions.dart';
 import 'package:reactive_forms/reactive_forms.dart';
 
 import 'package:inventory_management/utils/i18_key_constants.dart' as i18;
+import '../../utils/i18_key_constants.dart' as i18_local;
 import 'package:inventory_management/widgets/inventory/no_facilities_assigned_dialog.dart';
 import 'package:inventory_management/widgets/localized.dart';
 import 'package:inventory_management/blocs/product_variant.dart';
@@ -24,6 +26,10 @@ import 'package:inventory_management/blocs/stock_reconciliation.dart';
 import 'package:inventory_management/widgets/back_navigation_help_header.dart';
 import 'package:inventory_management/widgets/component_wrapper/facility_bloc_wrapper.dart';
 import 'package:inventory_management/widgets/component_wrapper/product_variant_bloc_wrapper.dart';
+
+import '../../utils/constants.dart';
+import '../../utils/extensions/extensions.dart';
+import '../../utils/utils.dart' show CustomValidator;
 
 @RoutePage()
 class CustomStockReconciliationPage extends LocalizedStatefulWidget {
@@ -46,7 +52,7 @@ class CustomStockReconciliationPageState
   String? selectedFacilityId;
   TextEditingController controller1 = TextEditingController();
 
-  FormGroup _form(bool isDistributor) {
+  FormGroup _form(bool isDistributor, num stockInHand) {
     return fb.group({
       _facilityKey: FormControl<String>(
         validators: isDistributor ? [] : [Validators.required],
@@ -57,7 +63,7 @@ class CustomStockReconciliationPageState
         validators: [
           Validators.number(),
           Validators.required,
-          Validators.delegate(CustomValidator.validStockCount)
+          Validators.delegate(CustomValidator.validStockCount),
         ],
       ),
       _reconciliationCommentsKey: FormControl<String>(),
@@ -89,10 +95,10 @@ class CustomStockReconciliationPageState
                     dateOfReconciliation: DateTime.now(),
                   ),
                   stockRepository:
-                      context.repository<StockModel, StockSearchModel>(context),
+                      context.repository<StockModel, StockSearchModel>(),
                   stockReconciliationRepository: context.repository<
                       StockReconciliationModel,
-                      StockReconciliationSearchModel>(context),
+                      StockReconciliationSearchModel>(),
                 ),
                 child: BlocConsumer<StockReconciliationBloc,
                     StockReconciliationState>(
@@ -105,8 +111,10 @@ class CustomStockReconciliationPageState
                   },
                   builder: (context, stockState) {
                     return ReactiveFormBuilder(
-                      form: () => _form(InventorySingleton().isDistributor! &&
-                          !InventorySingleton().isWareHouseMgr!),
+                      form: () => _form(
+                          InventorySingleton().isDistributor! &&
+                              !InventorySingleton().isWareHouseMgr!,
+                          stockState.stockInHand),
                       builder: (ctx, form, child) {
                         return Scaffold(
                           body: ScrollableContent(
@@ -125,161 +133,177 @@ class CustomStockReconciliationPageState
                                         mainAxisSize: MainAxisSize.max,
                                         size: DigitButtonSize.large,
                                         type: DigitButtonType.primary,
-                                        onPressed: !form.valid ||
-                                                (form
-                                                        .control(
-                                                            _productVariantKey)
-                                                        .value ==
-                                                    null)
-                                            ? () {}
-                                            : () async {
-                                                form.markAllAsTouched();
-                                                FocusManager
-                                                    .instance.primaryFocus
-                                                    ?.unfocus();
-                                                if (!form.valid) return;
-
-                                                final bloc = ctx.read<
-                                                    StockReconciliationBloc>();
-
-                                                final facilityId =
-                                                    InventorySingleton()
-                                                                .isDistributor! &&
-                                                            !InventorySingleton()
-                                                                .isWareHouseMgr!
-                                                        ? FacilityModel(
-                                                            id: InventorySingleton()
-                                                                .loggedInUserUuid!,
+                                        onPressed: () async {
+                                          if (int.tryParse(form
+                                                      .control(_manualCountKey)
+                                                      .value) !=
+                                                  stockState.stockInHand &&
+                                              (form
+                                                          .control(
+                                                            _reconciliationCommentsKey,
                                                           )
-                                                        : FacilityModel(
-                                                            id: selectedFacilityId
-                                                                .toString(),
-                                                          );
+                                                          .value ==
+                                                      null ||
+                                                  form
+                                                          .control(
+                                                            _reconciliationCommentsKey,
+                                                          )
+                                                          .value
+                                                          .length <
+                                                      2)) {
+                                            DigitToast.show(
+                                              context,
+                                              options: DigitToastOptions(
+                                                localizations.translate(i18_local
+                                                    .stockReconciliationDetails
+                                                    .commentRequiredError),
+                                                true,
+                                                theme,
+                                              ),
+                                            );
+                                            return;
+                                          }
+                                          if (!form.valid ||
+                                              (form
+                                                      .control(
+                                                          _productVariantKey)
+                                                      .value ==
+                                                  null)) {
+                                            return;
+                                          }
+                                          form.markAllAsTouched();
+                                          FocusManager.instance.primaryFocus
+                                              ?.unfocus();
+                                          if (!form.valid) return;
 
-                                                final productVariant = form
-                                                    .control(_productVariantKey)
-                                                    .value as ProductVariantModel;
+                                          final bloc = ctx
+                                              .read<StockReconciliationBloc>();
 
-                                                final calculatedCount = form
-                                                    .control(_manualCountKey)
-                                                    .value as String;
-
-                                                final comments = form
-                                                    .control(
-                                                      _reconciliationCommentsKey,
+                                          final facilityId =
+                                              InventorySingleton()
+                                                          .isDistributor! &&
+                                                      !InventorySingleton()
+                                                          .isWareHouseMgr!
+                                                  ? FacilityModel(
+                                                      id: InventorySingleton()
+                                                          .loggedInUserUuid!,
                                                     )
-                                                    .value as String?;
+                                                  : FacilityModel(
+                                                      id: selectedFacilityId
+                                                          .toString(),
+                                                    );
 
-                                                final model =
-                                                    StockReconciliationModel(
-                                                  clientReferenceId:
-                                                      IdGen.i.identifier,
-                                                  dateOfReconciliation: stockState
-                                                      .dateOfReconciliation
-                                                      .millisecondsSinceEpoch,
-                                                  facilityId: facilityId.id,
-                                                  productVariantId:
-                                                      productVariant.id,
-                                                  calculatedCount: stockState
-                                                      .stockInHand
-                                                      .toInt(),
-                                                  commentsOnReconciliation:
-                                                      comments,
-                                                  physicalCount: int.tryParse(
-                                                        calculatedCount,
-                                                      ) ??
-                                                      0,
-                                                  auditDetails: AuditDetails(
-                                                    createdBy:
-                                                        InventorySingleton()
-                                                            .loggedInUserUuid,
-                                                    createdTime: context
-                                                        .millisecondsSinceEpoch(),
-                                                  ),
-                                                  clientAuditDetails:
-                                                      ClientAuditDetails(
-                                                    createdBy:
-                                                        InventorySingleton()
-                                                            .loggedInUserUuid,
-                                                    createdTime: context
-                                                        .millisecondsSinceEpoch(),
-                                                    lastModifiedBy:
-                                                        InventorySingleton()
-                                                            .loggedInUserUuid,
-                                                    lastModifiedTime: context
-                                                        .millisecondsSinceEpoch(),
-                                                  ),
-                                                );
+                                          final productVariant = form
+                                              .control(_productVariantKey)
+                                              .value as ProductVariantModel;
 
-                                                final submit =
-                                                    await showCustomPopup(
-                                                  context: context,
-                                                  builder: (popupContext) =>
-                                                      Popup(
-                                                    title:
-                                                        localizations.translate(
-                                                      i18.stockReconciliationDetails
-                                                          .dialogTitle,
-                                                    ),
-                                                    onOutsideTap: () {
-                                                      Navigator.of(
-                                                        popupContext,
-                                                        rootNavigator: true,
-                                                      ).pop(false);
-                                                    },
-                                                    description:
-                                                        localizations.translate(
-                                                      i18.stockReconciliationDetails
-                                                          .dialogContent,
-                                                    ),
-                                                    type: PopUpType.simple,
-                                                    actions: [
-                                                      DigitButton(
-                                                        label: localizations
-                                                            .translate(
-                                                          i18.common
-                                                              .coreCommonSubmit,
-                                                        ),
-                                                        onPressed: () {
-                                                          Navigator.of(
-                                                            popupContext,
-                                                            rootNavigator: true,
-                                                          ).pop(true);
-                                                        },
-                                                        type: DigitButtonType
-                                                            .primary,
-                                                        size: DigitButtonSize
-                                                            .large,
-                                                      ),
-                                                      DigitButton(
-                                                        label: localizations
-                                                            .translate(
-                                                          i18.common
-                                                              .coreCommonCancel,
-                                                        ),
-                                                        onPressed: () {
-                                                          Navigator.of(
-                                                            popupContext,
-                                                            rootNavigator: true,
-                                                          ).pop(false);
-                                                        },
-                                                        type: DigitButtonType
-                                                            .secondary,
-                                                        size: DigitButtonSize
-                                                            .large,
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ) as bool;
+                                          final calculatedCount = form
+                                              .control(_manualCountKey)
+                                              .value as String;
 
-                                                if (submit ?? false) {
-                                                  bloc.add(
-                                                    StockReconciliationCreateEvent(
-                                                      model,
-                                                    ),
-                                                  );
-                                                }
+                                          final comments = form
+                                              .control(
+                                                _reconciliationCommentsKey,
+                                              )
+                                              .value as String?;
+
+                                          final model =
+                                              StockReconciliationModel(
+                                            clientReferenceId:
+                                                IdGen.i.identifier,
+                                            dateOfReconciliation: stockState
+                                                .dateOfReconciliation
+                                                .millisecondsSinceEpoch,
+                                            facilityId: facilityId.id,
+                                            productVariantId: productVariant.id,
+                                            calculatedCount:
+                                                stockState.stockInHand.toInt(),
+                                            commentsOnReconciliation: comments,
+                                            physicalCount: int.tryParse(
+                                                  calculatedCount,
+                                                ) ??
+                                                0,
+                                            auditDetails: AuditDetails(
+                                              createdBy: InventorySingleton()
+                                                  .loggedInUserUuid,
+                                              createdTime: context
+                                                  .millisecondsSinceEpoch(),
+                                            ),
+                                            clientAuditDetails:
+                                                ClientAuditDetails(
+                                              createdBy: InventorySingleton()
+                                                  .loggedInUserUuid,
+                                              createdTime: context
+                                                  .millisecondsSinceEpoch(),
+                                              lastModifiedBy:
+                                                  InventorySingleton()
+                                                      .loggedInUserUuid,
+                                              lastModifiedTime: context
+                                                  .millisecondsSinceEpoch(),
+                                            ),
+                                          );
+
+                                          final submit = await showCustomPopup(
+                                            context: context,
+                                            builder: (popupContext) => Popup(
+                                              title: localizations.translate(
+                                                i18.stockReconciliationDetails
+                                                    .dialogTitle,
+                                              ),
+                                              onOutsideTap: () {
+                                                Navigator.of(
+                                                  popupContext,
+                                                  rootNavigator: true,
+                                                ).pop(false);
                                               },
+                                              description:
+                                                  localizations.translate(
+                                                i18.stockReconciliationDetails
+                                                    .dialogContent,
+                                              ),
+                                              type: PopUpType.simple,
+                                              actions: [
+                                                DigitButton(
+                                                  label:
+                                                      localizations.translate(
+                                                    i18.common.coreCommonSubmit,
+                                                  ),
+                                                  onPressed: () {
+                                                    Navigator.of(
+                                                      popupContext,
+                                                      rootNavigator: true,
+                                                    ).pop(true);
+                                                  },
+                                                  type: DigitButtonType.primary,
+                                                  size: DigitButtonSize.large,
+                                                ),
+                                                DigitButton(
+                                                  label:
+                                                      localizations.translate(
+                                                    i18.common.coreCommonCancel,
+                                                  ),
+                                                  onPressed: () {
+                                                    Navigator.of(
+                                                      popupContext,
+                                                      rootNavigator: true,
+                                                    ).pop(false);
+                                                  },
+                                                  type:
+                                                      DigitButtonType.secondary,
+                                                  size: DigitButtonSize.large,
+                                                ),
+                                              ],
+                                            ),
+                                          ) as bool;
+
+                                          if (submit ?? false) {
+                                            bloc.add(
+                                              StockReconciliationCreateEvent(
+                                                model,
+                                              ),
+                                            );
+                                          }
+                                        },
                                         label: localizations.translate(
                                           i18.common.coreCommonSubmit,
                                         ),
@@ -319,6 +343,66 @@ class CustomStockReconciliationPageState
                                                 ),
                                             fetched:
                                                 (facilities, allFacilities) {
+                                              if (context.selectedProject
+                                                      .address?.boundaryType ==
+                                                  Constants
+                                                      .stateBoundaryLevel) {
+                                                List<FacilityModel>
+                                                    filteredFacilities =
+                                                    facilities
+                                                        .where(
+                                                          (element) =>
+                                                              element.usage ==
+                                                              Constants
+                                                                  .stateFacility,
+                                                        )
+                                                        .toList();
+                                                facilities =
+                                                    filteredFacilities.isEmpty
+                                                        ? facilities
+                                                        : filteredFacilities;
+                                              } else if (context.selectedProject
+                                                      .address?.boundaryType ==
+                                                  Constants.lgaBoundaryLevel) {
+                                                List<FacilityModel>
+                                                    filteredFacilities =
+                                                    facilities
+                                                        .where(
+                                                          (element) =>
+                                                              element.usage ==
+                                                              Constants
+                                                                  .lgaFacility,
+                                                        )
+                                                        .toList();
+                                                facilities =
+                                                    filteredFacilities.isEmpty
+                                                        ? facilities
+                                                        : filteredFacilities;
+                                              } else {
+                                                List<FacilityModel>
+                                                    filteredFacilities =
+                                                    facilities
+                                                        .where(
+                                                          (element) =>
+                                                              element.usage ==
+                                                              Constants
+                                                                  .healthFacility,
+                                                        )
+                                                        .toList();
+                                                facilities =
+                                                    filteredFacilities.isEmpty
+                                                        ? facilities
+                                                        : filteredFacilities;
+                                              }
+                                              final teamFacilities = [
+                                                FacilityModel(
+                                                  id: 'Delivery Team',
+                                                  name: 'Delivery Team',
+                                                ),
+                                              ];
+                                              teamFacilities.addAll(
+                                                facilities,
+                                              );
                                               return Column(
                                                 children: [
                                                   InkWell(
@@ -418,6 +502,26 @@ class CustomStockReconciliationPageState
                                                       .productLabel,
                                                 ),
                                                 child: DigitDropdown(
+                                                  selectedOption: (form
+                                                              .control(
+                                                                  _productVariantKey)
+                                                              .value !=
+                                                          null)
+                                                      ? DropdownItem(
+                                                          name: localizations.translate((form
+                                                                          .control(
+                                                                              _productVariantKey)
+                                                                          .value
+                                                                      as ProductVariantModel)
+                                                                  .sku ??
+                                                              (form.control(_productVariantKey).value
+                                                                      as ProductVariantModel)
+                                                                  .id),
+                                                          code: (form.control(_productVariantKey).value
+                                                                  as ProductVariantModel)
+                                                              .id)
+                                                      : const DropdownItem(
+                                                          name: '', code: ''),
                                                   emptyItemText:
                                                       localizations.translate(
                                                     i18.common.noMatchFound,
@@ -509,25 +613,6 @@ class CustomStockReconciliationPageState
                                         .toStringAsFixed(0),
                                     labelFlex: 5,
                                   ),
-                                  // const DigitDivider(),
-                                  // LabelValueItem(
-                                  //   label: localizations.translate(
-                                  //     i18.stockReconciliationDetails.stockLost,
-                                  //   ),
-                                  //   value:
-                                  //       stockState.stockLost.toStringAsFixed(0),
-                                  //   labelFlex: 5,
-                                  // ),
-                                  // const DigitDivider(),
-                                  // LabelValueItem(
-                                  //   label: localizations.translate(
-                                  //     i18.stockReconciliationDetails
-                                  //         .stockDamaged,
-                                  //   ),
-                                  //   value: stockState.stockDamaged
-                                  //       .toStringAsFixed(0),
-                                  //   labelFlex: 5,
-                                  // ),
                                   const DigitDivider(),
                                   LabelValueItem(
                                     label: localizations.translate(i18
@@ -588,6 +673,10 @@ class CustomStockReconciliationPageState
                                             onChange: (value) {
                                               field.control.markAsTouched();
                                               field.control.value = value;
+                                              form
+                                                  .control(
+                                                      _reconciliationCommentsKey)
+                                                  .updateValueAndValidity();
                                             },
                                           ),
                                         );
@@ -596,6 +685,7 @@ class CustomStockReconciliationPageState
                                     formControlName: _reconciliationCommentsKey,
                                     builder: (field) {
                                       return InputField(
+                                        errorMessage: field.errorText,
                                         type: InputType.textArea,
                                         label: localizations.translate(
                                           i18.stockReconciliationDetails

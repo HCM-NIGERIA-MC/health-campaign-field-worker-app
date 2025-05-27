@@ -80,6 +80,7 @@ class CustomInventoryReportSelectionPageState
                     ),
                   ),
                 ),
+                const SizedBox(height: spacer4),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: spacer2),
                   child: MenuCard(

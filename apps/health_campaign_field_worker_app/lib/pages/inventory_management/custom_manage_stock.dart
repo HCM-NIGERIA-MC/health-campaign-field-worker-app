@@ -49,7 +49,7 @@ class CustomManageStocksPageState
     return Scaffold(
       body: ScrollableContent(
         header: const CustomBackNavigationHelpHeaderWidget(
-          showHelp: true,
+          showHelp: false,
         ),
         children: [
           Column(
@@ -135,7 +135,7 @@ class CustomManageStocksPageState
                                   ? Icons.settings_backup_restore
                                   : Icons.file_upload_outlined,
                               onTap: () {
-                                showStockIssueOrReturnDialog(context);
+                                showStockIssueDialog(context);
                               }),
                         ),
                       ),
@@ -146,7 +146,7 @@ class CustomManageStocksPageState
                         child: Center(
                             child: GestureDetector(
                           onTap: () {
-                            showStockIssueOrReturnDialog(context);
+                            showStockIssueDialog(context);
                           },
                           child: Icon(
                             Icons.arrow_circle_right,
@@ -223,11 +223,6 @@ class CustomManageStocksPageState
               children: [
                 GestureDetector(
                   onTap: () {
-                    // todo commenting the code to remove qr scanner mandatorily
-                    // if (InventorySingleton().isDistributor) {
-                    //   context.router.push(QRScannerRoute());
-                    //   Navigator.of(context).pop();
-                    // } else {
                     context.router.push(
                       RecordStockWrapperRoute(
                         type: StockRecordEntryType.receipt,
@@ -257,7 +252,8 @@ class CustomManageStocksPageState
                           ),
                           const SizedBox(width: 8),
                           Text(
-                            "Create New Transaction",
+                            localizations.translate(i18_local
+                                .stockDetails.createNewTransactionLabel),
                             style: TextStyle(
                               fontSize: 16,
                               color: Colors.orange[800],
@@ -300,7 +296,8 @@ class CustomManageStocksPageState
                           ),
                           const SizedBox(width: 8),
                           Text(
-                            "View Created Transaction",
+                            localizations.translate(i18_local
+                                .stockDetails.viewCreatedTransactionLabel),
                             style: TextStyle(
                               fontSize: 16,
                               color: Colors.orange[800],
@@ -318,7 +315,7 @@ class CustomManageStocksPageState
         });
   }
 
-  void showStockIssueOrReturnDialog(BuildContext context) {
+  void showStockIssueDialog(BuildContext context) {
     showDialog(
         context: context,
         builder: (context) {
@@ -328,19 +325,11 @@ class CustomManageStocksPageState
               children: [
                 GestureDetector(
                   onTap: () {
-                    if (context.isCDD) {
-                      context.router.push(
-                        RecordStockWrapperRoute(
-                          type: StockRecordEntryType.returned,
-                        ),
-                      );
-                    } else {
-                      context.router.push(
-                        RecordStockWrapperRoute(
-                          type: StockRecordEntryType.dispatch,
-                        ),
-                      );
-                    }
+                    context.router.push(
+                      RecordStockWrapperRoute(
+                        type: StockRecordEntryType.dispatch,
+                      ),
+                    );
                     Navigator.of(context).pop();
                   },
                   child: Container(
@@ -364,9 +353,10 @@ class CustomManageStocksPageState
                           ),
                           const SizedBox(width: 8),
                           Text(
-                            "Create New Transaction",
+                            localizations.translate(i18_local
+                                .stockDetails.createNewTransactionLabel),
                             style: TextStyle(
-                              fontSize: 20,
+                              fontSize: 16,
                               color: Colors.orange[800],
                               fontWeight: FontWeight.bold,
                             ),
@@ -379,19 +369,12 @@ class CustomManageStocksPageState
                 const SizedBox(height: 16), // Add spacing between buttons
                 GestureDetector(
                   onTap: () {
-                    if (context.isCDD) {
-                      context.router.push(
-                        CustomMinNumberRoute(
-                          type: StockRecordEntryType.returned,
-                        ),
-                      );
-                    } else {
-                      context.router.push(
-                        CustomMinNumberRoute(
-                          type: StockRecordEntryType.dispatch,
-                        ),
-                      );
-                    }
+                    context.router.push(
+                      CustomMinNumberRoute(
+                        type: StockRecordEntryType.dispatch,
+                      ),
+                    );
+
                     Navigator.of(context).pop();
                   },
                   child: Container(
@@ -415,7 +398,8 @@ class CustomManageStocksPageState
                           ),
                           const SizedBox(width: 8),
                           Text(
-                            "View Created Transaction",
+                            localizations.translate(i18_local
+                                .stockDetails.viewCreatedTransactionLabel),
                             style: TextStyle(
                               fontSize: 16,
                               color: Colors.orange[800],
@@ -471,7 +455,8 @@ class CustomManageStocksPageState
                           ),
                           const SizedBox(width: 8),
                           Text(
-                            "Create New Transaction",
+                            localizations.translate(i18_local
+                                .stockDetails.createNewTransactionLabel),
                             style: TextStyle(
                               fontSize: 16,
                               color: Colors.orange[800],
@@ -514,7 +499,8 @@ class CustomManageStocksPageState
                           ),
                           const SizedBox(width: 8),
                           Text(
-                            "View Created Transaction",
+                            localizations.translate(i18_local
+                                .stockDetails.viewCreatedTransactionLabel),
                             style: TextStyle(
                               fontSize: 16,
                               color: Colors.orange[800],

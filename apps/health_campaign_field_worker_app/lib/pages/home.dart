@@ -566,23 +566,16 @@ class _HomePageState extends LocalizedState<HomePage> {
     ];
 
     final List<String> filteredLabels = homeItemsLabel
-        .where((element) =>
-            state.actionsWrapper.actions
-                .map((e) => e.displayName)
-                .toList()
-                .contains(element) ||
-            element == i18.home.db)
+        .where((element) => state.actionsWrapper.actions
+            .map((e) => e.displayName)
+            .toList()
+            .contains(element))
         .toList();
 
     final showcaseKeys = filteredLabels
         .where((f) => f != i18.home.db)
         .map((label) => homeItemsShowcaseMap[label]!)
         .toList();
-
-    if ((envConfig.variables.envType == EnvType.demo && kReleaseMode) ||
-        envConfig.variables.envType == EnvType.uat) {
-      filteredLabels.remove(i18.home.db);
-    }
 
     final List<Widget> widgetList =
         filteredLabels.map((label) => homeItemsMap[label]!).toList();
@@ -606,16 +599,11 @@ class _HomePageState extends LocalizedState<HomePage> {
                     LocalRepository<HFReferralModel, HFReferralSearchModel>>(),
 
                 context.read<
-                    LocalRepository<HFReferralModel, HFReferralSearchModel>>(),
-
-                context.read<
                     LocalRepository<AttendanceLogModel,
                         AttendanceLogSearchModel>>(),
 
                 context.read<
                     LocalRepository<PgrServiceModel, PgrServiceSearchModel>>(),
-                context.read<
-                    LocalRepository<HFReferralModel, HFReferralSearchModel>>(),
 
                 context
                     .read<LocalRepository<ServiceModel, ServiceSearchModel>>(),
@@ -650,14 +638,8 @@ class _HomePageState extends LocalizedState<HomePage> {
                     RemoteRepository<HFReferralModel, HFReferralSearchModel>>(),
 
                 context.read<
-                    RemoteRepository<HFReferralModel, HFReferralSearchModel>>(),
-
-                context.read<
                     RemoteRepository<AttendanceLogModel,
                         AttendanceLogSearchModel>>(),
-
-                context.read<
-                    RemoteRepository<HFReferralModel, HFReferralSearchModel>>(),
 
                 context.read<
                     RemoteRepository<HouseholdModel, HouseholdSearchModel>>(),

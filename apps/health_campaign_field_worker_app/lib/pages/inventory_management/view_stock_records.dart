@@ -1,4 +1,5 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:collection/collection.dart';
 import 'package:digit_data_model/data_model.dart';
 import 'package:digit_ui_components/digit_components.dart';
 import 'package:digit_ui_components/widgets/atoms/input_wrapper.dart';
@@ -10,6 +11,9 @@ import 'package:inventory_management/models/entities/stock.dart';
 import 'package:inventory_management/utils/i18_key_constants.dart' as i18;
 import 'package:inventory_management/utils/utils.dart';
 import 'package:registration_delivery/widgets/localized.dart';
+
+import '../../utils/extensions/extensions.dart';
+import '../../utils/utils.dart';
 
 @RoutePage()
 class ViewStockRecordsPage extends LocalizedStatefulWidget {
@@ -87,6 +91,16 @@ class _ViewStockRecordsPageState extends LocalizedState<ViewStockRecordsPage>
   Widget _buildStockRecordTab(StockModel stock) {
     final senderIdToShowOnTab = stock.senderId;
 
+    String? partialQuantity = stock.additionalFields?.fields
+        .firstWhereOrNull((e) => e.key == "partialBlistersReturned")
+        ?.value
+        .toString();
+
+    String? wastedQuantity = stock.additionalFields?.fields
+        .firstWhereOrNull((e) => e.key == "wastedBlistersReturned")
+        ?.value
+        .toString();
+
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
       child: Column(
@@ -131,10 +145,14 @@ class _ViewStockRecordsPageState extends LocalizedState<ViewStockRecordsPage>
                   const SizedBox(height: 8),
                   Row(
                     children: [
-                      const Expanded(child: Text('Received From')),
                       Expanded(
-                          child: Text(localizations
-                              .translate('FAC_$senderIdToShowOnTab'))),
+                        child: Text(localizations.translate(getEntryTypeLabel(
+                            widget.stockRecords.firstOrNull))),
+                      ),
+                      Expanded(
+                          child: Text(localizations.translate(
+                              getSecondaryPartyValue(
+                                  widget.stockRecords.firstOrNull)))),
                     ],
                   ),
                 ],
@@ -193,6 +211,27 @@ class _ViewStockRecordsPageState extends LocalizedState<ViewStockRecordsPage>
                     readOnly: true,
                   ),
                   const SizedBox(height: 12),
+
+                  // Partial Quantity
+                  if (partialQuantity != null)
+                    InputField(
+                      type: InputType.text,
+                      label: 'Partial Quantity *',
+                      initialValue: partialQuantity,
+                      isDisabled: true,
+                      readOnly: true,
+                    ),
+                  if (partialQuantity != null) const SizedBox(height: 12),
+                  // Wasted Quantity
+                  if (wastedQuantity != null)
+                    InputField(
+                      type: InputType.text,
+                      label: 'Wasted Quantity *',
+                      initialValue: wastedQuantity,
+                      isDisabled: true,
+                      readOnly: true,
+                    ),
+                  if (wastedQuantity != null) const SizedBox(height: 12),
                   // Comments
                   InputField(
                     type: InputType.textArea,

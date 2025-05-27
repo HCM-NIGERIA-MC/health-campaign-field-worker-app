@@ -10,11 +10,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 // import 'package:health_campaign_field_worker_app/pages/pages-SMC/beneficiary/custom_facility_selection_smc.dart';
 import 'package:reactive_forms/reactive_forms.dart';
+import 'package:referral_reconciliation/referral_reconciliation.dart';
 import 'package:registration_delivery/models/entities/referral.dart';
 import 'package:registration_delivery/models/entities/status.dart';
 import 'package:registration_delivery/models/entities/task.dart';
 import 'package:registration_delivery/pages/beneficiary/facility_selection.dart';
 import 'package:registration_delivery/router/registration_delivery_router.gm.dart';
+import 'package:registration_delivery/utils/utils.dart';
 import 'package:registration_delivery/widgets/inventory/no_facilities_assigned_dialog.dart';
 
 import '../../../utils/app_enums.dart';
@@ -86,361 +88,410 @@ class CustomReferBeneficiarySMCPageState
         );
       },
       builder: (ctx, facilityState) {
-        List<FacilityModel> facilities = [];
-        final healthFacilities = facilityState.whenOrNull(
-              fetched: (
-                facilities,
-                allFacilities,
-              ) {
-                final projectFacilities = facilities
-                    .where((e) => e.usage == Constants.healthFacility)
-                    .toList();
+        return facilityState.maybeWhen(
+          orElse: () => const Offstage(),
+          empty: () => const Offstage(),
+          fetched: (
+            facilities,
+            allFacilities,
+          ) {
+            final List<FacilityModel> healthFacilities;
+            final projectFacilities = facilities
+                .where((e) => e.usage == Constants.healthFacility)
+                .toList();
 
-                return projectFacilities.isEmpty
-                    ? allFacilities
-                    : projectFacilities;
-              },
-            ) ??
-            [];
+            healthFacilities =
+                projectFacilities.isEmpty ? allFacilities : projectFacilities;
+            final reasons = widget.isReadministrationUnSuccessful
+                ? [sideEffectFromCurrentCycle]
+                : (widget.referralReasons ?? []);
 
-        facilities.addAll(healthFacilities);
+            return WillPopScope(
+              onWillPop: () => _onBackPressed(
+                  context, widget.isReadministrationUnSuccessful),
+              child: Scaffold(
+                body: Scaffold(
+                  body: ReactiveFormBuilder(
+                    form: () => buildForm(healthFacilities),
+                    builder: (context, form, child) => ScrollableContent(
+                      enableFixedButton: true,
+                      header: Column(children: [
+                        widget.isReadministrationUnSuccessful
+                            ? const CustomBackNavigationHelpHeaderWidget(
+                                showBackNavigation: false,
+                                showHelp: false,
+                                showcaseButton: null,
+                              )
+                            : const CustomBackNavigationHelpHeaderWidget(
+                                showHelp: false,
+                                showcaseButton: null,
+                              ),
+                      ]),
+                      footer: DigitCard(
+                        margin: const EdgeInsets.fromLTRB(0, kPadding, 0, 0),
+                        padding:
+                            const EdgeInsets.fromLTRB(kPadding, 0, kPadding, 0),
+                        child: ValueListenableBuilder(
+                          valueListenable: clickedStatus,
+                          builder: (context, bool isClicked, _) {
+                            return DigitElevatedButton(
+                              onPressed: isClicked
+                                  ? null
+                                  : () async {
+                                      form.markAllAsTouched();
 
-        final reasons = widget.isReadministrationUnSuccessful
-            ? [sideEffectFromCurrentCycle]
-            : (widget.referralReasons ?? []);
+                                      if (reasons.isEmpty) {
+                                        return;
+                                      }
 
-        return WillPopScope(
-          onWillPop: () =>
-              _onBackPressed(context, widget.isReadministrationUnSuccessful),
-          child: Scaffold(
-            body: Scaffold(
-              body: ReactiveFormBuilder(
-                form: () => buildForm(healthFacilities),
-                builder: (context, form, child) => ScrollableContent(
-                  enableFixedButton: true,
-                  header: Column(children: [
-                    widget.isReadministrationUnSuccessful
-                        ? const CustomBackNavigationHelpHeaderWidget(
-                            showBackNavigation: false,
-                            showHelp: false,
-                            showcaseButton: null,
-                          )
-                        : const CustomBackNavigationHelpHeaderWidget(
-                            showHelp: false,
-                            showcaseButton: null,
-                          ),
-                  ]),
-                  footer: DigitCard(
-                    margin: const EdgeInsets.fromLTRB(0, kPadding, 0, 0),
-                    padding:
-                        const EdgeInsets.fromLTRB(kPadding, 0, kPadding, 0),
-                    child: ValueListenableBuilder(
-                      valueListenable: clickedStatus,
-                      builder: (context, bool isClicked, _) {
-                        return DigitElevatedButton(
-                          onPressed: isClicked
-                              ? null
-                              : () async {
-                                  form.markAllAsTouched();
-
-                                  if (reasons.isEmpty) {
-                                    return;
-                                  }
-
-                                  if (!form.valid) {
-                                    return;
-                                  } else {
-                                    final submit = await showDialog(
-                                      context: context,
-                                      builder: (ctx) => Popup(
-                                        title: localizations.translate(
-                                          i18.deliverIntervention.dialogTitle,
-                                        ),
-                                        description: localizations.translate(
-                                          i18.deliverIntervention.dialogContent,
-                                        ),
-                                        actions: [
-                                          DigitButton(
-                                              label: localizations.translate(
-                                                i18.common.coreCommonSubmit,
-                                              ),
-                                              onPressed: () {
-                                                clickedStatus.value = true;
-                                                Navigator.of(
-                                                  context,
-                                                  rootNavigator: true,
-                                                ).pop(true);
-                                              },
-                                              type: DigitButtonType.primary,
-                                              size: DigitButtonSize.large),
-                                          DigitButton(
-                                              label: localizations.translate(
-                                                i18.common.coreCommonCancel,
-                                              ),
-                                              onPressed: () => Navigator.of(
-                                                    context,
-                                                    rootNavigator: true,
-                                                  ).pop(false),
-                                              type: DigitButtonType.secondary,
-                                              size: DigitButtonSize.large)
-                                        ],
-                                      ),
-                                    );
-                                    if (submit == null || !submit) {
-                                      return;
-                                    }
-                                    clickedStatus.value = true;
-                                    final reason = reasons.first;
-
-                                    final event = context.read<ReferralBloc>();
-                                    event.add(ReferralSubmitEvent(
-                                      ReferralModel(
-                                        clientReferenceId: IdGen.i.identifier,
-                                        projectId: context.projectId,
-                                        projectBeneficiaryClientReferenceId:
-                                            widget
-                                                .projectBeneficiaryClientRefId,
-                                        referrerId: context.loggedInUserUuid,
-                                        reasons: [reason],
-                                        tenantId: envConfig.variables.tenantId,
-                                        rowVersion: 1,
-                                        auditDetails: AuditDetails(
-                                          createdBy: context.loggedInUserUuid,
-                                          createdTime:
-                                              context.millisecondsSinceEpoch(),
-                                          lastModifiedBy:
-                                              context.loggedInUserUuid,
-                                          lastModifiedTime:
-                                              context.millisecondsSinceEpoch(),
-                                        ),
-                                        clientAuditDetails: ClientAuditDetails(
-                                          createdBy: context.loggedInUserUuid,
-                                          createdTime:
-                                              context.millisecondsSinceEpoch(),
-                                          lastModifiedBy:
-                                              context.loggedInUserUuid,
-                                          lastModifiedTime:
-                                              context.millisecondsSinceEpoch(),
-                                        ),
-                                        additionalFields:
-                                            ReferralAdditionalFields(
-                                          version: 1,
-                                          fields: [
-                                            AdditionalField(
-                                              referralReasons,
-                                              reasons.join(","),
+                                      if (!form.valid) {
+                                        return;
+                                      } else {
+                                        final submit = await showDialog(
+                                          context: context,
+                                          builder: (ctx) => Popup(
+                                            title: localizations.translate(
+                                              i18.deliverIntervention
+                                                  .dialogTitle,
                                             ),
-                                          ],
-                                        ),
-                                      ),
-                                      false,
-                                    ));
-
-                                    final clientReferenceId =
-                                        IdGen.i.identifier;
-                                    context.read<DeliverInterventionBloc>().add(
-                                          DeliverInterventionSubmitEvent(
-                                            task: TaskModel(
-                                              projectBeneficiaryClientReferenceId:
-                                                  widget
-                                                      .projectBeneficiaryClientRefId,
-                                              clientReferenceId:
-                                                  clientReferenceId,
-                                              tenantId:
-                                                  envConfig.variables.tenantId,
-                                              rowVersion: 1,
-                                              auditDetails: AuditDetails(
-                                                createdBy:
-                                                    context.loggedInUserUuid,
-                                                createdTime: context
-                                                    .millisecondsSinceEpoch(),
-                                              ),
-                                              projectId: context.projectId,
-                                              status: Status.beneficiaryReferred
-                                                  .toValue(),
-                                              clientAuditDetails:
-                                                  ClientAuditDetails(
-                                                createdBy:
-                                                    context.loggedInUserUuid,
-                                                createdTime: context
-                                                    .millisecondsSinceEpoch(),
-                                                lastModifiedBy:
-                                                    context.loggedInUserUuid,
-                                                lastModifiedTime: context
-                                                    .millisecondsSinceEpoch(),
-                                              ),
-                                              additionalFields:
-                                                  TaskAdditionalFields(
-                                                version: 1,
-                                                fields: [
-                                                  AdditionalField(
-                                                    'taskStatus',
-                                                    Status.beneficiaryReferred
-                                                        .toValue(),
-                                                  ),
-                                                  if (widget
-                                                      .isReadministrationUnSuccessful)
-                                                    AdditionalField(
-                                                      'quantityWasted',
-                                                      widget.quantityWasted
-                                                                  .toString()
-                                                                  .length ==
-                                                              1
-                                                          ? "0${widget.quantityWasted}"
-                                                          : widget
-                                                              .quantityWasted
-                                                              .toString(),
-                                                    ),
-                                                  if (widget
-                                                      .isReadministrationUnSuccessful)
-                                                    const AdditionalField(
-                                                      'unsuccessfullDelivery',
-                                                      'true',
-                                                    ),
-                                                  if (widget.productVariantId !=
-                                                      null)
-                                                    AdditionalField(
-                                                      'productVariantId',
-                                                      widget.productVariantId,
-                                                    ),
-                                                  AdditionalField(
-                                                    additional_fields_local
-                                                        .AdditionalFieldsType
-                                                        .deliveryType
-                                                        .toValue(),
-                                                    EligibilityAssessmentStatus
-                                                        .smcDone.name,
-                                                  ),
-                                                ],
-                                              ),
-                                              address: widget
-                                                  .individual.address?.first
-                                                  .copyWith(
-                                                relatedClientReferenceId:
-                                                    clientReferenceId,
-                                                id: null,
-                                              ),
+                                            description:
+                                                localizations.translate(
+                                              i18.deliverIntervention
+                                                  .dialogContent,
                                             ),
-                                            isEditing: false,
-                                            boundaryModel: context.boundary,
+                                            actions: [
+                                              DigitButton(
+                                                  label:
+                                                      localizations.translate(
+                                                    i18.common.coreCommonSubmit,
+                                                  ),
+                                                  onPressed: () {
+                                                    clickedStatus.value = true;
+                                                    Navigator.of(
+                                                      context,
+                                                      rootNavigator: true,
+                                                    ).pop(true);
+                                                  },
+                                                  type: DigitButtonType.primary,
+                                                  size: DigitButtonSize.large),
+                                              DigitButton(
+                                                  label:
+                                                      localizations.translate(
+                                                    i18.common.coreCommonCancel,
+                                                  ),
+                                                  onPressed: () => Navigator.of(
+                                                        context,
+                                                        rootNavigator: true,
+                                                      ).pop(false),
+                                                  type:
+                                                      DigitButtonType.secondary,
+                                                  size: DigitButtonSize.large)
+                                            ],
                                           ),
                                         );
+                                        if (submit == null || !submit) {
+                                          return;
+                                        }
+                                        if (healthFacilities.isEmpty &&
+                                            context.mounted) {
+                                          DigitToast.show(
+                                            context,
+                                            options: DigitToastOptions(
+                                              localizations.translate(
+                                                i18_local.beneficiaryDetails
+                                                    .noHealthFacilityError,
+                                              ),
+                                              true,
+                                              theme,
+                                            ),
+                                          );
+                                          return;
+                                        }
+                                        clickedStatus.value = true;
+                                        final recipient = form
+                                            .control(_referredToKey)
+                                            .value as String;
+                                        final reason = reasons.first;
+                                        final recipientType = recipient == 'APS'
+                                            ? 'STAFF'
+                                            : 'FACILITY';
+                                        final recipientId = recipient == 'APS'
+                                            ? context.loggedInUserUuid
+                                            : healthFacilities.first.id;
 
-                                    final reloadState =
-                                        context.read<HouseholdOverviewBloc>();
-                                    final searchBloc =
-                                        context.read<SearchHouseholdsBloc>();
-                                    searchBloc.add(
-                                      const SearchHouseholdsClearEvent(),
-                                    );
-
-                                    Future.delayed(
-                                      const Duration(milliseconds: 500),
-                                      () {
-                                        reloadState
-                                            .add(HouseholdOverviewReloadEvent(
-                                          projectId: context.projectId,
-                                          projectBeneficiaryType:
-                                              context.beneficiaryType,
+                                        final event =
+                                            context.read<ReferralBloc>();
+                                        event.add(ReferralSubmitEvent(
+                                          ReferralModel(
+                                            clientReferenceId:
+                                                IdGen.i.identifier,
+                                            projectId: context.projectId,
+                                            projectBeneficiaryClientReferenceId:
+                                                widget
+                                                    .projectBeneficiaryClientRefId,
+                                            referrerId:
+                                                context.loggedInUserUuid,
+                                            recipientId: recipientId,
+                                            recipientType: recipientType,
+                                            reasons: [reason],
+                                            tenantId:
+                                                envConfig.variables.tenantId,
+                                            rowVersion: 1,
+                                            auditDetails: AuditDetails(
+                                              createdBy:
+                                                  context.loggedInUserUuid,
+                                              createdTime: context
+                                                  .millisecondsSinceEpoch(),
+                                              lastModifiedBy:
+                                                  context.loggedInUserUuid,
+                                              lastModifiedTime: context
+                                                  .millisecondsSinceEpoch(),
+                                            ),
+                                            clientAuditDetails:
+                                                ClientAuditDetails(
+                                              createdBy:
+                                                  context.loggedInUserUuid,
+                                              createdTime: context
+                                                  .millisecondsSinceEpoch(),
+                                              lastModifiedBy:
+                                                  context.loggedInUserUuid,
+                                              lastModifiedTime: context
+                                                  .millisecondsSinceEpoch(),
+                                            ),
+                                            additionalFields:
+                                                ReferralAdditionalFields(
+                                              version: 1,
+                                              fields: [
+                                                AdditionalField(
+                                                  referralReasons,
+                                                  reasons.join(","),
+                                                ),
+                                                const AdditionalField(
+                                                    'referralType',
+                                                    'smcReferred')
+                                              ],
+                                            ),
+                                          ),
+                                          false,
                                         ));
-                                      },
-                                    ).then(
-                                      (value) => context.router.popAndPush(
-                                        CustomHouseholdAcknowledgementRoute(
-                                          enableViewHousehold: true,
-                                          eligibilityAssessmentType:
-                                              EligibilityAssessmentType.vas,
-                                        ),
-                                      ),
-                                    );
-                                  }
-                                },
-                          child: Center(
-                            child: Text(
-                              localizations
-                                  .translate(i18_local.common.coreCommonSubmit),
-                            ),
-                          ),
-                        );
-                      },
-                    ),
-                  ),
-                  children: [
-                    DigitCard(
-                      child: Column(
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Expanded(
+
+                                        final clientReferenceId =
+                                            IdGen.i.identifier;
+                                        context
+                                            .read<DeliverInterventionBloc>()
+                                            .add(
+                                              DeliverInterventionSubmitEvent(
+                                                task: TaskModel(
+                                                  projectBeneficiaryClientReferenceId:
+                                                      widget
+                                                          .projectBeneficiaryClientRefId,
+                                                  clientReferenceId:
+                                                      clientReferenceId,
+                                                  tenantId: envConfig
+                                                      .variables.tenantId,
+                                                  rowVersion: 1,
+                                                  auditDetails: AuditDetails(
+                                                    createdBy: context
+                                                        .loggedInUserUuid,
+                                                    createdTime: context
+                                                        .millisecondsSinceEpoch(),
+                                                  ),
+                                                  projectId: context.projectId,
+                                                  status: Status
+                                                      .beneficiaryReferred
+                                                      .toValue(),
+                                                  clientAuditDetails:
+                                                      ClientAuditDetails(
+                                                    createdBy: context
+                                                        .loggedInUserUuid,
+                                                    createdTime: context
+                                                        .millisecondsSinceEpoch(),
+                                                    lastModifiedBy: context
+                                                        .loggedInUserUuid,
+                                                    lastModifiedTime: context
+                                                        .millisecondsSinceEpoch(),
+                                                  ),
+                                                  additionalFields:
+                                                      TaskAdditionalFields(
+                                                    version: 1,
+                                                    fields: [
+                                                      AdditionalField(
+                                                        'taskStatus',
+                                                        Status
+                                                            .beneficiaryReferred
+                                                            .toValue(),
+                                                      ),
+                                                      if (widget
+                                                          .isReadministrationUnSuccessful)
+                                                        AdditionalField(
+                                                          'quantityWasted',
+                                                          widget.quantityWasted
+                                                                      .toString()
+                                                                      .length ==
+                                                                  1
+                                                              ? "0${widget.quantityWasted}"
+                                                              : widget
+                                                                  .quantityWasted
+                                                                  .toString(),
+                                                        ),
+                                                      if (widget
+                                                          .isReadministrationUnSuccessful)
+                                                        const AdditionalField(
+                                                          'unsuccessfullDelivery',
+                                                          'true',
+                                                        ),
+                                                      if (widget
+                                                              .productVariantId !=
+                                                          null)
+                                                        AdditionalField(
+                                                          'productVariantId',
+                                                          widget
+                                                              .productVariantId,
+                                                        ),
+                                                      AdditionalField(
+                                                        additional_fields_local
+                                                            .AdditionalFieldsType
+                                                            .deliveryType
+                                                            .toValue(),
+                                                        EligibilityAssessmentStatus
+                                                            .smcDone.name,
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  address: widget
+                                                      .individual.address?.first
+                                                      .copyWith(
+                                                    relatedClientReferenceId:
+                                                        clientReferenceId,
+                                                    id: null,
+                                                  ),
+                                                ),
+                                                isEditing: false,
+                                                boundaryModel: context.boundary,
+                                              ),
+                                            );
+
+                                        final reloadState = context
+                                            .read<HouseholdOverviewBloc>();
+                                        final searchBloc = context
+                                            .read<SearchHouseholdsBloc>();
+                                        searchBloc.add(
+                                          const SearchHouseholdsClearEvent(),
+                                        );
+
+                                        Future.delayed(
+                                          const Duration(milliseconds: 500),
+                                          () {
+                                            reloadState.add(
+                                                HouseholdOverviewReloadEvent(
+                                              projectId: context.projectId,
+                                              projectBeneficiaryType:
+                                                  context.beneficiaryType,
+                                            ));
+                                          },
+                                        ).then(
+                                          (value) => context.router.popAndPush(
+                                            CustomHouseholdAcknowledgementRoute(
+                                              enableViewHousehold: true,
+                                              eligibilityAssessmentType:
+                                                  EligibilityAssessmentType.vas,
+                                            ),
+                                          ),
+                                        );
+                                      }
+                                    },
+                              child: Center(
                                 child: Text(
                                   localizations.translate(
-                                    i18_local.referBeneficiary.referralDetails,
-                                  ),
-                                  style: theme.textTheme.displayMedium,
+                                      i18_local.common.coreCommonSubmit),
                                 ),
                               ),
+                            );
+                          },
+                        ),
+                      ),
+                      children: [
+                        DigitCard(
+                          child: Column(
+                            children: [
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Expanded(
+                                    child: Text(
+                                      localizations.translate(
+                                        i18_local
+                                            .referBeneficiary.referralDetails,
+                                      ),
+                                      style: theme.textTheme.displayMedium,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              Column(children: [
+                                DigitDateFormPicker(
+                                  margin: const EdgeInsets.symmetric(
+                                      vertical: spacer2),
+                                  isEnabled: false,
+                                  formControlName: _dateOfReferralKey,
+                                  label: localizations.translate(
+                                    i18_local
+                                        .referBeneficiary.dateOfReferralLabel,
+                                  ),
+                                  isRequired: false,
+                                  initialDate: DateTime.now(),
+                                  cancelText: localizations.translate(
+                                      i18_local.common.coreCommonCancel),
+                                  confirmText: localizations
+                                      .translate(i18_local.common.coreCommonOk),
+                                ),
+                                DigitTextFormField(
+                                  formControlName: _administrativeUnitKey,
+                                  label: localizations.translate(
+                                    i18_local.referBeneficiary
+                                        .organizationUnitFormLabel,
+                                  ),
+                                  isRequired: true,
+                                  readOnly: true,
+                                ),
+                                DigitTextFormField(
+                                  formControlName: _referredByKey,
+                                  readOnly: true,
+                                  label: localizations.translate(
+                                    i18_local.referBeneficiary.referredByLabel,
+                                  ),
+                                  validationMessages: {
+                                    'required': (_) => localizations.translate(
+                                          i18_local.common.corecommonRequired,
+                                        ),
+                                  },
+                                  isRequired: true,
+                                ),
+                                DigitTextFormField(
+                                  formControlName: _referredToKey,
+                                  readOnly: true,
+                                  label: localizations.translate(
+                                    i18_local.referBeneficiary.referredToLabel,
+                                  ),
+                                  validationMessages: {
+                                    'required': (_) => localizations.translate(
+                                          i18_local.common.corecommonRequired,
+                                        ),
+                                  },
+                                  isRequired: true,
+                                ),
+                              ]),
                             ],
                           ),
-                          Column(children: [
-                            DigitDateFormPicker(
-                              margin: const EdgeInsets.symmetric(vertical: spacer2),
-                              isEnabled: false,
-                              formControlName: _dateOfReferralKey,
-                              label: localizations.translate(
-                                i18_local.referBeneficiary.dateOfReferralLabel,
-                              ),
-                              isRequired: false,
-                              initialDate: DateTime.now(),
-                              cancelText: localizations
-                                  .translate(i18_local.common.coreCommonCancel),
-                              confirmText: localizations
-                                  .translate(i18_local.common.coreCommonOk),
-                            ),
-                            DigitTextFormField(
-                              formControlName: _administrativeUnitKey,
-                              label: localizations.translate(
-                                i18_local
-                                    .referBeneficiary.organizationUnitFormLabel,
-                              ),
-                              isRequired: true,
-                              readOnly: true,
-                            ),
-                            DigitTextFormField(
-                              formControlName: _referredByKey,
-                              readOnly: true,
-                              label: localizations.translate(
-                                i18_local.referBeneficiary.referredByLabel,
-                              ),
-                              validationMessages: {
-                                'required': (_) => localizations.translate(
-                                      i18_local.common.corecommonRequired,
-                                    ),
-                              },
-                              isRequired: true,
-                            ),
-                            DigitTextFormField(
-                              formControlName: _referredToKey,
-                              readOnly: true,
-                              label: localizations.translate(
-                                i18_local.referBeneficiary.referredToLabel,
-                              ),
-                              validationMessages: {
-                                'required': (_) => localizations.translate(
-                                      i18_local.common.corecommonRequired,
-                                    ),
-                              },
-                              isRequired: true,
-                            ),
-                          ]),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
-                  ],
+                  ),
                 ),
               ),
-            ),
-          ),
+            );
+          },
         );
       },
     );
@@ -455,13 +506,21 @@ class CustomReferBeneficiarySMCPageState
         value: context.loggedInUser.userName,
         validators: [Validators.required],
       ),
+      // _referredToKey: FormControl<String>(
+      //   value: healthFacilities
+      //       .where((e) =>
+      //           e.boundaryCode == context.loggedInUserModel?.boundaryCode)
+      //       .first
+      //       .id
+      //       .toString(),
+      //   validators: [
+      //     Validators.required,
+      //   ],
+      // ),
       _referredToKey: FormControl<String>(
-        value: healthFacilities
-            .where((e) =>
-                e.boundaryCode == context.loggedInUserModel?.boundaryCode)
-            .first
-            .id
-            .toString(),
+        value: healthFacilities.isNotEmpty
+            ? localizations.translate('FAC_${healthFacilities.first.id}')
+            : null,
         validators: [
           Validators.required,
         ],

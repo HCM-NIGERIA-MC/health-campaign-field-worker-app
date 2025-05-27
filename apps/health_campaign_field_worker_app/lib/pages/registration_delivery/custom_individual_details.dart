@@ -478,7 +478,11 @@ class CustomIndividualDetailsPageState
                       children: [
                         Text(
                           localizations.translate(
-                            i18.individualDetails.individualsDetailsLabelText,
+                            widget.isHeadOfHousehold
+                                ? i18_local
+                                    .individualDetails.caregiverDetailsLabelText
+                                : i18_local.individualDetails
+                                    .individualsDetailsLabelTextNewUpdate,
                           ),
                           style: textTheme.headingXl.copyWith(
                             color: theme.colorTheme.text.primary,
@@ -493,7 +497,7 @@ class CustomIndividualDetailsPageState
                                 validationMessages: {
                                   'required': (object) =>
                                       localizations.translate(
-                                        '${i18.individualDetails.nameLabelText}_IS_REQUIRED',
+                                        '${widget.isHeadOfHousehold ? i18_local.individualDetails.caregiverNameLabelText : i18.individualDetails.nameLabelText}_IS_REQUIRED',
                                       ),
                                   'maxLength': (object) => localizations
                                       .translate(i18.common.maxCharsRequired)
@@ -506,7 +510,11 @@ class CustomIndividualDetailsPageState
                                 },
                                 builder: (field) => LabeledField(
                                   label: localizations.translate(
-                                    i18.individualDetails.nameLabelText,
+                                    widget.isHeadOfHousehold
+                                        ? i18_local.individualDetails
+                                            .caregiverNameLabelText
+                                        : i18_local.individualDetails
+                                            .nameLabelTextNewUpdate,
                                   ),
                                   isRequired: true,
                                   child: DigitTextFormInput(
@@ -535,7 +543,8 @@ class CustomIndividualDetailsPageState
                                     ? localizations.translate(i18
                                         .individualDetails.clfCheckboxLabelText)
                                     : localizations.translate(
-                                        i18.individualDetails.checkboxLabelText,
+                                        i18_local.individualDetails
+                                            .checkboxLabelTextUpdate,
                                       ),
                                 value: widget.isHeadOfHousehold,
                                 readOnly: widget.isHeadOfHousehold,
@@ -570,13 +579,14 @@ class CustomIndividualDetailsPageState
                               // Handle changes to the control's value here
                               final value = formControl.value;
 
+                              if (value == null) {
+                                return;
+                              }
+
                               digits.DigitDOBAge age =
                                   digits.DigitDateUtils.calculateAge(value);
                               if (widget.isHeadOfHousehold &&
-                                  (age.years < 18 ||
-                                      (age.years == 18 &&
-                                          age.months == 0 &&
-                                          age.days == 0))) {
+                                  (age.years < 18)) {
                                 formControl.setErrors({'customMinAge': true});
                               } else if ((age.years == 0 && age.months == 0) ||
                                   age.months > 11 ||
@@ -591,8 +601,8 @@ class CustomIndividualDetailsPageState
                             confirmText: localizations
                                 .translate(i18.common.coreCommonOk),
                             monthsHintLabel: 'Month',
-                            headAgeValidError:
-                                i18_local.individualDetails.headAgeValidError,
+                            headAgeValidError: localizations.translate(
+                                i18_local.individualDetails.headAgeValidError),
                           ),
                         ),
                         dropdown.DigitDropdown<String>(
@@ -631,6 +641,10 @@ class CustomIndividualDetailsPageState
                                 'required': (_) => localizations.translate(
                                       i18.common.corecommonRequired,
                                     ),
+                                'mobileNumber': (object) =>
+                                    localizations.translate(i18_local
+                                        .individualDetails
+                                        .mobileNumberLengthValidationMessage),
                                 'minLength': (object) =>
                                     localizations.translate(i18_local
                                         .individualDetails
@@ -836,11 +850,8 @@ class CustomIndividualDetailsPageState
       _genderKey: FormControl<String>(value: getGenderOptions(individual)),
       _mobileNumberKey:
           FormControl<String>(value: individual?.mobileNumber, validators: [
-        Validators.delegate(
-            (validator) => CustomValidator.validMobileNumber(validator)),
-        // Validators.pattern(Constants.mobileNumberRegExp,
-        //     validationMessage:
-        //         localizations.translate(i18.common.coreCommonMobileNumber)),
+        Validators.delegate((validator) =>
+            local_utils.CustomValidator.validMobileNumber(validator)),
         Validators.minLength(11),
         Validators.maxLength(11),
         if (widget.isHeadOfHousehold) Validators.required,

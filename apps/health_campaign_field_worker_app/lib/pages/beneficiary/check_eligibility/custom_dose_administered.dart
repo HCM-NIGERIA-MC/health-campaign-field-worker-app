@@ -9,12 +9,15 @@ import 'package:digit_ui_components/widgets/atoms/table_cell.dart';
 import 'package:digit_ui_components/widgets/molecules/digit_card.dart';
 import 'package:digit_ui_components/widgets/molecules/digit_table.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:reactive_forms/reactive_forms.dart';
 import 'package:registration_delivery/blocs/app_localization.dart';
 import 'package:registration_delivery/utils/extensions/extensions.dart';
 
 import 'package:registration_delivery/utils/i18_key_constants.dart' as i18;
+import 'package:health_campaign_field_worker_app/utils/i18_key_constants.dart'
+    as i18_local;
 import 'package:registration_delivery/blocs/delivery_intervention/deliver_intervention.dart';
 import 'package:registration_delivery/blocs/household_overview/household_overview.dart';
 import 'package:registration_delivery/models/entities/additional_fields_type.dart';
@@ -53,6 +56,10 @@ class CustomDoseAdministeredPageState
   bool doseAdministered = false;
   bool formSubmitted = false;
 
+  bool _checkbox1 = false;
+  bool _checkbox2 = false;
+  bool _checkbox3 = false;
+
   final clickedStatus = ValueNotifier<bool>(false);
 
   @override
@@ -86,445 +93,369 @@ class CustomDoseAdministeredPageState
       child: PopScope(
         canPop: false,
         child: Scaffold(
-          body: BlocBuilder<LocationBloc, LocationState>(
-            builder: (context, locationState) {
-              return ScrollableContent(
-                enableFixedDigitButton: true,
-                header: const Column(children: [
-                  BackNavigationHelpHeaderWidget(
-                    showBackNavigation: false,
-                    showHelp: false,
-                  ),
-                ]),
-                footer: DigitCard(
-                    margin: const EdgeInsets.only(top: spacer2),
-                    children: [
-                      ValueListenableBuilder(
-                        valueListenable: clickedStatus,
-                        builder: (context, bool isClicked, _) {
-                          return DigitButton(
-                            label: localizations
-                                .translate(i18.common.coreCommonNext),
-                            type: DigitButtonType.primary,
-                            size: DigitButtonSize.large,
-                            mainAxisSize: MainAxisSize.max,
-                            isDisabled: isClicked,
-                            onPressed: () {
-                              final doseAdministered = true;
-                              final lat = locationState.latitude;
-                              final long = locationState.longitude;
-                              clickedStatus.value = true;
-                              final bloc =
-                                  context.read<DeliverInterventionBloc>().state;
-                              final event =
-                                  context.read<DeliverInterventionBloc>();
+          body: SafeArea(
+            child: BlocBuilder<LocationBloc, LocationState>(
+              builder: (context, locationState) {
+                return ScrollableContent(
+                  enableFixedDigitButton: true,
+                  header: const Column(children: [
+                    BackNavigationHelpHeaderWidget(
+                      showBackNavigation: false,
+                      showHelp: false,
+                    ),
+                  ]),
+                  footer: DigitCard(
+                      margin: const EdgeInsets.only(top: spacer2),
+                      children: [
+                        ValueListenableBuilder(
+                          valueListenable: clickedStatus,
+                          builder: (context, bool isClicked, _) {
+                            return DigitButton(
+                              label: localizations
+                                  .translate(i18.common.coreCommonNext),
+                              type: DigitButtonType.primary,
+                              size: DigitButtonSize.large,
+                              mainAxisSize: MainAxisSize.max,
+                              isDisabled: isClicked ||
+                                  !(_checkbox1 && _checkbox2 && _checkbox3),
+                              onPressed: () {
+                                final doseAdministered = true;
+                                final lat = locationState.latitude;
+                                final long = locationState.longitude;
+                                clickedStatus.value = true;
+                                final bloc = context
+                                    .read<DeliverInterventionBloc>()
+                                    .state;
+                                final event =
+                                    context.read<DeliverInterventionBloc>();
 
-                              if (doseAdministered == true && context.mounted) {
-                                // Iterate through future deliveries
+                                if (doseAdministered == true &&
+                                    context.mounted) {
+                                  // Iterate through future deliveries
 
-                                for (var e in bloc.futureDeliveries!) {
-                                  int doseIndex = e.id;
-                                  final clientReferenceId = IdGen.i.identifier;
-                                  final address = bloc.oldTask?.address;
-                                  // Create and dispatch a DeliverInterventionSubmitEvent with a new TaskModel
-                                  event.add(DeliverInterventionSubmitEvent(
-                                    task: TaskModel(
-                                      projectId: RegistrationDeliverySingleton()
-                                          .projectId,
-                                      address: address?.copyWith(
-                                        relatedClientReferenceId:
-                                            clientReferenceId,
-                                        id: null,
-                                      ),
-                                      status: Status.delivered.toValue(),
-                                      clientReferenceId: clientReferenceId,
-                                      projectBeneficiaryClientReferenceId: bloc
-                                          .oldTask
-                                          ?.projectBeneficiaryClientReferenceId,
-                                      tenantId: RegistrationDeliverySingleton()
-                                          .tenantId,
-                                      rowVersion: 1,
-                                      auditDetails: AuditDetails(
-                                        createdBy:
+                                  for (var e in bloc.futureDeliveries!) {
+                                    int doseIndex = e.id;
+                                    final clientReferenceId =
+                                        IdGen.i.identifier;
+                                    final address = bloc.oldTask?.address;
+                                    // Create and dispatch a DeliverInterventionSubmitEvent with a new TaskModel
+                                    event.add(DeliverInterventionSubmitEvent(
+                                      task: TaskModel(
+                                        projectId:
                                             RegistrationDeliverySingleton()
-                                                .loggedInUserUuid!,
-                                        createdTime:
-                                            context.millisecondsSinceEpoch(),
-                                      ),
-                                      clientAuditDetails: ClientAuditDetails(
-                                        createdBy:
+                                                .projectId,
+                                        address: address?.copyWith(
+                                          relatedClientReferenceId:
+                                              clientReferenceId,
+                                          id: null,
+                                        ),
+                                        status: Status.delivered.toValue(),
+                                        clientReferenceId: clientReferenceId,
+                                        projectBeneficiaryClientReferenceId: bloc
+                                            .oldTask
+                                            ?.projectBeneficiaryClientReferenceId,
+                                        tenantId:
                                             RegistrationDeliverySingleton()
-                                                .loggedInUserUuid!,
-                                        createdTime:
-                                            context.millisecondsSinceEpoch(),
+                                                .tenantId,
+                                        rowVersion: 1,
+                                        auditDetails: AuditDetails(
+                                          createdBy:
+                                              RegistrationDeliverySingleton()
+                                                  .loggedInUserUuid!,
+                                          createdTime:
+                                              context.millisecondsSinceEpoch(),
+                                        ),
+                                        clientAuditDetails: ClientAuditDetails(
+                                          createdBy:
+                                              RegistrationDeliverySingleton()
+                                                  .loggedInUserUuid!,
+                                          createdTime:
+                                              context.millisecondsSinceEpoch(),
+                                        ),
+                                        resources: fetchProductVariant(
+                                                e,
+                                                overViewBloc.selectedIndividual,
+                                                overViewBloc
+                                                    .householdMemberWrapper
+                                                    .household)
+                                            ?.productVariants
+                                            ?.map((variant) =>
+                                                TaskResourceModel(
+                                                  clientReferenceId:
+                                                      IdGen.i.identifier,
+                                                  tenantId:
+                                                      RegistrationDeliverySingleton()
+                                                          .tenantId,
+                                                  taskclientReferenceId:
+                                                      clientReferenceId,
+                                                  quantity: variant.quantity
+                                                      .toString(),
+                                                  productVariantId:
+                                                      variant.productVariantId,
+                                                  isDelivered: true,
+                                                  auditDetails: AuditDetails(
+                                                    createdBy:
+                                                        RegistrationDeliverySingleton()
+                                                            .loggedInUserUuid!,
+                                                    createdTime: context
+                                                        .millisecondsSinceEpoch(),
+                                                  ),
+                                                  clientAuditDetails:
+                                                      ClientAuditDetails(
+                                                    createdBy:
+                                                        RegistrationDeliverySingleton()
+                                                            .loggedInUserUuid!,
+                                                    createdTime: context
+                                                        .millisecondsSinceEpoch(),
+                                                  ),
+                                                ))
+                                            .toList(),
+                                        additionalFields: TaskAdditionalFields(
+                                          version: 1,
+                                          fields: [
+                                            AdditionalField(
+                                              AdditionalFieldsType
+                                                  .dateOfDelivery
+                                                  .toValue(),
+                                              DateTime.now()
+                                                  .millisecondsSinceEpoch
+                                                  .toString(),
+                                            ),
+                                            AdditionalField(
+                                              AdditionalFieldsType
+                                                  .dateOfAdministration
+                                                  .toValue(),
+                                              DateTime.now()
+                                                  .millisecondsSinceEpoch
+                                                  .toString(),
+                                            ),
+                                            AdditionalField(
+                                              AdditionalFieldsType
+                                                  .dateOfVerification
+                                                  .toValue(),
+                                              DateTime.now()
+                                                  .millisecondsSinceEpoch
+                                                  .toString(),
+                                            ),
+                                            AdditionalField(
+                                              AdditionalFieldsType.cycleIndex
+                                                  .toValue(),
+                                              "0${bloc.cycle}",
+                                            ),
+                                            AdditionalField(
+                                              AdditionalFieldsType.doseIndex
+                                                  .toValue(),
+                                              "0$doseIndex",
+                                            ),
+                                            AdditionalField(
+                                              AdditionalFieldsType
+                                                  .deliveryStrategy
+                                                  .toValue(),
+                                              e.deliveryStrategy,
+                                            ),
+                                            if (lat != null)
+                                              AdditionalField(
+                                                AdditionalFieldsType.latitude
+                                                    .toValue(),
+                                                lat,
+                                              ),
+                                            if (long != null)
+                                              AdditionalField(
+                                                AdditionalFieldsType.longitude
+                                                    .toValue(),
+                                                long,
+                                              ),
+                                            AdditionalField(
+                                              additional_fields_local
+                                                  .AdditionalFieldsType
+                                                  .deliveryType
+                                                  .toValue(),
+                                              widget.eligibilityAssessmentType ==
+                                                      EligibilityAssessmentType
+                                                          .smc
+                                                  ? EligibilityAssessmentStatus
+                                                      .smcDone.name
+                                                  : EligibilityAssessmentStatus
+                                                      .vasDone.name,
+                                            ),
+                                          ],
+                                        ),
                                       ),
-                                      resources: fetchProductVariant(
-                                              e,
-                                              overViewBloc.selectedIndividual,
-                                              overViewBloc
-                                                  .householdMemberWrapper
-                                                  .household)
-                                          ?.productVariants
-                                          ?.map((variant) => TaskResourceModel(
-                                                clientReferenceId:
-                                                    IdGen.i.identifier,
-                                                tenantId:
-                                                    RegistrationDeliverySingleton()
-                                                        .tenantId,
-                                                taskclientReferenceId:
-                                                    clientReferenceId,
-                                                quantity:
-                                                    variant.quantity.toString(),
-                                                productVariantId:
-                                                    variant.productVariantId,
-                                                isDelivered: true,
-                                                auditDetails: AuditDetails(
-                                                  createdBy:
-                                                      RegistrationDeliverySingleton()
-                                                          .loggedInUserUuid!,
-                                                  createdTime: context
-                                                      .millisecondsSinceEpoch(),
-                                                ),
-                                                clientAuditDetails:
-                                                    ClientAuditDetails(
-                                                  createdBy:
-                                                      RegistrationDeliverySingleton()
-                                                          .loggedInUserUuid!,
-                                                  createdTime: context
-                                                      .millisecondsSinceEpoch(),
-                                                ),
-                                              ))
-                                          .toList(),
-                                      additionalFields: TaskAdditionalFields(
-                                        version: 1,
-                                        fields: [
-                                          AdditionalField(
-                                            AdditionalFieldsType.dateOfDelivery
-                                                .toValue(),
-                                            DateTime.now()
-                                                .millisecondsSinceEpoch
-                                                .toString(),
+                                      isEditing: false,
+                                      boundaryModel:
+                                          RegistrationDeliverySingleton()
+                                              .boundary!,
+                                    ));
+                                  }
+
+                                  final reloadState =
+                                      context.read<HouseholdOverviewBloc>();
+
+                                  Future.delayed(
+                                    const Duration(milliseconds: 1000),
+                                    () {
+                                      reloadState
+                                          .add(HouseholdOverviewReloadEvent(
+                                        projectId:
+                                            RegistrationDeliverySingleton()
+                                                .projectId!,
+                                        projectBeneficiaryType:
+                                            RegistrationDeliverySingleton()
+                                                .beneficiaryType!,
+                                      ));
+                                    },
+                                  ).then((value) => context.router.popAndPush(
+                                        CustomHouseholdAcknowledgementRoute(
+                                          enableViewHousehold: true,
+                                          eligibilityAssessmentType:
+                                              widget.eligibilityAssessmentType,
+                                        ),
+                                      ));
+                                }
+                              },
+                            );
+                          },
+                        ),
+                      ]),
+                  children: [
+                    BlocBuilder<HouseholdOverviewBloc, HouseholdOverviewState>(
+                      builder: (context, state) {
+                        String name =
+                            state.selectedIndividual?.name?.givenName ?? "";
+                        String beneficiaryId = state
+                                .selectedIndividual?.identifiers
+                                ?.lastWhereOrNull((e) =>
+                                    e.identifierType ==
+                                    IdentifierTypes.uniqueBeneficiaryID
+                                        .toValue())
+                                ?.identifierId ??
+                            "";
+                        return DigitCard(
+                            margin: const EdgeInsets.only(
+                                top: spacer2, bottom: spacer2),
+                            children: [
+                              Text(
+                                localizations.translate(
+                                  i18.deliverIntervention
+                                      .wasTheDoseAdministered,
+                                ),
+                                style: textTheme.headingXl,
+                              ),
+                              Column(
+                                children: [
+                                  ListTile(
+                                    title: Text(
+                                      localizations.translate(
+                                        i18_local.deliverIntervention
+                                            .doseCompletionChecksText1,
+                                      ),
+                                    ),
+                                    leading: SizedBox(
+                                      width: 24,
+                                      height: 24,
+                                      child: Align(
+                                        alignment: Alignment.centerLeft,
+                                        child: DigitCheckbox(
+                                          value: _checkbox1,
+                                          onChanged: (bool? value) => setState(
+                                              () =>
+                                                  _checkbox1 = value ?? false),
+                                        ),
+                                      ),
+                                    ),
+                                    contentPadding: EdgeInsets.zero,
+                                    horizontalTitleGap: 8,
+                                    minLeadingWidth: 24,
+                                    minVerticalPadding: 0,
+                                  ),
+                                  ListTile(
+                                    title: Text.rich(
+                                      TextSpan(
+                                        text:
+                                            '${localizations.translate(i18_local.deliverIntervention.doseCompletionChecksText2)} ',
+                                        style: const TextStyle(
+                                            color: Colors.black),
+                                        children: [
+                                          TextSpan(
+                                            text: beneficiaryId,
+                                            style: const TextStyle(
+                                                color: Color.fromARGB(
+                                                    255, 245, 56, 42),
+                                                fontWeight: FontWeight.bold),
                                           ),
-                                          AdditionalField(
-                                            AdditionalFieldsType
-                                                .dateOfAdministration
-                                                .toValue(),
-                                            DateTime.now()
-                                                .millisecondsSinceEpoch
-                                                .toString(),
+                                          TextSpan(
+                                            text:
+                                                ' ${localizations.translate(i18_local.deliverIntervention.doseCompletionChecksText3)} ',
                                           ),
-                                          AdditionalField(
-                                            AdditionalFieldsType
-                                                .dateOfVerification
-                                                .toValue(),
-                                            DateTime.now()
-                                                .millisecondsSinceEpoch
-                                                .toString(),
+                                          TextSpan(
+                                            text: name,
+                                            style: const TextStyle(
+                                                color: Color.fromARGB(
+                                                    255, 245, 56, 42),
+                                                fontWeight: FontWeight.bold),
                                           ),
-                                          AdditionalField(
-                                            AdditionalFieldsType.cycleIndex
-                                                .toValue(),
-                                            "0${bloc.cycle}",
-                                          ),
-                                          AdditionalField(
-                                            AdditionalFieldsType.doseIndex
-                                                .toValue(),
-                                            "0$doseIndex",
-                                          ),
-                                          AdditionalField(
-                                            AdditionalFieldsType
-                                                .deliveryStrategy
-                                                .toValue(),
-                                            e.deliveryStrategy,
-                                          ),
-                                          if (lat != null)
-                                            AdditionalField(
-                                              AdditionalFieldsType.latitude
-                                                  .toValue(),
-                                              lat,
-                                            ),
-                                          if (long != null)
-                                            AdditionalField(
-                                              AdditionalFieldsType.longitude
-                                                  .toValue(),
-                                              long,
-                                            ),
-                                          AdditionalField(
-                                            additional_fields_local
-                                                .AdditionalFieldsType
-                                                .deliveryType
-                                                .toValue(),
-                                            widget.eligibilityAssessmentType ==
-                                                    EligibilityAssessmentType
-                                                        .smc
-                                                ? EligibilityAssessmentStatus
-                                                    .smcDone.name
-                                                : EligibilityAssessmentStatus
-                                                    .vasDone.name,
+                                          TextSpan(
+                                            text:
+                                                ' (${localizations.translate(i18_local.deliverIntervention.doseCompletionChecksText4)})',
                                           ),
                                         ],
                                       ),
                                     ),
-                                    isEditing: false,
-                                    boundaryModel:
-                                        RegistrationDeliverySingleton()
-                                            .boundary!,
-                                  ));
-                                }
-
-                                final reloadState =
-                                    context.read<HouseholdOverviewBloc>();
-
-                                Future.delayed(
-                                  const Duration(milliseconds: 1000),
-                                  () {
-                                    reloadState
-                                        .add(HouseholdOverviewReloadEvent(
-                                      projectId: RegistrationDeliverySingleton()
-                                          .projectId!,
-                                      projectBeneficiaryType:
-                                          RegistrationDeliverySingleton()
-                                              .beneficiaryType!,
-                                    ));
-                                  },
-                                ).then((value) => context.router.popAndPush(
-                                      CustomHouseholdAcknowledgementRoute(
-                                        enableViewHousehold: true,
-                                        eligibilityAssessmentType:
-                                            widget.eligibilityAssessmentType,
+                                    leading: SizedBox(
+                                      width: 24,
+                                      height: 24,
+                                      child: Align(
+                                        alignment: Alignment.centerLeft,
+                                        child: DigitCheckbox(
+                                          value: _checkbox2,
+                                          onChanged: (bool? value) => setState(
+                                              () =>
+                                                  _checkbox2 = value ?? false),
+                                        ),
                                       ),
-                                    ));
-                              }
-                            },
-                          );
-                        },
-                      ),
-                    ]),
-                children: [
-                  BlocBuilder<HouseholdOverviewBloc, HouseholdOverviewState>(
-                    builder: (context, state) {
-                      String name =
-                          state.selectedIndividual?.name?.givenName ?? "";
-                      String beneficiaryId = state
-                              .selectedIndividual?.identifiers
-                              ?.lastWhereOrNull((e) =>
-                                  e.identifierType ==
-                                  IdentifierTypes.uniqueBeneficiaryID.toValue())
-                              ?.identifierId ??
-                          "";
-                      return DigitCard(
-                          margin: const EdgeInsets.only(
-                              top: spacer2, bottom: spacer2),
-                          children: [
-                            Text(
-                              localizations.translate(
-                                i18.deliverIntervention.wasTheDoseAdministered,
-                              ),
-                              style: textTheme.headingXl,
-                            ),
-                            Column(
-                              children: [
-                                const ListTile(
-                                  title: Text(
-                                    "Given 2 AQ tablets to caregiver",
-                                  ),
-                                  leading: Text("1"),
-                                ),
-                                ListTile(
-                                  title: Text.rich(
-                                    TextSpan(
-                                      text: 'Have you written this ID ',
-                                      style:
-                                          const TextStyle(color: Colors.black),
-                                      children: [
-                                        TextSpan(
-                                          text: beneficiaryId,
-                                          style: const TextStyle(
-                                              fontWeight: FontWeight.bold),
-                                        ),
-                                        const TextSpan(
-                                          text: ' in the child Card for ',
-                                        ),
-                                        TextSpan(
-                                          text: name,
-                                          style: const TextStyle(
-                                              fontWeight: FontWeight.bold),
-                                        ),
-                                        const TextSpan(
-                                          text:
-                                              ' (To be used in the next cycle)',
-                                        ),
-                                      ],
                                     ),
+                                    contentPadding: EdgeInsets.zero,
+                                    horizontalTitleGap: 8,
+                                    minLeadingWidth: 24,
+                                    minVerticalPadding: 0,
                                   ),
-                                  leading: const Text("2"),
-                                ),
-                                const ListTile(
-                                  title: Text(
-                                    "Given health talk on the use of SPAQ on day 2 and day 3",
+                                  ListTile(
+                                    title: Text(
+                                      localizations.translate(
+                                        i18_local.deliverIntervention
+                                            .doseCompletionChecksText5,
+                                      ),
+                                    ),
+                                    leading: SizedBox(
+                                      width: 24,
+                                      height: 24,
+                                      child: Align(
+                                        alignment: Alignment.centerLeft,
+                                        child: DigitCheckbox(
+                                          value: _checkbox3,
+                                          onChanged: (bool? value) => setState(
+                                              () =>
+                                                  _checkbox3 = value ?? false),
+                                        ),
+                                      ),
+                                    ),
+                                    contentPadding: EdgeInsets.zero,
+                                    horizontalTitleGap: 8,
+                                    minLeadingWidth: 24,
+                                    minVerticalPadding: 0,
                                   ),
-                                  leading: Text("3"),
-                                ),
-                              ],
-                            ),
-                            // ReactiveWrapperField(
-                            //   formControlName: _doseAdministeredKey,
-                            //   builder: (field) => RadioList(
-                            //     radioDigitButtons: Constants.yesNo
-                            //         .map((e) => RadioButtonModel(
-                            //               code: e.key.toString(),
-                            //               name: localizations
-                            //                   .translate(e.label),
-                            //             ))
-                            //         .toList(),
-                            //     errorMessage: form
-                            //             .control(_doseAdministeredKey)
-                            //             .hasErrors
-                            //         ? localizations.translate(
-                            //             i18.common.corecommonRequired,
-                            //           )
-                            //         : null,
-                            //     groupValue: form
-                            //             .control(_doseAdministeredKey)
-                            //             .value
-                            //             .toString() ??
-                            //         '',
-                            //     onChanged: (val) {
-                            //       form.control(_doseAdministeredKey).value =
-                            //           val.code == 'true' ? true : false;
-                            //     },
-                            //   ),
-                            // ),
-                          ]);
-                    },
-                  ),
-                  // BlocBuilder<ProductVariantBloc, ProductVariantState>(
-                  //   builder: (context, productState) {
-                  //     return productState.maybeWhen(
-                  //       orElse: () => const Offstage(),
-                  //       fetched: (productVariantsValue) {
-                  //         final variant = productState.whenOrNull(
-                  //           fetched: (productVariants) {
-                  //             return productVariants;
-                  //           },
-                  //         );
-
-                  //         return DigitCard(
-                  //             margin: const EdgeInsets.only(
-                  //                 top: spacer2, bottom: spacer2),
-                  //             children: [
-                  //               BlocBuilder<DeliverInterventionBloc,
-                  //                   DeliverInterventionState>(
-                  //                 builder: (context, deliveryState) {
-                  //                   List<DigitTableRow> tableDataRows =
-                  //                       deliveryState.futureDeliveries!
-                  //                           .map((e) {
-                  //                     int doseIndex = deliveryState
-                  //                             .futureDeliveries!
-                  //                             .indexOf(e) +
-                  //                         deliveryState.dose +
-                  //                         1;
-                  //                     List<String> skus = fetchProductVariant(
-                  //                             e,
-                  //                             overViewBloc.selectedIndividual,
-                  //                             overViewBloc
-                  //                                 .householdMemberWrapper
-                  //                                 .household)!
-                  //                         .productVariants!
-                  //                         .map((ele) {
-                  //                       final pv = variant!.firstWhere(
-                  //                         (element) =>
-                  //                             element.id ==
-                  //                             ele.productVariantId,
-                  //                       );
-
-                  //                       return '${ele.quantity} - ${pv.sku.toString()}';
-                  //                     }).toList();
-
-                  //                     return DigitTableRow(tableRow: [
-                  //                       DigitTableData(
-                  //                         'Dose $doseIndex',
-                  //                         cellKey: 'dose',
-                  //                       ),
-                  //                       DigitTableData(
-                  //                         skus.join(' + '),
-                  //                         cellKey: 'resources',
-                  //                       ),
-                  //                     ]);
-                  //                   }).toList();
-
-                  //                   return Column(
-                  //                     children: [
-                  //                       Align(
-                  //                         alignment: Alignment.centerLeft,
-                  //                         child: Padding(
-                  //                           padding: const EdgeInsets.only(
-                  //                             bottom: spacer2 * 2,
-                  //                           ),
-                  //                           child: Text(
-                  //                             localizations.translate(
-                  //                               i18.beneficiaryDetails
-                  //                                   .resourcesTobeProvided,
-                  //                             ),
-                  //                             style: textTheme.headingXl,
-                  //                           ),
-                  //                         ),
-                  //                       ),
-                  //                       DigitTableCard(
-                  //                         element: {
-                  //                           localizations.translate(
-                  //                             i18.beneficiaryDetails
-                  //                                 .beneficiaryAge,
-                  //                           ): localizations.translate(
-                  //                               fetchProductVariant(
-                  //                                       deliveryState
-                  //                                           .futureDeliveries
-                  //                                           ?.first,
-                  //                                       overViewBloc
-                  //                                           .selectedIndividual,
-                  //                                       overViewBloc
-                  //                                           .householdMemberWrapper
-                  //                                           .household)!
-                  //                                   .condition!),
-                  //                         },
-                  //                       ),
-                  //                       const Divider(
-                  //                         thickness: 2.0,
-                  //                       ),
-                  //                       SizedBox(
-                  //                         height: (tableDataRows.length + 1) *
-                  //                             57.5,
-                  //                         child: DigitTable(
-                  //                           enableBorder: true,
-                  //                           showPagination: false,
-                  //                           showSelectedState: false,
-                  //                           columns: headerListResource,
-                  //                           rows: tableDataRows,
-                  //                         ),
-                  //                       ),
-                  //                     ],
-                  //                   );
-                  //                 },
-                  //               ),
-                  //             ]);
-                  //       },
-                  //     );
-                  //   },
-                  // ),
-                ],
-              );
-            },
+                                ],
+                              ),
+                            ]);
+                      },
+                    ),
+                  ],
+                );
+              },
+            ),
           ),
         ),
       ),
     );
   }
-
-  // FormGroup buildForm(BuildContext context) {
-  //   return fb.group(<String, Object>{
-  //     _doseAdministeredKey: FormControl<bool>(
-  //       value: null,
-  //     ),
-  //   });
-  // }
 }

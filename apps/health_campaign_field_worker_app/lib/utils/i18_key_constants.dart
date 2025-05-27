@@ -23,6 +23,7 @@ const searchBeneficiary = SearchBeneficiary();
 const individualDetails = IndividualDetails();
 const beneficiaryDetails = BeneficiaryDetails();
 const stockDetails = StockDetails();
+const stockReconciliationDetails = StockReconciliationDetails();
 const inventoryReportDetails = InventoryReportDetails();
 
 const selectStockShowcase = SelectStockShowcase();
@@ -72,6 +73,11 @@ class Common {
   String get corecommonRequired => 'CORE_COMMON_REQUIRED';
 
   String get coreCommonReasonRequired => 'CORE_COMMON_REASON_REQUIRED';
+
+  String get coreCommonConsentReasonRequired =>
+      'CORE_COMMON_CONSENT_REASON_REQUIRED';
+
+  String get coreCommonOthersRequired => 'CORE_COMMON_OTHERS_REQUIRED';
 
   String get corecommonclose => 'CORE_COMMON_CLOSE';
 
@@ -208,6 +214,17 @@ class DeliverIntervention {
       'DELIVER_INTERVENTION_REDOSE_QUANTITY_LABEL';
   String get dose => 'DELIVER_INTERVENTION_DOSE';
 
+  String get doseCompletionChecksText1 =>
+      'DELIVER_INTERVENTION_DOSE_COMPLETION_CHECKS_TEXT1';
+  String get doseCompletionChecksText2 =>
+      'DELIVER_INTERVENTION_DOSE_COMPLETION_CHECKS_TEXT2';
+  String get doseCompletionChecksText3 =>
+      'DELIVER_INTERVENTION_DOSE_COMPLETION_CHECKS_TEXT3';
+  String get doseCompletionChecksText4 =>
+      'DELIVER_INTERVENTION_DOSE_COMPLETION_CHECKS_TEXT4';
+  String get doseCompletionChecksText5 =>
+      'DELIVER_INTERVENTION_DOSE_COMPLETION_CHECKS_TEXT5';
+
   String get quantityAdministratedLabel => 'QUANTITY_ADMINISTRATED_LABEL';
 
   String get selectTheResourceDeliveredLabel =>
@@ -317,6 +334,10 @@ class HouseholdDetails {
   String get addBeneficiartText => 'ADD_BENEFICIARY_TEXT';
 
   String get householdDetailsLabel => 'HOUSEHOLD_DETAILS_LABEL';
+
+  String get dateOfHouseholdRegistrationLabelUpdate =>
+      'DATE_OF_HOUSEHOLD_REGISTRATION_LABEL';
+
   String get actionLabel => 'HOUSEHOLD_ACTION_LABEL';
   String get dateOfRegistrationLabel =>
       'HOUSEHOLD_DETAILS_DATE_OF_REGISTRATION_LABEL';
@@ -429,6 +450,22 @@ class HomeShowcase {
 
 class StockDetails {
   const StockDetails();
+  String get selectTransactingPartyReturnedFrom =>
+      'STOCK_DETAILS_RETURNED_FROM';
+
+  String get returnedTo => 'STOCK_DETAILS_RETURNED_TO';
+
+  String get viewCreatedTransactionLabel => 'VIEW_CREATED_TRANSACTION';
+
+  String get createNewTransactionLabel => 'CREATE_NEW_TRANSACTION';
+
+//TODO:
+  String get quantityCapsulePartialReturnedLabel =>
+      "QTY_PARTIAL_RETURNED_LABEL_STOCK";
+  String get quantityCapsulePartialWastedLabel =>
+      "QTY_PARTIAL_WASTED_LABEL_STOCK";
+
+  String get reconciliationCommentRequired => 'RECONCILIATION_COMMENT_REQUIRED';
 
   String get cddCodeLabel => 'CDD_CODE_LABEL';
 
@@ -452,6 +489,9 @@ class StockDetails {
   String get quantityPartialReturnedLabel =>
       'STOCK_DETAILS_PARTIAL_QUANTITY_RETURNED';
 
+  String get quantityWastedReturnedLabel =>
+      'STOCK_DETAILS_WASTED_QUANTITY_RETURNED';
+
   String get quantityReturnedMaxError =>
       'STOCK_DETAILS_RETURNED_MAX_QUANTITY_ERROR';
 
@@ -461,6 +501,12 @@ class StockDetails {
 
   String get recordStockReturnedDescription =>
       'STOCK_DETAILS_RECORD_STOCK_RETURNED_DESCRIPTION';
+}
+
+class StockReconciliationDetails {
+  const StockReconciliationDetails();
+
+  String get commentRequiredError => 'RECONCILIATION_COMMENT_IS_REQUIRED';
 }
 
 class InventoryReportDetails {
@@ -708,6 +754,10 @@ class CaregiverConsent {
 
   String get caregiverConsentActionLabelText =>
       'CARE_GIVER_CONSENT_ACTION_LABEL_TEXT';
+
+  String get caregiverConsentReason => 'CARE_GIVER_CONSENT_REASON_FOR_NO';
+
+  String get caregiveroption => 'CARECARE_GIVER_CONSENT_REASON_NOT_SELECTED';
 }
 
 class ComplaintsDetailsShowcase {
@@ -893,6 +943,9 @@ class Home {
 
 class AcknowledgementSuccess {
   const AcknowledgementSuccess();
+
+  String get acknowledgementSuccessUpdateLabelText =>
+      "ACKNOWLEDGEMENT_SUCCESS_UPDATE_LABEL_TEXT";
 
   String get mrrnNumberDescription => "MRRN_NUMBER_DESCRIPTION";
 
@@ -1252,13 +1305,20 @@ class IndividualDetails {
   const IndividualDetails();
 
   String get headAgeValidError => "INDIVIDUAL_HEAD_MIN_AGE_VALIDATION_MESSAGE";
+  String get individualDetailsLabelTextUpdate =>
+      'INDIVIDUAL_DETAILS_LABEL_TEXT_UPDATE';
+  String get individualDetailsNameLabelTextUpdate =>
+      'INDIVIDUAL_DETAILS_NAME_LABEL_TEXT_UPDATE';
+  String get individualsDetailsLabelTextNewUpdate =>
+      'INDIVIDUALS_DETAILS_LABEL_TEXT_NEW_UPDATE';
+  String get nameLabelTextNewUpdate => 'NAME_LABEL_TEXT_NEW_UPDATE';
+  String get landmarkValidationMessage =>
+      'INDIVIDUAL_DETAILS_LANDMARK_VALIDATION_MESSAGE';
 
   String get onlyAlphabetsValidationMessage =>
       'INDIVIDUAL_DETAILS_ONLY_ALPHABETS_VALIDATION_MESSAGE';
   String get mobileNumberLengthValidationMessageSMC =>
       'INDIVIDUAL_DETAILS_MOBILE_NUMBER_LENGTH_SMC';
-  String get landmarkValidationMessage =>
-      'INDIVIDUAL_DETAILS_LANDMARK_VALIDATION_MESSAGE';
 
   // String get onlyAlphabetsValidationMessage =>
   //     'INDIVIDUAL_DETAILS_ONLY_ALPHABETS_VALIDATION_MESSAGE';
@@ -1266,9 +1326,15 @@ class IndividualDetails {
 
   String get individualsDetailsLabelText => 'INDIVIDUAL_LABEL_TEXT';
 
+  String get caregiverDetailsLabelText => 'CAREGIVER_LABEL_TEXT';
+
   String get nameLabelText => 'INDIVIDUAL_NAME_LABEL_TEXT';
 
+  String get caregiverNameLabelText => 'CAREGIVER_NAME_LABEL_TEXT';
+
   String get checkboxLabelText => 'HEAD_OF_HOUSEHOLD_LABEL_TEXT';
+
+  String get checkboxLabelTextUpdate => "HEAD_OF_HOUSEHOLD_CHECKBOX_LABEL_TEXT";
 
   String get idTypeLabelText => 'ID_TYPE_LABEL_TEXT';
 
@@ -1312,6 +1378,8 @@ class IndividualDetails {
 
 class BeneficiaryDetails {
   const BeneficiaryDetails();
+
+  String get benficiarySearchId => "SEARCH_BY_BENEFICIARY_ID";
 
   String get backToHome => "BACK_TO_HOME";
 
@@ -1419,6 +1487,8 @@ class BeneficiaryDetails {
   String get recordCycle => 'BENEFICIARY_DETAILS_RECORD_CYCLE';
 
   String get currentSmcCycleLabel => 'BENEFICIARY_DETAILS_CURRENT_SMC_CYCLE';
+
+  String get noHealthFacilityError => 'NO_HEALTH_FACILITY_ERROR';
 }
 
 class PrivacyPolicy {

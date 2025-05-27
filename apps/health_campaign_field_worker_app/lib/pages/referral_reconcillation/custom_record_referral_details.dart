@@ -50,7 +50,7 @@ class _CustomRecordReferralDetailsPageState
   static const _referralReason = 'referralReason';
   static const _referredByKey = 'referredBy';
   static const _genderKey = 'gender';
-  // static const _cycleKey = 'cycle';
+  static const _cycleKey = 'cycle';
   static const _beneficiaryIdKey = 'beneficiaryId';
   static const _referralCodeKey = 'referralCode';
   static const _ageKey = 'ageInMonths';
@@ -135,6 +135,14 @@ class _CustomRecordReferralDetailsPageState
                                               ? () {}
                                               : () {
                                                   if (form
+                                                          .control(_cycleKey)
+                                                          .value ==
+                                                      null) {
+                                                    clickedStatus.value = false;
+                                                    form
+                                                        .control(_cycleKey)
+                                                        .setErrors({'': true});
+                                                  } else if (form
                                                           .control(_genderKey)
                                                           .value ==
                                                       null) {
@@ -152,8 +160,7 @@ class _CustomRecordReferralDetailsPageState
                                                         .control(
                                                             _referralReason)
                                                         .setErrors({'': true});
-                                                  }
-                                                  else if (form
+                                                  } else if (form
                                                           .control(
                                                               _beneficiaryIdKey)
                                                           .value ==
@@ -164,7 +171,7 @@ class _CustomRecordReferralDetailsPageState
                                                             _beneficiaryIdKey)
                                                         .setErrors({'': true});
                                                   }
-                                                  
+
                                                   form.markAllAsTouched();
 
                                                   if (viewOnly) {
@@ -222,6 +229,9 @@ class _CustomRecordReferralDetailsPageState
                                                       context,
                                                     ).state;
                                                     clickedStatus.value = true;
+                                                    final cycle = form
+                                                        .control(_cycleKey)
+                                                        .value;
                                                     final nameOfChild = form
                                                         .control(
                                                             _nameOfChildKey)
@@ -399,6 +409,18 @@ class _CustomRecordReferralDetailsPageState
                                                                       .toValue(),
                                                                   gender,
                                                                 ),
+                                                              if (cycle !=
+                                                                      null &&
+                                                                  cycle
+                                                                      .toString()
+                                                                      .trim()
+                                                                      .isNotEmpty)
+                                                                AdditionalField(
+                                                                  ReferralReconEnums
+                                                                      .cycle
+                                                                      .toValue(),
+                                                                  cycle,
+                                                                ),
                                                             ],
                                                           ),
                                                         ),
@@ -449,6 +471,17 @@ class _CustomRecordReferralDetailsPageState
                                             onPressed: isClicked
                                                 ? () {}
                                                 : () {
+                                                    if (form
+                                                            .control(_cycleKey)
+                                                            .value ==
+                                                        null) {
+                                                      clickedStatus.value =
+                                                          false;
+                                                      form
+                                                          .control(_cycleKey)
+                                                          .setErrors(
+                                                              {'': true});
+                                                    }
                                                     if (form
                                                             .control(_genderKey)
                                                             .value ==
@@ -544,6 +577,9 @@ class _CustomRecordReferralDetailsPageState
                                                       ).state;
                                                       clickedStatus.value =
                                                           true;
+                                                      final cycle = form
+                                                          .control(_cycleKey)
+                                                          .value;
                                                       final nameOfChild = form
                                                           .control(
                                                               _nameOfChildKey)
@@ -718,6 +754,18 @@ class _CustomRecordReferralDetailsPageState
                                                                         .toValue(),
                                                                     gender,
                                                                   ),
+                                                                if (cycle !=
+                                                                        null &&
+                                                                    cycle
+                                                                        .toString()
+                                                                        .trim()
+                                                                        .isNotEmpty)
+                                                                  AdditionalField(
+                                                                    ReferralReconEnums
+                                                                        .cycle
+                                                                        .toValue(),
+                                                                    cycle,
+                                                                  ),
                                                               ],
                                                             ),
                                                           ),
@@ -775,6 +823,65 @@ class _CustomRecordReferralDetailsPageState
                                           ),
                                         ],
                                       ),
+                                      ReactiveWrapperField<String>(
+                                          formControlName: _cycleKey,
+                                          validationMessages: {
+                                            '': (_) => localizations.translate(
+                                                i18.common.corecommonRequired),
+                                          },
+                                          showErrors: (control) =>
+                                              control.invalid &&
+                                              control.touched,
+                                          // Ensures error is shown if invalid and touched
+                                          builder: (field) {
+                                            return LabeledField(
+                                                isRequired: true,
+                                                label: localizations.translate(
+                                                  i18.referralReconciliation
+                                                      .selectCycle,
+                                                ),
+                                                child: Dropdown(
+                                                  readOnly: viewOnly,
+                                                  onSelect: (val) => {
+                                                    form
+                                                        .control(_cycleKey)
+                                                        .markAsTouched(),
+                                                    form
+                                                        .control(_cycleKey)
+                                                        .value = val.code,
+                                                  },
+                                                  selectedOption: widget.cycles
+                                                      .map((item) =>
+                                                          DropdownItem(
+                                                            name:
+                                                                '${localizations.translate(i18.referralReconciliation.cycle)} $item',
+                                                            code:
+                                                                item.toString(),
+                                                          ))
+                                                      .firstWhere(
+                                                        (item) =>
+                                                            item.code ==
+                                                            form
+                                                                .control(
+                                                                    _cycleKey)
+                                                                .value,
+                                                        orElse: () =>
+                                                            const DropdownItem(
+                                                                name: '',
+                                                                code: ''),
+                                                      ),
+                                                  errorMessage: field.errorText,
+                                                  items: widget.cycles
+                                                      .map(
+                                                        (item) => DropdownItem(
+                                                          name:
+                                                              '${localizations.translate(i18.referralReconciliation.cycle)} $item',
+                                                          code: item.toString(),
+                                                        ),
+                                                      )
+                                                      .toList(),
+                                                ));
+                                          }),
                                       ReactiveWrapperField<String>(
                                           validationMessages: {
                                             'required': (_) =>
@@ -1085,6 +1192,30 @@ class _CustomRecordReferralDetailsPageState
 
   FormGroup buildForm(RecordHFReferralState referralState) {
     return fb.group(<String, Object>{
+      _cycleKey: FormControl<String>(
+        value: referralState.mapOrNull(
+          create: (value) => value.viewOnly &&
+                  value.hfReferralModel?.additionalFields?.fields
+                          .where((e) =>
+                              e.key == ReferralReconEnums.cycle.toValue())
+                          .firstOrNull
+                          ?.value !=
+                      null
+              ? value.hfReferralModel?.additionalFields?.fields
+                  .where((e) => e.key == ReferralReconEnums.cycle.toValue())
+                  .firstOrNull
+                  ?.value
+                  .toString()
+              : null,
+        ),
+        disabled: referralState.mapOrNull(
+              create: (value) => value.viewOnly,
+            ) ??
+            false,
+        validators: [
+          Validators.required,
+        ],
+      ),
       _nameOfChildKey: FormControl<String>(
         value: referralState.mapOrNull(
           create: (value) => value.viewOnly &&
