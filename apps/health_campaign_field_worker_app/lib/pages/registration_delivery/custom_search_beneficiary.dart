@@ -746,7 +746,10 @@ class _CustomSearchBeneficiaryPageState
                                       popupContext,
                                       rootNavigator: true,
                                     ).pop();
-//
+                                    final parent =
+                                        context.router.parent() as StackRouter;
+                                    parent
+                                        .popUntilRouteWithName(HomeRoute.name);
                                   },
                                   type: DigitButtonType.primary,
                                   size: DigitButtonSize.large,
