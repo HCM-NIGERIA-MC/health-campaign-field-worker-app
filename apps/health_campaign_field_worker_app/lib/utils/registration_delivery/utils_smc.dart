@@ -122,15 +122,24 @@ bool redosePending(List<TaskModel>? tasks, ProjectCycle? selectedCycle) {
         (element) => element.status == Status.visited.toValue(),
       )
       .lastOrNull;
+
+  final redoseTaskCreatedTime = redoseTask?.clientAuditDetails?.createdTime;
+
+  final isRedoseDoneInCurrentCycle = redoseTaskCreatedTime != null &&
+      redoseTaskCreatedTime >= selectedCycle.startDate &&
+      redoseTaskCreatedTime <= selectedCycle.endDate;
+
   TaskModel? successfullTask = tasks
       .where(
         (element) => element.status == Status.administeredSuccess.toValue(),
       )
       .lastOrNull;
+
   int diff = DateTime.now().millisecondsSinceEpoch -
       (successfullTask?.clientAuditDetails?.createdTime ??
           DateTime.now().millisecondsSinceEpoch);
-  redosePending = redoseTask == null
+
+  redosePending = (redoseTask == null || !isRedoseDoneInCurrentCycle)
       ? true
       : (redoseTask.additionalFields?.fields
                   .where(
@@ -140,11 +149,7 @@ bool redosePending(List<TaskModel>? tasks, ProjectCycle? selectedCycle) {
               [])
           .isEmpty;
 
-  return redosePending &&
-      ( // selectedCycle.mandatoryWaitSinceLastCycleInDays == null ||
-          diff <= 30 * 60 * 1000
-      // * (selectedCycle.mandatoryWaitSinceLastCycleInDays ?? 0)
-      );
+  return redosePending && (diff <= 30 * 60 * 1000);
 }
 
 bool checkBeneficiaryReferredSMC(
@@ -177,9 +182,6 @@ bool checkBeneficiaryReferredSMC(
   if (successfulTaskCreatedTime == null) {
     return false;
   }
-
-  final date = DateTime.fromMillisecondsSinceEpoch(successfulTaskCreatedTime);
-
   final isLastCycleRunning =
       successfulTaskCreatedTime >= currentCycle.startDate &&
           successfulTaskCreatedTime <= currentCycle.endDate;
@@ -189,7 +191,7 @@ bool checkBeneficiaryReferredSMC(
 
 bool checkBeneficiaryInEligibleSMC(
     List<TaskModel>? tasks, ProjectCycle? currentCycle) {
-   if (currentCycle == null) {
+  if (currentCycle == null) {
     return false;
   }
   if ((tasks ?? []).isEmpty) {
@@ -198,7 +200,8 @@ bool checkBeneficiaryInEligibleSMC(
   var successfulTask = tasks!
       .where(
         (element) =>
-            element.status ==   status_local.Status.beneficiaryInEligible.toValue() &&
+            element.status ==
+                status_local.Status.beneficiaryInEligible.toValue() &&
             element.additionalFields?.fields.firstWhereOrNull(
                   (e) =>
                       e.key ==
