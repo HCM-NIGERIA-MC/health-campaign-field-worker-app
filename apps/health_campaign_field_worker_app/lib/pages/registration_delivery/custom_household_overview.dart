@@ -314,9 +314,18 @@ class _CustomHouseholdOverviewPageState
                                                 ? localizations.translate(i18
                                                     .householdOverView
                                                     .clfOverviewLabel)
-                                                : localizations.translate(i18
-                                                    .householdOverView
-                                                    .householdOverViewLabel),
+                                                : (state
+                                                                .householdMemberWrapper
+                                                                .household!
+                                                                .additionalFields !=
+                                                            null &&
+                                                        headerType != null)
+                                                    ? localizations.translate(
+                                                        getInterventionTypeHeader(
+                                                            headerType))
+                                                    : localizations.translate(i18
+                                                        .householdOverView
+                                                        .householdOverViewLabel),
                                             style: textTheme.headingXl.copyWith(
                                                 color: theme
                                                     .colorTheme.text.primary),
