@@ -364,10 +364,14 @@ class CustomHouseHoldDetailsPageState
                                 ? localizations.translate(
                                     i18.householdDetails.clfDetailsLabel,
                                   )
-                                : localizations.translate(
-                                    i18_local.householdDetails
-                                        .dateOfHouseholdRegistrationLabelUpdate,
-                                  ),
+                                : (widget.pointType != null)
+                                    ? localizations.translate(
+                                        getInterventionTypeHeader(
+                                            widget.pointType))
+                                    : localizations.translate(
+                                        i18_local.householdDetails
+                                            .dateOfHouseholdRegistrationLabelUpdate,
+                                      ),
                             headingStyle: textTheme.headingXl
                                 .copyWith(color: theme.colorTheme.text.primary),
                           ),
