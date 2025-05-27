@@ -1,3 +1,5 @@
+import 'package:digit_components/widgets/atoms/digit_toaster.dart';
+import 'package:digit_components/widgets/digit_dialog.dart';
 import 'package:digit_data_model/data_model.dart';
 import 'package:digit_ui_components/digit_components.dart';
 import 'package:digit_ui_components/widgets/atoms/input_wrapper.dart';
@@ -10,6 +12,7 @@ import 'package:inventory_management/models/entities/transaction_reason.dart';
 import 'package:inventory_management/models/entities/transaction_type.dart';
 import 'package:inventory_management/utils/i18_key_constants.dart' as i18;
 import '../../utils/i18_key_constants.dart' as i18_local;
+import 'package:registration_delivery/utils/i18_key_constants.dart' as i18_reg;
 import 'package:inventory_management/utils/utils.dart';
 import 'package:registration_delivery/widgets/localized.dart';
 import 'package:reactive_forms/reactive_forms.dart';
@@ -70,10 +73,30 @@ class _ViewStockRecordsCDDPageState
     super.dispose();
   }
 
-  Future<void> _handleSubmission() async {
+  Future<void> _handleSubmission(List<StockModel> stockRecords) async {
+    final theme = Theme.of(context);
     // Validate current form
     final currentForm = _forms[_tabController.index];
-    currentForm.markAllAsTouched();
+    final quantityReceived = currentForm.control('quantityReceived').value;
+    final stockQuantity =
+        int.tryParse(stockRecords[_tabController.index].quantity ?? '0') ?? 0;
+    final currentComment = currentForm.control('comments').value;
+    if ((quantityReceived == null ||
+            (quantityReceived is int && quantityReceived < stockQuantity)) &&
+        (currentComment == null || currentComment.trim() == '')) {
+      await DigitToast.show(context,
+          options: DigitToastOptions('Comment is required', true, theme));
+      return;
+    }
+    if (quantityReceived == null ||
+        (quantityReceived is int && quantityReceived > stockQuantity)) {
+      await DigitToast.show(context,
+          options: DigitToastOptions(
+              'Received quantity can not be more than issued quantity',
+              true,
+              theme));
+      return;
+    }
 
     if (!currentForm.valid) {
       return;
@@ -83,6 +106,35 @@ class _ViewStockRecordsCDDPageState
       // Move to next tab
       _tabController.animateTo(_tabController.index + 1);
     } else {
+      final shouldSubmit = await DigitDialog.show<bool>(
+        context,
+        options: DigitDialogOptions(
+          titleText: localizations.translate(
+            i18_reg.deliverIntervention.dialogTitle,
+          ),
+          contentText: localizations.translate(
+            i18_reg.deliverIntervention.dialogContent,
+          ),
+          primaryAction: DigitDialogActions(
+            label: localizations.translate(
+              i18.common.coreCommonSubmit,
+            ),
+            action: (ctx) {
+              Navigator.of(ctx, rootNavigator: true).pop(true);
+            },
+          ),
+          secondaryAction: DigitDialogActions(
+            label: localizations.translate(
+              i18.common.coreCommonGoback,
+            ),
+            action: (ctx) {
+              Navigator.of(ctx, rootNavigator: true).pop(false);
+            },
+          ),
+        ),
+      );
+
+      if (!shouldSubmit!) return;
       // Final submission - validate all forms
       bool allValid = true;
       for (int i = 0; i < _forms.length; i++) {
@@ -122,7 +174,7 @@ class _ViewStockRecordsCDDPageState
           AdditionalField('quantitySent', stock.quantity ?? ''),
           if (form.control('comments').value != null)
             AdditionalField('comments', form.control('comments').value),
-          AdditionalField('received', 'true'),
+          const AdditionalField('received', 'true'),
         ];
 
         return stock.copyWith(
@@ -161,84 +213,58 @@ class _ViewStockRecordsCDDPageState
               const RecordStockCreateStockEntryEvent(),
             );
 
-        final stockReceived = int.parse(_forms[updatedStocks.indexOf(stock)]
+        final totalQty = int.parse(_forms[updatedStocks.indexOf(stock)]
             .control('quantityReceived')
             .value
             .toString());
 
-        if (int.parse(stock.quantity!) > stockReceived) {
-          Toast.showToast(
-            context,
-            message: localizations.translate(
-                i18_local.inventoryReportDetails.commentIsRequiredText),
-            type: ToastType.error,
-            position: ToastPosition.aboveOneButtonFooter,
-          );
-        } else if (int.parse(stock.quantity!) < stockReceived) {
-          Toast.showToast(
-            context,
-            message: localizations.translate(
-                i18_local.inventoryReportDetails.checkTheQuantityReceivedText),
-            type: ToastType.error,
-            position: ToastPosition.aboveOneButtonFooter,
-          );
+        int spaq1Count = context.spaq1;
+        int spaq2Count = context.spaq2;
+
+        int blueVasCount = context.blueVas;
+        int redVasCount = context.redVas;
+        String productName = stock.additionalFields?.fields
+            .firstWhereOrNull((element) => element.key == "productName")
+            ?.value;
+
+        if (productName == Constants.spaq1) {
+          spaq1Count = totalQty;
+          spaq2Count = 0;
+          redVasCount = 0;
+          blueVasCount = 0;
+        } else if (productName == Constants.spaq2) {
+          spaq2Count = totalQty;
+          spaq1Count = 0;
+          redVasCount = 0;
+          blueVasCount = 0;
+        } else if (productName == Constants.blueVAS) {
+          blueVasCount = totalQty;
+          spaq1Count = 0;
+          spaq2Count = 0;
+          redVasCount = 0;
         } else {
-          if (InventorySingleton().isDistributor) {
-            final totalQty = int.parse(_forms[updatedStocks.indexOf(stock)]
-                .control('quantityReceived')
-                .value
-                .toString());
-
-            int spaq1Count = context.spaq1;
-            int spaq2Count = context.spaq2;
-
-            int blueVasCount = context.blueVas;
-            int redVasCount = context.redVas;
-            String productName = stock.additionalFields?.fields
-                .firstWhereOrNull((element) => element.key == "productName")
-                ?.value;
-
-            if (productName == Constants.spaq1) {
-              spaq1Count = totalQty;
-              spaq2Count = 0;
-              redVasCount = 0;
-              blueVasCount = 0;
-            } else if (productName == Constants.spaq2) {
-              spaq2Count = totalQty;
-              spaq1Count = 0;
-              redVasCount = 0;
-              blueVasCount = 0;
-            } else if (productName == Constants.blueVAS) {
-              blueVasCount = totalQty;
-              spaq1Count = 0;
-              spaq2Count = 0;
-              redVasCount = 0;
-            } else {
-              blueVasCount = 0;
-              spaq1Count = 0;
-              spaq2Count = 0;
-              redVasCount = totalQty;
-            }
-
-            context.read<AuthBloc>().add(
-                  AuthAddSpaqCountsEvent(
-                    spaq1Count: spaq1Count,
-                    spaq2Count: spaq2Count,
-                    blueVasCount: blueVasCount,
-                    redVasCount: redVasCount,
-                  ),
-                );
-            await Future.delayed(const Duration(milliseconds: 500));
-          }
+          blueVasCount = 0;
+          spaq1Count = 0;
+          spaq2Count = 0;
+          redVasCount = totalQty;
         }
 
-        context.router.push(
-          CustomAcknowledgementRoute(
-              mrnNumber: widget.mrnNumber,
-              stockRecords: updatedStocks,
-              entryType: StockRecordEntryType.receipt),
-        );
+        context.read<AuthBloc>().add(
+              AuthAddSpaqCountsEvent(
+                spaq1Count: spaq1Count,
+                spaq2Count: spaq2Count,
+                blueVasCount: blueVasCount,
+                redVasCount: redVasCount,
+              ),
+            );
       }
+      await Future.delayed(const Duration(milliseconds: 500));
+      context.router.push(
+        CustomAcknowledgementRoute(
+            mrnNumber: widget.mrnNumber,
+            stockRecords: updatedStocks,
+            entryType: StockRecordEntryType.receipt),
+      );
     }
   }
 
@@ -247,7 +273,7 @@ class _ViewStockRecordsCDDPageState
     final productName = stock.additionalFields?.fields
             .firstWhere(
               (field) => field.key == 'productName',
-              orElse: () => AdditionalField('productName', ''),
+              orElse: () => const AdditionalField('productName', ''),
             )
             .value
             ?.toString() ??
@@ -294,7 +320,8 @@ class _ViewStockRecordsCDDPageState
                     initialValue: stock.additionalFields?.fields
                             .firstWhere(
                               (field) => field.key == 'batchNumber',
-                              orElse: () => AdditionalField('batchNumber', ''),
+                              orElse: () =>
+                                  const AdditionalField('batchNumber', ''),
                             )
                             .value
                             ?.toString() ??
@@ -434,7 +461,7 @@ class _ViewStockRecordsCDDPageState
               label: _tabController.index < widget.stockRecords.length - 1
                   ? localizations.translate(i18.common.coreCommonNext)
                   : localizations.translate(i18.common.coreCommonSubmit),
-              onPressed: _handleSubmission,
+              onPressed: () => _handleSubmission(widget.stockRecords),
               type: DigitButtonType.primary,
               size: DigitButtonSize.large,
             ),
