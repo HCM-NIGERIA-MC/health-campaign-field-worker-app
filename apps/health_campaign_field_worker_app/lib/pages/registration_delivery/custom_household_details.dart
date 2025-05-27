@@ -365,9 +365,7 @@ class CustomHouseHoldDetailsPageState
                                     i18.householdDetails.clfDetailsLabel,
                                   )
                                 : (widget.pointType != null)
-                                    ? localizations.translate(
-                                        getInterventionTypeHeader(
-                                            widget.pointType))
+                                    ? localizations.translate("${getInterventionTypeHeader(widget.pointType)}_DETAILS")
                                     : localizations.translate(
                                         i18_local.householdDetails
                                             .dateOfHouseholdRegistrationLabelUpdate,

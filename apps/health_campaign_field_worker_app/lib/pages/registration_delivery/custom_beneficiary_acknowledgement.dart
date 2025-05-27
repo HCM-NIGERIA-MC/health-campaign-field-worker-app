@@ -1,5 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:collection/collection.dart';
+import 'package:digit_data_model/data_model.dart';
 import 'package:digit_ui_components/digit_components.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -14,6 +15,7 @@ import 'package:registration_delivery/router/registration_delivery_router.gm.dar
 import '../../blocs/registration_delivery/custom_beneficairy_registration.dart';
 import '../../blocs/registration_delivery/custom_search_household.dart';
 import '../../models/entities/identifier_types.dart';
+import '../../utils/constants.dart';
 import '../../widgets/digit_ui_component/custom_panel_card.dart';
 import '../../utils/i18_key_constants.dart' as i18_local;
 
@@ -53,11 +55,19 @@ class CustomBeneficiaryAcknowledgementPageState
     String? beneficiaryName =
         householdMember?.members?.lastOrNull?.name?.givenName;
     if (widget.acknowledgementType == AcknowledgementType.addHousehold) {
+      final houseID = (householdMember?.household?.additionalFields?.fields
+              ?.firstWhere(
+                (e) => e.key == Constants.pointKey,
+                orElse: () =>
+                    const AdditionalField(Constants.pointKey, "HEAD_TO_HEAD"),
+              )
+              .value ??
+          "HEAD_TO_HEAD");
+
       return beneficiaryId == null || beneficiaryName == null
           ? null
           : {
-              'id': localizations
-                  .translate(i18_local.beneficiaryDetails.householdId),
+              'id': localizations.translate("${houseID}_ID"),
               'value': '$beneficiaryName - $beneficiaryId'
             };
     }
