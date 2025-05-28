@@ -1112,6 +1112,8 @@ class _DynamicTabsPageState extends LocalizedState<DynamicTabsPage>
       for (var productName in selectedProducts) {
         await _saveCurrentTabData(productName, entryType);
       }
+
+      final stockState = context.read<RecordStockBloc>().state;
       // Loop through all stocks and dispatch individual events
       for (final stockModel in _tabStocks.values) {
         int quantity = int.parse(stockModel.quantity.toString());
@@ -1172,14 +1174,42 @@ class _DynamicTabsPageState extends LocalizedState<DynamicTabsPage>
           spaq2Count = totalQty;
         }
 
-        context.read<RecordStockBloc>().add(
-              RecordStockSaveStockDetailsEvent(
-                stockModel: stockModel,
-              ),
-            );
-        context.read<RecordStockBloc>().add(
-              const RecordStockCreateStockEntryEvent(),
-            );
+        final bloc = RecordStockBloc(
+          stockRepository: context.repository<StockModel, StockSearchModel>(),
+          RecordStockCreateState(
+            entryType: stockState.entryType,
+            projectId: InventorySingleton().projectId,
+            dateOfRecord: DateTime.now(),
+            facilityModel: FacilityModel(
+              id: context.loggedInUserUuid,
+            ),
+            primaryId: context.loggedInUserUuid,
+            primaryType: "STAFF",
+          ),
+        );
+
+        bloc.add(
+          RecordStockSaveStockDetailsEvent(
+            stockModel: stockModel,
+          ),
+        );
+
+        await Future.delayed(const Duration(milliseconds: 500), () {});
+        bloc.add(
+          const RecordStockCreateStockEntryEvent(),
+        );
+
+        bloc.close();
+
+//TODO: commented [pitabash], previous code
+        // context.read<RecordStockBloc>().add(
+        //       RecordStockSaveStockDetailsEvent(
+        //         stockModel: stockModel,
+        //       ),
+        //     );
+        // context.read<RecordStockBloc>().add(
+        //       const RecordStockCreateStockEntryEvent(),
+        //     );
       }
 
       context.read<AuthBloc>().add(
@@ -1190,6 +1220,7 @@ class _DynamicTabsPageState extends LocalizedState<DynamicTabsPage>
               redVasCount: 0,
             ),
           );
+          
 
       (context.router.parent() as StackRouter).maybePop();
 
