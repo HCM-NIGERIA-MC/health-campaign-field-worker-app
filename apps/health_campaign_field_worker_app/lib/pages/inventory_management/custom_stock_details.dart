@@ -1198,11 +1198,6 @@ class CustomStockDetailsPageState
                                                     'Delivery Team') {
                                                   setState(() {
                                                     deliveryTeamSelected = true;
-                                                    form
-                                                            .control(
-                                                                _deliveryTeamKey)
-                                                            .value =
-                                                        'oyo-cdd-user-1||405a837d-8275-4e10-ae88-7465681d6f66';
                                                   });
                                                 } else {
                                                   setState(() {
