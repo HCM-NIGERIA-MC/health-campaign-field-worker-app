@@ -44,6 +44,7 @@ class _ViewStockRecordsLGAPageState
   late final FormGroup _form;
   late final Map<String, int> _issuedQuantities;
   bool _commentsRequired = false;
+  bool isSubmitClicked = false;
 
   @override
   void initState() {
@@ -124,7 +125,8 @@ class _ViewStockRecordsLGAPageState
   }
 
   Future<void> _handleSubmission() async {
-    if (_form.valid) {
+    if (_form.valid && !isSubmitClicked) {
+      isSubmitClicked = true;
       final updatedStocks = widget.stockRecords.map((stock) {
         final additionalFields = stock.additionalFields?.fields ?? [];
 

@@ -45,6 +45,7 @@ class _ViewStockRecordsCDDPageState
     with SingleTickerProviderStateMixin {
   late final List<FormGroup> _forms;
   late TabController _tabController;
+  bool isSubmitClicked = false;
 
   @override
   void initState() {
@@ -135,7 +136,11 @@ class _ViewStockRecordsCDDPageState
           ),
         );
 
-        if (!shouldSubmit!) return;
+        if ((shouldSubmit ?? false)) {
+          return;
+        } else {
+          isSubmitClicked = true;
+        }
         // Final submission - validate all forms
         bool allValid = true;
         for (int i = 0; i < _forms.length; i++) {
@@ -148,6 +153,7 @@ class _ViewStockRecordsCDDPageState
         }
 
         if (!allValid) {
+          isSubmitClicked = false;
           return;
         }
 
@@ -294,6 +300,7 @@ class _ViewStockRecordsCDDPageState
         );
       }
     } catch (error) {
+      isSubmitClicked = false;
       print(error);
     }
   }

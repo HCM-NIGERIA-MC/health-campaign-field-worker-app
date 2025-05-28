@@ -13,6 +13,7 @@ import 'package:inventory_management/models/entities/transaction_type.dart';
 import 'package:inventory_management/utils/utils.dart';
 import 'package:inventory_management/widgets/back_navigation_help_header.dart';
 import '../../blocs/inventory_management/stock_bloc.dart';
+import '../../blocs/localization/app_localization.dart';
 import '../../router/app_router.dart';
 import '../../utils/utils.dart';
 import '../../widgets/action_card/all_transactions_card.dart';
@@ -236,10 +237,8 @@ class _ViewAllTransactionsScreenState extends State<ViewAllTransactionsScreen> {
                                                     .value
                                                     ?.toString() ??
                                                 'N/A',
-                                        cddCode: InventorySingleton()
-                                                .loggedInUser
-                                                ?.name ??
-                                            (stock.senderId ?? ''),
+                                        cddCode: AppLocalizations.of(context)
+                                            .translate('FAC_${stock.senderId}'),
                                         date: (stock.dateOfEntry != null)
                                             ? DateFormat('d MMMM yyyy').format(
                                                 (stock.dateOfEntryTime ??

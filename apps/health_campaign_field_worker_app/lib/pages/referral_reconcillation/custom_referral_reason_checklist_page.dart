@@ -129,16 +129,8 @@ class _CustomReferralReasonChecklistPageState
 
                             for (int i = 0; i < controller.length; i++) {
                               if (itemsAttributes?[i].required == true &&
-                                  ((itemsAttributes?[i].dataType ==
-                                              'SingleValueList' &&
-                                          visibleChecklistIndexes
-                                              .any((e) => e == i) &&
-                                          (controller[i].text == '')) ||
-                                      (itemsAttributes?[i].dataType !=
-                                              'SingleValueList' &&
-                                          (controller[i].text == '' &&
-                                              !(widget.referralClientRefId !=
-                                                  null))))) {
+                                  visibleChecklistIndexes.any((e) => e == i) &&
+                                  controller[i].text == '') {
                                 return;
                               }
                             }
@@ -487,6 +479,7 @@ class _CustomReferralReasonChecklistPageState
                                   ),
                                   BlocBuilder<ServiceBloc, ServiceState>(
                                     builder: (context, state) {
+                                      visibleChecklistIndexes.add(index);
                                       return Column(
                                         children: e.values!
                                             .where((e1) =>
@@ -712,6 +705,18 @@ class _CustomReferralReasonChecklistPageState
                                 ),
                               );
                           setState(() {
+                            // Clear child controllers and update visibility
+                            for (final matchingChildItem in childItems) {
+                              final childIndex =
+                                  initialAttributes?.indexOf(matchingChildItem);
+                              if (childIndex != null) {
+                                // controller[childIndex].clear();
+                                visibleChecklistIndexes
+                                    .removeWhere((v) => v == childIndex);
+                              }
+                            }
+
+                            // Update the current controller's value
                             controller[index].value =
                                 TextEditingController.fromValue(
                               TextEditingValue(
@@ -840,6 +845,7 @@ class _CustomReferralReasonChecklistPageState
         );
       });
     } else if (item.dataType == 'MultiValueList') {
+      visibleChecklistIndexes.add(index);
       return Column(children: [
         Align(
           alignment: Alignment.topLeft,
