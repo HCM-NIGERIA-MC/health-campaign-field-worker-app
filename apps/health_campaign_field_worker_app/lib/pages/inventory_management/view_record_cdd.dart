@@ -209,16 +209,16 @@ class _ViewStockRecordsCDDPageState
         for (final stock in updatedStocks) {
           final bloc = RecordStockBloc(
             stockRepository: context.repository<StockModel, StockSearchModel>(),
-            RecordStockCreateState(
-              entryType: stockState.entryType,
-              projectId: InventorySingleton().projectId,
-              dateOfRecord: DateTime.now(),
-              facilityModel: FacilityModel(
-                id: context.loggedInUserUuid,
-              ),
-              primaryId: context.loggedInUserUuid,
-              primaryType: "STAFF",
+             RecordStockCreateState(
+            entryType: stockState.entryType,
+            projectId: InventorySingleton().projectId,
+            dateOfRecord: DateTime.now(),
+            facilityModel:stockState.facilityModel?? FacilityModel(
+              id: context.loggedInUserUuid,
             ),
+            primaryId: stockState.primaryId,
+            primaryType: stockState.primaryType,
+          ),
           );
 
           bloc.add(
