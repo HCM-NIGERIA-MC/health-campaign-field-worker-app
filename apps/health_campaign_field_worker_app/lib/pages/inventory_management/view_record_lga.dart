@@ -174,9 +174,10 @@ class _ViewStockRecordsLGAPageState
             entryType: stockState.entryType,
             projectId: InventorySingleton().projectId,
             dateOfRecord: DateTime.now(),
-            facilityModel:stockState.facilityModel?? FacilityModel(
-              id: context.loggedInUserUuid,
-            ),
+            facilityModel: stockState.facilityModel ??
+                FacilityModel(
+                  id: stockState.primaryId ?? context.loggedInUserUuid,
+                ),
             primaryId: stockState.primaryId,
             primaryType: stockState.primaryType,
           ),

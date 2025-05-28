@@ -1176,13 +1176,14 @@ class _DynamicTabsPageState extends LocalizedState<DynamicTabsPage>
 
         final bloc = RecordStockBloc(
           stockRepository: context.repository<StockModel, StockSearchModel>(),
-           RecordStockCreateState(
+          RecordStockCreateState(
             entryType: stockState.entryType,
             projectId: InventorySingleton().projectId,
             dateOfRecord: DateTime.now(),
-            facilityModel:stockState.facilityModel?? FacilityModel(
-              id: context.loggedInUserUuid,
-            ),
+            facilityModel: stockState.facilityModel ??
+                FacilityModel(
+                  id: stockState.primaryId ?? context.loggedInUserUuid,
+                ),
             primaryId: stockState.primaryId,
             primaryType: stockState.primaryType,
           ),
@@ -1220,7 +1221,6 @@ class _DynamicTabsPageState extends LocalizedState<DynamicTabsPage>
               redVasCount: 0,
             ),
           );
-          
 
       (context.router.parent() as StackRouter).maybePop();
 
