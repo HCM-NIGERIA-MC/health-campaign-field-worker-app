@@ -76,232 +76,236 @@ class _ViewStockRecordsCDDPageState
 
   Future<void> _handleSubmission(List<StockModel> stockRecords) async {
     try {
-      final theme = Theme.of(context);
-      // Validate current form
-      final currentForm = _forms[_tabController.index];
-      final quantityReceived = currentForm.control('quantityReceived').value;
-      final stockQuantity =
-          int.tryParse(stockRecords[_tabController.index].quantity ?? '0') ?? 0;
-      final currentComment = currentForm.control('comments').value;
-      if ((quantityReceived == null ||
-              (quantityReceived is int && quantityReceived < stockQuantity)) &&
-          (currentComment == null || currentComment.trim() == '')) {
-        await DigitToast.show(context,
-            options: DigitToastOptions('Comment is required', true, theme));
-        return;
-      }
-      if (quantityReceived == null ||
-          (quantityReceived is int && quantityReceived > stockQuantity)) {
-        await DigitToast.show(context,
-            options: DigitToastOptions(
-                'Received quantity can not be more than issued quantity',
-                true,
-                theme));
-        return;
-      }
-
-      if (!currentForm.valid) {
-        return;
-      }
-
-      if (_tabController.index < widget.stockRecords.length - 1) {
-        // Move to next tab
-        _tabController.animateTo(_tabController.index + 1);
-      } else {
-        final shouldSubmit = await DigitDialog.show<bool>(
-          context,
-          options: DigitDialogOptions(
-            titleText: localizations.translate(
-              i18_reg.deliverIntervention.dialogTitle,
-            ),
-            contentText: localizations.translate(
-              i18_reg.deliverIntervention.dialogContent,
-            ),
-            primaryAction: DigitDialogActions(
-              label: localizations.translate(
-                i18.common.coreCommonSubmit,
-              ),
-              action: (ctx) {
-                Navigator.of(ctx, rootNavigator: true).pop(true);
-              },
-            ),
-            secondaryAction: DigitDialogActions(
-              label: localizations.translate(
-                i18.common.coreCommonGoback,
-              ),
-              action: (ctx) {
-                Navigator.of(ctx, rootNavigator: true).pop(false);
-              },
-            ),
-          ),
-        );
-
-        if ((shouldSubmit ?? false)) {
+      if (!isSubmitClicked) {
+        final theme = Theme.of(context);
+        // Validate current form
+        final currentForm = _forms[_tabController.index];
+        final quantityReceived = currentForm.control('quantityReceived').value;
+        final stockQuantity =
+            int.tryParse(stockRecords[_tabController.index].quantity ?? '0') ??
+                0;
+        final currentComment = currentForm.control('comments').value;
+        if ((quantityReceived == null ||
+                (quantityReceived is int &&
+                    quantityReceived < stockQuantity)) &&
+            (currentComment == null || currentComment.trim() == '')) {
+          await DigitToast.show(context,
+              options: DigitToastOptions('Comment is required', true, theme));
           return;
+        }
+        if (quantityReceived == null ||
+            (quantityReceived is int && quantityReceived > stockQuantity)) {
+          await DigitToast.show(context,
+              options: DigitToastOptions(
+                  'Received quantity can not be more than issued quantity',
+                  true,
+                  theme));
+          return;
+        }
+
+        if (!currentForm.valid) {
+          return;
+        }
+
+        if (_tabController.index < widget.stockRecords.length - 1) {
+          // Move to next tab
+          _tabController.animateTo(_tabController.index + 1);
         } else {
-          isSubmitClicked = true;
-        }
-        // Final submission - validate all forms
-        bool allValid = true;
-        for (int i = 0; i < _forms.length; i++) {
-          _forms[i].markAllAsTouched();
-          if (!_forms[i].valid) {
-            allValid = false;
-            _tabController.animateTo(i);
-            break;
-          }
-        }
-
-        if (!allValid) {
-          isSubmitClicked = false;
-          return;
-        }
-
-        // Proceed with final submission
-        context.read<RecordStockBloc>().add(
-              RecordStockSaveTransactionDetailsEvent(
-                dateOfRecord: DateTime.now(),
-                facilityModel: FacilityModel(
-                  id: context.loggedInUserUuid,
-                ),
-                primaryId: context.loggedInUserUuid,
-                primaryType: "STAFF",
+          final shouldSubmit = await DigitDialog.show<bool>(
+            context,
+            options: DigitDialogOptions(
+              titleText: localizations.translate(
+                i18_reg.deliverIntervention.dialogTitle,
               ),
-            );
-
-        final updatedStocks = widget.stockRecords.map((stock) {
-          final additionalFields = stock.additionalFields?.fields ?? [];
-          final form = _forms[widget.stockRecords.indexOf(stock)];
-
-          final newFields = [
-            ...additionalFields.where((field) =>
-                field.key != 'quantityReceived' && field.key != 'comments'),
-            AdditionalField('quantityReceived',
-                form.control('quantityReceived').value.toString()),
-            AdditionalField('quantitySent', stock.quantity ?? ''),
-            if (form.control('comments').value != null)
-              AdditionalField('comments', form.control('comments').value),
-            const AdditionalField('received', 'true'),
-          ];
-
-          return stock.copyWith(
-            id: null,
-            rowVersion: 1,
-            clientReferenceId: IdGen.i.identifier,
-            transactionType: TransactionType.received.toValue(),
-            transactionReason: TransactionReason.received.toValue(),
-            quantity: form.control('quantityReceived').value.toString(),
-            additionalFields: stock.additionalFields?.copyWith(
-              fields: newFields,
-            ),
-            dateOfEntry: DateTime.now().millisecondsSinceEpoch,
-            auditDetails: AuditDetails(
-              createdBy: InventorySingleton().loggedInUserUuid,
-              createdTime: context.millisecondsSinceEpoch(),
-              lastModifiedBy: InventorySingleton().loggedInUserUuid,
-              lastModifiedTime: context.millisecondsSinceEpoch(),
-            ),
-            clientAuditDetails: ClientAuditDetails(
-              createdBy: InventorySingleton().loggedInUserUuid,
-              createdTime: context.millisecondsSinceEpoch(),
-              lastModifiedBy: InventorySingleton().loggedInUserUuid,
-              lastModifiedTime: context.millisecondsSinceEpoch(),
+              contentText: localizations.translate(
+                i18_reg.deliverIntervention.dialogContent,
+              ),
+              primaryAction: DigitDialogActions(
+                label: localizations.translate(
+                  i18.common.coreCommonSubmit,
+                ),
+                action: (ctx) {
+                  Navigator.of(ctx, rootNavigator: true).pop(true);
+                },
+              ),
+              secondaryAction: DigitDialogActions(
+                label: localizations.translate(
+                  i18.common.coreCommonGoback,
+                ),
+                action: (ctx) {
+                  Navigator.of(ctx, rootNavigator: true).pop(false);
+                },
+              ),
             ),
           );
-        }).toList();
 
-        final stockState = context.read<RecordStockBloc>().state;
+          if (!(shouldSubmit ?? false)) {
+            return;
+          }
+          // Final submission - validate all forms
+          bool allValid = true;
+          for (int i = 0; i < _forms.length; i++) {
+            _forms[i].markAllAsTouched();
+            if (!_forms[i].valid) {
+              allValid = false;
+              _tabController.animateTo(i);
+              break;
+            }
+          }
 
-        for (final stock in updatedStocks) {
-          final bloc = RecordStockBloc(
-            stockRepository: context.repository<StockModel, StockSearchModel>(),
-            RecordStockCreateState(
-              entryType: stockState.entryType,
-              projectId: InventorySingleton().projectId,
-              dateOfRecord: DateTime.now(),
-              facilityModel: stockState.facilityModel ??
-                  FacilityModel(
+          if (!allValid) {
+            return;
+          }
+
+          isSubmitClicked = true;
+
+          // Proceed with final submission
+          context.read<RecordStockBloc>().add(
+                RecordStockSaveTransactionDetailsEvent(
+                  dateOfRecord: DateTime.now(),
+                  facilityModel: FacilityModel(
                     id: context.loggedInUserUuid,
                   ),
-              primaryId: stockState.primaryId,
-              primaryType: stockState.primaryType,
-            ),
-          );
-
-          bloc.add(
-            RecordStockSaveStockDetailsEvent(
-              stockModel: stock,
-            ),
-          );
-
-          await Future.delayed(const Duration(milliseconds: 500), () {});
-          bloc.add(
-            const RecordStockCreateStockEntryEvent(),
-          );
-
-          bloc.close();
-          final totalQty = int.parse(_forms[updatedStocks.indexOf(stock)]
-              .control('quantityReceived')
-              .value
-              .toString());
-
-          int spaq1Count = context.spaq1;
-          int spaq2Count = context.spaq2;
-
-          int blueVasCount = context.blueVas;
-          int redVasCount = context.redVas;
-          String productName = stock.additionalFields?.fields
-              .firstWhereOrNull((element) => element.key == "productName")
-              ?.value;
-
-          if (productName == Constants.spaq1) {
-            spaq1Count = totalQty;
-            spaq2Count = 0;
-            redVasCount = 0;
-            blueVasCount = 0;
-          } else if (productName == Constants.spaq2) {
-            spaq2Count = totalQty;
-            spaq1Count = 0;
-            redVasCount = 0;
-            blueVasCount = 0;
-          } else if (productName == Constants.blueVAS) {
-            blueVasCount = totalQty;
-            spaq1Count = 0;
-            spaq2Count = 0;
-            redVasCount = 0;
-          } else {
-            blueVasCount = 0;
-            spaq1Count = 0;
-            spaq2Count = 0;
-            redVasCount = totalQty;
-          }
-
-          context.read<AuthBloc>().add(
-                AuthAddSpaqCountsEvent(
-                  spaq1Count: spaq1Count,
-                  spaq2Count: spaq2Count,
-                  blueVasCount: blueVasCount,
-                  redVasCount: redVasCount,
+                  primaryId: context.loggedInUserUuid,
+                  primaryType: "STAFF",
                 ),
               );
 
-          await Future.delayed(
-            const Duration(milliseconds: 500),
+          final updatedStocks = widget.stockRecords.map((stock) {
+            final additionalFields = stock.additionalFields?.fields ?? [];
+            final form = _forms[widget.stockRecords.indexOf(stock)];
+
+            final newFields = [
+              ...additionalFields.where((field) =>
+                  field.key != 'quantityReceived' && field.key != 'comments'),
+              AdditionalField('quantityReceived',
+                  form.control('quantityReceived').value.toString()),
+              AdditionalField('quantitySent', stock.quantity ?? ''),
+              if (form.control('comments').value != null)
+                AdditionalField('comments', form.control('comments').value),
+              const AdditionalField('received', 'true'),
+            ];
+
+            return stock.copyWith(
+              id: null,
+              rowVersion: 1,
+              clientReferenceId: IdGen.i.identifier,
+              transactionType: TransactionType.received.toValue(),
+              transactionReason: TransactionReason.received.toValue(),
+              quantity: form.control('quantityReceived').value.toString(),
+              additionalFields: stock.additionalFields?.copyWith(
+                fields: newFields,
+              ),
+              dateOfEntry: DateTime.now().millisecondsSinceEpoch,
+              auditDetails: AuditDetails(
+                createdBy: InventorySingleton().loggedInUserUuid,
+                createdTime: context.millisecondsSinceEpoch(),
+                lastModifiedBy: InventorySingleton().loggedInUserUuid,
+                lastModifiedTime: context.millisecondsSinceEpoch(),
+              ),
+              clientAuditDetails: ClientAuditDetails(
+                createdBy: InventorySingleton().loggedInUserUuid,
+                createdTime: context.millisecondsSinceEpoch(),
+                lastModifiedBy: InventorySingleton().loggedInUserUuid,
+                lastModifiedTime: context.millisecondsSinceEpoch(),
+              ),
+            );
+          }).toList();
+
+          final stockState = context.read<RecordStockBloc>().state;
+
+          for (final stock in updatedStocks) {
+            final bloc = RecordStockBloc(
+              stockRepository:
+                  context.repository<StockModel, StockSearchModel>(),
+              RecordStockCreateState(
+                entryType: stockState.entryType,
+                projectId: InventorySingleton().projectId,
+                dateOfRecord: DateTime.now(),
+                facilityModel: stockState.facilityModel ??
+                    FacilityModel(
+                      id: context.loggedInUserUuid,
+                    ),
+                primaryId: stockState.primaryId,
+                primaryType: stockState.primaryType,
+              ),
+            );
+
+            bloc.add(
+              RecordStockSaveStockDetailsEvent(
+                stockModel: stock,
+              ),
+            );
+
+            await Future.delayed(const Duration(milliseconds: 500), () {});
+            bloc.add(
+              const RecordStockCreateStockEntryEvent(),
+            );
+
+            bloc.close();
+            final totalQty = int.parse(_forms[updatedStocks.indexOf(stock)]
+                .control('quantityReceived')
+                .value
+                .toString());
+
+            int spaq1Count = context.spaq1;
+            int spaq2Count = context.spaq2;
+
+            int blueVasCount = context.blueVas;
+            int redVasCount = context.redVas;
+            String productName = stock.additionalFields?.fields
+                .firstWhereOrNull((element) => element.key == "productName")
+                ?.value;
+
+            if (productName == Constants.spaq1) {
+              spaq1Count = totalQty;
+              spaq2Count = 0;
+              redVasCount = 0;
+              blueVasCount = 0;
+            } else if (productName == Constants.spaq2) {
+              spaq2Count = totalQty;
+              spaq1Count = 0;
+              redVasCount = 0;
+              blueVasCount = 0;
+            } else if (productName == Constants.blueVAS) {
+              blueVasCount = totalQty;
+              spaq1Count = 0;
+              spaq2Count = 0;
+              redVasCount = 0;
+            } else {
+              blueVasCount = 0;
+              spaq1Count = 0;
+              spaq2Count = 0;
+              redVasCount = totalQty;
+            }
+
+            context.read<AuthBloc>().add(
+                  AuthAddSpaqCountsEvent(
+                    spaq1Count: spaq1Count,
+                    spaq2Count: spaq2Count,
+                    blueVasCount: blueVasCount,
+                    redVasCount: redVasCount,
+                  ),
+                );
+
+            await Future.delayed(
+              const Duration(milliseconds: 500),
+            );
+          }
+
+          (context.router.parent() as StackRouter).maybePop();
+
+          context.router.push(
+            CustomAcknowledgementRoute(
+                mrnNumber: widget.mrnNumber,
+                stockRecords: updatedStocks,
+                entryType: StockRecordEntryType.receipt),
           );
         }
-
-        (context.router.parent() as StackRouter).maybePop();
-
-        context.router.push(
-          CustomAcknowledgementRoute(
-              mrnNumber: widget.mrnNumber,
-              stockRecords: updatedStocks,
-              entryType: StockRecordEntryType.receipt),
-        );
       }
     } catch (error) {
       isSubmitClicked = false;
-      print(error);
+      rethrow;
     }
   }
 

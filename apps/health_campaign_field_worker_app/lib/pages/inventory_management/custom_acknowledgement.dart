@@ -97,9 +97,6 @@ class CustomAcknowledgementPageState
                   i18_local.acknowledgementSuccess.createNewTransactions,
                 ),
                 onPressed: () {
-                  // context
-                  //     .read<RecordStockBloc>()
-                  //     .add(const RecordStockEvent.reset());
                   context.router
                       .popUntilRouteWithName(CustomManageStocksRoute.name);
                 },
