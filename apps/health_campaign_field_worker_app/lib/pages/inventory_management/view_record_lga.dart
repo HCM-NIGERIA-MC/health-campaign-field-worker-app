@@ -44,6 +44,7 @@ class _ViewStockRecordsLGAPageState
   late final FormGroup _form;
   late final Map<String, int> _issuedQuantities;
   bool _commentsRequired = false;
+  bool isSubmitClicked = false;
 
   @override
   void initState() {
@@ -124,7 +125,8 @@ class _ViewStockRecordsLGAPageState
   }
 
   Future<void> _handleSubmission() async {
-    if (_form.valid) {
+    if (_form.valid && !isSubmitClicked) {
+      isSubmitClicked = true;
       final updatedStocks = widget.stockRecords.map((stock) {
         final additionalFields = stock.additionalFields?.fields ?? [];
 
@@ -166,15 +168,47 @@ class _ViewStockRecordsLGAPageState
         );
       }).toList();
 
+      final stockState = context.read<RecordStockBloc>().state;
       for (final stock in updatedStocks) {
-        context.read<RecordStockBloc>().add(
-              RecordStockSaveStockDetailsEvent(
-                stockModel: stock,
-              ),
-            );
-        context.read<RecordStockBloc>().add(
-              const RecordStockCreateStockEntryEvent(),
-            );
+        final bloc = RecordStockBloc(
+          stockRepository: context.repository<StockModel, StockSearchModel>(),
+          RecordStockCreateState(
+            entryType: stockState.entryType,
+            projectId: InventorySingleton().projectId,
+            dateOfRecord: DateTime.now(),
+            facilityModel: stockState.facilityModel ??
+                FacilityModel(
+                  id: stockState.primaryId ?? context.loggedInUserUuid,
+                ),
+            primaryId: stockState.primaryId,
+            primaryType: stockState.primaryType,
+          ),
+        );
+
+        bloc.add(
+          RecordStockSaveStockDetailsEvent(
+            stockModel: stock,
+          ),
+        );
+
+        await Future.delayed(const Duration(milliseconds: 500), () {});
+        bloc.add(
+          const RecordStockCreateStockEntryEvent(),
+        );
+
+        bloc.close();
+
+        //TODO: old
+        // context.read<RecordStockBloc>().add(
+        //       RecordStockSaveStockDetailsEvent(
+        //         stockModel: stock,
+        //       ),
+        //     );
+        // context.read<RecordStockBloc>().add(
+        //       const RecordStockCreateStockEntryEvent(),
+        //     );
+
+        // end of it
         // if (InventorySingleton().isDistributor) {
         final totalQty =
             int.parse(_form.control('quantityReceived').value.toString());
@@ -219,10 +253,10 @@ class _ViewStockRecordsLGAPageState
             );
         await Future.delayed(const Duration(milliseconds: 500));
         // _tabController.animateTo(_tabController.index + 1);
-        await Future.delayed(const Duration(milliseconds: 500));
-        context.read<RecordStockBloc>().add(
-              const RecordStockCreateStockEntryEvent(),
-            );
+        // await Future.delayed(const Duration(milliseconds: 500));
+        // context.read<RecordStockBloc>().add(
+        //       const RecordStockCreateStockEntryEvent(),
+        //     );
         // }
       }
 

@@ -53,6 +53,7 @@ class _DynamicTabsPageState extends LocalizedState<DynamicTabsPage>
   String _sharedMRN = '';
   bool _isInitializing = true;
   String? senderIdToShowOnTab = '';
+  bool isSubmitClicked = false;
 
 // fields to capture stock metadata
   String? senderId;
@@ -1056,147 +1057,174 @@ class _DynamicTabsPageState extends LocalizedState<DynamicTabsPage>
 
   Future<void> _handleFinalSubmission(BuildContext context,
       StockRecordEntryType entryType, List<String> selectedProducts) async {
-    final lastProduct = products.last.sku ?? '';
+    if (!isSubmitClicked) {
+      final lastProduct = products.last.sku ?? '';
 
-    final theme = Theme.of(context);
+      final theme = Theme.of(context);
 
-    final submit = await showCustomPopup(
-      context: context,
-      builder: (popupContext) => Popup(
-        title: localizations.translate(i18.stockDetails.dialogTitle),
-        onOutsideTap: () {
-          Navigator.of(popupContext).pop(false);
-        },
-        description: localizations.translate(
-          i18.stockDetails.dialogContent,
-        ),
-        type: PopUpType.simple,
-        actions: [
-          DigitButton(
-            label: localizations.translate(
-              i18.common.coreCommonSubmit,
-            ),
-            onPressed: () {
-              Navigator.of(
-                popupContext,
-              ).pop(true);
-            },
-            type: DigitButtonType.primary,
-            size: DigitButtonSize.large,
+      final submit = await showCustomPopup(
+        context: context,
+        builder: (popupContext) => Popup(
+          title: localizations.translate(i18.stockDetails.dialogTitle),
+          onOutsideTap: () {
+            Navigator.of(popupContext).pop(false);
+          },
+          description: localizations.translate(
+            i18.stockDetails.dialogContent,
           ),
-          DigitButton(
-            label: localizations.translate(
-              i18.common.coreCommonCancel,
-            ),
-            onPressed: () {
-              Navigator.of(
-                popupContext,
-              ).pop(false);
-            },
-            type: DigitButtonType.secondary,
-            size: DigitButtonSize.large,
-          ),
-        ],
-      ),
-    ) as bool;
-
-    if (submit && context.mounted) {
-      int currentSpaq1Count = context.spaq1;
-
-      int currentSpaq2Count = context.spaq2;
-
-      int spaq1Count = 0;
-
-      int spaq2Count = 0;
-
-      for (var productName in selectedProducts) {
-        await _saveCurrentTabData(productName, entryType);
-      }
-      // Loop through all stocks and dispatch individual events
-      for (final stockModel in _tabStocks.values) {
-        int quantity = int.parse(stockModel.quantity.toString());
-
-        int quantityWasted = int.parse(stockModel.additionalFields?.fields
-                .firstWhereOrNull(
-                    (element) => element.key == 'wastedBlistersReturned')
-                ?.value
-                ?.toString() ??
-            '0');
-
-        final totalQty = ((entryType == StockRecordEntryType.dispatch)
-                ? quantity * -1
-                : quantity) -
-            quantityWasted;
-
-        String? productName = stockModel.additionalFields?.fields
-            .firstWhereOrNull((element) => element.key == 'productName')
-            ?.value;
-
-        // Custom logic based on productName
-
-        if (entryType == StockRecordEntryType.dispatch) {
-          if (productName == Constants.spaq1 &&
-              (currentSpaq1Count + totalQty < 0)) {
-            await DigitToast.show(
-              context,
-              options: DigitToastOptions(
-                  localizations.translate(context.isCDD
-                      ? i18_local
-                          .beneficiaryDetails.validationForExcessStockReturn
-                      : i18_local
-                          .beneficiaryDetails.validationForExcessStockDispatch),
-                  true,
-                  theme),
-            );
-            return;
-          } else if (productName == Constants.spaq2 &&
-              (currentSpaq2Count + totalQty < 0)) {
-            await DigitToast.show(
-              context,
-              options: DigitToastOptions(
-                  localizations.translate(context.isCDD
-                      ? i18_local
-                          .beneficiaryDetails.validationForExcessStockReturn
-                      : i18_local
-                          .beneficiaryDetails.validationForExcessStockDispatch),
-                  true,
-                  theme),
-            );
-            return;
-          }
-        }
-
-        if (productName == Constants.spaq1) {
-          spaq1Count = totalQty;
-        } else if (productName == Constants.spaq2) {
-          spaq2Count = totalQty;
-        }
-
-        context.read<RecordStockBloc>().add(
-              RecordStockSaveStockDetailsEvent(
-                stockModel: stockModel,
+          type: PopUpType.simple,
+          actions: [
+            DigitButton(
+              label: localizations.translate(
+                i18.common.coreCommonSubmit,
               ),
-            );
-        context.read<RecordStockBloc>().add(
-              const RecordStockCreateStockEntryEvent(),
-            );
-      }
+              onPressed: () {
+                Navigator.of(
+                  popupContext,
+                ).pop(true);
+              },
+              type: DigitButtonType.primary,
+              size: DigitButtonSize.large,
+            ),
+            DigitButton(
+              label: localizations.translate(
+                i18.common.coreCommonCancel,
+              ),
+              onPressed: () {
+                Navigator.of(
+                  popupContext,
+                ).pop(false);
+              },
+              type: DigitButtonType.secondary,
+              size: DigitButtonSize.large,
+            ),
+          ],
+        ),
+      ) as bool;
 
-      context.read<AuthBloc>().add(
-            AuthAddSpaqCountsEvent(
-              spaq1Count: spaq1Count,
-              spaq2Count: spaq2Count,
-              blueVasCount: 0,
-              redVasCount: 0,
+      if (submit && context.mounted) {
+        isSubmitClicked = true;
+
+        int currentSpaq1Count = context.spaq1;
+
+        int currentSpaq2Count = context.spaq2;
+
+        int spaq1Count = 0;
+
+        int spaq2Count = 0;
+
+        for (var productName in selectedProducts) {
+          await _saveCurrentTabData(productName, entryType);
+        }
+
+        final stockState = context.read<RecordStockBloc>().state;
+        // Loop through all stocks and dispatch individual events
+        for (final stockModel in _tabStocks.values) {
+          int quantity = int.parse(stockModel.quantity.toString());
+
+          int quantityWasted = int.parse(stockModel.additionalFields?.fields
+                  .firstWhereOrNull(
+                      (element) => element.key == 'wastedBlistersReturned')
+                  ?.value
+                  ?.toString() ??
+              '0');
+
+          final totalQty = ((entryType == StockRecordEntryType.dispatch)
+                  ? quantity * -1
+                  : quantity) -
+              quantityWasted;
+
+          String? productName = stockModel.additionalFields?.fields
+              .firstWhereOrNull((element) => element.key == 'productName')
+              ?.value;
+
+          // Custom logic based on productName
+
+          if (entryType == StockRecordEntryType.dispatch) {
+            if (productName == Constants.spaq1 &&
+                (currentSpaq1Count + totalQty < 0)) {
+              await DigitToast.show(
+                context,
+                options: DigitToastOptions(
+                    localizations.translate(context.isCDD
+                        ? i18_local
+                            .beneficiaryDetails.validationForExcessStockReturn
+                        : i18_local.beneficiaryDetails
+                            .validationForExcessStockDispatch),
+                    true,
+                    theme),
+              );
+              isSubmitClicked = false;
+              return;
+            } else if (productName == Constants.spaq2 &&
+                (currentSpaq2Count + totalQty < 0)) {
+              await DigitToast.show(
+                context,
+                options: DigitToastOptions(
+                    localizations.translate(context.isCDD
+                        ? i18_local
+                            .beneficiaryDetails.validationForExcessStockReturn
+                        : i18_local.beneficiaryDetails
+                            .validationForExcessStockDispatch),
+                    true,
+                    theme),
+              );
+              isSubmitClicked = false;
+              return;
+            }
+          }
+
+          if (productName == Constants.spaq1) {
+            spaq1Count = totalQty;
+          } else if (productName == Constants.spaq2) {
+            spaq2Count = totalQty;
+          }
+
+          final bloc = RecordStockBloc(
+            stockRepository: context.repository<StockModel, StockSearchModel>(),
+            RecordStockCreateState(
+              entryType: stockState.entryType,
+              projectId: InventorySingleton().projectId,
+              dateOfRecord: DateTime.now(),
+              facilityModel: stockState.facilityModel ??
+                  FacilityModel(
+                    id: stockState.primaryId ?? context.loggedInUserUuid,
+                  ),
+              primaryId: stockState.primaryId,
+              primaryType: stockState.primaryType,
             ),
           );
 
-      (context.router.parent() as StackRouter).maybePop();
+          bloc.add(
+            RecordStockSaveStockDetailsEvent(
+              stockModel: stockModel,
+            ),
+          );
 
-      context.router.push(CustomAcknowledgementRoute(
-          mrnNumber: _sharedMRN,
-          stockRecords: _tabStocks.values.toList(),
-          entryType: entryType));
+          await Future.delayed(const Duration(milliseconds: 500), () {});
+          bloc.add(
+            const RecordStockCreateStockEntryEvent(),
+          );
+
+          bloc.close();
+        }
+
+        context.read<AuthBloc>().add(
+              AuthAddSpaqCountsEvent(
+                spaq1Count: spaq1Count,
+                spaq2Count: spaq2Count,
+                blueVasCount: 0,
+                redVasCount: 0,
+              ),
+            );
+
+        (context.router.parent() as StackRouter).maybePop();
+
+        context.router.push(CustomAcknowledgementRoute(
+            mrnNumber: _sharedMRN,
+            stockRecords: _tabStocks.values.toList(),
+            entryType: entryType));
+      }
     }
   }
 
