@@ -1,4 +1,4 @@
-package org.egov.oyo
+package org.egov.ab
 
 import android.content.BroadcastReceiver
 import android.content.Context

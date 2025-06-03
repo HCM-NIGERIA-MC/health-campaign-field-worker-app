@@ -296,6 +296,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.3.3"
+  change_app_package_name:
+    dependency: "direct main"
+    description:
+      name: change_app_package_name
+      sha256: "8e43b754fe960426904d77ed4c62fa8c9834deaf6e293ae40963fa447482c4c5"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.5.0"
   characters:
     dependency: transitive
     description:
@@ -509,10 +517,10 @@ packages:
     dependency: "direct main"
     description:
       name: digit_data_model
-      sha256: f0bce797c00f83e8ea6268dd89496890a9526b3fc13a1f1d9e5faf7dc3907c2e
+      sha256: "6fdaa41a27b9fc2a84d9b7e238cad83d18b70d10f9fa9b797a4039365c27ce9b"
       url: "https://pub.dev"
     source: hosted
-    version: "1.0.6-dev.1"
+    version: "1.0.6-dev.3"
   digit_dss:
     dependency: "direct main"
     description:
@@ -541,10 +549,10 @@ packages:
     dependency: "direct main"
     description:
       name: digit_scanner
-      sha256: "69580859ba9b63f32e40e6d56bf55a016eb623007ea06552b38f70056ea06dfe"
+      sha256: c8f82938906a11c516d445d7e5e27b7e6c6a1d07e0a608c2f90f63dd234241a5
       url: "https://pub.dev"
     source: hosted
-    version: "1.0.5"
+    version: "1.0.5+1"
   digit_showcase:
     dependency: "direct main"
     description:
@@ -557,10 +565,10 @@ packages:
     dependency: "direct main"
     description:
       name: digit_ui_components
-      sha256: "80f3770380963d7ec5fde6be1b67cde8ceb63dec5fc68ae51b70d4ad2278c7dd"
+      sha256: "32d7fbc875b5a6ee4710eb827d73acd43a38f20a42800f01ac5e6fc07069f3fc"
       url: "https://pub.dev"
     source: hosted
-    version: "0.0.2-dev.15"
+    version: "0.2.0"
   dio:
     dependency: "direct main"
     description:
@@ -1344,10 +1352,10 @@ packages:
     dependency: "direct main"
     description:
       name: inventory_management
-      sha256: "481b9ecb81900287632a79048e1ded36bb66415714f0ab5a30a38c94aa3d7cec"
+      sha256: "2b3e900966fc88ca415bf117d08750cd221685a9db42b099cf456c8a9a04c2a7"
       url: "https://pub.dev"
     source: hosted
-    version: "1.0.5"
+    version: "1.0.5-dev.1"
   io:
     dependency: transitive
     description:
@@ -1460,6 +1468,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "5.0.2"
+  logger:
+    dependency: "direct main"
+    description:
+      name: logger
+      sha256: be4b23575aac7ebf01f225a241eb7f6b5641eeaf43c6a8613510fc2f8cf187d1
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.5.0"
   logging:
     dependency: transitive
     description:
@@ -1516,6 +1532,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.0.5"
+  mobile_scanner:
+    dependency: "direct main"
+    description:
+      name: mobile_scanner
+      sha256: "1b60b8f9d4ce0cb0e7d7bc223c955d083a0737bee66fa1fcfe5de48225e0d5b3"
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.5.7"
   mocktail:
     dependency: "direct dev"
     description:
@@ -1524,6 +1548,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.0.3"
+  multi_select_flutter:
+    dependency: "direct main"
+    description:
+      name: multi_select_flutter
+      sha256: "503857b415d390d29159df8a9d92d83c6aac17aaf1c307fb7bcfc77d097d20ed"
+      url: "https://pub.dev"
+    source: hosted
+    version: "4.1.3"
   nested:
     dependency: "direct main"
     description:
@@ -1832,10 +1864,10 @@ packages:
     dependency: "direct main"
     description:
       name: referral_reconciliation
-      sha256: "40578f3e86fc3de3431147ea4bf91cf94c3acda488d776f86a85c6fedd7e2cb9"
+      sha256: "5d3ea365246978776c0d247d9dbe35ebc04b7df1b85d7f38db20ec7e4021b977"
       url: "https://pub.dev"
     source: hosted
-    version: "1.0.4"
+    version: "1.0.4+2"
   registration_delivery:
     dependency: "direct main"
     description:
@@ -2061,10 +2093,10 @@ packages:
     dependency: "direct main"
     description:
       name: survey_form
-      sha256: f601e5205ccd9d945d241789b30365203834d5d3e0ce718706a5f1cc4e49e137
+      sha256: e81e71beff6c4982ff6944ad34da056ea5b4adba860d9552a5eb554356dd816d
       url: "https://pub.dev"
     source: hosted
-    version: "1.0.1"
+    version: "1.0.1+3"
   sync_http:
     dependency: transitive
     description:
