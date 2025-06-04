@@ -106,6 +106,7 @@ class Constants {
   static const int mlPerBottle = 30;
   static const int apiCallLimit = 1000;
   static const String pipeSeparator = '||';
+  static const int stockMaxLimit = 100000000;
 
   // for stock validation
 
