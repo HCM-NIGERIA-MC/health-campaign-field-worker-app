@@ -838,7 +838,12 @@ class _DynamicTabsPageState extends LocalizedState<DynamicTabsPage>
               transactionReason,
       additionalFields: currentStock.additionalFields?.copyWith(
         fields: [
-          ...(currentStock.additionalFields?.fields ?? []),
+          ...(currentStock.additionalFields?.fields.where((e) =>
+                  e.key != 'batchNumber' &&
+                  e.key != 'comments' &&
+                  e.key != 'partialBlistersReturned' &&
+                  e.key != 'wastedBlistersReturned') ??
+              []),
           if (form.control(_batchNumberKey).value != null)
             AdditionalField('batchNumber', form.control(_batchNumberKey).value),
           if (form.control(_commentsKey).value != null)
@@ -852,174 +857,6 @@ class _DynamicTabsPageState extends LocalizedState<DynamicTabsPage>
         ],
       ),
     );
-
-//     bool isSubtracted = (entryType == StockRecordEntryType.dispatch ||
-//         entryType == StockRecordEntryType.returned);
-//     final ss = int.parse(
-//         form.control(_transactionQuantityKey).value?.toString() ?? "0");
-
-//     final spaq1Count = context.spaq1;
-//     final spaq2Count = context.spaq2;
-
-//     final blueVasCount = context.blueVas;
-//     final redVasCount = context.redVas;
-
-//     // Custom logic based on productName
-//     if (productName == Constants.spaq1 && isSubtracted && ss > spaq1Count) {
-//       await DigitToast.show(
-//         context,
-//         options: DigitToastOptions(
-//             localizations.translate((entryType == StockRecordEntryType.dispatch)
-//                 ? i18_local.beneficiaryDetails.validationForExcessStockDispatch
-//                 : i18_local.beneficiaryDetails.validationForExcessStockReturn),
-//             true,
-//             theme),
-//       );
-//       return false;
-//     } else if (productName == Constants.spaq2 &&
-//         isSubtracted &&
-//         ss > spaq2Count) {
-//       await DigitToast.show(
-//         context,
-//         options: DigitToastOptions(
-//             localizations.translate((entryType == StockRecordEntryType.dispatch)
-//                 ? i18_local.beneficiaryDetails.validationForExcessStockDispatch
-//                 : i18_local.beneficiaryDetails.validationForExcessStockReturn),
-//             true,
-//             theme),
-//       );
-//       return false;
-//     } else if (productName == Constants.blueVAS &&
-//         isSubtracted &&
-//         ss > blueVasCount) {
-//       await DigitToast.show(
-//         context,
-//         options: DigitToastOptions(
-//             localizations.translate((entryType == StockRecordEntryType.dispatch)
-//                 ? i18_local.beneficiaryDetails.validationForExcessStockDispatch
-//                 : i18_local.beneficiaryDetails.validationForExcessStockReturn),
-//             true,
-//             theme),
-//       );
-//       return false;
-//     } else if (productName == Constants.redVAS &&
-//         isSubtracted &&
-//         ss > redVasCount) {
-//       await DigitToast.show(
-//         context,
-//         options: DigitToastOptions(
-//             localizations.translate((entryType == StockRecordEntryType.dispatch)
-//                 ? i18_local.beneficiaryDetails.validationForExcessStockDispatch
-//                 : i18_local.beneficiaryDetails.validationForExcessStockReturn),
-//             true,
-//             theme),
-//       );
-//       return false;
-//     }
-
-//     final recordStock = context.read<RecordStockBloc>().state;
-//     context.read<RecordStockBloc>().add(
-//           RecordStockSaveStockDetailsEvent(
-//             stockModel: currentStock,
-//           ),
-//         );
-
-//     final isDistributor = context.isDistributor;
-
-// //     if ((ss > context.spaq1 ||
-// //             ss > context.spaq2 ||
-// //             ss > context.blueVas ||
-// //             ss > context.redVas) &&
-// //         context.isDistributor &&
-// //         recordStock.entryType == StockRecordEntryType.dispatch) {
-// // //       showCustomPopup(
-// // //         context: context,
-// // //         builder: (popupContext) => Popup(
-// // //           title:
-// // //               localizations.translate(i18_local.beneficiaryDetails.errorHeader),
-// // //           onOutsideTap: () {
-// // //             Navigator.of(popupContext).pop(false);
-// // //           },
-// // //           description: localizations.translate(
-// // //             i18_local.beneficiaryDetails.validationForExcessStock,
-// // //           ),
-// // //           type: PopUpType.simple,
-// // //           actions: [
-// // //             DigitButton(
-// // //               label: localizations.translate(
-// // //                 i18_local.common.coreCommonCancel,
-// // //               ),
-// // //               onPressed: () {
-// // //                 Navigator.of(
-// // //                   popupContext,
-// // //                   rootNavigator: true,
-// // //                 ).pop();
-// // // //
-// // //               },
-// // //               type: DigitButtonType.primary,
-// // //               size: DigitButtonSize.large,
-// // //             ),
-// // //           ],
-// // //         ),
-// // //       );
-
-// //       return;
-// //     }
-//     // bool submit = false;
-//     // if (_tabController.index == _tabController.length - 1) {
-//     //   submit = await showCustomPopup(
-//     //     context: context,
-//     //     builder: (popupContext) => Popup(
-//     //       title: localizations.translate(i18.stockDetails.dialogTitle),
-//     //       onOutsideTap: () {
-//     //         Navigator.of(popupContext).pop(false);
-//     //       },
-//     //       description: localizations.translate(
-//     //         i18.stockDetails.dialogContent,
-//     //       ),
-//     //       type: PopUpType.simple,
-//     //       actions: [
-//     //         DigitButton(
-//     //           label: localizations.translate(
-//     //             i18.common.coreCommonSubmit,
-//     //           ),
-//     //           onPressed: () {
-//     //             Navigator.of(
-//     //               popupContext,
-//     //               rootNavigator: true,
-//     //             ).pop(true);
-//     //             Navigator.of(context, rootNavigator: true).pop(true);
-//     //             Navigator.of(context).push(
-//     //               MaterialPageRoute(
-//     //                 builder: (context) => CustomAcknowledgementPage(
-//     //                   mrnNumber: _sharedMRN,
-//     //                   stockRecords: _tabStocks.values.toList(),
-//     //                 ),
-//     //               ),
-//     //             );
-//     //             // todo : correct the routing here to show , page where we can see transactions
-//     //           },
-//     //           type: DigitButtonType.primary,
-//     //           size: DigitButtonSize.large,
-//     //         ),
-//     //         DigitButton(
-//     //           label: localizations.translate(
-//     //             i18.common.coreCommonCancel,
-//     //           ),
-//     //           onPressed: () {
-//     //             Navigator.of(
-//     //               popupContext,
-//     //               rootNavigator: true,
-//     //             ).pop(false);
-//     //           },
-//     //           type: DigitButtonType.secondary,
-//     //           size: DigitButtonSize.large,
-//     //         ),
-//     //       ],
-//     //     ),
-//     //   ) as bool;
-//     // }
-
     return true;
   }
 
