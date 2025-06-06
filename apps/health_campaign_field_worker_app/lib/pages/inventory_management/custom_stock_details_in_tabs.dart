@@ -838,7 +838,12 @@ class _DynamicTabsPageState extends LocalizedState<DynamicTabsPage>
               transactionReason,
       additionalFields: currentStock.additionalFields?.copyWith(
         fields: [
-          ...(currentStock.additionalFields?.fields ?? []),
+          ...(currentStock.additionalFields?.fields.where((e) =>
+                  e.key != 'batchNumber' &&
+                  e.key != 'comments' &&
+                  e.key != 'partialBlistersReturned' &&
+                  e.key != 'wastedBlistersReturned') ??
+              []),
           if (form.control(_batchNumberKey).value != null)
             AdditionalField('batchNumber', form.control(_batchNumberKey).value),
           if (form.control(_commentsKey).value != null)
