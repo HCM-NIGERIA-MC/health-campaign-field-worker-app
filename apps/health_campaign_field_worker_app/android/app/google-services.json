@@ -26,6 +26,25 @@
     },
     {
       "client_info": {
+        "mobilesdk_app_id": "1:397617237644:android:d444a69cd8e63513f6b5a9",
+        "android_client_info": {
+          "package_name": "org.egov.ab"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBzE5f156_ia7HumLb1fDg8A-88uhmQ68Y"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
         "mobilesdk_app_id": "1:397617237644:android:eacd9c6a4018a760f6b5a9",
         "android_client_info": {
           "package_name": "org.egov.bauchi"
@@ -238,6 +257,25 @@
         "mobilesdk_app_id": "1:397617237644:android:f14b769685186d04f6b5a9",
         "android_client_info": {
           "package_name": "org.egov.pemba"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBzE5f156_ia7HumLb1fDg8A-88uhmQ68Y"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:397617237644:android:3d603a9b0c0bc6adf6b5a9",
+        "android_client_info": {
+          "package_name": "org.egov.pl"
         }
       },
       "oauth_client": [],
