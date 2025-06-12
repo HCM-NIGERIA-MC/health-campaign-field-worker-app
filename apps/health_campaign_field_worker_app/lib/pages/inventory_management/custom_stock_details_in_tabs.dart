@@ -146,20 +146,12 @@ class _DynamicTabsPageState extends LocalizedState<DynamicTabsPage>
                   ]
                 : [],
           ),
-          _transactionQuantityKey: FormControl<int>(
-              validators: InventorySingleton().isWareHouseMgr
-                  ? [
-                      Validators.number(),
-                      Validators.required,
-                      Validators.min(1),
-                      Validators.max(1000000),
-                    ]
-                  : [
-                      Validators.number(),
-                      Validators.required,
-                      Validators.min(1),
-                      Validators.max(1000000),
-                    ]),
+          _transactionQuantityKey: FormControl<int>(validators: [
+            Validators.number(),
+            Validators.required,
+            Validators.min(1),
+            Validators.max(Constants.stockMaxLimit),
+          ]),
           // _waybillQuantityKey:
           //     FormControl<String>(validators: [Validators.required]),
           _transactionQuantityPartialKey: FormControl<int>(validators: []),
@@ -452,7 +444,7 @@ class _DynamicTabsPageState extends LocalizedState<DynamicTabsPage>
         Validators.number(),
         Validators.required,
         Validators.min(0),
-        Validators.max(1000000),
+        Validators.max(Constants.stockMaxLimit),
       ], autoValidate: true);
     }
 
@@ -462,7 +454,7 @@ class _DynamicTabsPageState extends LocalizedState<DynamicTabsPage>
         Validators.number(),
         Validators.required,
         Validators.min(0),
-        Validators.max(1000000),
+        Validators.max(Constants.stockMaxLimit),
       ], autoValidate: true);
     }
 
@@ -570,7 +562,7 @@ class _DynamicTabsPageState extends LocalizedState<DynamicTabsPage>
                                 '${quantityCountLabel}_ERROR',
                               ),
                           "max": (object) => localizations.translate(
-                                '${quantityCountLabel}_MAX_ERROR',
+                                i18_local.stockDetails.stockMaxError,
                               ),
                           "min": (object) => localizations.translate(
                                 '${quantityCountLabel}_MIN_ERROR',
@@ -603,7 +595,7 @@ class _DynamicTabsPageState extends LocalizedState<DynamicTabsPage>
                                   return;
                                 }
                                 if (int.parse(val) > 10000000000) {
-                                  field.control.value = 10000;
+                                  field.control.value = Constants.stockMaxLimit;
                                 } else {
                                   if (val != '') {
                                     field.control.value = int.parse(val);
@@ -626,7 +618,7 @@ class _DynamicTabsPageState extends LocalizedState<DynamicTabsPage>
                                   '${quantityCountLabel}_ERROR',
                                 ),
                             "max": (object) => localizations.translate(
-                                  '${quantityCountLabel}_MAX_ERROR',
+                                  i18_local.stockDetails.stockMaxError,
                                 ),
                             "min": (object) => localizations.translate(
                                   '${quantityCountLabel}_MIN_ERROR',
@@ -662,7 +654,8 @@ class _DynamicTabsPageState extends LocalizedState<DynamicTabsPage>
                                   }
 
                                   if (int.parse(val) > 10000000000) {
-                                    field.control.value = 10000;
+                                    field.control.value =
+                                        Constants.stockMaxLimit;
                                   } else {
                                     if (val != '') {
                                       field.control.value = int.parse(val);
@@ -684,7 +677,7 @@ class _DynamicTabsPageState extends LocalizedState<DynamicTabsPage>
                                   '${quantityCountLabel}_ERROR',
                                 ),
                             "max": (object) => localizations.translate(
-                                  '${quantityCountLabel}_MAX_ERROR',
+                                  i18_local.stockDetails.stockMaxError,
                                 ),
                             "min": (object) => localizations.translate(
                                   '${quantityCountLabel}_MIN_ERROR',
@@ -720,7 +713,8 @@ class _DynamicTabsPageState extends LocalizedState<DynamicTabsPage>
                                   }
 
                                   if (int.parse(val) > 10000000000) {
-                                    field.control.value = 10000;
+                                    field.control.value =
+                                        Constants.stockMaxLimit;
                                   } else {
                                     if (val != '') {
                                       field.control.value = int.parse(val);
@@ -836,48 +830,27 @@ class _DynamicTabsPageState extends LocalizedState<DynamicTabsPage>
     final theme = Theme.of(context);
 
     _tabStocks[productName] = currentStock.copyWith(
-      //TODO:
-      // quantity: form.control(_transactionQuantityKey).value?.toString() != "0"
-      //     ? form.control(_transactionQuantityKey).value?.toString()
-      //     : (_forms[productName]?.value)?["quantity"] as String?,
-      // wayBillNumber: form.control(_waybillNumberKey).value?.toString() ??
-      //     (_forms[productName]?.value)?["waybillNumber"] as String?,
-
       quantity: form.control(_transactionQuantityKey).value?.toString(),
-
+      referenceId: context.selectedProject.id,
       wayBillNumber: form.control(_waybillNumberKey).value?.toString(),
       transactionReason:
           form.control(_transactionReasonKey).value?.toString() ??
               transactionReason,
       additionalFields: currentStock.additionalFields?.copyWith(
         fields: [
-          // ...(currentStock.additionalFields?.fields ?? []),
-          // if (form.control(_batchNumberKey).value != null) ...[
-          //   AdditionalField('batchNumber', form.control(_batchNumberKey).value),
-          // ] else if ((_forms[productName]?.value)?["batchNumberKey"] !=
-          //     null) ...[
-          //   AdditionalField(
-          //       'batchNumber', (_forms[productName]?.value)?["batchNumberKey"]),
-          // ],
-          // if (form.control(_commentsKey).value != null) ...[
-          //   AdditionalField('comments', form.control(_commentsKey).value),
-          // ] else if ((_forms[productName]?.value)?["comments"] != null) ...[
-          //   AdditionalField(
-          //       'comments', (_forms[productName]?.value)?["comments"]),
-          // ]
-
-          ...(currentStock.additionalFields?.fields ?? []),
-
+          ...(currentStock.additionalFields?.fields.where((e) =>
+                  e.key != 'batchNumber' &&
+                  e.key != 'comments' &&
+                  e.key != 'partialBlistersReturned' &&
+                  e.key != 'wastedBlistersReturned') ??
+              []),
           if (form.control(_batchNumberKey).value != null)
             AdditionalField('batchNumber', form.control(_batchNumberKey).value),
-
           if (form.control(_commentsKey).value != null)
             AdditionalField('comments', form.control(_commentsKey).value),
-
           if (form.control(_transactionQuantityPartialKey).value != null)
             AdditionalField('partialBlistersReturned',
                 form.control(_transactionQuantityPartialKey).value),
-
           if (form.control(_transactionQuantityWastedKey).value != null)
             AdditionalField('wastedBlistersReturned',
                 form.control(_transactionQuantityWastedKey).value),

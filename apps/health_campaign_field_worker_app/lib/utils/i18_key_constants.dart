@@ -499,6 +499,8 @@ class StockDetails {
 
   String get recordStockReturnedDescription =>
       'STOCK_DETAILS_RECORD_STOCK_RETURNED_DESCRIPTION';
+
+  String get stockMaxError => 'STOCK_DETAILS_QUANTITY_MAX_ERROR';
 }
 
 class StockReconciliationDetails {

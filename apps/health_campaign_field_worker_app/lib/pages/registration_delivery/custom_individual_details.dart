@@ -1,6 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:collection/collection.dart';
 import 'package:dart_mappable/dart_mappable.dart';
+import 'package:registration_delivery/models/entities/household.dart';
 // import 'package:digit_components/utils/date_utils.dart' as digits;
 import '../../utils/date_utils.dart' as digits;
 import 'package:digit_components/widgets/atoms/digit_toaster.dart';
@@ -82,7 +83,7 @@ class CustomIndividualDetailsPageState
     super.initState();
   }
 
-  onSubmit(name, bool isCreate) async {
+  onSubmit(HouseholdModel? householdModel, bool isCreate) async {
     final bloc = context.read<CustomBeneficiaryRegistrationBloc>();
     final router = context.router;
 
@@ -99,17 +100,19 @@ class CustomIndividualDetailsPageState
       }
       router.popUntil(
           (route) => route.settings.name == SearchBeneficiaryRoute.name);
-      customSearchHouseholdsBloc.add(const CustomSearchHouseholdsEvent.clear());
-      customSearchHouseholdsBloc.add(
-        CustomSearchHouseholdsEvent.searchByHouseholdHead(
-          searchText: name.trim(),
-          projectId: RegistrationDeliverySingleton().projectId!,
-          isProximityEnabled: false,
-          maxRadius: RegistrationDeliverySingleton().maxRadius,
-          limit: customSearchHouseholdsBloc.state.limit,
-          offset: 0,
-        ),
-      );
+      if (householdModel != null) {
+        customSearchHouseholdsBloc
+            .add(const CustomSearchHouseholdsEvent.clear());
+        customSearchHouseholdsBloc.add(
+          CustomSearchHouseholdsEvent.searchByHousehold(
+            projectId: RegistrationDeliverySingleton().projectId!,
+            isProximityEnabled: false,
+            maxRadius: RegistrationDeliverySingleton().maxRadius,
+            householdModel: householdModel,
+          ),
+        );
+      }
+
       router.push(CustomBeneficiaryAcknowledgementRoute(
         enableViewHousehold: true,
         acknowledgementType: isCreate
@@ -333,8 +336,7 @@ class CustomIndividualDetailsPageState
                                       ),
                                     );
                                     // router.push(CustomSummaryRoute());
-                                    await onSubmit(
-                                        individual.name?.givenName ?? "", true);
+                                    await onSubmit(householdModel, true);
                                   }
                                 },
                                 editIndividual: (
@@ -406,8 +408,7 @@ class CustomIndividualDetailsPageState
                                             : null,
                                       ),
                                     );
-                                    onSubmit(individual.name?.givenName ?? "",
-                                        false);
+                                    onSubmit(householdModel, false);
                                     context.router.maybePop();
                                   }
                                 },
@@ -459,8 +460,7 @@ class CustomIndividualDetailsPageState
                                               : null,
                                         ),
                                       );
-                                      onSubmit(individual.name?.givenName ?? "",
-                                          false);
+                                      onSubmit(householdModel, false);
                                     }
                                   }
                                 },
