@@ -330,6 +330,7 @@ class _EligibilityChecklistViewPage
                                                       .checklist.notSelectedKey,
                                           rowVersion: 1,
                                           tenantId: attribute?[i].tenantId,
+                                          
                                           additionalFields:
                                               ServiceAttributesAdditionalFields(
                                             version: 1,
@@ -395,6 +396,22 @@ class _EligibilityChecklistViewPage
                                                   "boundaryCode":
                                                       context.boundary.code
                                                 },
+                                                additionalFields:
+                                                          ServiceAdditionalFields(
+                                                              version: 1,
+                                                              fields: [
+                                                            AdditionalField(
+                                                                'lng',
+                                                                longitude),
+                                                            AdditionalField(
+                                                                'lat',
+                                                                latitude),
+                                                            AdditionalField(
+                                                                'boundaryCode',
+                                                                context
+                                                                    .boundary
+                                                                    .code)
+                                                          ])
                                               ),
                                             ),
                                           );
