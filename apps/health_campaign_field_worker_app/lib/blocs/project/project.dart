@@ -13,6 +13,7 @@ import 'package:digit_ui_components/utils/app_logger.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:inventory_management/data/repositories/remote/stock.dart';
 import 'package:inventory_management/models/entities/stock.dart';
 import 'package:inventory_management/models/entities/transaction_type.dart';
 import 'package:isar/isar.dart';
@@ -110,7 +111,7 @@ class ProjectBloc extends Bloc<ProjectEvent, ProjectState> {
       productVariantLocalRepository;
 
   /// Stock Repositories
-  final RemoteRepository<StockModel, StockSearchModel> stockRemoteRepository;
+  final StockRemoteRepository stockRemoteRepository;
   final LocalRepository<StockModel, StockSearchModel> stockLocalRepository;
 
   final DashboardRemoteRepository dashboardRemoteRepository;
@@ -614,19 +615,7 @@ class ProjectBloc extends Bloc<ProjectEvent, ProjectState> {
       ));
     }
 
-    try {
-      final projectFacilities = await projectFacilityLocalRepository
-          .search(ProjectFacilitySearchModel());
-      final facilities =
-          await facilityLocalRepository.search(FacilitySearchModel());
-      await downloadStockDataBasedOnRole(
-          projectFacilities, facilities, event.model.address?.boundaryType);
-    } catch (_) {
-      emit(state.copyWith(
-        loading: false,
-        syncError: ProjectSyncErrorType.projectFacilities,
-      ));
-    }
+    
 
     final getSelectedProjectType = await localSecureStore.selectedProjectType;
     final currentRunningCycle = getSelectedProjectType?.cycles
@@ -637,6 +626,21 @@ class ProjectBloc extends Bloc<ProjectEvent, ProjectState> {
           // Return null when no matching cycle is found
         )
         .firstOrNull;
+
+
+        try {
+      final projectFacilities = await projectFacilityLocalRepository
+          .search(ProjectFacilitySearchModel());
+      final facilities =
+          await facilityLocalRepository.search(FacilitySearchModel());
+      await downloadStockDataBasedOnRole(
+          projectFacilities, facilities, event.model.address?.boundaryType, currentRunningCycle);
+    } catch (_) {
+      emit(state.copyWith(
+        loading: false,
+        syncError: ProjectSyncErrorType.projectFacilities,
+      ));
+    }
 
     emit(state.copyWith(
       selectedProject: event.model,
@@ -698,9 +702,10 @@ class ProjectBloc extends Bloc<ProjectEvent, ProjectState> {
   FutureOr<void> downloadStockDataBasedOnRole(
       List<ProjectFacilityModel> projectFacilities,
       List<FacilityModel> allFacilities,
-      String? boundaryType) async {
+      String? boundaryType, Cycle? currentRunningCycle) async {
     final userObject = await localSecureStore.userRequestModel;
     final userRoles = userObject!.roles.map((e) => e.code);
+    final lastChangedSince = currentRunningCycle?.startDate;
 
     Map<String, String> facilityIdUsageMap = {};
 
@@ -721,7 +726,7 @@ class ProjectBloc extends Bloc<ProjectEvent, ProjectState> {
         transactionType: [TransactionType.dispatched.toValue()],
       );
       final stockEntriesDownloaded =
-          await downloadStockEntries(stockSearchModel);
+          await downloadStockEntries(stockSearchModel, lastChangedSince);
       // info : create entries in the local repository
 
       await createStockDownloadedEntries(stockEntriesDownloaded);
@@ -737,7 +742,7 @@ class ProjectBloc extends Bloc<ProjectEvent, ProjectState> {
         transactionType: [TransactionType.dispatched.toValue()],
       );
       final stockEntriesDownloaded =
-          await downloadStockEntries(stockSearchModel);
+          await downloadStockEntries(stockSearchModel, lastChangedSince);
 
       // info : create entries in the local repository
       await createStockDownloadedEntries(stockEntriesDownloaded);
@@ -748,7 +753,7 @@ class ProjectBloc extends Bloc<ProjectEvent, ProjectState> {
         transactionType: [TransactionType.dispatched.toValue()],
       );
       final stockEntriesDownloaded =
-          await downloadStockEntries(stockSearchModel);
+          await downloadStockEntries(stockSearchModel, lastChangedSince);
 
       // info : create entries in the local repository
       await createStockDownloadedEntries(stockEntriesDownloaded);
@@ -765,12 +770,12 @@ class ProjectBloc extends Bloc<ProjectEvent, ProjectState> {
   // info:  downloads the stock data from remote repository
 
   FutureOr<List<StockModel>> downloadStockEntries(
-      StockSearchModel stockSearchModel) async {
+      StockSearchModel stockSearchModel, int? lastChangedSince) async {
     var offset = 0;
     var initialLimit = Constants.apiCallLimit;
 
     final stockEntries = await stockRemoteRepository.search(stockSearchModel,
-        limit: initialLimit, offSet: offset);
+        limit: initialLimit, offSet: offset, lastChangedSince: lastChangedSince);
 
     return stockEntries;
   }
