@@ -370,7 +370,7 @@ class CustomDeliverInterventionPageState
                                     enableFixedDigitButton: true,
                                     footer: BlocBuilder<DeliverInterventionBloc,
                                         DeliverInterventionState>(
-                                      builder: (context, state) {
+                                      builder: (context, deliveryState) {
                                         return DigitCard(
                                             margin: const EdgeInsets.only(
                                                 top: spacer2),
