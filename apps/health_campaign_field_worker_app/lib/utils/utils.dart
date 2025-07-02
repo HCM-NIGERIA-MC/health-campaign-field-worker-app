@@ -765,15 +765,17 @@ bool isHFUser(BuildContext context) {
   }
 }
 
-int getIndividualAge(IndividualModel individualModel) {
+String getIndividualAge(IndividualModel individualModel) {
   DateTime dateOfBirth =
       DateFormat("dd/MM/yyyy").parse(individualModel.dateOfBirth ?? '');
   DigitDOBAge age = DigitDateUtils.calculateAge(dateOfBirth);
-  return getAgeMonths(age);
+
+  return getAgeMonths(age).toString().length == 1
+      ? '0${getAgeMonths(age)}'
+      : getAgeMonths(age).toString();
 }
 
 String? getBeneficiaryId(IndividualModel individualModel) {
-  IdentifierTypes.uniqueBeneficiaryID.toValue();
   return individualModel.identifiers
       ?.firstWhereOrNull((e) =>
           e.identifierType == IdentifierTypes.uniqueBeneficiaryID.toValue())
