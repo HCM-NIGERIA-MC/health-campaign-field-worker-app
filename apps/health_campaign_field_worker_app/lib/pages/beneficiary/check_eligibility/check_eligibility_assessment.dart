@@ -407,7 +407,14 @@ class _EligibilityChecklistViewPage
                                                         AdditionalField(
                                                             'boundaryCode',
                                                             context
-                                                                .boundary.code)
+                                                                .boundary.code),
+                                                        if (widget.individual
+                                                                ?.clientReferenceId !=
+                                                            null)
+                                                          AdditionalField(
+                                                              'relatedClientReferenceId',
+                                                              widget.individual
+                                                                  ?.clientReferenceId),
                                                       ])),
                                             ),
                                           );
