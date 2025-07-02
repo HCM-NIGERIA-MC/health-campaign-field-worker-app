@@ -775,10 +775,9 @@ int getIndividualAge(IndividualModel individualModel) {
 String? getBeneficiaryId(IndividualModel individualModel) {
   IdentifierTypes.uniqueBeneficiaryID.toValue();
   return individualModel.identifiers
-          ?.firstWhereOrNull((e) =>
-              e.identifierType == IdentifierTypes.uniqueBeneficiaryID.toValue())
-          ?.identifierId ??
-      '';
+      ?.firstWhereOrNull((e) =>
+          e.identifierType == IdentifierTypes.uniqueBeneficiaryID.toValue())
+      ?.identifierId;
 }
 
 List<AdditionalField> getIndividualAdditionalFields(
@@ -799,7 +798,7 @@ List<AdditionalField> getIndividualAdditionalFields(
         'individualClientReferenceId',
         individualModel?.clientReferenceId,
       ),
-    if (individualModel != null && getBeneficiaryId(individualModel) != null)
+    if (individualModel != null)
       AdditionalField(
         'uniqueBeneficiaryId',
         getBeneficiaryId(individualModel),
