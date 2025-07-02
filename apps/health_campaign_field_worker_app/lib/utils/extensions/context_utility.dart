@@ -292,7 +292,6 @@ extension ContextUtilityExtensions on BuildContext {
   }
 
   int get spaq1 {
-    return 10;
     final authBloc = _get<AuthBloc>();
     final spaq1 = authBloc.state.whenOrNull(
       authenticated: (
@@ -318,7 +317,6 @@ extension ContextUtilityExtensions on BuildContext {
   }
 
   int get spaq2 {
-    return 10;
     final authBloc = _get<AuthBloc>();
     final spaq2 = authBloc.state.whenOrNull(
       authenticated: (
