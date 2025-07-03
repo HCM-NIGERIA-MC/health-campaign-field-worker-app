@@ -330,7 +330,6 @@ class _EligibilityChecklistViewPage
                                                       .checklist.notSelectedKey,
                                           rowVersion: 1,
                                           tenantId: attribute?[i].tenantId,
-                                          
                                           additionalFields:
                                               ServiceAttributesAdditionalFields(
                                             version: 1,
@@ -352,67 +351,71 @@ class _EligibilityChecklistViewPage
                                       context.read<ServiceBloc>().add(
                                             ServiceCreateEvent(
                                               serviceModel: ServiceModel(
-                                                createdAt: DigitDateUtils
-                                                    .getDateFromTimestamp(
-                                                  DateTime.now()
-                                                      .toLocal()
-                                                      .millisecondsSinceEpoch,
-                                                  dateFormat: Constants
-                                                      .checklistViewDateFormat,
-                                                ),
-                                                tenantId:
-                                                    selectedServiceDefinition!
-                                                        .tenantId,
-                                                clientId: isHealthFacilityWorker &&
-                                                        widget.referralClientRefId !=
-                                                            null
-                                                    ? widget.referralClientRefId
-                                                        .toString()
-                                                    : referenceId,
-                                                serviceDefId:
-                                                    selectedServiceDefinition
-                                                        ?.id,
-                                                attributes: attributes,
-                                                rowVersion: 1,
-                                                accountId: context.projectId,
-                                                auditDetails: AuditDetails(
-                                                  createdBy:
-                                                      context.loggedInUserUuid,
-                                                  createdTime: DateTime.now()
-                                                      .millisecondsSinceEpoch,
-                                                ),
-                                                clientAuditDetails:
-                                                    ClientAuditDetails(
-                                                  createdBy:
-                                                      context.loggedInUserUuid,
-                                                  createdTime: context
-                                                      .millisecondsSinceEpoch(),
-                                                  lastModifiedBy:
-                                                      context.loggedInUserUuid,
-                                                  lastModifiedTime: context
-                                                      .millisecondsSinceEpoch(),
-                                                ),
-                                                additionalDetails: {
-                                                  "boundaryCode":
-                                                      context.boundary.code
-                                                },
-                                                additionalFields:
-                                                          ServiceAdditionalFields(
-                                                              version: 1,
-                                                              fields: [
-                                                            AdditionalField(
-                                                                'lng',
-                                                                longitude),
-                                                            AdditionalField(
-                                                                'lat',
-                                                                latitude),
-                                                            AdditionalField(
-                                                                'boundaryCode',
-                                                                context
-                                                                    .boundary
-                                                                    .code)
-                                                          ])
-                                              ),
+                                                  createdAt: DigitDateUtils
+                                                      .getDateFromTimestamp(
+                                                    DateTime.now()
+                                                        .toLocal()
+                                                        .millisecondsSinceEpoch,
+                                                    dateFormat: Constants
+                                                        .checklistViewDateFormat,
+                                                  ),
+                                                  tenantId:
+                                                      selectedServiceDefinition!
+                                                          .tenantId,
+                                                  clientId: isHealthFacilityWorker &&
+                                                          widget.referralClientRefId !=
+                                                              null
+                                                      ? widget
+                                                          .referralClientRefId
+                                                          .toString()
+                                                      : referenceId,
+                                                  serviceDefId:
+                                                      selectedServiceDefinition
+                                                          ?.id,
+                                                  attributes: attributes,
+                                                  rowVersion: 1,
+                                                  accountId: context.projectId,
+                                                  auditDetails: AuditDetails(
+                                                    createdBy: context
+                                                        .loggedInUserUuid,
+                                                    createdTime: DateTime.now()
+                                                        .millisecondsSinceEpoch,
+                                                  ),
+                                                  clientAuditDetails:
+                                                      ClientAuditDetails(
+                                                    createdBy: context
+                                                        .loggedInUserUuid,
+                                                    createdTime: context
+                                                        .millisecondsSinceEpoch(),
+                                                    lastModifiedBy: context
+                                                        .loggedInUserUuid,
+                                                    lastModifiedTime: context
+                                                        .millisecondsSinceEpoch(),
+                                                  ),
+                                                  additionalDetails: {
+                                                    "boundaryCode":
+                                                        context.boundary.code
+                                                  },
+                                                  additionalFields:
+                                                      ServiceAdditionalFields(
+                                                          version: 1,
+                                                          fields: [
+                                                        AdditionalField(
+                                                            'lng', longitude),
+                                                        AdditionalField(
+                                                            'lat', latitude),
+                                                        AdditionalField(
+                                                            'boundaryCode',
+                                                            context
+                                                                .boundary.code),
+                                                        if (widget.individual
+                                                                ?.clientReferenceId !=
+                                                            null)
+                                                          AdditionalField(
+                                                              'relatedClientReferenceId',
+                                                              widget.individual
+                                                                  ?.clientReferenceId),
+                                                      ])),
                                             ),
                                           );
 
@@ -508,6 +511,9 @@ class _EligibilityChecklistViewPage
                                                               .smcDone.name
                                                           : EligibilityAssessmentStatus
                                                               .vasDone.name,
+                                                    ),
+                                                    ...getIndividualAdditionalFields(
+                                                      widget.individual,
                                                     ),
                                                   ],
                                                 ),

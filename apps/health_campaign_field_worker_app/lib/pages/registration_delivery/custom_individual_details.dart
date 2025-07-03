@@ -238,12 +238,27 @@ class CustomIndividualDetailsPageState
                                       DateTime.now(),
                                     );
 
+                              final ageInMonths = age.years * 12 + age.months;
+
                               if (age.years < 18 && widget.isHeadOfHousehold) {
                                 await DigitToast.show(
                                   context,
                                   options: DigitToastOptions(
                                     localizations.translate(i18_local
                                         .individualDetails.headAgeValidError),
+                                    true,
+                                    theme,
+                                  ),
+                                );
+
+                                return;
+                              } else if (!widget.isHeadOfHousehold &&
+                                  (ageInMonths < 3 || ageInMonths > 59)) {
+                                await DigitToast.show(
+                                  context,
+                                  options: DigitToastOptions(
+                                    localizations.translate(i18_local
+                                        .individualDetails.childAgeValidError),
                                     true,
                                     theme,
                                   ),
