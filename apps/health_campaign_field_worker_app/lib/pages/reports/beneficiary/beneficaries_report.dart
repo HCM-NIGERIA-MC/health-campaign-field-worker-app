@@ -36,7 +36,7 @@ class BeneficiariesReportState extends LocalizedState<BeneficiariesReportPage> {
   List<DownsyncModel> downSyncList = [];
   int pendingSyncCount = 0;
   BoundaryModel? selectedBoundary;
-  StreamController<double> downloadProgress = StreamController<double>();
+  StreamController<double> downloadProgress = StreamController<double>.broadcast();
   late StreamSubscription? syncSubscription;
 
   @override
@@ -232,7 +232,7 @@ class BeneficiariesReportState extends LocalizedState<BeneficiariesReportPage> {
                           i18.beneficiaryDetails.downloadreport,
                         )}\n\n\n${localizations.translate(
                           i18.beneficiaryDetails.boundary,
-                        )} ${result.boundaryName}\n${localizations.translate(
+                        )} ${localizations.translate(result.locality ?? result.boundaryName ?? "")}\n${localizations.translate(
                           i18.beneficiaryDetails.status,
                         )} ${localizations.translate(
                           i18.beneficiaryDetails.downloadcompleted,
@@ -248,7 +248,7 @@ class BeneficiariesReportState extends LocalizedState<BeneficiariesReportPage> {
                           descriptionTableData: {
                             localizations.translate(
                               i18.beneficiaryDetails.boundary,
-                            ): result.boundaryName!,
+                            ): localizations.translate(result.locality ?? result.boundaryName ?? ""),
                             localizations.translate(
                               i18.beneficiaryDetails.status,
                             ): localizations.translate(
@@ -357,7 +357,7 @@ class BeneficiariesReportState extends LocalizedState<BeneficiariesReportPage> {
                                   label: localizations.translate(
                                     i18.beneficiaryDetails.boundary,
                                   ),
-                                  value: e.boundaryName!),
+                                  value: localizations.translate(e.locality ?? e.boundaryName ?? "")),
                               LabelValueItem(
                                   labelFlex: 5,
                                   label: localizations.translate(
