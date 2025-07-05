@@ -168,6 +168,9 @@ class HouseholdOverView {
   String get householdOverViewVASAssessmentActionText =>
       'HOUSEHOLD_OVER_VIEW_VAS_ASSESSMENT_ACTION_TEXT';
 
+  String get householdOverViewMVAssessmentActionText =>
+      'HOUSEHOLD_OVER_VIEW_MV_ASSESSMENT_ACTION_TEXT';
+
   String get householdOverViewRedoseActionText =>
       'HOUSEHOLD_OVER_VIEW_REDOSE_ACTION_TEXT';
 
@@ -182,6 +185,13 @@ class HouseholdOverView {
 
   String get householdOverViewBeneficiaryInEligibleSMCLabel =>
       'HOUSEHOLD_OVER_VIEW_BENEFICIARY_INELIGIBLE_SMC_LABEL';
+
+  String get householdOverViewBeneficiaryReferredMVLabel =>
+      'HOUSEHOLD_OVER_VIEW_BENEFICIARY_REFERRED_MV_LABEL';
+
+  String get householdOverViewBeneficiaryInEligibleMVLabel =>
+      'HOUSEHOLD_OVER_VIEW_BENEFICIARY_INELIGIBLE_MV_LABEL';
+
   String get householdOverViewBeneficiaryInEligibleVASLabel =>
       'HOUSEHOLD_OVER_VIEW_BENEFICIARY_INELIGIBLE_VAS_LABEL';
 
@@ -237,6 +247,8 @@ class DeliverIntervention {
   String get doseadministeredby => 'DOSE_ADMINISTERED_BY_LABEL';
   String get proceedToVASLabel => 'PROCEED_TO_VAS_LABEL';
   String get proceedToVASDescription => 'PROCEED_TO_VAS_DESCRIPTION';
+  String get proceedToMVLabel => 'PROCEED_TO_MV_LABEL';
+  String get proceedToMVDescription => 'PROCEED_TO_MV_DESCRIPTION';
 }
 
 class Checklist {

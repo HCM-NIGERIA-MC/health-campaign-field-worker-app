@@ -189,6 +189,43 @@ bool checkBeneficiaryReferredSMC(
   return isLastCycleRunning;
 }
 
+bool checkBeneficiaryReferredMV(
+    List<TaskModel>? tasks, ProjectCycle? currentCycle) {
+  if (currentCycle == null) {
+    return false;
+  }
+  if ((tasks ?? []).isEmpty) {
+    return false;
+  }
+  var successfulTask = tasks!
+      .where(
+        (element) =>
+            element.status == Status.beneficiaryReferred.toValue() &&
+            element.additionalFields?.fields.firstWhereOrNull(
+                  (e) =>
+                      e.key ==
+                          additional_fields_local
+                              .AdditionalFieldsType.deliveryType
+                              .toValue() &&
+                      e.value == EligibilityAssessmentStatus.mvDone.name,
+                ) !=
+                null,
+      )
+      .lastOrNull;
+
+  final successfulTaskCreatedTime =
+      successfulTask?.clientAuditDetails?.createdTime;
+
+  if (successfulTaskCreatedTime == null) {
+    return false;
+  }
+  final isLastCycleRunning =
+      successfulTaskCreatedTime >= currentCycle.startDate &&
+          successfulTaskCreatedTime <= currentCycle.endDate;
+
+  return isLastCycleRunning;
+}
+
 bool checkBeneficiaryInEligibleSMC(
     List<TaskModel>? tasks, ProjectCycle? currentCycle) {
   if (currentCycle == null) {
@@ -222,6 +259,45 @@ bool checkBeneficiaryInEligibleSMC(
   }
 
   final date = DateTime.fromMillisecondsSinceEpoch(successfulTaskCreatedTime);
+
+  final isLastCycleRunning =
+      successfulTaskCreatedTime >= currentCycle.startDate &&
+          successfulTaskCreatedTime <= currentCycle.endDate;
+
+  return isLastCycleRunning;
+}
+
+bool checkBeneficiaryInEligibleMV(
+    List<TaskModel>? tasks, ProjectCycle? currentCycle) {
+  if (currentCycle == null) {
+    return false;
+  }
+  if ((tasks ?? []).isEmpty) {
+    return false;
+  }
+  var successfulTask = tasks!
+      .where(
+        (element) =>
+            element.status ==
+                status_local.Status.beneficiaryInEligible.toValue() &&
+            element.additionalFields?.fields.firstWhereOrNull(
+                  (e) =>
+                      e.key ==
+                          additional_fields_local
+                              .AdditionalFieldsType.deliveryType
+                              .toValue() &&
+                      e.value == EligibilityAssessmentStatus.mvDone.name,
+                ) !=
+                null,
+      )
+      .lastOrNull;
+
+  final successfulTaskCreatedTime =
+      successfulTask?.clientAuditDetails?.createdTime;
+
+  if (successfulTaskCreatedTime == null) {
+    return false;
+  }
 
   final isLastCycleRunning =
       successfulTaskCreatedTime >= currentCycle.startDate &&
@@ -302,6 +378,21 @@ bool checkEligibilityForAgeAndSideEffectAll(
   }
 
   return false;
+}
+
+bool checkEligibilityForAgeMV(IndividualModel individual) {
+  if (individual.dateOfBirth == null) {
+    return false;
+  }
+  DigitDOBAgeConvertor age = DigitDateUtils.calculateAge(
+    DigitDateUtils.getFormattedDateToDateTime(
+          individual.dateOfBirth!,
+        ) ??
+        DateTime.now(),
+  );
+  int totalAgeMonths = age.years * 12 + age.months;
+
+  return totalAgeMonths <= 23 && totalAgeMonths >= 5;
 }
 
 bool checkBeneficiaryReferredVAS(List<TaskModel>? tasks) {
@@ -391,6 +482,40 @@ bool assessmentVASPending(List<TaskModel>? tasks) {
       .lastOrNull;
 
   return successfulTask == null;
+}
+
+bool assessmentMVPending(List<TaskModel>? tasks, ProjectCycle? currentCycle) {
+  if (currentCycle == null) {
+    return true;
+  }
+  if ((tasks ?? []).isEmpty) {
+    return true;
+  }
+  var successfulTask = tasks!
+      .where(
+        (element) => (element.additionalFields?.fields.firstWhereOrNull(
+              (e) =>
+                  e.key ==
+                      additional_fields_local.AdditionalFieldsType.deliveryType
+                          .toValue() &&
+                  e.value == EligibilityAssessmentStatus.mvDone.name,
+            ) !=
+            null),
+      )
+      .lastOrNull;
+
+  final successfulTaskCreatedTime =
+      successfulTask?.clientAuditDetails?.createdTime;
+
+  if (successfulTaskCreatedTime == null) {
+    return true;
+  }
+
+  final isLastCycleRunning =
+      successfulTaskCreatedTime >= currentCycle.startDate &&
+          successfulTaskCreatedTime <= currentCycle.endDate;
+
+  return !isLastCycleRunning;
 }
 
 bool recordedSideEffect(

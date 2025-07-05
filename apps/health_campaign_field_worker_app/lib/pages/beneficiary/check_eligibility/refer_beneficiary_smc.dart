@@ -44,6 +44,7 @@ class CustomReferBeneficiarySMCPage extends LocalizedStatefulWidget {
   final List<String>? referralReasons;
   final String quantityWasted;
   final String? productVariantId;
+  final EligibilityAssessmentType eligibilityAssessmentType;
 
   const CustomReferBeneficiarySMCPage({
     super.key,
@@ -55,6 +56,7 @@ class CustomReferBeneficiarySMCPage extends LocalizedStatefulWidget {
     this.quantityWasted = "00",
     this.productVariantId,
     this.referralReasons,
+    this.eligibilityAssessmentType = EligibilityAssessmentType.smc,
   });
   @override
   State<CustomReferBeneficiarySMCPage> createState() =>
@@ -266,9 +268,13 @@ class CustomReferBeneficiarySMCPageState
                                                   referralReasons,
                                                   reasons.join(","),
                                                 ),
-                                                const AdditionalField(
+                                                AdditionalField(
                                                     'referralType',
-                                                    'smcReferred')
+                                                    widget.eligibilityAssessmentType ==
+                                                            EligibilityAssessmentType
+                                                                .smc
+                                                        ? 'smcReferred'
+                                                        : 'mvReferred')
                                               ],
                                             ),
                                           ),
@@ -353,8 +359,13 @@ class CustomReferBeneficiarySMCPageState
                                                             .AdditionalFieldsType
                                                             .deliveryType
                                                             .toValue(),
-                                                        EligibilityAssessmentStatus
-                                                            .smcDone.name,
+                                                        widget.eligibilityAssessmentType ==
+                                                                EligibilityAssessmentType
+                                                                    .smc
+                                                            ? EligibilityAssessmentStatus
+                                                                .smcDone.name
+                                                            : EligibilityAssessmentStatus
+                                                                .mvDone.name,
                                                       ),
                                                       ...getIndividualAdditionalFields(
                                                           widget.individual)

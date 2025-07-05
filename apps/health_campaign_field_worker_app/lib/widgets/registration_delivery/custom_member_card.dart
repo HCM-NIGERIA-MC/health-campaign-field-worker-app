@@ -100,6 +100,12 @@ class CustomMemberCard extends StatelessWidget {
     bool isBeneficiaryInEligibleSMC =
         checkBeneficiaryInEligibleSMC(smcTasks, context.selectedCycle);
 
+    bool isBeneficiaryReferredMV =
+        checkBeneficiaryReferredMV(tasks, context.selectedCycle);
+
+    bool isBeneficiaryInEligibleMV =
+        checkBeneficiaryInEligibleMV(tasks, context.selectedCycle);
+
     final theme = Theme.of(context);
     if (isHead) {
       return Align(
@@ -148,6 +154,29 @@ class CustomMemberCard extends StatelessWidget {
                     (isBeneficiaryReferredSMC || isBeneficiaryInEligibleSMC)
                         ? DigitTheme.instance.colorScheme.error
                         : DigitTheme.instance.colorScheme.onSurfaceVariant,
+              ),
+            ),
+          if (isBeneficiaryReferredMV ||
+              isBeneficiaryInEligibleMV ||
+              !checkEligibilityForAgeMV(individual))
+            Align(
+              alignment: Alignment.centerLeft,
+              child: DigitIconButton(
+                icon: Icons.check_circle,
+                iconText: localizations.translate(
+                  isBeneficiaryReferredMV
+                      ? i18_local.householdOverView
+                          .householdOverViewBeneficiaryReferredMVLabel
+                      : i18_local.householdOverView
+                          .householdOverViewBeneficiaryInEligibleMVLabel,
+                ),
+                iconSize: 20,
+                iconTextColor: isBeneficiaryReferredMV
+                    ? DigitTheme.instance.colorScheme.onSurfaceVariant
+                    : DigitTheme.instance.colorScheme.error,
+                iconColor: isBeneficiaryReferredMV
+                    ? DigitTheme.instance.colorScheme.onSurfaceVariant
+                    : DigitTheme.instance.colorScheme.error,
               ),
             ),
         ],
@@ -209,14 +238,17 @@ class CustomMemberCard extends StatelessWidget {
     }
   }
 
-  Widget actionButton(BuildContext context) {
+  Widget actionButton(BuildContext context, IndividualModel individual) {
     final theme = Theme.of(context);
     final textTheme = theme.digitTextTheme(context);
     List<TaskModel>? smcTasks = _getSMCStatusData();
 
-    final doseStatus =  checkStatusSMC(smcTasks, context.selectedCycle);
+    final doseStatus = checkStatusSMC(smcTasks, context.selectedCycle);
     bool smcAssessmentPendingStatus =
         assessmentSMCPending(smcTasks, context.selectedCycle);
+
+    bool mvAssessmentPendingStatus =
+        assessmentMVPending(tasks, context.selectedCycle);
 
     bool isBeneficiaryReferredSMC =
         checkBeneficiaryReferredSMC(smcTasks, context.selectedCycle);
@@ -362,6 +394,39 @@ class CustomMemberCard extends StatelessWidget {
                   }
                 }
               }
+            },
+          ),
+        if ((!smcAssessmentPendingStatus ||
+                isBeneficiaryInEligibleSMC ||
+                isBeneficiaryReferredSMC) &&
+            mvAssessmentPendingStatus &&
+            checkEligibilityForAgeMV(individual))
+          DigitElevatedButton(
+            child: Center(
+              child: Text(
+                localizations.translate(
+                  i18_local.householdOverView
+                      .householdOverViewMVAssessmentActionText,
+                ),
+                style: textTheme.headingM.copyWith(color: Colors.white),
+              ),
+            ),
+            onPressed: () async {
+              final bloc = context.read<HouseholdOverviewBloc>();
+              bloc.add(
+                HouseholdOverviewEvent.selectedIndividual(
+                  individualModel: individual,
+                ),
+              );
+
+              context.router.push(
+                EligibilityChecklistViewRoute(
+                  projectBeneficiaryClientReferenceId:
+                      projectBeneficiaryClientReferenceId,
+                  individual: individual,
+                  eligibilityAssessmentType: EligibilityAssessmentType.mv,
+                ),
+              );
             },
           ),
       ],
@@ -533,7 +598,7 @@ class CustomMemberCard extends StatelessWidget {
                     )
                   : Column(
                       children: [
-                        actionButton(context),
+                        actionButton(context, individual),
                         const SizedBox(
                           height: 10,
                         ),

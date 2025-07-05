@@ -348,6 +348,7 @@ abstract class _$AppRouter extends RootStackRouter {
           quantityWasted: args.quantityWasted,
           productVariantId: args.productVariantId,
           referralReasons: args.referralReasons,
+          eligibilityAssessmentType: args.eligibilityAssessmentType,
         ),
       );
     },
@@ -1968,6 +1969,8 @@ class CustomReferBeneficiarySMCRoute
     String quantityWasted = "00",
     String? productVariantId,
     List<String>? referralReasons,
+    EligibilityAssessmentType eligibilityAssessmentType =
+        EligibilityAssessmentType.smc,
     List<PageRouteInfo>? children,
   }) : super(
           CustomReferBeneficiarySMCRoute.name,
@@ -1981,6 +1984,7 @@ class CustomReferBeneficiarySMCRoute
             quantityWasted: quantityWasted,
             productVariantId: productVariantId,
             referralReasons: referralReasons,
+            eligibilityAssessmentType: eligibilityAssessmentType,
           ),
           initialChildren: children,
         );
@@ -2002,6 +2006,7 @@ class CustomReferBeneficiarySMCRouteArgs {
     this.quantityWasted = "00",
     this.productVariantId,
     this.referralReasons,
+    this.eligibilityAssessmentType = EligibilityAssessmentType.smc,
   });
 
   final Key? key;
@@ -2022,9 +2027,11 @@ class CustomReferBeneficiarySMCRouteArgs {
 
   final List<String>? referralReasons;
 
+  final EligibilityAssessmentType eligibilityAssessmentType;
+
   @override
   String toString() {
-    return 'CustomReferBeneficiarySMCRouteArgs{key: $key, appLocalizations: $appLocalizations, isEditing: $isEditing, projectBeneficiaryClientRefId: $projectBeneficiaryClientRefId, individual: $individual, isReadministrationUnSuccessful: $isReadministrationUnSuccessful, quantityWasted: $quantityWasted, productVariantId: $productVariantId, referralReasons: $referralReasons}';
+    return 'CustomReferBeneficiarySMCRouteArgs{key: $key, appLocalizations: $appLocalizations, isEditing: $isEditing, projectBeneficiaryClientRefId: $projectBeneficiaryClientRefId, individual: $individual, isReadministrationUnSuccessful: $isReadministrationUnSuccessful, quantityWasted: $quantityWasted, productVariantId: $productVariantId, referralReasons: $referralReasons, eligibilityAssessmentType: $eligibilityAssessmentType}';
   }
 }
 

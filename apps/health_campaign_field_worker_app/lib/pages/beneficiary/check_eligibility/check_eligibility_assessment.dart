@@ -67,6 +67,7 @@ class _EligibilityChecklistViewPage
   GlobalKey<FormState> checklistFormKey = GlobalKey<FormState>();
   Map<String?, String> responses = {};
   final String yes = "YES";
+  final String no = "NO";
   bool triggerLocalization = false;
 
   @override
@@ -164,18 +165,9 @@ class _EligibilityChecklistViewPage
 
                               for (int i = 0; i < controller.length; i++) {
                                 if (itemsAttributes?[i].required == true &&
-                                    ((itemsAttributes?[i].dataType ==
-                                                'SingleValueList' &&
-                                            visibleChecklistIndexes
-                                                .any((e) => e == i) &&
-                                            (controller[i].text == '')) ||
-                                        (itemsAttributes?[i].dataType !=
-                                                'SingleValueList' &&
-                                            (controller[i].text == '' &&
-                                                !(context
-                                                        .isHealthFacilitySupervisor &&
-                                                    widget.referralClientRefId !=
-                                                        null))))) {
+                                    visibleChecklistIndexes
+                                        .any((e) => e == i) &&
+                                    controller[i].text == '') {
                                   return;
                                 }
                               }
@@ -210,7 +202,8 @@ class _EligibilityChecklistViewPage
                               ifReferral = widget.eligibilityAssessmentType ==
                                       EligibilityAssessmentType.smc
                                   ? isReferral(responses, referralReasons)
-                                  : isVASReferral(responses, referralReasons);
+                                  : isMVReferral(responses, referralReasons,
+                                      ineligibilityReasons);
                               ifDeliver = isDelivery(responses);
                               checkIfIneligibleFlow = isIneligible(
                                 responses,
@@ -221,6 +214,11 @@ class _EligibilityChecklistViewPage
                                   checkIfIneligibleFlow.length >= 2) {
                                 ifIneligible = checkIfIneligibleFlow[0];
                                 ifAdministration = checkIfIneligibleFlow[1];
+                              }
+                              if (widget.eligibilityAssessmentType ==
+                                  EligibilityAssessmentType.mv) {
+                                ifIneligible = !isMVReferral(responses,
+                                    referralReasons, ineligibilityReasons);
                               }
 
                               var descriptionText = ifIneligible
@@ -252,7 +250,7 @@ class _EligibilityChecklistViewPage
                                         )
                                       : localizations.translate(
                                           i18_local.deliverIntervention
-                                              .proceedToVASLabel,
+                                              .proceedToMVLabel,
                                         ),
                                   content: widget.eligibilityAssessmentType ==
                                           EligibilityAssessmentType.smc
@@ -488,12 +486,6 @@ class _EligibilityChecklistViewPage
                                                     TaskAdditionalFields(
                                                   version: 1,
                                                   fields: [
-                                                    // AdditionalField(
-                                                    //   'taskStatus',
-                                                    //   status_local.Status
-                                                    //       .beneficiaryInEligible
-                                                    //       .toValue(),
-                                                    // ),
                                                     AdditionalField(
                                                       'ineligibleReasons',
                                                       ineligibilityReasons
@@ -510,7 +502,7 @@ class _EligibilityChecklistViewPage
                                                           ? EligibilityAssessmentStatus
                                                               .smcDone.name
                                                           : EligibilityAssessmentStatus
-                                                              .vasDone.name,
+                                                              .mvDone.name,
                                                     ),
                                                     ...getIndividualAdditionalFields(
                                                       widget.individual,
@@ -545,25 +537,15 @@ class _EligibilityChecklistViewPage
                                               widget.eligibilityAssessmentType),
                                     );
                                   } else if (ifReferral) {
-                                    widget.eligibilityAssessmentType ==
-                                            EligibilityAssessmentType.smc
-                                        ? router.push(
-                                            CustomReferBeneficiarySMCRoute(
-                                            projectBeneficiaryClientRefId:
-                                                projectBeneficiaryClientReferenceId ??
-                                                    "",
-                                            individual: widget.individual!,
-                                            referralReasons: referralReasons,
-                                          ))
-                                        : router.push(
-                                            CustomReferBeneficiaryVASRoute(
-                                              projectBeneficiaryClientRefId:
-                                                  projectBeneficiaryClientReferenceId ??
-                                                      "",
-                                              individual: widget.individual!,
-                                              referralReasons: referralReasons,
-                                            ),
-                                          );
+                                    router.push(CustomReferBeneficiarySMCRoute(
+                                      projectBeneficiaryClientRefId:
+                                          projectBeneficiaryClientReferenceId ??
+                                              "",
+                                      individual: widget.individual!,
+                                      referralReasons: referralReasons,
+                                      eligibilityAssessmentType:
+                                          widget.eligibilityAssessmentType,
+                                    ));
                                   } else {
                                     router.push(CustomBeneficiaryDetailsRoute(
                                         eligibilityAssessmentType:
@@ -1217,6 +1199,71 @@ class _EligibilityChecklistViewPage
     }
 
     return isReferral;
+  }
+
+  bool isMVReferral(
+    Map<String?, String> responses,
+    List<String?> referralReasons,
+    List<String?> ineligibilityReasons,
+  ) {
+    bool isReferral = false;
+    String q1Key = "KBEA1";
+    String q2Key = "KBEA1.YES.ADT1";
+    String q4Key = "KBEA1.YES.ADT1.YES.MV2";
+
+    if (responses.isNotEmpty) {
+      if (responses.containsKey(q1Key) && responses[q1Key]!.isNotEmpty) {
+        if (responses[q1Key] == no) {
+          ineligibilityReasons.add("NO_MALARIA_VACCINE_IN_LGA");
+        }
+      }
+      if (responses.containsKey(q2Key) && responses[q2Key]!.isNotEmpty) {
+        isReferral = responses[q2Key] == no ? true : false;
+      }
+      if ((responses.containsKey(q4Key) && responses[q4Key]!.isNotEmpty)) {
+        String? dateOfDose = responses[q4Key];
+        if (dateOfDose != null && dateOfDose.isNotEmpty) {
+          isReferral = isOlderThanOneMonth(dateOfDose);
+          if (!isReferral) {
+            ineligibilityReasons.add("VACCINE_PROVIDED_IN_LAST_MONTH");
+          }
+        } else {
+          ineligibilityReasons.add("VACCINE_PROVIDED_IN_LAST_MONTH");
+        }
+      }
+    }
+
+    if (isReferral) {
+      referralReasons.add("MALARIA_VACCINE");
+    }
+
+    return isReferral;
+  }
+
+  bool isOlderThanOneMonth(String inputDate) {
+    // Define the date format
+    final dateFormat = DateFormat('dd/MM/yyyy');
+
+    try {
+      // Parse the input string to DateTime
+      DateTime parsedDate = dateFormat.parseStrict(inputDate);
+
+      // Get the current date
+      DateTime currentDate = DateTime.now();
+
+      // Calculate date one month ago
+      DateTime oneMonthAgo = DateTime(
+        currentDate.year,
+        currentDate.month - 1,
+        currentDate.day,
+      );
+
+      // Compare
+      return parsedDate.isBefore(oneMonthAgo);
+    } catch (e) {
+      // Handle parsing error
+      return false;
+    }
   }
 
   bool isDelivery(Map<String?, String> responses) {
