@@ -37,6 +37,7 @@ import '../../../utils/app_enums.dart';
 import '../../../utils/i18_key_constants.dart' as i18_local;
 import '../../../models/entities/additional_fields_type.dart'
     as additional_fields_local;
+import '../../../utils/utils.dart' show getIndividualAdditionalFields;
 import '../../../widgets/custom_back_navigation.dart';
 
 @RoutePage()
@@ -87,24 +88,25 @@ class CustomDeliverInterventionPageState
       DeliverInterventionState deliverInterventionState,
       FormGroup form,
       HouseholdMemberWrapper householdMember,
-      ProjectBeneficiaryModel projectBeneficiary) async {
+      ProjectBeneficiaryModel projectBeneficiary,
+      IndividualModel? selectedIndividual) async {
     final lat = locationState.latitude;
     final long = locationState.longitude;
-    TaskModel taskModel = _getTaskModel(
-      context,
-      form: form,
-      oldTask: RegistrationDeliverySingleton().beneficiaryType ==
-              BeneficiaryType.household
-          ? deliverInterventionState.tasks?.lastOrNull
-          : null,
-      projectBeneficiaryClientReferenceId: projectBeneficiary.clientReferenceId,
-      dose: deliverInterventionState.dose,
-      cycle: deliverInterventionState.cycle,
-      deliveryStrategy: DeliverStrategyType.direct.toValue(),
-      address: householdMember.members?.first.address?.first,
-      latitude: lat,
-      longitude: long,
-    );
+    TaskModel taskModel = _getTaskModel(context,
+        form: form,
+        oldTask: RegistrationDeliverySingleton().beneficiaryType ==
+                BeneficiaryType.household
+            ? deliverInterventionState.tasks?.lastOrNull
+            : null,
+        projectBeneficiaryClientReferenceId:
+            projectBeneficiary.clientReferenceId,
+        dose: deliverInterventionState.dose,
+        cycle: deliverInterventionState.cycle,
+        deliveryStrategy: DeliverStrategyType.direct.toValue(),
+        address: householdMember.members?.first.address?.first,
+        latitude: lat,
+        longitude: long,
+        selectedIndividual: selectedIndividual);
     context.read<DeliverInterventionBloc>().add(
           DeliverInterventionSubmitEvent(
               task: taskModel,
@@ -159,7 +161,8 @@ class CustomDeliverInterventionPageState
       DeliverInterventionState deliverInterventionState,
       FormGroup form,
       HouseholdMemberWrapper householdMember,
-      ProjectBeneficiaryModel projectBeneficiary) {
+      ProjectBeneficiaryModel projectBeneficiary,
+      IndividualModel? selectedIndividual) {
     if (context.mounted) {
       DigitComponentsUtils.showDialog(
         context,
@@ -176,7 +179,8 @@ class CustomDeliverInterventionPageState
             deliverInterventionState,
             form,
             householdMember,
-            projectBeneficiary);
+            projectBeneficiary,
+            selectedIndividual);
       });
     }
   }
@@ -366,7 +370,7 @@ class CustomDeliverInterventionPageState
                                     enableFixedDigitButton: true,
                                     footer: BlocBuilder<DeliverInterventionBloc,
                                         DeliverInterventionState>(
-                                      builder: (context, state) {
+                                      builder: (context, deliveryState) {
                                         return DigitCard(
                                             margin: const EdgeInsets.only(
                                                 top: spacer2),
@@ -514,6 +518,8 @@ class CustomDeliverInterventionPageState
                                                                 householdMemberWrapper,
                                                                 projectBeneficiary!
                                                                     .first,
+                                                                state
+                                                                    .selectedIndividual,
                                                               );
                                                             }
                                                           }
@@ -794,6 +800,7 @@ class CustomDeliverInterventionPageState
     AddressModel? address,
     double? latitude,
     double? longitude,
+    IndividualModel? selectedIndividual,
   }) {
     // Initialize task with oldTask if available, or create a new one
     var task = oldTask;
@@ -896,6 +903,9 @@ class CustomDeliverInterventionPageState
             widget.eligibilityAssessmentType == EligibilityAssessmentType.smc
                 ? EligibilityAssessmentStatus.smcDone.name
                 : EligibilityAssessmentStatus.vasDone.name,
+          ),
+          ...getIndividualAdditionalFields(
+            selectedIndividual,
           ),
         ],
       ),

@@ -98,27 +98,6 @@ class CustomIndividualDetailsPageState
               navigateToSummary: false),
         );
       }
-      router.popUntil(
-          (route) => route.settings.name == SearchBeneficiaryRoute.name);
-      if (householdModel != null) {
-        customSearchHouseholdsBloc
-            .add(const CustomSearchHouseholdsEvent.clear());
-        customSearchHouseholdsBloc.add(
-          CustomSearchHouseholdsEvent.searchByHousehold(
-            projectId: RegistrationDeliverySingleton().projectId!,
-            isProximityEnabled: false,
-            maxRadius: RegistrationDeliverySingleton().maxRadius,
-            householdModel: householdModel,
-          ),
-        );
-      }
-
-      router.push(CustomBeneficiaryAcknowledgementRoute(
-        enableViewHousehold: true,
-        acknowledgementType: isCreate
-            ? AcknowledgementType.addHousehold
-            : AcknowledgementType.addMember,
-      ));
     }
   }
 
@@ -135,7 +114,31 @@ class CustomIndividualDetailsPageState
         form: () => buildForm(bloc.state),
         builder: (context, form, child) => BlocConsumer<
             CustomBeneficiaryRegistrationBloc, BeneficiaryRegistrationState>(
-          listener: (context, state) {},
+          listener: (context, state) {
+            state.mapOrNull(
+              persisted: (value) async {
+                router.popUntil((route) =>
+                    route.settings.name == SearchBeneficiaryRoute.name);
+                customSearchHouseholdsBloc
+                    .add(const CustomSearchHouseholdsEvent.clear());
+                customSearchHouseholdsBloc.add(
+                  CustomSearchHouseholdsEvent.searchByHousehold(
+                    projectId: RegistrationDeliverySingleton().projectId!,
+                    isProximityEnabled: false,
+                    maxRadius: RegistrationDeliverySingleton().maxRadius,
+                    householdModel: value.householdModel,
+                  ),
+                );
+
+                router.push(CustomBeneficiaryAcknowledgementRoute(
+                  enableViewHousehold: true,
+                  acknowledgementType: !value.navigateToRoot
+                      ? AcknowledgementType.addHousehold
+                      : AcknowledgementType.addMember,
+                ));
+              },
+            );
+          },
           builder: (context, state) {
             return ScrollableContent(
               enableFixedDigitButton: true,
@@ -238,12 +241,27 @@ class CustomIndividualDetailsPageState
                                       DateTime.now(),
                                     );
 
+                              final ageInMonths = age.years * 12 + age.months;
+
                               if (age.years < 18 && widget.isHeadOfHousehold) {
                                 await DigitToast.show(
                                   context,
                                   options: DigitToastOptions(
                                     localizations.translate(i18_local
                                         .individualDetails.headAgeValidError),
+                                    true,
+                                    theme,
+                                  ),
+                                );
+
+                                return;
+                              } else if (!widget.isHeadOfHousehold &&
+                                  (ageInMonths < 3 || ageInMonths > 59)) {
+                                await DigitToast.show(
+                                  context,
+                                  options: DigitToastOptions(
+                                    localizations.translate(i18_local
+                                        .individualDetails.childAgeValidError),
                                     true,
                                     theme,
                                   ),

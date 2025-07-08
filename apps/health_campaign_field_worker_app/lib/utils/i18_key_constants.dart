@@ -1307,6 +1307,7 @@ class IndividualDetails {
   const IndividualDetails();
 
   String get headAgeValidError => "INDIVIDUAL_HEAD_MIN_AGE_VALIDATION_MESSAGE";
+  String get childAgeValidError => "INDIVIDUAL_CHILD_AGE_VALIDATION_MESSAGE";
   String get individualDetailsLabelTextUpdate =>
       'INDIVIDUAL_DETAILS_LABEL_TEXT_UPDATE';
   String get individualDetailsNameLabelTextUpdate =>

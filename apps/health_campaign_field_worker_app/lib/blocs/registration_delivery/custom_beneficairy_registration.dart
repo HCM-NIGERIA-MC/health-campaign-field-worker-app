@@ -14,6 +14,8 @@ import 'package:registration_delivery/models/entities/status.dart';
 import 'package:registration_delivery/utils/typedefs.dart';
 import 'package:registration_delivery/utils/utils.dart';
 
+import '../../utils/utils.dart';
+
 part 'custom_beneficairy_registration.freezed.dart';
 
 typedef BeneficiaryRegistrationEmitter = Emitter<BeneficiaryRegistrationState>;
@@ -267,25 +269,31 @@ class CustomBeneficiaryRegistrationBloc
               value.projectBeneficiaryModel!,
             );
 
+            List<AdditionalField> additionalFields =
+                getIndividualAdditionalFields(individual);
+
             await householdMemberRepository.create(
               HouseholdMemberModel(
-                householdClientReferenceId: household.clientReferenceId,
-                individualClientReferenceId: individual.clientReferenceId,
-                isHeadOfHousehold: value.isHeadOfHousehold,
-                tenantId: RegistrationDeliverySingleton().tenantId,
-                rowVersion: 1,
-                clientReferenceId: IdGen.i.identifier,
-                clientAuditDetails: ClientAuditDetails(
-                  createdTime: createdAt,
-                  lastModifiedTime: initialModifiedAt,
-                  lastModifiedBy: event.userUuid,
-                  createdBy: event.userUuid,
-                ),
-                auditDetails: AuditDetails(
-                  createdBy: event.userUuid,
-                  createdTime: createdAt,
-                ),
-              ),
+                  householdClientReferenceId: household.clientReferenceId,
+                  individualClientReferenceId: individual.clientReferenceId,
+                  isHeadOfHousehold: value.isHeadOfHousehold,
+                  tenantId: RegistrationDeliverySingleton().tenantId,
+                  rowVersion: 1,
+                  clientReferenceId: IdGen.i.identifier,
+                  clientAuditDetails: ClientAuditDetails(
+                    createdTime: createdAt,
+                    lastModifiedTime: initialModifiedAt,
+                    lastModifiedBy: event.userUuid,
+                    createdBy: event.userUuid,
+                  ),
+                  auditDetails: AuditDetails(
+                    createdBy: event.userUuid,
+                    createdTime: createdAt,
+                  ),
+                  additionalFields: additionalFields.isEmpty
+                      ? null
+                      : HouseholdMemberAdditionalFields(
+                          version: 1, fields: additionalFields)),
             );
           } catch (error) {
             rethrow;
@@ -364,6 +372,9 @@ class CustomBeneficiaryRegistrationBloc
             value.projectBeneficiaryModel!,
           );
 
+          List<AdditionalField> additionalFields =
+              getIndividualAdditionalFields(individual);
+
           await householdMemberRepository.create(
             HouseholdMemberModel(
               householdClientReferenceId: household.clientReferenceId,
@@ -382,6 +393,10 @@ class CustomBeneficiaryRegistrationBloc
                 createdBy: event.userUuid,
                 createdTime: createdAt,
               ),
+              additionalFields: additionalFields.isEmpty
+                  ? null
+                  : HouseholdMemberAdditionalFields(
+                      version: 1, fields: additionalFields),
             ),
           );
         } catch (error) {
@@ -634,6 +649,27 @@ class CustomBeneficiaryRegistrationBloc
             nonRecoverableError:
                 existingIndividual?.nonRecoverableError ?? false,
           ));
+
+          List<AdditionalField> additionalFields =
+              getIndividualAdditionalFields(individual);
+
+          final HouseholdMemberModel? existingHouseholdmember =
+              (await householdMemberRepository
+                      .search(HouseholdMemberSearchModel(
+            individualClientReferenceIds: [individual.clientReferenceId],
+          )))
+                  .firstOrNull;
+
+          if (existingHouseholdmember != null) {
+            await householdMemberRepository
+                .update(existingHouseholdmember.copyWith(
+              additionalFields: additionalFields.isEmpty
+                  ? null
+                  : HouseholdMemberAdditionalFields(
+                      version: 1, fields: additionalFields),
+            ));
+          }
+
           if (projectBeneficiary.isNotEmpty) {
             if (projectBeneficiary.first.tag != event.tag) {
               await projectBeneficiaryRepository
@@ -726,6 +762,9 @@ class CustomBeneficiaryRegistrationBloc
             );
           }
 
+          List<AdditionalField> additionalFields =
+              getIndividualAdditionalFields(event.individualModel);
+
           await householdMemberRepository.create(
             HouseholdMemberModel(
               householdClientReferenceId:
@@ -746,6 +785,10 @@ class CustomBeneficiaryRegistrationBloc
                 lastModifiedBy: event.userUuid,
                 createdBy: event.userUuid,
               ),
+              additionalFields: additionalFields.isEmpty
+                  ? null
+                  : HouseholdMemberAdditionalFields(
+                      version: 1, fields: additionalFields),
             ),
           );
         } catch (error) {

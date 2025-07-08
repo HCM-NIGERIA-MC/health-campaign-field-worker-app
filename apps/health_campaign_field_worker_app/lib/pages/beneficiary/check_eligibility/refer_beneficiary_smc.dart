@@ -356,6 +356,8 @@ class CustomReferBeneficiarySMCPageState
                                                         EligibilityAssessmentStatus
                                                             .smcDone.name,
                                                       ),
+                                                      ...getIndividualAdditionalFields(
+                                                          widget.individual)
                                                     ],
                                                   ),
                                                   address: widget
