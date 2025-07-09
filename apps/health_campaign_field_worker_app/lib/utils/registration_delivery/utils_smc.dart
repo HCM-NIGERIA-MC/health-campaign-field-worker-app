@@ -392,7 +392,7 @@ bool checkEligibilityForAgeMV(IndividualModel individual) {
   );
   int totalAgeMonths = age.years * 12 + age.months;
 
-  return totalAgeMonths <= 23 && totalAgeMonths >= 5;
+  return totalAgeMonths <= 11 && totalAgeMonths >= 5;
 }
 
 bool checkBeneficiaryReferredVAS(List<TaskModel>? tasks) {
