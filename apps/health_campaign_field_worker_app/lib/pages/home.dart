@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:recase/recase.dart';
 import 'package:referral_reconciliation/referral_reconciliation.dart';
 import 'package:referral_reconciliation/router/referral_reconciliation_router.gm.dart';
@@ -37,6 +39,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:survey_form/models/entities/service.dart';
 import 'package:survey_form/router/survey_form_router.gm.dart';
 import 'package:survey_form/utils/utils.dart';
@@ -357,6 +360,61 @@ class _HomePageState extends LocalizedState<HomePage> {
           onPressed: () async {
             RegistrationDeliverySingleton()
                 .setHouseholdType(HouseholdType.family);
+            final prefs = await SharedPreferences.getInstance();
+            final schemaJsonRaw = prefs.getString('app_config_schemas');
+
+            if (schemaJsonRaw != null) {
+              final allSchemas =
+                  json.decode(schemaJsonRaw) as Map<String, dynamic>;
+
+              final registrationSchemaEntry =
+                  allSchemas['REGISTRATIONFLOW'] as Map<String, dynamic>?;
+              final deliverySchemaEntry =
+                  allSchemas['DELIVERYFLOW'] as Map<String, dynamic>?;
+
+              final registrationSchemaData = registrationSchemaEntry?['data'];
+              final deliverySchemaData = deliverySchemaEntry?['data'];
+
+              if (registrationSchemaData != null ||
+                  deliverySchemaData != null) {
+                // Extract templates from both schemas
+                final regTemplatesRaw = registrationSchemaData?['templates'];
+                final delTemplatesRaw = deliverySchemaData?['templates'];
+
+                final Map<String, dynamic> regTemplateMap =
+                    regTemplatesRaw is Map<String, dynamic>
+                        ? regTemplatesRaw
+                        : {};
+
+                final Map<String, dynamic> delTemplateMap =
+                    delTemplatesRaw is Map<String, dynamic>
+                        ? delTemplatesRaw
+                        : {};
+
+                final templates = {
+                  for (final entry
+                      in {...regTemplateMap, ...delTemplateMap}.entries)
+                    entry.key: TemplateConfig.fromJson(
+                        entry.value as Map<String, dynamic>)
+                };
+
+                final registrationConfig = json.encode(registrationSchemaData);
+                final deliveryConfig = json.encode(deliverySchemaData);
+
+                RegistrationDeliverySingleton().setTemplateConfigs(templates);
+                RegistrationDeliverySingleton()
+                    .setRegistrationConfig(registrationConfig);
+                RegistrationDeliverySingleton()
+                    .setDeliveryConfig(deliveryConfig);
+              }
+
+              if (isTriggerLocalisation) {
+                final moduleName =
+                    'hcm-registrationflow-${context.selectedProject.referenceID},hcm-deliveryflow-${context.selectedProject.referenceID}';
+                triggerLocalization(module: moduleName);
+                isTriggerLocalisation = false;
+              }
+            }
             context.router.push(const CustomRegistrationDeliveryWrapperRoute());
           },
         ),

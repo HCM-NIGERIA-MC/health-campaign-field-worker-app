@@ -565,10 +565,10 @@ packages:
     dependency: "direct main"
     description:
       name: digit_ui_components
-      sha256: "32d7fbc875b5a6ee4710eb827d73acd43a38f20a42800f01ac5e6fc07069f3fc"
+      sha256: "80f3770380963d7ec5fde6be1b67cde8ceb63dec5fc68ae51b70d4ad2278c7dd"
       url: "https://pub.dev"
     source: hosted
-    version: "0.2.0"
+    version: "0.0.2-dev.15"
   dio:
     dependency: "direct main"
     description:
@@ -1872,10 +1872,10 @@ packages:
     dependency: "direct main"
     description:
       name: registration_delivery
-      sha256: "4354d586163faa46a1880a72dfcc380025599d370a194e6f14a7bba68f17906c"
+      sha256: "01bdb6ad7d0e5c9e4a18d4749d1390edb04b5348da402961f718edecf9e5fd40"
       url: "https://pub.dev"
     source: hosted
-    version: "1.0.6"
+    version: "1.0.6+2"
   remove_emoji_input_formatter:
     dependency: transitive
     description:
