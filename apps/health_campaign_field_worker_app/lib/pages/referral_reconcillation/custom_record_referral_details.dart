@@ -194,7 +194,7 @@ class _CustomRecordReferralDetailsPageState
                                                           ServiceSearchEvent(
                                                             serviceSearchModel:
                                                                 ServiceSearchModel(
-                                                              relatedClientReferenceId:
+                                                              clientId:
                                                                   recordState
                                                                       .mapOrNull(
                                                                 create: (value) => value
@@ -516,7 +516,7 @@ class _CustomRecordReferralDetailsPageState
                                                               ServiceSearchEvent(
                                                                 serviceSearchModel:
                                                                     ServiceSearchModel(
-                                                                  relatedClientReferenceId:
+                                                                  clientId:
                                                                       recordState
                                                                           .mapOrNull(
                                                                     create: (value) => value

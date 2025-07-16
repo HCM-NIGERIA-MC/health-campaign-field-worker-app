@@ -12,6 +12,7 @@ import 'package:stream_transform/stream_transform.dart';
 
 import '../../data/repositories/local/search/individual_global_search_smc.dart';
 import '../../utils/search/global_search_parameters_smc.dart';
+import '../registration_delivery/custom_search_household.dart';
 
 part 'search_households_smc.freezed.dart';
 

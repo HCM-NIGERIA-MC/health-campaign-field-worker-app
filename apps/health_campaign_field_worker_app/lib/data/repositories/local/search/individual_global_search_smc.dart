@@ -521,6 +521,7 @@ class IndividualGlobalSearchSMCRepository extends LocalRepository {
                 IdentifierModel(
                   id: identifier.id,
                   clientReferenceId: individual.clientReferenceId,
+                  individualClientReferenceId: individual.clientReferenceId,
                   identifierType: identifier.identifierType,
                   identifierId: identifier.identifierId,
                   rowVersion: identifier.rowVersion,
