@@ -63,7 +63,6 @@ import '../utils/utils.dart';
 import '../widgets/header/back_navigation_help_header.dart';
 import '../widgets/home/home_item_card.dart';
 import '../widgets/localized.dart';
-import '../widgets/registration_delivery/custom_beneficiary_progress.dart';
 import '../widgets/showcase/config/showcase_constants.dart';
 import '../widgets/showcase/showcase_button.dart';
 // import 'package:referral_reconciliation/blocs/search_referral_reconciliations.dart';
@@ -162,18 +161,19 @@ class _HomePageState extends LocalizedState<HomePage> {
                 showBackNavigation: false,
                 showHelp: false,
               ),
-              skipProgressBar
-                  ? const SizedBox.shrink()
-                  : homeShowcaseData.distributorProgressBar.buildWith(
-                      child: CustomBeneficiaryProgressBar(
-                        label: localizations.translate(
-                          i18.home.progressIndicatorTitle,
-                        ),
-                        prefixLabel: localizations.translate(
-                          i18.home.progressIndicatorPrefixLabel,
-                        ),
-                      ),
-                    ),
+              // TODO: Work on it later
+              // skipProgressBar
+              //     ? const SizedBox.shrink()
+              //     : homeShowcaseData.distributorProgressBar.buildWith(
+              //         child: CustomBeneficiaryProgressBar(
+              //           label: localizations.translate(
+              //             i18.home.progressIndicatorTitle,
+              //           ),
+              //           prefixLabel: localizations.translate(
+              //             i18.home.progressIndicatorPrefixLabel,
+              //           ),
+              //         ),
+              //       ),
             ],
           ),
           footer: Padding(

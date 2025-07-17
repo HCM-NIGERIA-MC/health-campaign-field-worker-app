@@ -107,7 +107,8 @@ class _CustomSearchReferralReconciliationsPageState
                                           alignment: Alignment.topLeft,
                                           child: Text(
                                             localizations.translate(
-                                              i18_local.searchBeneficiary.searchBeneficiaryLabelText,
+                                              i18_local.searchBeneficiary
+                                                  .searchBeneficiaryLabelText,
                                             ),
                                             style: textTheme.headingXl.copyWith(
                                                 color: theme
@@ -180,8 +181,9 @@ class _CustomSearchReferralReconciliationsPageState
                                                 ServiceSearchEvent(
                                                   serviceSearchModel:
                                                       ServiceSearchModel(
-                                                    relatedClientReferenceId:
-                                                        i.clientReferenceId,
+                                                    referenceIds: [
+                                                      i.clientReferenceId
+                                                    ],
                                                   ),
                                                 ),
                                               );
