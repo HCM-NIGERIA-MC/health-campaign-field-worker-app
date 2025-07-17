@@ -2,8 +2,8 @@ import 'dart:async';
 
 import 'package:collection/collection.dart';
 import 'package:digit_data_model/models/entities/individual.dart';
-import '../registration_delivery/custom_search_household.dart';
 import 'search_households_smc.dart' as searchHouseholdsSMC;
+import 'package:registration_delivery/blocs/search_households/search_households.dart';
 import 'package:registration_delivery/models/entities/household.dart';
 import 'package:registration_delivery/models/entities/household_member.dart';
 import 'package:registration_delivery/models/entities/project_beneficiary.dart';
