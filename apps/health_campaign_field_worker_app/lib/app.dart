@@ -146,37 +146,37 @@ class MainApplicationState extends State<MainApplication>
                   );
                 },
               ),
-              BlocProvider(
-                create: (context) {
-                  return SearchHouseholdsSMCBloc(
-                      beneficiaryType:
-                          RegistrationDeliverySingleton().beneficiaryType!,
-                      userUid:
-                          RegistrationDeliverySingleton().loggedInUserUuid!,
-                      projectId: RegistrationDeliverySingleton().projectId!,
-                      addressRepository:
-                          context.read<RegistrationDeliveryAddressRepo>(),
-                      projectBeneficiary: context.repository<
-                          ProjectBeneficiaryModel,
-                          ProjectBeneficiarySearchModel>(),
-                      householdMember: context.repository<HouseholdMemberModel,
-                          HouseholdMemberSearchModel>(),
-                      household: context
-                          .repository<HouseholdModel, HouseholdSearchModel>(),
-                      individual: context
-                          .repository<IndividualModel, IndividualSearchModel>(),
-                      taskDataRepository:
-                          context.repository<TaskModel, TaskSearchModel>(),
-                      sideEffectDataRepository: context
-                          .repository<SideEffectModel, SideEffectSearchModel>(),
-                      referralDataRepository: context
-                          .repository<ReferralModel, ReferralSearchModel>(),
-                      individualGlobalSearchSMCRepository:
-                          context.read<IndividualGlobalSearchSMCRepository>(),
-                      houseHoldGlobalSearchRepository:
-                          context.read<HouseHoldGlobalSearchRepository>());
-                },
-              ),
+              // BlocProvider(
+              //   create: (context) {
+              //     return SearchHouseholdsSMCBloc(
+              //         beneficiaryType:
+              //             RegistrationDeliverySingleton().beneficiaryType!,
+              //         userUid:
+              //             RegistrationDeliverySingleton().loggedInUserUuid!,
+              //         projectId: RegistrationDeliverySingleton().projectId!,
+              //         addressRepository:
+              //             context.read<RegistrationDeliveryAddressRepo>(),
+              //         projectBeneficiary: context.repository<
+              //             ProjectBeneficiaryModel,
+              //             ProjectBeneficiarySearchModel>(),
+              //         householdMember: context.repository<HouseholdMemberModel,
+              //             HouseholdMemberSearchModel>(),
+              //         household: context
+              //             .repository<HouseholdModel, HouseholdSearchModel>(),
+              //         individual: context
+              //             .repository<IndividualModel, IndividualSearchModel>(),
+              //         taskDataRepository:
+              //             context.repository<TaskModel, TaskSearchModel>(),
+              //         sideEffectDataRepository: context
+              //             .repository<SideEffectModel, SideEffectSearchModel>(),
+              //         referralDataRepository: context
+              //             .repository<ReferralModel, ReferralSearchModel>(),
+              //         individualGlobalSearchSMCRepository:
+              //             context.read<IndividualGlobalSearchSMCRepository>(),
+              //         houseHoldGlobalSearchRepository:
+              //             context.read<HouseHoldGlobalSearchRepository>());
+              //   },
+              // ),
 
               BlocProvider(
                 create: (_) {
@@ -263,28 +263,28 @@ class MainApplicationState extends State<MainApplication>
 
                     return MultiBlocProvider(
                       providers: [
-                        BlocProvider(
-                            create: (_) => IndividualGlobalSearchSMCBloc(
-                                userUid: RegistrationDeliverySingleton()
-                                    .loggedInUserUuid!,
-                                projectId:
-                                    RegistrationDeliverySingleton().projectId!,
-                                individual: individual,
-                                householdMember: householdMember,
-                                household: household,
-                                projectBeneficiary: projectBeneficiary,
-                                taskDataRepository: task,
-                                beneficiaryType: RegistrationDeliverySingleton()
-                                    .beneficiaryType!,
-                                sideEffectDataRepository: sideEffect,
-                                addressRepository: context
-                                    .read<RegistrationDeliveryAddressRepo>(),
-                                referralDataRepository: referral,
-                                individualGlobalSearchSMCRepository:
-                                    context.read<
-                                        IndividualGlobalSearchSMCRepository>(),
-                                houseHoldGlobalSearchRepository: context
-                                    .read<HouseHoldGlobalSearchRepository>())),
+                        // BlocProvider(
+                        //     create: (_) => IndividualGlobalSearchSMCBloc(
+                        //         userUid: RegistrationDeliverySingleton()
+                        //             .loggedInUserUuid!,
+                        //         projectId:
+                        //             RegistrationDeliverySingleton().projectId!,
+                        //         individual: individual,
+                        //         householdMember: householdMember,
+                        //         household: household,
+                        //         projectBeneficiary: projectBeneficiary,
+                        //         taskDataRepository: task,
+                        //         beneficiaryType: RegistrationDeliverySingleton()
+                        //             .beneficiaryType!,
+                        //         sideEffectDataRepository: sideEffect,
+                        //         addressRepository: context
+                        //             .read<RegistrationDeliveryAddressRepo>(),
+                        //         referralDataRepository: referral,
+                        //         individualGlobalSearchSMCRepository:
+                        //             context.read<
+                        //                 IndividualGlobalSearchSMCRepository>(),
+                        //         houseHoldGlobalSearchRepository: context
+                        //             .read<HouseHoldGlobalSearchRepository>())),
                         BlocProvider(
                           create: (localizationModulesList != null &&
                                   firstLanguage != null)
@@ -377,8 +377,9 @@ class MainApplicationState extends State<MainApplication>
                                 LocalRepository<StockModel,
                                     StockSearchModel>>(),
                             stockRemoteRepository: ctx.read<
-                                RemoteRepository<StockModel,
-                                    StockSearchModel>>() as StockRemoteRepository,
+                                    RemoteRepository<StockModel,
+                                        StockSearchModel>>()
+                                as StockRemoteRepository,
                             context: context,
                             attendanceLogLocalRepository: ctx.read<
                                 LocalRepository<AttendanceLogModel,

@@ -531,6 +531,7 @@ class IndividualGlobalSearchSMCRepository extends LocalRepository {
                     lastModifiedBy: identifier.auditModifiedBy,
                     lastModifiedTime: identifier.auditModifiedTime,
                   ),
+                  individualClientReferenceId: individual.clientReferenceId,
                 ),
             ],
             additionalFields: individual.additionalFields == null

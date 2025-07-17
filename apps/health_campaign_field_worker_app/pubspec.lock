@@ -304,6 +304,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.3.3"
+  carousel_slider:
+    dependency: transitive
+    description:
+      name: carousel_slider
+      sha256: "9c695cc963bf1d04a47bd6021f68befce8970bcd61d24938e1fb0918cf5d9c42"
+      url: "https://pub.dev"
+    source: hosted
+    version: "4.2.1"
   change_app_package_name:
     dependency: "direct main"
     description:
@@ -613,10 +621,10 @@ packages:
     dependency: "direct main"
     description:
       name: digit_ui_components
-      sha256: "80f3770380963d7ec5fde6be1b67cde8ceb63dec5fc68ae51b70d4ad2278c7dd"
+      sha256: "94bfc92dc2bd7dbec934a04e80155beb2dd71e76e166d14095c129880b0c0e36"
       url: "https://pub.dev"
     source: hosted
-    version: "0.0.2-dev.15"
+    version: "0.2.2+5"
   dio:
     dependency: "direct main"
     description:
@@ -1920,10 +1928,10 @@ packages:
     dependency: "direct main"
     description:
       name: referral_reconciliation
-      sha256: "5d3ea365246978776c0d247d9dbe35ebc04b7df1b85d7f38db20ec7e4021b977"
+      sha256: "2f3587105c2229ed089a23bc7084b8a2b2fbd5b69d119e9d1b80850def33848d"
       url: "https://pub.dev"
     source: hosted
-    version: "1.0.4+2"
+    version: "1.0.6"
   registration_delivery:
     dependency: "direct main"
     description:

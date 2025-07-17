@@ -869,13 +869,31 @@ void setPackagesSingleton(BuildContext context) {
               appConfiguration.symptomsTypes!.map((e) => e.code).toList(),
           referralReasons:
               appConfiguration.referralReasons!.map((e) => e.code).toList(),
-          searchHouseHoldFilter: [],
-          searchCLFFilters: [],
-          houseStructureTypes: [],
-          refusalReasons: [],
+          searchHouseHoldFilter: appConfiguration.searchHouseHoldFilters != null
+              ? appConfiguration.searchHouseHoldFilters!
+                  .where((e) => e.active)
+                  .map((e) => e.code)
+                  .toList()
+              : [],
+          searchCLFFilters: appConfiguration.searchCLFFilters != null
+              ? appConfiguration.searchCLFFilters!
+                  .where((e) => e.active)
+                  .map((e) => e.code)
+                  .toList()
+              : [],
+          houseStructureTypes: appConfiguration.houseStructureTypes
+              ?.where((e) => e.active)
+              .map((e) => e.code)
+              .toList(),
+          refusalReasons: appConfiguration.refusalReasons
+              ?.where((e) => e.active)
+              .map((e) => e.code)
+              .toList(),
           loggedInUser: context.loggedInUserModel,
-          beneficiaryIdMinCount: null,
-          beneficiaryIdBatchSize: null,
+          beneficiaryIdMinCount:
+              appConfiguration.beneficiaryIdConfig?.first.minCount.toInt(),
+          beneficiaryIdBatchSize:
+              appConfiguration.beneficiaryIdConfig?.first.batchSize.toInt(),
         );
 
         InventorySingleton().setInitialData(
