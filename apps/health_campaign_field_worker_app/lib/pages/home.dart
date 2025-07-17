@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:digit_data_model/models/templates/template_config.dart';
 import 'package:recase/recase.dart';
 import 'package:referral_reconciliation/referral_reconciliation.dart';
 import 'package:referral_reconciliation/router/referral_reconciliation_router.gm.dart';
@@ -84,7 +85,7 @@ class _HomePageState extends LocalizedState<HomePage> {
   bool skipProgressBar = false;
   final storage = const FlutterSecureStorage();
   late StreamSubscription<List<ConnectivityResult>> subscription;
-  bool isTriggerLocalisation = true;
+  bool isTriggerLocalization = true;
 
   @override
   initState() {
@@ -344,9 +345,9 @@ class _HomePageState extends LocalizedState<HomePage> {
           icon: Icons.bar_chart_sharp,
           label: i18.home.dashboard,
           onPressed: () {
-            if (isTriggerLocalisation) {
+            if (isTriggerLocalization) {
               triggerLocalization();
-              isTriggerLocalisation = false;
+              isTriggerLocalization = false;
             }
             context.router.push(const UserDashboardRoute());
           },
@@ -408,13 +409,15 @@ class _HomePageState extends LocalizedState<HomePage> {
                     .setDeliveryConfig(deliveryConfig);
               }
 
-              if (isTriggerLocalisation) {
+              if (isTriggerLocalization) {
                 final moduleName =
                     'hcm-registrationflow-${context.selectedProject.referenceID},hcm-deliveryflow-${context.selectedProject.referenceID}';
                 triggerLocalization(module: moduleName);
-                isTriggerLocalisation = false;
+                isTriggerLocalization = false;
               }
             }
+            RegistrationDeliverySingleton()
+                .setHouseholdType(HouseholdType.family);
             context.router.push(const CustomRegistrationDeliveryWrapperRoute());
           },
         ),
@@ -425,9 +428,9 @@ class _HomePageState extends LocalizedState<HomePage> {
           icon: Icons.supervised_user_circle_rounded,
           label: i18.home.beneficiaryReferralLabel,
           onPressed: () async {
-            if (isTriggerLocalisation) {
+            if (isTriggerLocalization) {
               triggerLocalization();
-              isTriggerLocalisation = false;
+              isTriggerLocalization = false;
             }
             context.router.push(CustomSearchReferralReconciliationsRoute());
           },
@@ -524,9 +527,9 @@ class _HomePageState extends LocalizedState<HomePage> {
           icon: Icons.bar_chart_sharp,
           label: i18.home.dashboard,
           onPressed: () {
-            if (isTriggerLocalisation) {
+            if (isTriggerLocalization) {
               triggerLocalization();
-              isTriggerLocalisation = false;
+              isTriggerLocalization = false;
             }
             ;
             context.router.push(const UserDashboardRoute());
@@ -539,9 +542,9 @@ class _HomePageState extends LocalizedState<HomePage> {
           icon: Icons.announcement,
           label: i18.home.fileComplaint,
           onPressed: () {
-            if (isTriggerLocalisation) {
+            if (isTriggerLocalization) {
               triggerLocalization();
-              isTriggerLocalisation = false;
+              isTriggerLocalization = false;
             }
             context.router.push(const ComplaintsInboxWrapperRoute());
           },
@@ -553,9 +556,9 @@ class _HomePageState extends LocalizedState<HomePage> {
           icon: Icons.fingerprint_outlined,
           label: i18.home.manageAttendanceLabel,
           onPressed: () {
-            if (isTriggerLocalisation) {
+            if (isTriggerLocalization) {
               triggerLocalization();
-              isTriggerLocalisation = false;
+              isTriggerLocalization = false;
             }
             ;
             context.router.push(const ManageAttendanceRoute());
@@ -571,9 +574,9 @@ class _HomePageState extends LocalizedState<HomePage> {
           customIconSize: spacer8,
           label: i18.home.mySurveyForm,
           onPressed: () {
-            if (isTriggerLocalisation) {
+            if (isTriggerLocalization) {
               triggerLocalization();
-              isTriggerLocalisation = false;
+              isTriggerLocalization = false;
             }
             context.router.push(CustomSurveyFormWrapperRoute());
           },
@@ -732,7 +735,7 @@ class _HomePageState extends LocalizedState<HomePage> {
     }
   }
 
-  void triggerLocalization() {
+  void triggerLocalization({String? module, bool? loadOnline}) {
     context.read<AppInitializationBloc>().state.maybeWhen(
           orElse: () {},
           initialized: (
@@ -742,22 +745,60 @@ class _HomePageState extends LocalizedState<HomePage> {
           ) {
             final appConfig = appConfiguration;
             final localizationModulesList = appConfiguration.backendInterface;
-            final selectedLocale =
-                "en_NG"; //AppSharedPreferences().getSelectedLocale;
+            final selectedLocale = AppSharedPreferences().getSelectedLocale;
             LocalizationParams()
                 .setCode(LeastLevelBoundarySingleton().boundary);
-            context
-                .read<LocalizationBloc>()
-                .add(LocalizationEvent.onLoadLocalization(
-                  module:
-                      "${localizationModulesList?.interfaces.where((element) => element.type == Modules.localizationModule).map((e) => e.name.toString()).join(',')}",
-                  tenantId: appConfig.tenantId ?? "default",
-                  locale: selectedLocale!,
-                  path: Constants.localizationApiPath,
-                ));
+            if (loadOnline == true) {
+              context
+                  .read<LocalizationBloc>()
+                  .add(LocalizationEvent.onRemoteLoadLocalization(
+                    module: module ??
+                        "${localizationModulesList?.interfaces.where((element) => element.type == Modules.localizationModule).map((e) => e.name.toString()).join(',')}",
+                    tenantId: envConfig.variables.tenantId,
+                    locale: selectedLocale!,
+                    path: Constants.localizationApiPath,
+                  ));
+            } else {
+              context
+                  .read<LocalizationBloc>()
+                  .add(LocalizationEvent.onLoadLocalization(
+                    module: module ??
+                        "${localizationModulesList?.interfaces.where((element) => element.type == Modules.localizationModule).map((e) => e.name.toString()).join(',')}",
+                    tenantId: envConfig.variables.tenantId,
+                    locale: selectedLocale!,
+                    path: Constants.localizationApiPath,
+                  ));
+            }
           },
         );
   }
+
+  // void triggerLocalization() {
+  //   context.read<AppInitializationBloc>().state.maybeWhen(
+  //         orElse: () {},
+  //         initialized: (
+  //           AppConfiguration appConfiguration,
+  //           _,
+  //           __,
+  //         ) {
+  //           final appConfig = appConfiguration;
+  //           final localizationModulesList = appConfiguration.backendInterface;
+  //           final selectedLocale =
+  //               "en_NG"; //AppSharedPreferences().getSelectedLocale;
+  //           LocalizationParams()
+  //               .setCode(LeastLevelBoundarySingleton().boundary);
+  //           context
+  //               .read<LocalizationBloc>()
+  //               .add(LocalizationEvent.onLoadLocalization(
+  //                 module:
+  //                     "${localizationModulesList?.interfaces.where((element) => element.type == Modules.localizationModule).map((e) => e.name.toString()).join(',')}",
+  //                 tenantId: appConfig.tenantId ?? "default",
+  //                 locale: selectedLocale!,
+  //                 path: Constants.localizationApiPath,
+  //               ));
+  //         },
+  //       );
+  // }
 }
 
 // Function to set initial Data required for the packages to run
@@ -833,6 +874,8 @@ void setPackagesSingleton(BuildContext context) {
           houseStructureTypes: [],
           refusalReasons: [],
           loggedInUser: context.loggedInUserModel,
+          beneficiaryIdMinCount: null,
+          beneficiaryIdBatchSize: null,
         );
 
         InventorySingleton().setInitialData(
