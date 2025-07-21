@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:closed_household/utils/utils.dart';
 import 'package:digit_data_model/models/templates/template_config.dart';
 import 'package:recase/recase.dart';
 import 'package:referral_reconciliation/referral_reconciliation.dart';
@@ -418,7 +419,7 @@ class _HomePageState extends LocalizedState<HomePage> {
             }
             RegistrationDeliverySingleton()
                 .setHouseholdType(HouseholdType.family);
-            context.router.push(const CustomRegistrationDeliveryWrapperRoute());
+            context.router.push(const RegistrationDeliveryWrapperRoute());
           },
         ),
       ),
@@ -802,6 +803,8 @@ class _HomePageState extends LocalizedState<HomePage> {
 }
 
 // Function to set initial Data required for the packages to run
+
+// Function to set initial Data required for the packages to run
 void setPackagesSingleton(BuildContext context) {
   context.read<AppInitializationBloc>().state.maybeWhen(
       orElse: () {},
@@ -819,6 +822,21 @@ void setPackagesSingleton(BuildContext context) {
             loggedInIndividualId: context.loggedInIndividualId ?? '',
             loggedInUserUuid: context.loggedInUserUuid,
             appVersion: Constants().version);
+
+        SurveyFormSingleton().setInitialData(
+          projectId: context.projectId,
+          projectName: context.selectedProject.name,
+          loggedInIndividualId: context.loggedInIndividualId ?? '',
+          loggedInUserUuid: context.loggedInUserUuid,
+          appVersion: Constants().version,
+          roles: context.read<AuthBloc>().state.maybeMap(
+              orElse: () => const Offstage(),
+              authenticated: (res) {
+                return res.userModel.roles
+                    .map((e) => e.code.snakeCase.toUpperCase())
+                    .toList();
+              }),
+        );
 
         ReferralReconSingleton().setInitialData(
           userName: context.loggedInUser.name ?? '',
@@ -844,6 +862,11 @@ void setPackagesSingleton(BuildContext context) {
         );
 
         RegistrationDeliverySingleton().setInitialData(
+          beneficiaryIdMinCount:
+              appConfiguration.beneficiaryIdConfig?.first.minCount.toInt(),
+          beneficiaryIdBatchSize:
+              appConfiguration.beneficiaryIdConfig?.first.batchSize.toInt(),
+          loggedInUser: context.loggedInUserModel,
           loggedInUserUuid: context.loggedInUserUuid,
           maxRadius: appConfiguration.maxRadius!,
           projectId: context.projectId,
@@ -854,6 +877,9 @@ void setPackagesSingleton(BuildContext context) {
               appConfiguration.genderOptions!.map((e) => e.code).toList(),
           idTypeOptions:
               appConfiguration.idTypeOptions!.map((e) => e.code).toList(),
+          // memberRelationTypeOptions: appConfiguration.relationShipTypeOptions!
+          //     .map((e) => e.code)
+          //     .toList(),
           householdDeletionReasonOptions: appConfiguration
               .householdDeletionReasonOptions!
               .map((e) => e.code)
@@ -865,10 +891,10 @@ void setPackagesSingleton(BuildContext context) {
           deliveryCommentOptions: appConfiguration.deliveryCommentOptions!
               .map((e) => e.code)
               .toList(),
-          symptomsTypes:
-              appConfiguration.symptomsTypes!.map((e) => e.code).toList(),
-          referralReasons:
-              appConfiguration.referralReasons!.map((e) => e.code).toList(),
+          symptomsTypes: appConfiguration.symptomsTypes
+              ?.where((e) => e.active)
+              .map((e) => e.code)
+              .toList(),
           searchHouseHoldFilter: appConfiguration.searchHouseHoldFilters != null
               ? appConfiguration.searchHouseHoldFilters!
                   .where((e) => e.active)
@@ -881,6 +907,10 @@ void setPackagesSingleton(BuildContext context) {
                   .map((e) => e.code)
                   .toList()
               : [],
+          referralReasons: appConfiguration.referralReasons
+              ?.where((e) => e.active)
+              .map((e) => e.code)
+              .toList(),
           houseStructureTypes: appConfiguration.houseStructureTypes
               ?.where((e) => e.active)
               .map((e) => e.code)
@@ -889,11 +919,6 @@ void setPackagesSingleton(BuildContext context) {
               ?.where((e) => e.active)
               .map((e) => e.code)
               .toList(),
-          loggedInUser: context.loggedInUserModel,
-          beneficiaryIdMinCount:
-              appConfiguration.beneficiaryIdConfig?.first.minCount.toInt(),
-          beneficiaryIdBatchSize:
-              appConfiguration.beneficiaryIdConfig?.first.batchSize.toInt(),
         );
 
         InventorySingleton().setInitialData(

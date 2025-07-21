@@ -3,6 +3,7 @@ import 'package:attendance_management/router/attendance_router.gm.dart';
 import 'package:complaints/router/complaints_router.dart';
 import 'package:complaints/router/complaints_router.gm.dart';
 import 'package:digit_forms_engine/router/forms_router.dart';
+import 'package:digit_scanner/blocs/app_localization.dart';
 import 'package:health_campaign_field_worker_app/blocs/registration_delivery/custom_beneficairy_registration.dart';
 import 'package:referral_reconciliation/pages/search_referral_reconciliations.dart';
 import 'package:referral_reconciliation/router/referral_reconciliation_router.gm.dart';
@@ -24,6 +25,7 @@ import '../blocs/inventory_management/custom_inventory_report.dart';
 import '../blocs/localization/app_localization.dart';
 import '../pages/acknowledgement.dart';
 import '../pages/authenticated.dart';
+import '../pages/inventory_management/qr_scanner.dart';
 import '../pages/inventory_management/view_record_lga.dart';
 import '../pages/boundary_selection.dart';
 import '../pages/home.dart';
@@ -86,6 +88,7 @@ part 'app_router.gr.dart';
     AttendanceRoute,
     ComplaintsRoute,
     SurveyFormRoute,
+    FormsRoute,
   ],
 )
 class AppRouter extends _$AppRouter {
@@ -109,6 +112,7 @@ class AppRouter extends _$AppRouter {
       page: AuthenticatedRouteWrapper.page,
       path: '/',
       children: [
+        ...FormsRoute().routes,
         AutoRoute(page: HomeRoute.page, path: 'home'),
         AutoRoute(page: ProfileRoute.page, path: 'profile'),
         AutoRoute(page: UserQRDetailsRoute.page, path: 'user-qr-code'),
@@ -610,7 +614,7 @@ class AppRouter extends _$AppRouter {
             //   initial: true,
             // ),
             AutoRoute(
-              page: CustomComplaintTypeRoute.page,
+              page: ComplaintTypeRoute.page,
               path: 'custom-complaints-type',
               initial: true,
             ),
@@ -627,7 +631,7 @@ class AppRouter extends _$AppRouter {
               path: 'complaints-details',
             ),
             AutoRoute(
-              page: CustomComplaintsDetailsRoute.page,
+              page: ComplaintsDetailsRoute.page,
               path: 'custom-complaints-details',
             ),
             RedirectRoute(

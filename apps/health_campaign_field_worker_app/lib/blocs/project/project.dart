@@ -1,5 +1,6 @@
 // GENERATED using mason_cli
 import 'dart:async';
+import 'dart:convert';
 import 'dart:core';
 import 'dart:math';
 
@@ -11,6 +12,7 @@ import 'package:digit_data_model/data_model.dart';
 import 'package:digit_dss/digit_dss.dart';
 import 'package:digit_ui_components/utils/app_logger.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:inventory_management/data/repositories/remote/stock.dart';
@@ -18,6 +20,7 @@ import 'package:inventory_management/models/entities/stock.dart';
 import 'package:inventory_management/models/entities/transaction_type.dart';
 import 'package:isar/isar.dart';
 import 'package:recase/recase.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:survey_form/models/entities/service_definition.dart';
 
 import '../../../models/app_config/app_config_model.dart' as app_configuration;
@@ -481,6 +484,48 @@ class ProjectBloc extends Bloc<ProjectEvent, ProjectState> {
           }
         }
       }
+
+      try {
+        final formConfigResult = await mdmsRepository.searchMDMS(
+          envConfig.variables.mdmsApiPath,
+          MdmsRequestModel(
+            mdmsCriteria: MdmsCriteriaModel(
+              tenantId: envConfig.variables.tenantId,
+              moduleDetails: [
+                MdmsModuleDetailModel(
+                  moduleName: 'HCM-ADMIN-CONSOLE',
+                  masterDetails: [
+                    MdmsMasterDetailModel(
+                      'FormConfig',
+                      filter:
+                          "[?(@.project=='${event.model.referenceID}' && @.isSelected==true)]",
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ).toJson(),
+        );
+
+        final formConfigs = formConfigResult['HCM-ADMIN-CONSOLE']['FormConfig'];
+
+        for (final config in formConfigs) {
+          await enrichFormSchemaWithEnums(config);
+        }
+      } catch (e) {
+        emit(
+          state.copyWith(
+            selectedProject: event.model,
+            loading: false,
+            syncError: ProjectSyncErrorType.appConfig,
+          ),
+        );
+        if (kDebugMode) {
+          debugPrint(e.toString());
+        }
+        return;
+      }
+
       final configResult = await mdmsRepository.searchAppConfig(
         envConfig.variables.mdmsApiPath,
         MdmsRequestModel(
@@ -615,8 +660,6 @@ class ProjectBloc extends Bloc<ProjectEvent, ProjectState> {
       ));
     }
 
-    
-
     final getSelectedProjectType = await localSecureStore.selectedProjectType;
     final currentRunningCycle = getSelectedProjectType?.cycles
         ?.where(
@@ -627,14 +670,13 @@ class ProjectBloc extends Bloc<ProjectEvent, ProjectState> {
         )
         .firstOrNull;
 
-
-        try {
+    try {
       final projectFacilities = await projectFacilityLocalRepository
           .search(ProjectFacilitySearchModel());
       final facilities =
           await facilityLocalRepository.search(FacilitySearchModel());
-      await downloadStockDataBasedOnRole(
-          projectFacilities, facilities, event.model.address?.boundaryType, currentRunningCycle);
+      await downloadStockDataBasedOnRole(projectFacilities, facilities,
+          event.model.address?.boundaryType, currentRunningCycle);
     } catch (_) {
       emit(state.copyWith(
         loading: false,
@@ -649,6 +691,122 @@ class ProjectBloc extends Bloc<ProjectEvent, ProjectState> {
       projectType: getSelectedProjectType,
       selectedCycle: currentRunningCycle,
     ));
+  }
+
+  Future<void> storeSchema(dynamic schemaJson) async {
+    final prefs = await SharedPreferences.getInstance();
+    const schemaKey = 'app_config_schemas';
+
+    dynamic transformedSchema;
+
+    try {
+      transformedSchema = transformJson(schemaJson);
+    } catch (e, stackTrace) {
+      debugPrint('Schema transformation failed: $e');
+      debugPrint('$stackTrace');
+      transformedSchema = null;
+    }
+
+    if (transformedSchema == null) return;
+
+    // Get the unique name and version from schema
+    final schemaName = transformedSchema['name'];
+    final newVersion = transformedSchema['version'];
+
+    // Load existing schemas
+    final existingSchemasRaw = prefs.getString(schemaKey);
+    final Map<String, dynamic> existingSchemas =
+        existingSchemasRaw != null ? json.decode(existingSchemasRaw) : {};
+
+    // Get the existing schema for this name if any
+    final existingEntry = existingSchemas[schemaName] as Map<String, dynamic>?;
+
+    final updatedEntry = {
+      'data': transformedSchema,
+      'currentVersion': newVersion,
+      'previousVersion': existingEntry?['currentVersion']
+    };
+
+    // Update the map
+    existingSchemas[schemaName] = updatedEntry;
+
+    // Save updated schemas
+    await prefs.setString(schemaKey, json.encode(existingSchemas));
+  }
+
+  Future<void> enrichFormSchemaWithEnums(
+      Map<String, dynamic> formConfig) async {
+    final Map<String, Set<String>> moduleToMasters =
+        {}; // To collect module: master mapping
+
+    // Step 1 & 2: Traverse the form schema
+    for (final page in formConfig['pages']) {
+      for (final property in page['properties']) {
+        final schemaCode = property['schemaCode'];
+        if (schemaCode != null && schemaCode.toString().isNotEmpty) {
+          final parts = schemaCode.split('.');
+          if (parts.length == 2) {
+            final module = parts[0];
+            final master = parts[1];
+
+            moduleToMasters.putIfAbsent(module, () => <String>{}).add(master);
+          }
+        }
+      }
+    }
+
+    // ✅ If nothing to enrich, return early
+    if (moduleToMasters.isEmpty) {
+      await storeSchema(formConfig); // still store if needed
+      return;
+    }
+
+    // Step 3: Prepare MDMS moduleDetails
+    final moduleDetails = moduleToMasters.entries.map((entry) {
+      return MdmsModuleDetailModel(
+        moduleName: entry.key,
+        masterDetails:
+            entry.value.map((m) => MdmsMasterDetailModel(m)).toList(),
+      );
+    }).toList();
+
+    // Step 4: Fetch all master data in one MDMS call
+    final mdmsResponse = await mdmsRepository.searchMDMS(
+      envConfig.variables.mdmsApiPath,
+      MdmsRequestModel(
+        mdmsCriteria: MdmsCriteriaModel(
+          tenantId: envConfig.variables.tenantId,
+          moduleDetails: moduleDetails,
+        ),
+      ).toJson(),
+    );
+
+    // Step 5: Assign fetched enums back to form fields
+    for (final page in formConfig['pages']) {
+      for (final property in page['properties']) {
+        final schemaCode = property['schemaCode'];
+        if (schemaCode != null && schemaCode.toString().isNotEmpty) {
+          final parts = schemaCode.split('.');
+          if (parts.length == 2) {
+            final module = parts[0];
+            final master = parts[1];
+
+            final enumValues = mdmsResponse[module]?[master];
+            if (enumValues != null) {
+              property['enums'] = enumValues
+                  .map((e) => {
+                        'code': e['code'],
+                        'name': e['name'] ??
+                            e['code'], // fallback if name is missing
+                      })
+                  .toList();
+            }
+          }
+        }
+      }
+    }
+
+    await storeSchema(formConfig);
   }
 
   FutureOr<int> _getBatchSize() async {
@@ -702,7 +860,8 @@ class ProjectBloc extends Bloc<ProjectEvent, ProjectState> {
   FutureOr<void> downloadStockDataBasedOnRole(
       List<ProjectFacilityModel> projectFacilities,
       List<FacilityModel> allFacilities,
-      String? boundaryType, Cycle? currentRunningCycle) async {
+      String? boundaryType,
+      Cycle? currentRunningCycle) async {
     final userObject = await localSecureStore.userRequestModel;
     final userRoles = userObject!.roles.map((e) => e.code);
     final lastChangedSince = currentRunningCycle?.startDate;
@@ -774,8 +933,9 @@ class ProjectBloc extends Bloc<ProjectEvent, ProjectState> {
     var offset = 0;
     var initialLimit = Constants.apiCallLimit;
 
+    //TODO: have to add new package with lastChangedSince
     final stockEntries = await stockRemoteRepository.search(stockSearchModel,
-        limit: initialLimit, offSet: offset, lastChangedSince: lastChangedSince);
+        limit: initialLimit, offSet: offset);
 
     return stockEntries;
   }
@@ -815,5 +975,8 @@ enum ProjectSyncErrorType {
   projectFacilities,
   productVariants,
   serviceDefinitions,
-  boundary
+  boundary,
+  facilities,
+  appConfig,
+  attendance,
 }

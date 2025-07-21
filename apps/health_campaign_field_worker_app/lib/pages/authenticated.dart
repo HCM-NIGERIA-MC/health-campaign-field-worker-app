@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:digit_components/widgets/atoms/digit_toaster.dart';
@@ -6,6 +7,7 @@ import 'package:digit_components/widgets/digit_dialog.dart';
 import 'package:digit_components/widgets/digit_icon_tile.dart';
 
 import 'package:digit_data_model/data_model.dart';
+import 'package:digit_forms_engine/blocs/forms/forms.dart';
 import 'package:digit_showcase/showcase_widget.dart';
 import 'package:digit_ui_components/digit_components.dart';
 import 'package:digit_ui_components/services/location_bloc.dart';
@@ -27,6 +29,8 @@ import 'package:registration_delivery/models/entities/project_beneficiary.dart';
 import 'package:registration_delivery/models/entities/referral.dart';
 import 'package:registration_delivery/models/entities/side_effect.dart';
 import 'package:registration_delivery/models/entities/task.dart';
+import 'package:registration_delivery/router/registration_delivery_router.gm.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sync_service/sync_service_lib.dart';
 import 'package:survey_form/survey_form.dart';
 
@@ -237,6 +241,9 @@ class AuthenticatedPageWrapper extends StatelessWidget {
                               LocalRepository<ReferralModel,
                                   ReferralSearchModel>>(),
                         ),
+                      ),
+                      BlocProvider(
+                        create: (_) => FormsBloc(),
                       ),
                     ],
                     child: AutoRouter(
@@ -460,10 +467,67 @@ class AuthenticatedPageWrapper extends StatelessWidget {
     return languages
         ?.map((e) => SidebarItem(
               title: e.label,
-              onPressed: () {
+              onPressed: () async {
                 int index = languages.indexWhere(
                   (ele) => ele.value.toString() == e.value.toString(),
                 );
+
+                /// TODO: NEED TO EXTRACT THIS AS UTIL FUNCTION
+                String? dynamicModule;
+                final isInRegistrationFlow = context.router.current.name
+                    .contains(RegistrationDeliveryWrapperRoute.name);
+
+                if (isInRegistrationFlow) {
+                  final prefs = await SharedPreferences.getInstance();
+                  final schemaJsonRaw = prefs.getString('app_config_schemas');
+
+                  if (schemaJsonRaw != null) {
+                    final allSchemas =
+                        json.decode(schemaJsonRaw) as Map<String, dynamic>;
+                    final projectId = context.selectedProject.referenceID;
+
+                    // Initialize empty list to collect modules
+                    final List<String> modules = [];
+
+                    // Handle registrationflow
+                    final registrationSchemaEntry =
+                        allSchemas['REGISTRATIONFLOW'] as Map<String, dynamic>?;
+                    final registrationSchemaData =
+                        registrationSchemaEntry?['data'];
+                    final registrationFlowName = registrationSchemaData?['name']
+                        ?.toString()
+                        .toLowerCase();
+                    if (registrationFlowName != null && projectId != null) {
+                      modules.add('hcm-$registrationFlowName-$projectId');
+                    }
+
+                    // Handle deliveryflow
+                    final deliverySchemaEntry =
+                        allSchemas['DELIVERYFLOW'] as Map<String, dynamic>?;
+                    final deliverySchemaData = deliverySchemaEntry?['data'];
+                    final deliveryFlowName =
+                        deliverySchemaData?['name']?.toString().toLowerCase();
+                    if (deliveryFlowName != null && projectId != null) {
+                      modules.add('hcm-$deliveryFlowName-$projectId');
+                    }
+
+                    // Combine into a single string
+                    dynamicModule = modules.join(',');
+                  }
+                }
+
+                final staticModules = localizationModulesList.interfaces
+                    .where(
+                        (element) => element.type == Modules.localizationModule)
+                    .map((e) => e.name.toString())
+                    .followedBy([
+                  'hcm-boundary-${envConfig.variables.hierarchyType}'
+                ]).join(',');
+
+                final combinedModules = dynamicModule != null
+                    ? '$dynamicModule,$staticModules'
+                    : staticModules;
+
                 context
                     .read<LocalizationBloc>()
                     .add(LocalizationEvent.onLoadLocalization(

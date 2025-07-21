@@ -1,6 +1,7 @@
 import 'package:attendance_management/models/entities/attendance_log.dart';
 import 'package:attendance_management/models/entities/attendance_register.dart';
 import 'package:digit_components/theme/theme.dart';
+import 'package:digit_crud_bloc/repositories/local/search_entity_repository.dart';
 import 'package:digit_data_model/data_model.dart';
 import 'package:digit_dss/digit_dss.dart';
 import 'package:digit_scanner/blocs/scanner.dart';
@@ -79,6 +80,14 @@ class MainApplicationState extends State<MainApplication>
           create: (context) => IndividualGlobalSearchRepository(
             widget.sql,
             IndividualOpLogManager(widget.isar),
+          ),
+        ),
+        RepositoryProvider<SearchEntityRepository>(
+          create: (context) => SearchEntityRepository(
+            widget.sql,
+            IndividualOpLogManager(widget.isar),
+
+            /// todo: need to be changed to make is generic as this won't affect anything right now
           ),
         ),
         RepositoryProvider<HouseHoldGlobalSearchRepository>(
@@ -233,7 +242,8 @@ class MainApplicationState extends State<MainApplication>
 
                     final localizationModulesList = appConfig.backendInterface;
                     var firstLanguage;
-                    firstLanguage = appConfig.languages?.lastOrNull?.value;
+                    firstLanguage =
+                        "en_NG"; //appConfig.languages?.lastOrNull?.value;
 
                     final selectedLocale =
                         AppSharedPreferences().getSelectedLocale ??

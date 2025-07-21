@@ -15,6 +15,9 @@ import 'package:inventory_management/data/repositories/oplog/oplog.dart';
 import 'package:inventory_management/models/entities/stock.dart';
 import 'package:isar/isar.dart';
 import 'package:provider/provider.dart';
+import 'package:registration_delivery/data/repositories/local/unique_id_pool.dart';
+import 'package:registration_delivery/data/repositories/remote/unique_id_pool.dart';
+import 'package:registration_delivery/models/entities/unique_id_pool.dart';
 import 'package:survey_form/data/repositories/local/service.dart';
 import 'package:survey_form/data/repositories/local/service_definition.dart';
 import 'package:survey_form/data/repositories/oplog/oplog.dart';
@@ -239,6 +242,13 @@ class NetworkManagerProviderWrapper extends StatelessWidget {
         create: (_) => SideEffectLocalRepository(
           sql,
           SideEffectOpLogManager(isar),
+        ),
+      ),
+      RepositoryProvider<
+          LocalRepository<UniqueIdPoolModel, UniqueIdPoolSearchModel>>(
+        create: (_) => UniqueIdPoolLocalRepository(
+          sql,
+          UniqueIdOpLogManager(isar),
         ),
       ),
       RepositoryProvider<RegistrationDeliveryAddressRepo>(
@@ -468,6 +478,11 @@ class NetworkManagerProviderWrapper extends StatelessWidget {
               dio,
               actionMap: actions,
             ),
+          ),
+        if (value == DataModelType.uniqueId)
+          RepositoryProvider<UniqueIdPoolRemoteRepository>(
+            create: (context) =>
+                UniqueIdPoolRemoteRepository(dio, actionMap: actions),
           ),
         if (value == DataModelType.serviceDefinition)
           RepositoryProvider<
