@@ -96,12 +96,6 @@ class MainApplicationState extends State<MainApplication>
             HouseholdOpLogManager(widget.isar),
           ),
         ),
-        RepositoryProvider<IndividualGlobalSearchSMCRepository>(
-          create: (context) => IndividualGlobalSearchSMCRepository(
-            widget.sql,
-            IndividualOpLogManager(widget.isar),
-          ),
-        ),
       ],
       child: BlocProvider(
         create: (context) => AppInitializationBloc(

@@ -474,6 +474,7 @@ abstract class _$AppRouter extends RootStackRouter {
     ...AttendanceRoute().pagesMap,
     ...ComplaintsRoute().pagesMap,
     ...SurveyFormRoute().pagesMap,
+    ...FormsRoute().pagesMap,
   };
 }
 
@@ -1561,64 +1562,6 @@ class CustomWarehouseDetailsRouteArgs {
   @override
   String toString() {
     return 'CustomWarehouseDetailsRouteArgs{key: $key, appLocalizations: $appLocalizations}';
-  }
-}
-
-/// generated route for
-/// [DigitScannerPage]
-class DigitScannerRoute extends PageRouteInfo<DigitScannerRouteArgs> {
-  DigitScannerRoute({
-    Key? key,
-    ScannerLocalization? appLocalizations,
-    required int quantity,
-    required bool isGS1code,
-    bool singleValue = false,
-    bool isEditEnabled = false,
-    List<PageRouteInfo>? children,
-  }) : super(
-          DigitScannerRoute.name,
-          args: DigitScannerRouteArgs(
-            key: key,
-            appLocalizations: appLocalizations,
-            quantity: quantity,
-            isGS1code: isGS1code,
-            singleValue: singleValue,
-            isEditEnabled: isEditEnabled,
-          ),
-          initialChildren: children,
-        );
-
-  static const String name = 'DigitScannerRoute';
-
-  static const PageInfo<DigitScannerRouteArgs> page =
-      PageInfo<DigitScannerRouteArgs>(name);
-}
-
-class DigitScannerRouteArgs {
-  const DigitScannerRouteArgs({
-    this.key,
-    this.appLocalizations,
-    required this.quantity,
-    required this.isGS1code,
-    this.singleValue = false,
-    this.isEditEnabled = false,
-  });
-
-  final Key? key;
-
-  final ScannerLocalization? appLocalizations;
-
-  final int quantity;
-
-  final bool isGS1code;
-
-  final bool singleValue;
-
-  final bool isEditEnabled;
-
-  @override
-  String toString() {
-    return 'DigitScannerRouteArgs{key: $key, appLocalizations: $appLocalizations, quantity: $quantity, isGS1code: $isGS1code, singleValue: $singleValue, isEditEnabled: $isEditEnabled}';
   }
 }
 

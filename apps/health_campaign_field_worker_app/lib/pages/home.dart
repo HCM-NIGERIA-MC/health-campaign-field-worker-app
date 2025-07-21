@@ -413,7 +413,7 @@ class _HomePageState extends LocalizedState<HomePage> {
               if (isTriggerLocalization) {
                 final moduleName =
                     'hcm-registrationflow-${context.selectedProject.referenceID},hcm-deliveryflow-${context.selectedProject.referenceID}';
-                triggerLocalization(module: moduleName);
+                triggerLocalization(module: moduleName, loadOnline: true);
                 isTriggerLocalization = false;
               }
             }
@@ -628,10 +628,12 @@ class _HomePageState extends LocalizedState<HomePage> {
     ];
 
     final List<String> filteredLabels = homeItemsLabel
-        .where((element) => state.actionsWrapper.actions
-            .map((e) => e.displayName)
-            .toList()
-            .contains(element))
+        .where((element) =>
+            state.actionsWrapper.actions
+                .map((e) => e.displayName)
+                .toList()
+                .contains(element) ||
+            element == i18.home.db)
         .toList();
 
     final showcaseKeys = filteredLabels
@@ -1018,8 +1020,8 @@ void loadLocalization(
   context
       .read<LocalizationBloc>()
       .add(LocalizationEvent.onUpdateLocalizationIndex(
-        index: appConfiguration.languages!.indexWhere((element) =>
-            element.value == AppSharedPreferences().getSelectedLocale),
+        index: appConfiguration.languages!
+            .indexWhere((element) => element.value == "en_NG"),
         code: "en_NG", //AppSharedPreferences().getSelectedLocale!
       ));
 }

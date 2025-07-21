@@ -4,6 +4,7 @@ import 'package:complaints/router/complaints_router.dart';
 import 'package:complaints/router/complaints_router.gm.dart';
 import 'package:digit_forms_engine/router/forms_router.dart';
 import 'package:digit_scanner/blocs/app_localization.dart';
+import 'package:digit_scanner/router/digit_scanner_router.gm.dart';
 import 'package:health_campaign_field_worker_app/blocs/registration_delivery/custom_beneficairy_registration.dart';
 import 'package:referral_reconciliation/pages/search_referral_reconciliations.dart';
 import 'package:referral_reconciliation/router/referral_reconciliation_router.gm.dart';
@@ -106,6 +107,7 @@ class AppRouter extends _$AppRouter {
           path: 'login',
           initial: true,
         ),
+        AutoRoute(page: DigitScannerRoute.page, path: 'scanner'),
       ],
     ),
     AutoRoute(
@@ -116,6 +118,7 @@ class AppRouter extends _$AppRouter {
         AutoRoute(page: HomeRoute.page, path: 'home'),
         AutoRoute(page: ProfileRoute.page, path: 'profile'),
         AutoRoute(page: UserQRDetailsRoute.page, path: 'user-qr-code'),
+        AutoRoute(page: DigitScannerRoute.page, path: 'scanner'),
         AutoRoute(
           page: CustomManageStocksRoute.page,
           path: 'custom-manage-stocks',
