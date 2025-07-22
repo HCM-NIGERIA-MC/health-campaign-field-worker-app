@@ -62,6 +62,7 @@ import '../utils/i18_key_constants.dart' as i18;
 import '../utils/least_level_boundary_singleton.dart';
 import '../utils/utils.dart';
 import '../widgets/header/back_navigation_help_header.dart';
+import '../widgets/home/custom_progress_bar.dart';
 import '../widgets/home/home_item_card.dart';
 import '../widgets/localized.dart';
 import '../widgets/showcase/config/showcase_constants.dart';
@@ -163,18 +164,18 @@ class _HomePageState extends LocalizedState<HomePage> {
                 showHelp: false,
               ),
               // TODO: Work on it later
-              // skipProgressBar
-              //     ? const SizedBox.shrink()
-              //     : homeShowcaseData.distributorProgressBar.buildWith(
-              //         child: CustomBeneficiaryProgressBar(
-              //           label: localizations.translate(
-              //             i18.home.progressIndicatorTitle,
-              //           ),
-              //           prefixLabel: localizations.translate(
-              //             i18.home.progressIndicatorPrefixLabel,
-              //           ),
-              //         ),
-              //       ),
+              skipProgressBar
+                  ? const SizedBox.shrink()
+                  : homeShowcaseData.distributorProgressBar.buildWith(
+                      child: CustomBeneficiaryProgressBar(
+                        label: localizations.translate(
+                          i18.home.progressIndicatorTitle,
+                        ),
+                        prefixLabel: localizations.translate(
+                          i18.home.progressIndicatorPrefixLabel,
+                        ),
+                      ),
+                    ),
             ],
           ),
           footer: Padding(
