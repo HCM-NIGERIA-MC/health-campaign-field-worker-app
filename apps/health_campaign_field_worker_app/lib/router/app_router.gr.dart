@@ -81,6 +81,18 @@ abstract class _$AppRouter extends RootStackRouter {
         ),
       );
     },
+    CustomHouseholdAcknowledgementRoute.name: (routeData) {
+      final args = routeData.argsAs<CustomHouseholdAcknowledgementRouteArgs>(
+          orElse: () => const CustomHouseholdAcknowledgementRouteArgs());
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: CustomHouseholdAcknowledgementPage(
+          key: args.key,
+          appLocalizations: args.appLocalizations,
+          enableViewHousehold: args.enableViewHousehold,
+        ),
+      );
+    },
     CustomInventoryReportDetailsRoute.name: (routeData) {
       final args = routeData.argsAs<CustomInventoryReportDetailsRouteArgs>();
       return AutoRoutePage<dynamic>(
@@ -184,6 +196,17 @@ abstract class _$AppRouter extends RootStackRouter {
           key: args.key,
           appLocalizations: args.appLocalizations,
           projectFacilities: args.projectFacilities,
+        ),
+      );
+    },
+    CustomSearchBeneficiaryRoute.name: (routeData) {
+      final args = routeData.argsAs<CustomSearchBeneficiaryRouteArgs>(
+          orElse: () => const CustomSearchBeneficiaryRouteArgs());
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: CustomSearchBeneficiaryPage(
+          key: args.key,
+          appLocalizations: args.appLocalizations,
         ),
       );
     },
@@ -727,6 +750,50 @@ class CustomHFCreateReferralWrapperRouteArgs {
 }
 
 /// generated route for
+/// [CustomHouseholdAcknowledgementPage]
+class CustomHouseholdAcknowledgementRoute
+    extends PageRouteInfo<CustomHouseholdAcknowledgementRouteArgs> {
+  CustomHouseholdAcknowledgementRoute({
+    Key? key,
+    RegistrationDeliveryLocalization? appLocalizations,
+    bool? enableViewHousehold,
+    List<PageRouteInfo>? children,
+  }) : super(
+          CustomHouseholdAcknowledgementRoute.name,
+          args: CustomHouseholdAcknowledgementRouteArgs(
+            key: key,
+            appLocalizations: appLocalizations,
+            enableViewHousehold: enableViewHousehold,
+          ),
+          initialChildren: children,
+        );
+
+  static const String name = 'CustomHouseholdAcknowledgementRoute';
+
+  static const PageInfo<CustomHouseholdAcknowledgementRouteArgs> page =
+      PageInfo<CustomHouseholdAcknowledgementRouteArgs>(name);
+}
+
+class CustomHouseholdAcknowledgementRouteArgs {
+  const CustomHouseholdAcknowledgementRouteArgs({
+    this.key,
+    this.appLocalizations,
+    this.enableViewHousehold,
+  });
+
+  final Key? key;
+
+  final RegistrationDeliveryLocalization? appLocalizations;
+
+  final bool? enableViewHousehold;
+
+  @override
+  String toString() {
+    return 'CustomHouseholdAcknowledgementRouteArgs{key: $key, appLocalizations: $appLocalizations, enableViewHousehold: $enableViewHousehold}';
+  }
+}
+
+/// generated route for
 /// [CustomInventoryReportDetailsPage]
 class CustomInventoryReportDetailsRoute
     extends PageRouteInfo<CustomInventoryReportDetailsRouteArgs> {
@@ -1114,6 +1181,45 @@ class CustomReferralReconProjectFacilitySelectionRouteArgs {
   @override
   String toString() {
     return 'CustomReferralReconProjectFacilitySelectionRouteArgs{key: $key, appLocalizations: $appLocalizations, projectFacilities: $projectFacilities}';
+  }
+}
+
+/// generated route for
+/// [CustomSearchBeneficiaryPage]
+class CustomSearchBeneficiaryRoute
+    extends PageRouteInfo<CustomSearchBeneficiaryRouteArgs> {
+  CustomSearchBeneficiaryRoute({
+    Key? key,
+    RegistrationDeliveryLocalization? appLocalizations,
+    List<PageRouteInfo>? children,
+  }) : super(
+          CustomSearchBeneficiaryRoute.name,
+          args: CustomSearchBeneficiaryRouteArgs(
+            key: key,
+            appLocalizations: appLocalizations,
+          ),
+          initialChildren: children,
+        );
+
+  static const String name = 'CustomSearchBeneficiaryRoute';
+
+  static const PageInfo<CustomSearchBeneficiaryRouteArgs> page =
+      PageInfo<CustomSearchBeneficiaryRouteArgs>(name);
+}
+
+class CustomSearchBeneficiaryRouteArgs {
+  const CustomSearchBeneficiaryRouteArgs({
+    this.key,
+    this.appLocalizations,
+  });
+
+  final Key? key;
+
+  final RegistrationDeliveryLocalization? appLocalizations;
+
+  @override
+  String toString() {
+    return 'CustomSearchBeneficiaryRouteArgs{key: $key, appLocalizations: $appLocalizations}';
   }
 }
 
@@ -1562,6 +1668,64 @@ class CustomWarehouseDetailsRouteArgs {
   @override
   String toString() {
     return 'CustomWarehouseDetailsRouteArgs{key: $key, appLocalizations: $appLocalizations}';
+  }
+}
+
+/// generated route for
+/// [DigitScannerPage]
+class DigitScannerRoute extends PageRouteInfo<DigitScannerRouteArgs> {
+  DigitScannerRoute({
+    Key? key,
+    ScannerLocalization? appLocalizations,
+    required int quantity,
+    required bool isGS1code,
+    bool singleValue = false,
+    bool isEditEnabled = false,
+    List<PageRouteInfo>? children,
+  }) : super(
+          DigitScannerRoute.name,
+          args: DigitScannerRouteArgs(
+            key: key,
+            appLocalizations: appLocalizations,
+            quantity: quantity,
+            isGS1code: isGS1code,
+            singleValue: singleValue,
+            isEditEnabled: isEditEnabled,
+          ),
+          initialChildren: children,
+        );
+
+  static const String name = 'DigitScannerRoute';
+
+  static const PageInfo<DigitScannerRouteArgs> page =
+      PageInfo<DigitScannerRouteArgs>(name);
+}
+
+class DigitScannerRouteArgs {
+  const DigitScannerRouteArgs({
+    this.key,
+    this.appLocalizations,
+    required this.quantity,
+    required this.isGS1code,
+    this.singleValue = false,
+    this.isEditEnabled = false,
+  });
+
+  final Key? key;
+
+  final ScannerLocalization? appLocalizations;
+
+  final int quantity;
+
+  final bool isGS1code;
+
+  final bool singleValue;
+
+  final bool isEditEnabled;
+
+  @override
+  String toString() {
+    return 'DigitScannerRouteArgs{key: $key, appLocalizations: $appLocalizations, quantity: $quantity, isGS1code: $isGS1code, singleValue: $singleValue, isEditEnabled: $isEditEnabled}';
   }
 }
 
