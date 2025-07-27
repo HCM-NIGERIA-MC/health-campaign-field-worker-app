@@ -514,6 +514,15 @@ class InventoryReportDetails {
   String get partialReturnedQuantityLabel =>
       "INVENTORY_REPORT_DETAILS_PARTIAL_RETURNED_QUANTITY_LABEL";
 
+  String get summaryReport => 'INVENTORY_REPORT_DETAILS_SUMMARY_REPORT_LABEL';
+  String get dateLabel => 'INVENTORY_REPORT_DETAILS_DATE_LABEL';
+  String get householdDistributedLabel =>
+      'DISTRIBUTION_SUMMARY_HOUSEHOLD_DISTRIBUTED_LABEL';
+  String get projectBeneficiaryImpactedLabel =>
+      'DISTRIBUTION_SUMMARY_PROJECT_BENEFICIARY_IMPACTED_LABEL';
+  String get bednetDistributedLabel =>
+      'DISTRIBUTION_SUMMARY_BEDNET_DISTRIBUTED_LABEL';
+
   String get commentIsRequiredText => "COMMENT_IS_REQUIRED_TEXT";
 
   String get checkTheQuantityReceivedText =>
@@ -891,6 +900,8 @@ class Home {
   String get stockReconciliationLabel => 'HOME_STOCK_RECONCILIATION_LABEL';
 
   String get viewReportsLabel => 'HOME_VIEW_REPORTS_LABEL';
+
+  String get viewSummaryReportsLabel => 'VIEW_SUMMARY_REPORTS_LABEL';
 
   String get syncDataLabel => 'HOME_SYNC_DATA_LABEL';
 

@@ -68,6 +68,30 @@ abstract class _$AppRouter extends RootStackRouter {
         ),
       );
     },
+    CustomBeneficiaryDetailsRoute.name: (routeData) {
+      final args = routeData.argsAs<CustomBeneficiaryDetailsRouteArgs>(
+          orElse: () => const CustomBeneficiaryDetailsRouteArgs());
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: CustomBeneficiaryDetailsPage(
+          key: args.key,
+          appLocalizations: args.appLocalizations,
+        ),
+      );
+    },
+    CustomDistributionSummaryReportDetailsRoute.name: (routeData) {
+      final args =
+          routeData.argsAs<CustomDistributionSummaryReportDetailsRouteArgs>(
+              orElse: () =>
+                  const CustomDistributionSummaryReportDetailsRouteArgs());
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: CustomDistributionSummaryReportDetailsPage(
+          key: args.key,
+          appLocalizations: args.appLocalizations,
+        ),
+      );
+    },
     CustomHFCreateReferralWrapperRoute.name: (routeData) {
       final args = routeData.argsAs<CustomHFCreateReferralWrapperRouteArgs>();
       return AutoRoutePage<dynamic>(
@@ -90,6 +114,17 @@ abstract class _$AppRouter extends RootStackRouter {
           key: args.key,
           appLocalizations: args.appLocalizations,
           enableViewHousehold: args.enableViewHousehold,
+        ),
+      );
+    },
+    CustomHouseholdOverviewRoute.name: (routeData) {
+      final args = routeData.argsAs<CustomHouseholdOverviewRouteArgs>(
+          orElse: () => const CustomHouseholdOverviewRouteArgs());
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: CustomHouseholdOverviewPage(
+          key: args.key,
+          appLocalizations: args.appLocalizations,
         ),
       );
     },
@@ -696,6 +731,84 @@ class CustomAcknowledgementRouteArgs {
 }
 
 /// generated route for
+/// [CustomBeneficiaryDetailsPage]
+class CustomBeneficiaryDetailsRoute
+    extends PageRouteInfo<CustomBeneficiaryDetailsRouteArgs> {
+  CustomBeneficiaryDetailsRoute({
+    Key? key,
+    RegistrationDeliveryLocalization? appLocalizations,
+    List<PageRouteInfo>? children,
+  }) : super(
+          CustomBeneficiaryDetailsRoute.name,
+          args: CustomBeneficiaryDetailsRouteArgs(
+            key: key,
+            appLocalizations: appLocalizations,
+          ),
+          initialChildren: children,
+        );
+
+  static const String name = 'CustomBeneficiaryDetailsRoute';
+
+  static const PageInfo<CustomBeneficiaryDetailsRouteArgs> page =
+      PageInfo<CustomBeneficiaryDetailsRouteArgs>(name);
+}
+
+class CustomBeneficiaryDetailsRouteArgs {
+  const CustomBeneficiaryDetailsRouteArgs({
+    this.key,
+    this.appLocalizations,
+  });
+
+  final Key? key;
+
+  final RegistrationDeliveryLocalization? appLocalizations;
+
+  @override
+  String toString() {
+    return 'CustomBeneficiaryDetailsRouteArgs{key: $key, appLocalizations: $appLocalizations}';
+  }
+}
+
+/// generated route for
+/// [CustomDistributionSummaryReportDetailsPage]
+class CustomDistributionSummaryReportDetailsRoute
+    extends PageRouteInfo<CustomDistributionSummaryReportDetailsRouteArgs> {
+  CustomDistributionSummaryReportDetailsRoute({
+    Key? key,
+    AppLocalizations? appLocalizations,
+    List<PageRouteInfo>? children,
+  }) : super(
+          CustomDistributionSummaryReportDetailsRoute.name,
+          args: CustomDistributionSummaryReportDetailsRouteArgs(
+            key: key,
+            appLocalizations: appLocalizations,
+          ),
+          initialChildren: children,
+        );
+
+  static const String name = 'CustomDistributionSummaryReportDetailsRoute';
+
+  static const PageInfo<CustomDistributionSummaryReportDetailsRouteArgs> page =
+      PageInfo<CustomDistributionSummaryReportDetailsRouteArgs>(name);
+}
+
+class CustomDistributionSummaryReportDetailsRouteArgs {
+  const CustomDistributionSummaryReportDetailsRouteArgs({
+    this.key,
+    this.appLocalizations,
+  });
+
+  final Key? key;
+
+  final AppLocalizations? appLocalizations;
+
+  @override
+  String toString() {
+    return 'CustomDistributionSummaryReportDetailsRouteArgs{key: $key, appLocalizations: $appLocalizations}';
+  }
+}
+
+/// generated route for
 /// [CustomHFCreateReferralWrapperPage]
 class CustomHFCreateReferralWrapperRoute
     extends PageRouteInfo<CustomHFCreateReferralWrapperRouteArgs> {
@@ -790,6 +903,45 @@ class CustomHouseholdAcknowledgementRouteArgs {
   @override
   String toString() {
     return 'CustomHouseholdAcknowledgementRouteArgs{key: $key, appLocalizations: $appLocalizations, enableViewHousehold: $enableViewHousehold}';
+  }
+}
+
+/// generated route for
+/// [CustomHouseholdOverviewPage]
+class CustomHouseholdOverviewRoute
+    extends PageRouteInfo<CustomHouseholdOverviewRouteArgs> {
+  CustomHouseholdOverviewRoute({
+    Key? key,
+    RegistrationDeliveryLocalization? appLocalizations,
+    List<PageRouteInfo>? children,
+  }) : super(
+          CustomHouseholdOverviewRoute.name,
+          args: CustomHouseholdOverviewRouteArgs(
+            key: key,
+            appLocalizations: appLocalizations,
+          ),
+          initialChildren: children,
+        );
+
+  static const String name = 'CustomHouseholdOverviewRoute';
+
+  static const PageInfo<CustomHouseholdOverviewRouteArgs> page =
+      PageInfo<CustomHouseholdOverviewRouteArgs>(name);
+}
+
+class CustomHouseholdOverviewRouteArgs {
+  const CustomHouseholdOverviewRouteArgs({
+    this.key,
+    this.appLocalizations,
+  });
+
+  final Key? key;
+
+  final RegistrationDeliveryLocalization? appLocalizations;
+
+  @override
+  String toString() {
+    return 'CustomHouseholdOverviewRouteArgs{key: $key, appLocalizations: $appLocalizations}';
   }
 }
 

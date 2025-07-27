@@ -83,6 +83,11 @@ class _HomePageShowcaseData {
   final inventoryReport = ShowcaseItemBuilder(
     messageLocalizationKey: i18.homeShowcase.inventoryReport,
   );
+
+  final summaryReport = ShowcaseItemBuilder(
+    messageLocalizationKey: i18.home.viewSummaryReportsLabel,
+  );
+
   final hfBeneficiaryReferral = ShowcaseItemBuilder(
     messageLocalizationKey: i18.homeShowcase.beneficiaryReferral,
   );

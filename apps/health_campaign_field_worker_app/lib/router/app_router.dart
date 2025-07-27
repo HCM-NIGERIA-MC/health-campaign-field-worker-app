@@ -21,6 +21,7 @@ import '../blocs/inventory_management/custom_inventory_report.dart';
 import '../blocs/localization/app_localization.dart';
 import '../pages/acknowledgement.dart';
 import '../pages/authenticated.dart';
+import '../pages/beneficiary_report/custom_distribution_summary_report_details.dart';
 import '../pages/inventory_management/qr_scanner.dart';
 import '../pages/inventory_management/view_record_lga.dart';
 import '../pages/boundary_selection.dart';
@@ -46,7 +47,9 @@ import '../pages/profile.dart';
 import '../pages/project_facility_selection.dart';
 import '../pages/project_selection.dart';
 import '../pages/qr_details_page.dart';
+import '../pages/registration_delivery/custom_beneficiary_details.dart';
 import '../pages/registration_delivery/custom_household_acknowledgement.dart';
+import '../pages/registration_delivery/custom_household_overview.dart';
 import '../pages/registration_delivery/custom_search_beneficiary.dart';
 import '../pages/reports/beneficiary/beneficaries_report.dart';
 import '../pages/unauthenticated.dart';
@@ -233,8 +236,14 @@ class AppRouter extends _$AppRouter {
               ...FormsRoute().routes,
               AutoRoute(
                   initial: true,
-                  page: CustomSearchBeneficiaryRoute.page,
+                  page: SearchBeneficiaryRoute.page,
                   path: 'search-beneficiary'),
+              AutoRoute(
+                  page: CustomSearchBeneficiaryRoute.page,
+                  path: 'custom-search-beneficiary'),
+              RedirectRoute(
+                  path: 'search-beneficiary',
+                  redirectTo: 'custom-search-beneficiary'),
               AutoRoute(
                 page: BeneficiaryErrorRoute.page,
                 path: 'beneficiary-error',
@@ -245,11 +254,27 @@ class AppRouter extends _$AppRouter {
               ),
               AutoRoute(
                 page: HouseholdOverviewRoute.page,
-                path: 'overview',
+                path: 'household-overview',
               ),
+              AutoRoute(
+                page: CustomHouseholdOverviewRoute.page,
+                path: 'custom-household-overview',
+              ),
+              // RedirectRoute(
+              //   path: 'household-overview',
+              //   redirectTo: 'custom-household-overview',
+              // ),
               AutoRoute(
                 page: BeneficiaryDetailsRoute.page,
                 path: 'beneficiary-details',
+              ),
+              AutoRoute(
+                page: CustomBeneficiaryDetailsRoute.page,
+                path: 'custom-beneficiary-details',
+              ),
+              RedirectRoute(
+                path: 'beneficiary-details',
+                redirectTo: 'custom-beneficiary-details',
               ),
               AutoRoute(
                 page: HouseholdAcknowledgementRoute.page,
@@ -269,6 +294,10 @@ class AppRouter extends _$AppRouter {
         //   page: StockReconciliationRoute.page,
         //   path: 'stock-reconciliation',
         // ),
+        AutoRoute(
+          page: CustomDistributionSummaryReportDetailsRoute.page,
+          path: 'custom-distribution-report',
+        ),
         AutoRoute(
           page: CustomStockReconciliationRoute.page,
           path: 'custom-stock-reconciliation',

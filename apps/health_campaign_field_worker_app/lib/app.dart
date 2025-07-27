@@ -27,6 +27,7 @@ import 'blocs/localization/localization.dart';
 import 'blocs/project/project.dart';
 import 'blocs/search/individual_global_search_smc.dart';
 import 'blocs/search/search_households_smc.dart';
+import 'blocs/summary_reports/custom_distribution_summary_report.dart';
 import 'data/local_store/app_shared_preferences.dart';
 import 'data/network_manager.dart';
 import 'data/remote_client.dart';
@@ -215,6 +216,16 @@ class MainApplicationState extends State<MainApplication>
                   boundaryRepository: ctx
                       .read<NetworkManager>()
                       .repository<BoundaryModel, BoundarySearchModel>(ctx),
+                ),
+              ),
+              BlocProvider(
+                create: (context) => CustomDistributionSummaryReportBloc(
+                  householdRepository: context
+                      .repository<HouseholdModel, HouseholdSearchModel>(),
+                  taskRepository:
+                      context.repository<TaskModel, TaskSearchModel>(),
+                  projectBeneficiaryRepository: context.repository<
+                      ProjectBeneficiaryModel, ProjectBeneficiarySearchModel>(),
                 ),
               ),
             ],

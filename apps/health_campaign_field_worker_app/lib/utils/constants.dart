@@ -108,6 +108,10 @@ class Constants {
   static const String pipeSeparator = '||';
   static const int stockMaxLimit = 100000000;
 
+  static const String household = 'Household';
+  static const String projectBeneficiary = 'ProjectBeneficiary';
+  static const String bednetDistributed = 'BednetDistributed';
+
   // for stock validation
 
   static const String spaq1 = "SPAQ 1";

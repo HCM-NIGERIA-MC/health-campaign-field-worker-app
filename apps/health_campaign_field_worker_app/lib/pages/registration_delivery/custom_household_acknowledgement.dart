@@ -123,7 +123,7 @@ class CustomHouseholdAcknowledgementPageState
 
     final entries = <MapEntry<int, DigitButton>>[];
 
-    if ((widget.enableViewHousehold ?? false) && primaryProp?.hidden != true) {
+    if (primaryProp?.hidden != true) {
       final order = primaryProp?.order ?? 0;
       entries.add(MapEntry(
         order,

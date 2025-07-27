@@ -386,13 +386,29 @@ class _HomePageState extends LocalizedState<HomePage> {
                 Map<String, dynamic> delTemplatesRaw =
                     deliverySchemaData?['templates'];
 
-                regTemplatesRaw["HouseholdOverview"]
-                    ["navigateTo"] = {"name": "DELIVERYFLOW", "type": "form"};
+                // regTemplatesRaw["HouseholdOverview"]
+                //     ["navigateTo"] = {"name": "DELIVERYFLOW", "type": "form"};
 
-                delTemplatesRaw.remove("BeneficiaryDetails");
+                // registrationSchemaData['pages']['beneficiaryDetails']
+                //     ["navigateTo"] = {"name": "DELIVERYFLOW", "type": "form"};
 
-                registrationSchemaData['pages']['beneficiaryDetails']
-                    ["navigateTo"] = {"name": "DELIVERYFLOW", "type": "form"};
+                deliverySchemaData['pages']["beneficiaryChecklist"]
+                    ["includeInForm"] = false;
+
+                Map<String, dynamic> beneficiaryChecklist =
+                    deliverySchemaData['pages']["beneficiaryChecklist"]
+                        ["properties"];
+
+                Map<String, dynamic> newBeneficiaryChecklist = {};
+                for (int i = 0; i < beneficiaryChecklist.keys.length; i++) {
+                  newBeneficiaryChecklist[
+                          "beneficiary_checklist_health_talk_$i"] =
+                      beneficiaryChecklist[
+                          beneficiaryChecklist.keys.elementAt(i)];
+                }
+
+                deliverySchemaData['pages']["beneficiaryChecklist"]
+                    ["properties"] = newBeneficiaryChecklist;
 
                 final Map<String, dynamic> regTemplateMap =
                     regTemplatesRaw is Map<String, dynamic>
@@ -403,6 +419,29 @@ class _HomePageState extends LocalizedState<HomePage> {
                     delTemplatesRaw is Map<String, dynamic>
                         ? delTemplatesRaw
                         : {};
+
+                regTemplateMap["SearchBeneficiary"]["properties"]
+                    ["searchByID"] = {
+                  "type": "template",
+                  "label": "APPONE_REGISTRATION_SEARCHBENEFICIARY_BY_ID",
+                  "order": 1,
+                  "value": true,
+                  "format": "searchByID",
+                  "hidden": true,
+                  "tooltip": "",
+                  "helpText": "",
+                  "infoText": "",
+                  "readOnly": false,
+                  "fieldName": "searchByID",
+                  "deleteFlag": false,
+                  "innerLabel": "",
+                  "systemDate": false,
+                  "validations": [],
+                  "errorMessage": "",
+                  "includeInForm": true,
+                  "isMultiSelect": false,
+                  "includeInSummary": true
+                };
 
                 final templates = {
                   for (final entry
@@ -483,6 +522,18 @@ class _HomePageState extends LocalizedState<HomePage> {
           label: i18.home.viewReportsLabel,
           onPressed: () {
             context.router.push(CustomInventoryReportSelectionRoute());
+          },
+        ),
+      ),
+      i18.home.viewSummaryReportsLabel:
+          homeShowcaseData.summaryReport.buildWith(
+        child: HomeItemCard(
+          icon: Icons.book,
+          label: i18.home.viewSummaryReportsLabel,
+          onPressed: () {
+            context.router.push(
+              CustomDistributionSummaryReportDetailsRoute(),
+            );
           },
         ),
       ),
@@ -612,6 +663,8 @@ class _HomePageState extends LocalizedState<HomePage> {
       i18.home.stockReconciliationLabel:
           homeShowcaseData.wareHouseManagerStockReconciliation.showcaseKey,
       i18.home.viewReportsLabel: homeShowcaseData.inventoryReport.showcaseKey,
+      i18.home.viewSummaryReportsLabel:
+          homeShowcaseData.summaryReport.showcaseKey,
       i18.home.syncDataLabel: homeShowcaseData.distributorSyncData.showcaseKey,
       i18.home.fileComplaint:
           homeShowcaseData.distributorFileComplaint.showcaseKey,
@@ -632,6 +685,7 @@ class _HomePageState extends LocalizedState<HomePage> {
       i18.home.manageStockLabel,
       i18.home.stockReconciliationLabel,
       i18.home.viewReportsLabel,
+      i18.home.viewSummaryReportsLabel,
       i18.home.syncDataLabel,
       i18.home.fileComplaint,
       i18.home.db,
@@ -644,7 +698,8 @@ class _HomePageState extends LocalizedState<HomePage> {
                 .map((e) => e.displayName)
                 .toList()
                 .contains(element) ||
-            element == i18.home.db)
+            element == i18.home.db ||
+            element == i18.home.viewSummaryReportsLabel)
         .toList();
 
     final showcaseKeys = filteredLabels
