@@ -392,9 +392,6 @@ class _HomePageState extends LocalizedState<HomePage> {
                 // registrationSchemaData['pages']['beneficiaryDetails']
                 //     ["navigateTo"] = {"name": "DELIVERYFLOW", "type": "form"};
 
-                deliverySchemaData['pages']["beneficiaryChecklist"]
-                    ["includeInForm"] = false;
-
                 Map<String, dynamic> beneficiaryChecklist =
                     deliverySchemaData['pages']["beneficiaryChecklist"]
                         ["properties"];
@@ -421,27 +418,29 @@ class _HomePageState extends LocalizedState<HomePage> {
                         : {};
 
                 regTemplateMap["SearchBeneficiary"]["properties"]
-                    ["searchByID"] = {
-                  "type": "template",
-                  "label": "APPONE_REGISTRATION_SEARCHBENEFICIARY_BY_ID",
-                  "order": 1,
-                  "value": true,
-                  "format": "searchByID",
-                  "hidden": true,
-                  "tooltip": "",
-                  "helpText": "",
-                  "infoText": "",
-                  "readOnly": false,
-                  "fieldName": "searchByID",
-                  "deleteFlag": false,
-                  "innerLabel": "",
-                  "systemDate": false,
-                  "validations": [],
-                  "errorMessage": "",
-                  "includeInForm": true,
-                  "isMultiSelect": false,
-                  "includeInSummary": true
-                };
+                    ["searchByID"] = regTemplateMap["SearchBeneficiary"]
+                        ["properties"]["searchByID"] ??
+                    {
+                      "type": "template",
+                      "label": "APPONE_REGISTRATION_SEARCHBENEFICIARY_BY_ID",
+                      "order": 1,
+                      "value": true,
+                      "format": "searchByID",
+                      "hidden": true,
+                      "tooltip": "",
+                      "helpText": "",
+                      "infoText": "",
+                      "readOnly": false,
+                      "fieldName": "searchByID",
+                      "deleteFlag": false,
+                      "innerLabel": "",
+                      "systemDate": false,
+                      "validations": [],
+                      "errorMessage": "",
+                      "includeInForm": true,
+                      "isMultiSelect": false,
+                      "includeInSummary": true
+                    };
 
                 final templates = {
                   for (final entry
@@ -698,8 +697,7 @@ class _HomePageState extends LocalizedState<HomePage> {
                 .map((e) => e.displayName)
                 .toList()
                 .contains(element) ||
-            element == i18.home.db ||
-            element == i18.home.viewSummaryReportsLabel)
+            element == i18.home.db)
         .toList();
 
     final showcaseKeys = filteredLabels

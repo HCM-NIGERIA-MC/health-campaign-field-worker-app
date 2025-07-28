@@ -57,7 +57,6 @@ class CustomSearchBeneficiaryPage extends LocalizedStatefulWidget {
 class _CustomSearchBeneficiaryPageState
     extends LocalizedState<CustomSearchBeneficiaryPage> {
   final TextEditingController searchController = TextEditingController();
-
   bool isProximityEnabled = false, isBeneficiaryIdSearchEnabled = false;
   int offset = 0;
   int limit = 10;
@@ -74,12 +73,9 @@ class _CustomSearchBeneficiaryPageState
   @override
   void initState() {
     // Initialize the BlocWrapper with instances of SearchHouseholdsBloc, SearchMemberBloc, and ProximitySearchBloc
-
     generateBeneficiaryId();
     Future.microtask(() {
-      context
-          .read<RegistrationBloc>()
-          .add(const RegistrationEvent.initialize());
+      context.read<CrudBloc>().add(const CrudEventInitialize());
     });
     blocWrapper = context.read<RegistrationWrapperBloc>();
     context.read<LocationBloc>().add(const LoadLocationEvent());
@@ -134,7 +130,9 @@ class _CustomSearchBeneficiaryPageState
     return BlocListener<RegistrationWrapperBloc, RegistrationWrapperState>(
       listener: (context, createState) {
         if (createState.lastAction == RegistrationWrapperActionType.created ||
-            createState.lastAction == RegistrationWrapperActionType.updated) {
+            createState.lastAction == RegistrationWrapperActionType.updated ||
+            createState.lastAction ==
+                RegistrationWrapperActionType.createAndUpdate) {
           Navigator.of(context, rootNavigator: true).pop();
           final householdModel =
               createState.householdMembers.firstOrNull?.household;
@@ -308,10 +306,10 @@ class _CustomSearchBeneficiaryPageState
                     modelsConfig: modelsConfig,
                     formValues: formData,
                     existingModels: [
-                      household!,
-                      individual!,
-                      projectBeneficiary!,
-                      member!
+                      if (household != null) household,
+                      if (individual != null) individual,
+                      if (projectBeneficiary != null) projectBeneficiary,
+                      if (member != null) member
                     ],
                     context: {
                       "projectId":
@@ -337,13 +335,39 @@ class _CustomSearchBeneficiaryPageState
                     },
                   );
 
+                  final toCreate = <EntityModel>[];
+                  final toUpdate = [...entities];
+
+                  // If projectBeneficiary is null, mark for creation
+                  if (projectBeneficiary == null) {
+                    final projectBeneficiariesToCreate = entities
+                        .where((e) => e.runtimeType == ProjectBeneficiaryModel)
+                        .toList();
+
+                    toCreate.addAll(projectBeneficiariesToCreate);
+
+                    // Remove from update list
+                    toUpdate.removeWhere(
+                        (e) => projectBeneficiariesToCreate.contains(e));
+                  }
+
                   blocWrapper.add(
-                    RegistrationWrapperEvent.update(entities: entities),
+                    RegistrationWrapperEvent.createAndUpdate(
+                      entitiesToCreate: toCreate,
+                      entitiesToUpdate: toUpdate,
+                    ),
                   );
                 } catch (e) {
-                  print(e);
+                  Navigator.of(context, rootNavigator: true).pop();
+                  // Reset to prevent re-handling
+                  context.read<FormsBloc>().add(
+                        const FormsEvent.clearForm(
+                            schemaKey:
+                                'REGISTRATIONFLOW'), // or create a FormsResetEvent
+                      );
+                  context.router
+                      .push(BeneficiaryErrorRoute(enableViewHousehold: false));
                 }
-                ;
               } else {
                 final modelsConfig = formState.activeSchemaKey == 'DELIVERYFLOW'
                     ? (jsonConfig['delivery']?['models']
@@ -801,7 +825,6 @@ class _CustomSearchBeneficiaryPageState
                             } else if (availableIdCount >=
                                 RegistrationDeliverySingleton()
                                     .beneficiaryIdMinCount!) {
-                              FocusManager.instance.primaryFocus?.unfocus();
                               context.read<FormsBloc>().add(
                                   const FormsEvent.clearForm(
                                       schemaKey: 'REGISTRATIONFLOW'));
@@ -847,6 +870,7 @@ class _CustomSearchBeneficiaryPageState
                                 ));
                                 searchController.clear();
                               }
+                              FocusManager.instance.primaryFocus?.unfocus();
                             }
                             if (availableIdCount <= 0) {
                               WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -855,8 +879,6 @@ class _CustomSearchBeneficiaryPageState
                                     showSkip: true,
                                     localizations: localizations,
                                     shouldProceedFurther: (bool skip) {
-                                      FocusManager.instance.primaryFocus
-                                          ?.unfocus();
                                       context.read<FormsBloc>().add(
                                           const FormsEvent.clearForm(
                                               schemaKey: 'REGISTRATIONFLOW'));
@@ -901,6 +923,7 @@ class _CustomSearchBeneficiaryPageState
                                         searchController.clear();
                                       }
                                     });
+                                FocusManager.instance.primaryFocus?.unfocus();
                               });
                             }
                           },
@@ -1079,6 +1102,8 @@ class _CustomSearchBeneficiaryPageState
                                       onOpenPressed: () async {
                                         final scannerBloc =
                                             context.read<DigitScannerBloc>();
+                                        FocusManager.instance.primaryFocus
+                                            ?.unfocus();
 
                                         if ((i.tasks?.lastOrNull?.status ==
                                                     Status.closeHousehold
@@ -1127,6 +1152,29 @@ class _CustomSearchBeneficiaryPageState
                                             /// as registration is there assuming form won't be null
                                             defaultValues: formData,
                                           ));
+
+                                          blocWrapper.add(RegistrationWrapperEvent
+                                              .fetchDeliveryDetails(
+                                                  projectId:
+                                                      RegistrationDeliverySingleton()
+                                                          .selectedProject!
+                                                          .id,
+                                                  selectedIndividual: null,
+                                                  householdWrapper: HouseholdWrapper(
+                                                      household: i.household,
+                                                      individuals:
+                                                          i.individuals,
+                                                      members: i.members,
+                                                      projectBeneficiaries: i
+                                                          .projectBeneficiaries,
+                                                      tasks: i.tasks,
+                                                      sideEffects:
+                                                          i.sideEffects,
+                                                      referrals: i.referrals),
+                                                  beneficiaryType:
+                                                      RegistrationDeliverySingleton()
+                                                          .beneficiaryType
+                                                          ?.toValue()));
                                         } else {
                                           blocWrapper.add(
                                               const RegistrationWrapperEvent
@@ -1284,7 +1332,6 @@ class _CustomSearchBeneficiaryPageState
           isDisabled: isTextShort,
           onPressed: () {
             if (template?.properties?['searchByID']?.hidden == true) {
-              FocusManager.instance.primaryFocus?.unfocus();
               context.read<FormsBloc>().add(
                   const FormsEvent.clearForm(schemaKey: 'REGISTRATIONFLOW'));
 
@@ -1319,6 +1366,7 @@ class _CustomSearchBeneficiaryPageState
                   },
                 ));
                 searchController.clear();
+                FocusManager.instance.primaryFocus?.unfocus();
               }
             } else {
               fetchBeneficiaryIdCount();
@@ -1386,8 +1434,8 @@ class _CustomSearchBeneficiaryPageState
         filters: [
           if (selectedTag != "")
             reg_params.SearchFilter(
-              root:
-                  'projectBeneficiary', // or 'individual', based on what you're searching
+              root: 'projectBeneficiary',
+              // or 'individual', based on what you're searching
               field: 'tag',
               operator: 'equals',
               value: selectedTag,

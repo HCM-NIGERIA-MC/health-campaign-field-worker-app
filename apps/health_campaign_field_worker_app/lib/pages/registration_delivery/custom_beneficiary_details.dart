@@ -17,21 +17,17 @@ import 'package:registration_delivery/blocs/app_localization.dart';
 import 'package:registration_delivery/blocs/registration_wrapper/registration_wrapper_bloc.dart';
 import 'package:registration_delivery/pages/beneficiary/widgets/past_delivery.dart';
 import 'package:registration_delivery/pages/beneficiary/widgets/record_delivery_cycle.dart';
-import 'package:registration_delivery/utils/utils.dart';
 import 'package:registration_delivery/widgets/beneficiary/resource_card.dart';
 
 import 'package:registration_delivery/router/registration_delivery_router.gm.dart';
 import 'package:registration_delivery/utils/i18_key_constants.dart' as i18;
 import 'package:registration_delivery/utils/registration_component_keys.dart'
     as registration_keys;
-// import 'package:registration_delivery/utils/utils.dart';
+import 'package:registration_delivery/utils/utils.dart';
 import 'package:registration_delivery/widgets/back_navigation_help_header.dart';
 import 'package:registration_delivery/widgets/component_wrapper/product_variant_bloc_wrapper.dart';
 import 'package:registration_delivery/widgets/localized.dart';
 import 'package:registration_delivery/widgets/table_card/table_card.dart';
-
-import '../../utils/registration_delivery_utils.dart';
-import '../../widgets/registration_delivery/custom_resource_card.dart';
 
 @RoutePage()
 class CustomBeneficiaryDetailsPage extends LocalizedStatefulWidget {
@@ -72,7 +68,10 @@ class CustomBeneficiaryDetailsPageState
                       .beneficiaryType !=
                   BeneficiaryType.individual
               ? householdMemberWrapper.firstOrNull?.projectBeneficiaries != null
-                  ? [householdMemberWrapper.first.projectBeneficiaries?.first]
+                  ? [
+                      householdMemberWrapper
+                          .first.projectBeneficiaries?.firstOrNull
+                    ]
                   : householdMemberWrapper.firstOrNull?.projectBeneficiaries
                       ?.where(
                         (element) =>
@@ -85,10 +84,10 @@ class CustomBeneficiaryDetailsPageState
           // Extracting task data related to the selected project beneficiary
 
           final taskData = projectBeneficiary != null
-              ? state.householdMembers.first.tasks
+              ? state.householdMembers.firstOrNull?.tasks
                   ?.where((element) =>
                       element.projectBeneficiaryClientReferenceId ==
-                      projectBeneficiary.first?.clientReferenceId)
+                      projectBeneficiary.firstOrNull?.clientReferenceId)
                   .toList()
               : null;
           final deliverState = state.deliveryWrapper;
@@ -219,7 +218,7 @@ class CustomBeneficiaryDetailsPageState
                                                       // );
 
                                                       var productVariants =
-                                                          customFetchProductVariant(
+                                                          fetchProductVariant(
                                                               items,
                                                               state
                                                                   .selectedIndividual,
@@ -339,7 +338,7 @@ class CustomBeneficiaryDetailsPageState
                                                                               },
                                                                               customComponents: const [
                                                                                 {
-                                                                                  'resourceCard': CustomResourceCard()
+                                                                                  'resourceCard': ResourceCard()
                                                                                 }
                                                                               ],
                                                                             ));
@@ -422,7 +421,7 @@ class CustomBeneficiaryDetailsPageState
                                                         currentDose ?? 0 - 1];
 
                                                 var productVariants =
-                                                    customFetchProductVariant(
+                                                    fetchProductVariant(
                                                         items,
                                                         state
                                                             .selectedIndividual,
@@ -543,8 +542,8 @@ class CustomBeneficiaryDetailsPageState
                                                         .beneficiaryType !=
                                                     BeneficiaryType.individual
                                                 ? householdMemberWrapper
-                                                    .first
-                                                    .headOfHousehold
+                                                    .firstOrNull
+                                                    ?.headOfHousehold
                                                     ?.name
                                                     ?.givenName
                                                 : state.selectedIndividual?.name
@@ -560,8 +559,8 @@ class CustomBeneficiaryDetailsPageState
                                                           BeneficiaryType
                                                               .individual
                                                       ? householdMemberWrapper
-                                                          .first
-                                                          .headOfHousehold
+                                                          .firstOrNull
+                                                          ?.headOfHousehold
                                                           ?.identifiers
                                                       : state.selectedIndividual
                                                           ?.identifiers;
@@ -585,8 +584,8 @@ class CustomBeneficiaryDetailsPageState
                                                           BeneficiaryType
                                                               .individual
                                                       ? householdMemberWrapper
-                                                          .first
-                                                          .headOfHousehold
+                                                          .firstOrNull
+                                                          ?.headOfHousehold
                                                           ?.identifiers
                                                       : state.selectedIndividual
                                                           ?.identifiers;
@@ -608,8 +607,8 @@ class CustomBeneficiaryDetailsPageState
                                                           BeneficiaryType
                                                               .individual
                                                       ? householdMemberWrapper
-                                                          .first
-                                                          .headOfHousehold
+                                                          .firstOrNull
+                                                          ?.headOfHousehold
                                                           ?.dateOfBirth
                                                       : state.selectedIndividual
                                                           ?.dateOfBirth;
@@ -642,8 +641,8 @@ class CustomBeneficiaryDetailsPageState
                                                         .beneficiaryType !=
                                                     BeneficiaryType.individual
                                                 ? householdMemberWrapper
-                                                    .first
-                                                    .headOfHousehold
+                                                    .firstOrNull
+                                                    ?.headOfHousehold
                                                     ?.gender
                                                     ?.name
                                                     .sentenceCase
@@ -659,8 +658,8 @@ class CustomBeneficiaryDetailsPageState
                                                         .beneficiaryType !=
                                                     BeneficiaryType.individual
                                                 ? householdMemberWrapper
-                                                    .first
-                                                    .headOfHousehold
+                                                    .firstOrNull
+                                                    ?.headOfHousehold
                                                     ?.mobileNumber
                                                 : state.selectedIndividual
                                                         ?.mobileNumber ??
@@ -669,7 +668,8 @@ class CustomBeneficiaryDetailsPageState
                                                 .deliverIntervention
                                                 .dateOfRegistrationLabel): () {
                                               final date = projectBeneficiary
-                                                  ?.first?.dateOfRegistration;
+                                                  ?.firstOrNull
+                                                  ?.dateOfRegistration;
 
                                               final registrationDate = DateTime
                                                   .fromMillisecondsSinceEpoch(

@@ -38,6 +38,8 @@ import 'package:registration_delivery/widgets/localized.dart';
 import 'package:registration_delivery/widgets/member_card/member_card.dart';
 import 'package:registration_delivery/widgets/table_card/table_card.dart';
 
+import '../../router/app_router.dart';
+
 @RoutePage()
 class CustomHouseholdOverviewPage extends LocalizedStatefulWidget {
   const CustomHouseholdOverviewPage({super.key, super.appLocalizations});
@@ -78,7 +80,8 @@ class _CustomHouseholdOverviewPageState
             .read<RegistrationWrapperBloc>()
             .add(const RegistrationWrapperEvent.clear());
         WidgetsBinding.instance.addPostFrameCallback((_) {
-          context.router.popUntilRouteWithName(SearchBeneficiaryRoute.name);
+          context.router
+              .popUntilRouteWithName(CustomSearchBeneficiaryRoute.name);
         });
       },
       child: BlocBuilder<RegistrationWrapperBloc, RegistrationWrapperState>(
@@ -110,7 +113,7 @@ class _CustomHouseholdOverviewPageState
                                 .add(const RegistrationWrapperEvent.clear());
                             WidgetsBinding.instance.addPostFrameCallback((_) {
                               context.router.popUntilRouteWithName(
-                                  SearchBeneficiaryRoute.name);
+                                  CustomSearchBeneficiaryRoute.name);
                             });
                           },
                         ),
@@ -144,73 +147,92 @@ class _CustomHouseholdOverviewPageState
                                               padding:
                                                   const EdgeInsets.symmetric(
                                                       vertical: spacer2),
-                                              child: DigitButton(
-                                                label: localizations.translate(
-                                                  overviewTemplate
-                                                          ?.properties?[
-                                                              registration_keys
-                                                                  .commonKeys
-                                                                  .secondaryButtonKey]
-                                                          ?.label ??
-                                                      '${RegistrationDeliverySingleton().selectedProject!.projectType}_${i18.memberCard.deliverDetailsUpdateLabel}',
-                                                ),
-                                                capitalizeLetters: false,
-                                                isDisabled: state
-                                                            .householdMembers
-                                                            .first
-                                                            .tasks
-                                                            ?.lastOrNull
-                                                            ?.status ==
-                                                        Status
-                                                            .administeredSuccess
-                                                            .toValue()
-                                                    ? true
-                                                    : false,
-                                                type: DigitButtonType.secondary,
-                                                size: DigitButtonSize.large,
-                                                mainAxisSize: MainAxisSize.max,
-                                                onPressed: () {
-                                                  serviceDefinitionState.when(
-                                                      empty: () {},
-                                                      isloading: () {},
-                                                      serviceDefinitionFetch:
-                                                          (value, model) {
-                                                        if (value
-                                                            .where((element) =>
-                                                                element.code
-                                                                    .toString()
-                                                                    .contains(
-                                                                        '${RegistrationDeliverySingleton().selectedProject!.name}.${RegistrationDeliveryEnums.eligibility.toValue()}'))
-                                                            .toList()
-                                                            .isEmpty) {
-                                                          //TODO: need to handle in smc flow
-                                                          // context.router.push(
-                                                          //   DeliverInterventionRoute(),
-                                                          // );
-                                                        } else {
-                                                          navigateToChecklist(
-                                                              ctx,
-                                                              state
+                                              child: (state
+                                                              .householdMembers
+                                                              .first
+                                                              .tasks
+                                                              ?.lastOrNull
+                                                              ?.status ==
+                                                          Status
+                                                              .administeredSuccess
+                                                              .toValue()
+                                                      ? true
+                                                      : false)
+                                                  ? Offstage()
+                                                  : DigitButton(
+                                                      label: localizations
+                                                          .translate(
+                                                        overviewTemplate
+                                                                ?.properties?[
+                                                                    registration_keys
+                                                                        .commonKeys
+                                                                        .secondaryButtonKey]
+                                                                ?.label ??
+                                                            '${RegistrationDeliverySingleton().selectedProject!.projectType}_${i18.memberCard.deliverDetailsUpdateLabel}',
+                                                      ),
+                                                      capitalizeLetters: false,
+                                                      isDisabled: state
                                                                   .householdMembers
                                                                   .first
-                                                                  .household!
-                                                                  .clientReferenceId,
-                                                              state
-                                                                  .householdMembers
-                                                                  .first
-                                                                  .household
-                                                                  ?.address);
-                                                        }
-                                                      });
-                                                  callReloadEvent(
-                                                      offset: state
-                                                          .householdMembers
-                                                          .first
-                                                          .members!
-                                                          .length,
-                                                      limit: limit);
-                                                },
-                                              ),
+                                                                  .tasks
+                                                                  ?.lastOrNull
+                                                                  ?.status ==
+                                                              Status
+                                                                  .administeredSuccess
+                                                                  .toValue()
+                                                          ? true
+                                                          : false,
+                                                      type: DigitButtonType
+                                                          .secondary,
+                                                      size:
+                                                          DigitButtonSize.large,
+                                                      mainAxisSize:
+                                                          MainAxisSize.max,
+                                                      onPressed: () {
+                                                        serviceDefinitionState
+                                                            .when(
+                                                                empty: () {},
+                                                                isloading:
+                                                                    () {},
+                                                                serviceDefinitionFetch:
+                                                                    (value,
+                                                                        model) {
+                                                                  if (value
+                                                                      .where((element) => element
+                                                                          .code
+                                                                          .toString()
+                                                                          .contains(
+                                                                              '${RegistrationDeliverySingleton().selectedProject!.name}.${RegistrationDeliveryEnums.eligibility.toValue()}'))
+                                                                      .toList()
+                                                                      .isEmpty) {
+                                                                    //TODO: need to handle in smc flow
+                                                                    // context.router.push(
+                                                                    //   DeliverInterventionRoute(),
+                                                                    // );
+                                                                  } else {
+                                                                    navigateToChecklist(
+                                                                        ctx,
+                                                                        state
+                                                                            .householdMembers
+                                                                            .first
+                                                                            .household!
+                                                                            .clientReferenceId,
+                                                                        state
+                                                                            .householdMembers
+                                                                            .first
+                                                                            .household
+                                                                            ?.address);
+                                                                  }
+                                                                });
+                                                        callReloadEvent(
+                                                            offset: state
+                                                                .householdMembers
+                                                                .first
+                                                                .members!
+                                                                .length,
+                                                            limit: limit);
+                                                      },
+                                                    ),
                                             ),
                                           )
                                         : Offstage(
@@ -269,29 +291,9 @@ class _CustomHouseholdOverviewPageState
                                                                       '${RegistrationDeliverySingleton().selectedProject!.name}.${RegistrationDeliveryEnums.eligibility.toValue()}'))
                                                           .toList()
                                                           .isEmpty) {
-                                                        // context.router.push(
-                                                        //   BeneficiaryDetailsRoute(),
-                                                        // );
-
-                                                        final pageName = context
-                                                            .read<FormsBloc>()
-                                                            .state
-                                                            .cachedSchemas[
-                                                                'DELIVERYFLOW']
-                                                            ?.pages
-                                                            .entries
-                                                            .first
-                                                            .key;
                                                         context.router.push(
-                                                            FormsRenderRoute(
-                                                          isEdit: true,
-                                                          currentSchemaKey:
-                                                              'DELIVERYFLOW',
-                                                          pageName: pageName!,
-
-                                                          /// TODO: Need to add formData
-                                                          defaultValues: {},
-                                                        ));
+                                                          BeneficiaryDetailsRoute(),
+                                                        );
                                                       } else {
                                                         navigateToChecklist(
                                                             ctx,

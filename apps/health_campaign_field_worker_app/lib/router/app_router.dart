@@ -233,17 +233,16 @@ class AppRouter extends _$AppRouter {
             page: RegistrationDeliveryWrapperRoute.page,
             path: 'custom-registration-delivery-wrapper',
             children: [
-              ...FormsRoute().routes,
               AutoRoute(
-                  initial: true,
                   page: SearchBeneficiaryRoute.page,
                   path: 'search-beneficiary'),
               AutoRoute(
+                  initial: true,
                   page: CustomSearchBeneficiaryRoute.page,
                   path: 'custom-search-beneficiary'),
-              RedirectRoute(
-                  path: 'search-beneficiary',
-                  redirectTo: 'custom-search-beneficiary'),
+              // RedirectRoute(
+              //     path: 'search-beneficiary',
+              //     redirectTo: 'custom-search-beneficiary'),
               AutoRoute(
                 page: BeneficiaryErrorRoute.page,
                 path: 'beneficiary-error',
@@ -260,10 +259,10 @@ class AppRouter extends _$AppRouter {
                 page: CustomHouseholdOverviewRoute.page,
                 path: 'custom-household-overview',
               ),
-              // RedirectRoute(
-              //   path: 'household-overview',
-              //   redirectTo: 'custom-household-overview',
-              // ),
+              RedirectRoute(
+                path: 'household-overview',
+                redirectTo: 'custom-household-overview',
+              ),
               AutoRoute(
                 page: BeneficiaryDetailsRoute.page,
                 path: 'beneficiary-details',
@@ -287,6 +286,7 @@ class AppRouter extends _$AppRouter {
               RedirectRoute(
                   path: 'household-acknowledgement',
                   redirectTo: 'custom-household-acknowledgement'),
+              ...FormsRoute().routes,
             ]),
 
         // Inventory Route

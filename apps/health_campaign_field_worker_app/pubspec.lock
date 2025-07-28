@@ -541,18 +541,18 @@ packages:
     dependency: "direct main"
     description:
       name: digit_crud_bloc
-      sha256: "270499860c22a240bae74b9ce26cff49ca3a721123c47b5415c4ee1403de53ad"
+      sha256: bb490186c910064cc242f4dfa9d7423d86f6368db638703f9fc807de6e876ca3
       url: "https://pub.dev"
     source: hosted
-    version: "0.0.1-dev"
+    version: "0.0.2-dev"
   digit_data_converter:
     dependency: "direct main"
     description:
       name: digit_data_converter
-      sha256: "9fd3b226dfb3ad9ae1617746e3f075b1684c055bb405c4dd6a937ac5f7b0c98e"
+      sha256: "7b86a04b5455b913767919f660e5b8cd05cba3a3c0543011b472dd4e7e02f363"
       url: "https://pub.dev"
     source: hosted
-    version: "0.0.1-dev"
+    version: "0.0.3-dev"
   digit_data_model:
     dependency: "direct main"
     description:
@@ -581,10 +581,10 @@ packages:
     dependency: "direct main"
     description:
       name: digit_forms_engine
-      sha256: d42aa88354ff5cccf0903677ef40a14f33ab0ebc8bdc586e3d9130644da2311f
+      sha256: efbe2b82837cecdb4db1ca6556b1fa6eebe8d3fc1ddbb12f0f261cc17e45bf4c
       url: "https://pub.dev"
     source: hosted
-    version: "0.0.1-dev"
+    version: "0.0.2-dev"
   digit_formula_parser:
     dependency: transitive
     description:
@@ -1936,10 +1936,10 @@ packages:
     dependency: "direct main"
     description:
       name: registration_delivery
-      sha256: "5900a678c5a31bf9124bbccf9c7a515298c4a260371364181eeb26c2b826a2fb"
+      sha256: "8e44fb96946a4001f00def549ca36ceace69645a3bd0c89d0843b3bfef71950b"
       url: "https://pub.dev"
     source: hosted
-    version: "1.1.0-dev.2-console"
+    version: "1.1.0-dev.4-console"
   remove_emoji_input_formatter:
     dependency: transitive
     description:
