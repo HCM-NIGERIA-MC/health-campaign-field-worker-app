@@ -249,6 +249,8 @@ class _ViewStockRecordsCDDPageState
                 .value
                 .toString());
 
+            int bednetCount = context.bednet;
+
             int spaq1Count = context.spaq1;
             int spaq2Count = context.spaq2;
 
@@ -258,22 +260,32 @@ class _ViewStockRecordsCDDPageState
                 .firstWhereOrNull((element) => element.key == "productName")
                 ?.value;
 
-            if (productName == Constants.spaq1) {
+            if (productName == Constants.bednet) {
+              bednetCount = totalQty;
+              spaq1Count = 0;
+              spaq2Count = 0;
+              redVasCount = 0;
+              blueVasCount = 0;
+            } else if (productName == Constants.spaq1) {
+              bednetCount = 0;
               spaq1Count = totalQty;
               spaq2Count = 0;
               redVasCount = 0;
               blueVasCount = 0;
             } else if (productName == Constants.spaq2) {
+              bednetCount = 0;
               spaq2Count = totalQty;
               spaq1Count = 0;
               redVasCount = 0;
               blueVasCount = 0;
             } else if (productName == Constants.blueVAS) {
+              bednetCount = 0;
               blueVasCount = totalQty;
               spaq1Count = 0;
               spaq2Count = 0;
               redVasCount = 0;
             } else {
+              bednetCount = 0;
               blueVasCount = 0;
               spaq1Count = 0;
               spaq2Count = 0;
@@ -282,6 +294,7 @@ class _ViewStockRecordsCDDPageState
 
             context.read<AuthBloc>().add(
                   AuthAddSpaqCountsEvent(
+                    bednetCount: 0, // Bednet count is not used here
                     spaq1Count: spaq1Count,
                     spaq2Count: spaq2Count,
                     blueVasCount: blueVasCount,

@@ -172,22 +172,25 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     // emit(const AuthLoadingState());
 
     try {
+      int bednet = await localSecureStore.bednet;
       int spaq1 = await localSecureStore.spaq1;
       int spaq2 = await localSecureStore.spaq2;
       int blueVas = await localSecureStore.blueVas;
       int redVas = await localSecureStore.redVas;
 
+      int additionBednetCount = event.bednetCount;
       int additionSpaq1Count = event.spaq1Count;
       int additionSpaq2Count = event.spaq2Count;
       int additionBlueVasCount = event.blueVasCount;
       int additionRedVasCount = event.redVasCount;
 
+      bednet = bednet + additionBednetCount;
       spaq1 = spaq1 + additionSpaq1Count;
       spaq2 = spaq2 + additionSpaq2Count;
       blueVas = blueVas + additionBlueVasCount;
       redVas = redVas + additionRedVasCount;
 
-      localSecureStore.setSpaqCounts(spaq1, spaq2, blueVas, redVas);
+      localSecureStore.setSpaqCounts(bednet, spaq1, spaq2, blueVas, redVas);
 
       final accessToken = await localSecureStore.accessToken;
       final refreshToken = await localSecureStore.refreshToken;
@@ -207,6 +210,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           userModel: userObject,
           individualId: userIndividualId,
           actionsWrapper: actionsList,
+          bednetCount: bednet,
           spaq1Count: spaq1,
           spaq2Count: spaq2,
           blueVasCount: blueVas,
@@ -229,7 +233,8 @@ class AuthEvent with _$AuthEvent {
     required String tenantId,
   }) = AuthLoginEvent;
 
-  const factory AuthEvent.addSpaqCounts({
+  const factory AuthEvent.addProductCounts({
+    required int bednetCount,
     required int spaq1Count,
     required int spaq2Count,
     required int blueVasCount,
@@ -255,6 +260,7 @@ class AuthState with _$AuthState {
     required UserRequestModel userModel,
     required RoleActionsWrapperModel actionsWrapper,
     String? individualId,
+    final int? bednetCount,
     final int? spaq1Count,
     final int? spaq2Count,
     final int? blueVasCount,

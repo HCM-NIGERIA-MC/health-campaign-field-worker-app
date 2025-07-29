@@ -214,6 +214,8 @@ class _ViewStockRecordsLGAPageState
         final totalQty =
             int.parse(_form.control('quantityReceived').value.toString());
 
+        int bednetCount = context.bednet;
+
         int spaq1Count = context.spaq1;
         int spaq2Count = context.spaq2;
 
@@ -223,22 +225,32 @@ class _ViewStockRecordsLGAPageState
             .firstWhereOrNull((element) => element.key == "productName")
             ?.value;
         // Custom logic based on productName
-        if (productName == Constants.spaq1) {
+        if (productName == Constants.bednet) {
+          bednetCount = totalQty;
+          spaq1Count = 0;
+          spaq2Count = 0;
+          redVasCount = 0;
+          blueVasCount = 0;
+        } else if (productName == Constants.spaq1) {
+          bednetCount = 0;
           spaq1Count = totalQty;
           spaq2Count = 0;
           redVasCount = 0;
           blueVasCount = 0;
         } else if (productName == Constants.spaq2) {
+          bednetCount = 0;
           spaq2Count = totalQty;
           spaq1Count = 0;
           redVasCount = 0;
           blueVasCount = 0;
         } else if (productName == Constants.blueVAS) {
+          bednetCount = 0;
           blueVasCount = totalQty;
           spaq1Count = 0;
           spaq2Count = 0;
           redVasCount = 0;
         } else {
+          bednetCount = 0;
           blueVasCount = 0;
           spaq1Count = 0;
           spaq2Count = 0;
@@ -246,6 +258,7 @@ class _ViewStockRecordsLGAPageState
         }
         context.read<AuthBloc>().add(
               AuthAddSpaqCountsEvent(
+                bednetCount: context.bednet,
                 spaq1Count: spaq1Count,
                 spaq2Count: spaq2Count,
                 blueVasCount: blueVasCount,

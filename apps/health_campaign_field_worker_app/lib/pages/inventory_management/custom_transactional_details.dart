@@ -431,70 +431,6 @@ class CustomTransactionalDetailsPageState
                                                 .control(_deliveryTeamKey)
                                                 .value as String?;
 
-                                            int spaq1 = 0;
-                                            int spaq2 = 0;
-
-                                            int totalQuantity = 0;
-                                            int totalRemainingQuantityInMl =
-                                                context.spaq1;
-
-                                            int totalExpectedUnusedBottles =
-                                                totalRemainingQuantityInMl ~/
-                                                    Constants.mlPerBottle;
-
-                                            int totalExpectedPartialQuantityInMl =
-                                                totalRemainingQuantityInMl %
-                                                    Constants.mlPerBottle;
-
-                                            int totalExpectedPartialBottles =
-                                                totalRemainingQuantityInMl %
-                                                            Constants
-                                                                .mlPerBottle !=
-                                                        0
-                                                    ? 1
-                                                    : 0;
-
-                                            totalQuantity = quantity != null
-                                                ? int.parse(
-                                                    quantity.toString(),
-                                                  )
-                                                : 0;
-
-                                            spaq1 = totalQuantity *
-                                                Constants.mlPerBottle;
-
-                                            if (spaq1 >
-                                                    totalRemainingQuantityInMl &&
-                                                isDistributor &&
-                                                entryType ==
-                                                    StockRecordEntryType
-                                                        .dispatch) {
-                                              DigitToast.show(
-                                                context,
-                                                options: DigitToastOptions(
-                                                  localizations
-                                                      .translate(
-                                                        i18_local.stockDetails
-                                                            .quantityReturnedMaxError,
-                                                      )
-                                                      .replaceAll(
-                                                        "{1}",
-                                                        totalRemainingQuantityInMl
-                                                            .toString(),
-                                                      )
-                                                      .replaceAll(
-                                                        "{2}",
-                                                        totalExpectedUnusedBottles
-                                                            .toString(),
-                                                      ),
-                                                  true,
-                                                  theme,
-                                                ),
-                                              );
-
-                                              return;
-                                            }
-
                                             String? senderId;
                                             String? senderType;
                                             String? receiverId;
@@ -737,25 +673,26 @@ class CustomTransactionalDetailsPageState
                                                 const RecordStockCreateStockEntryEvent(),
                                               );
 
-                                              if (isDistributor) {
-                                                totalQuantity = entryType ==
-                                                        StockRecordEntryType
-                                                            .dispatch
-                                                    ? totalRemainingQuantityInMl *
-                                                        -1
-                                                    : totalQuantity *
-                                                        Constants.mlPerBottle;
+                                              // if (isDistributor) {
+                                              //   totalQuantity = entryType ==
+                                              //           StockRecordEntryType
+                                              //               .dispatch
+                                              //       ? totalRemainingQuantityInMl *
+                                              //           -1
+                                              //       : totalQuantity *
+                                              //           Constants.mlPerBottle;
 
-                                                spaq1 = totalQuantity;
+                                              //   spaq1 = totalQuantity;
 
-                                                context.read<AuthBloc>().add(
-                                                      AuthAddSpaqCountsEvent(
-                                                          spaq1Count: spaq1,
-                                                          spaq2Count: spaq2,
-                                                          blueVasCount: 0,
-                                                          redVasCount: 0),
-                                                    );
-                                              }
+                                              //   context.read<AuthBloc>().add(
+                                              //         AuthAddSpaqCountsEvent(
+                                              //           bednetCount: ,
+                                              //             spaq1Count: spaq1,
+                                              //             spaq2Count: spaq2,
+                                              //             blueVasCount: 0,
+                                              //             redVasCount: 0),
+                                              //       );
+                                              // }
                                             }
                                           });
                                         }

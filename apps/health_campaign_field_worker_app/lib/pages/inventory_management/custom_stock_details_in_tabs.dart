@@ -1078,9 +1078,13 @@ class _DynamicTabsPageState extends LocalizedState<DynamicTabsPage>
       if (submit && context.mounted) {
         isSubmitClicked = true;
 
+        int currentBednetCount = context.bednet;
+
         int currentSpaq1Count = context.spaq1;
 
         int currentSpaq2Count = context.spaq2;
+
+        int bednetCount = 0;
 
         int spaq1Count = 0;
 
@@ -1114,7 +1118,22 @@ class _DynamicTabsPageState extends LocalizedState<DynamicTabsPage>
           // Custom logic based on productName
 
           if (entryType == StockRecordEntryType.dispatch) {
-            if (productName == Constants.spaq1 &&
+            if (productName == Constants.bednet &&
+                (currentBednetCount + totalQty < 0)) {
+              await DigitToast.show(
+                context,
+                options: DigitToastOptions(
+                    localizations.translate(context.isCDD
+                        ? i18_local
+                            .beneficiaryDetails.validationForExcessStockReturn
+                        : i18_local.beneficiaryDetails
+                            .validationForExcessStockDispatch),
+                    true,
+                    theme),
+              );
+              isSubmitClicked = false;
+              return;
+            } else if (productName == Constants.spaq1 &&
                 (currentSpaq1Count + totalQty < 0)) {
               await DigitToast.show(
                 context,
@@ -1147,7 +1166,9 @@ class _DynamicTabsPageState extends LocalizedState<DynamicTabsPage>
             }
           }
 
-          if (productName == Constants.spaq1) {
+          if (productName == Constants.bednet) {
+            bednetCount = totalQty;
+          } else if (productName == Constants.spaq1) {
             spaq1Count = totalQty;
           } else if (productName == Constants.spaq2) {
             spaq2Count = totalQty;
@@ -1184,6 +1205,7 @@ class _DynamicTabsPageState extends LocalizedState<DynamicTabsPage>
 
         context.read<AuthBloc>().add(
               AuthAddSpaqCountsEvent(
+                bednetCount: bednetCount,
                 spaq1Count: spaq1Count,
                 spaq2Count: spaq2Count,
                 blueVasCount: 0,

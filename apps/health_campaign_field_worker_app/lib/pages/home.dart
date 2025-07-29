@@ -472,20 +472,20 @@ class _HomePageState extends LocalizedState<HomePage> {
           },
         ),
       ),
-      i18.home.beneficiaryReferralLabel:
-          homeShowcaseData.hfBeneficiaryReferral.buildWith(
-        child: HomeItemCard(
-          icon: Icons.supervised_user_circle_rounded,
-          label: i18.home.beneficiaryReferralLabel,
-          onPressed: () async {
-            if (isTriggerLocalization) {
-              triggerLocalization();
-              isTriggerLocalization = false;
-            }
-            context.router.push(CustomSearchReferralReconciliationsRoute());
-          },
-        ),
-      ),
+      // i18.home.beneficiaryReferralLabel:
+      //     homeShowcaseData.hfBeneficiaryReferral.buildWith(
+      //   child: HomeItemCard(
+      //     icon: Icons.supervised_user_circle_rounded,
+      //     label: i18.home.beneficiaryReferralLabel,
+      //     onPressed: () async {
+      //       if (isTriggerLocalization) {
+      //         triggerLocalization();
+      //         isTriggerLocalization = false;
+      //       }
+      //       context.router.push(CustomSearchReferralReconciliationsRoute());
+      //     },
+      //   ),
+      // ),
       i18.home.manageStockLabel:
           homeShowcaseData.warehouseManagerManageStock.buildWith(
         child: HomeItemCard(
@@ -536,13 +536,13 @@ class _HomePageState extends LocalizedState<HomePage> {
           },
         ),
       ),
-      i18.home.beneficiaryReferralLabel: HomeItemCard(
-        icon: Icons.supervised_user_circle_rounded,
-        label: i18.home.beneficiaryReferralLabel,
-        onPressed: () async {
-          await context.router.push(CustomSearchReferralReconciliationsRoute());
-        },
-      ),
+      // i18.home.beneficiaryReferralLabel: HomeItemCard(
+      //   icon: Icons.supervised_user_circle_rounded,
+      //   label: i18.home.beneficiaryReferralLabel,
+      //   onPressed: () async {
+      //     await context.router.push(CustomSearchReferralReconciliationsRoute());
+      //   },
+      // ),
       i18.home.syncDataLabel: homeShowcaseData.distributorSyncData.buildWith(
         child: StreamBuilder<Map<String, dynamic>?>(
           stream: FlutterBackgroundService().on('serviceRunning'),
@@ -651,8 +651,8 @@ class _HomePageState extends LocalizedState<HomePage> {
       i18.home.manageAttendanceLabel:
           homeShowcaseData.manageAttendance.showcaseKey,
 
-      i18.home.beneficiaryReferralLabel:
-          homeShowcaseData.hfBeneficiaryReferral.showcaseKey,
+      // i18.home.beneficiaryReferralLabel:
+      //     homeShowcaseData.hfBeneficiaryReferral.showcaseKey,
 
       i18.home.beneficiaryLabel:
           homeShowcaseData.distributorBeneficiaries.showcaseKey,
@@ -678,7 +678,7 @@ class _HomePageState extends LocalizedState<HomePage> {
       // INFO: Need to add items label of package Here
       i18.home.manageAttendanceLabel,
 
-      i18.home.beneficiaryReferralLabel,
+      // i18.home.beneficiaryReferralLabel,
       i18.home.mySurveyForm,
       i18.home.beneficiaryLabel,
       i18.home.manageStockLabel,
