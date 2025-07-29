@@ -294,7 +294,7 @@ class _ViewStockRecordsCDDPageState
 
             context.read<AuthBloc>().add(
                   AuthAddSpaqCountsEvent(
-                    bednetCount: 0, // Bednet count is not used here
+                    bednetCount: bednetCount,
                     spaq1Count: spaq1Count,
                     spaq2Count: spaq2Count,
                     blueVasCount: blueVasCount,

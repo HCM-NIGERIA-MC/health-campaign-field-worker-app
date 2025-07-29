@@ -867,6 +867,21 @@ class ProjectBloc extends Bloc<ProjectEvent, ProjectState> {
     final lastChangedSince = currentRunningCycle?.startDate;
 
     Map<String, String> facilityIdUsageMap = {};
+    List<ProductVariantModel> productVariants = [];
+    List<StockModel> stockEntriesDownloaded = [];
+
+    List<ProjectResourceModel> projectResources =
+        await projectResourceLocalRepository.search(
+      ProjectResourceSearchModel(),
+    );
+
+    for (var projectResource in projectResources) {
+      productVariants = await productVariantRemoteRepository.search(
+        ProductVariantSearchModel(
+          id: [projectResource.resource.productVariantId],
+        ),
+      );
+    }
 
     for (var element in allFacilities) {
       facilityIdUsageMap[element.id] = element?.usage ?? "";
@@ -884,11 +899,9 @@ class ProjectBloc extends Bloc<ProjectEvent, ProjectState> {
         receiverId: receiverIds,
         transactionType: [TransactionType.dispatched.toValue()],
       );
-      final stockEntriesDownloaded =
+      stockEntriesDownloaded =
           await downloadStockEntries(stockSearchModel, lastChangedSince);
       // info : create entries in the local repository
-
-      await createStockDownloadedEntries(stockEntriesDownloaded);
     } else if (userRoles.contains(RolesType.warehouseManager.toValue()) &&
         boundaryType == Constants.lgaBoundaryLevel) {
       List<String> receiverIds =
@@ -900,23 +913,22 @@ class ProjectBloc extends Bloc<ProjectEvent, ProjectState> {
         receiverId: receiverIds,
         transactionType: [TransactionType.dispatched.toValue()],
       );
-      final stockEntriesDownloaded =
+      stockEntriesDownloaded =
           await downloadStockEntries(stockSearchModel, lastChangedSince);
-
-      // info : create entries in the local repository
-      await createStockDownloadedEntries(stockEntriesDownloaded);
-    } else if (userRoles.contains(RolesType.communityDistributor.toValue())) {
+    } else if (userRoles.contains(RolesType.distributor.toValue())) {
       final receiverIds = [context.loggedInUserUuid];
       final stockSearchModel = StockSearchModel(
         receiverId: receiverIds,
         transactionType: [TransactionType.dispatched.toValue()],
       );
-      final stockEntriesDownloaded =
+      stockEntriesDownloaded =
           await downloadStockEntries(stockSearchModel, lastChangedSince);
-
-      // info : create entries in the local repository
-      await createStockDownloadedEntries(stockEntriesDownloaded);
     }
+    final filterStockEntriesDownloaded = stockEntriesDownloaded
+        .where((e) =>
+            productVariants.any((variant) => variant.id == e.productVariantId))
+        .toList();
+    await createStockDownloadedEntries(filterStockEntriesDownloaded);
   }
 
   // info : insert data in db

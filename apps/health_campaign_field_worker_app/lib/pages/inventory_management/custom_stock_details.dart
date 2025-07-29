@@ -1098,7 +1098,7 @@ class CustomStockDetailsPageState
                                                       element.usage ==
                                                       Constants.centralFacility)
                                                   .toList()
-                                              : facilities
+                                              : allFacilities
                                                   .where((element) =>
                                                       element.usage ==
                                                       Constants.lgaFacility)
@@ -1108,12 +1108,12 @@ class CustomStockDetailsPageState
                                             Constants.lgaBoundaryLevel) {
                                           filteredFacilities = entryType ==
                                                   StockRecordEntryType.receipt
-                                              ? facilities
+                                              ? allFacilities
                                                   .where((element) =>
                                                       element.usage ==
                                                       Constants.stateFacility)
                                                   .toList()
-                                              : facilities
+                                              : allFacilities
                                                   .where((element) =>
                                                       element.usage ==
                                                       Constants.healthFacility)
@@ -1121,7 +1121,7 @@ class CustomStockDetailsPageState
                                         } else {
                                           filteredFacilities = context
                                                   .isDistributor
-                                              ? facilities
+                                              ? allFacilities
                                                   .where((element) =>
                                                       element.usage ==
                                                       Constants.healthFacility)
@@ -1129,7 +1129,7 @@ class CustomStockDetailsPageState
                                               : entryType ==
                                                       StockRecordEntryType
                                                           .receipt
-                                                  ? facilities
+                                                  ? allFacilities
                                                       .where((element) =>
                                                           element.usage ==
                                                           Constants.lgaFacility)

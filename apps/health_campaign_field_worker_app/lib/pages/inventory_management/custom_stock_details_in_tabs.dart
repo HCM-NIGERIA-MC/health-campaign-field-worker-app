@@ -389,7 +389,10 @@ class _DynamicTabsPageState extends LocalizedState<DynamicTabsPage>
     switch (entryType) {
       case StockRecordEntryType.receipt:
         pageTitle = i18.stockDetails.receivedPageTitle;
-        if (productName == Constants.spaq1 || productName == Constants.spaq2) {
+        if (productName == Constants.bednet) {
+          quantityCountLabel = i18.stockDetails.quantityReceivedLabel;
+        } else if (productName == Constants.spaq1 ||
+            productName == Constants.spaq2) {
           quantityCountLabel = i18.stockDetails.quantityReceivedLabel;
         } else {
           quantityCountLabel = i18.stockDetails.quantityReceivedLabel;
@@ -399,7 +402,18 @@ class _DynamicTabsPageState extends LocalizedState<DynamicTabsPage>
         pageTitle = InventorySingleton().isWareHouseMgr
             ? i18.stockDetails.issuedPageTitle
             : i18.stockDetails.returnedPageTitle;
-        if (productName == Constants.spaq1 || productName == Constants.spaq2) {
+        if (productName == Constants.bednet) {
+          quantityCountLabel = InventorySingleton().isWareHouseMgr
+              ? i18.stockDetails.quantitySentLabel
+              : i18.stockDetails.quantityReturnedLabel;
+
+          quantityPartialCountLabel =
+              i18_local.stockDetails.quantityPartialReturnedLabel;
+
+          quantityWastedCountLabel =
+              i18_local.stockDetails.quantityWastedReturnedLabel;
+        } else if (productName == Constants.spaq1 ||
+            productName == Constants.spaq2) {
           quantityCountLabel = InventorySingleton().isWareHouseMgr
               ? i18.stockDetails.quantitySentLabel
               : i18.stockDetails.quantityReturnedLabel;
@@ -417,7 +431,13 @@ class _DynamicTabsPageState extends LocalizedState<DynamicTabsPage>
         break;
       case StockRecordEntryType.returned:
         pageTitle = i18.stockDetails.returnedPageTitle;
-        if (productName == Constants.spaq1 || productName == Constants.spaq2) {
+        if (productName == Constants.bednet) {
+          quantityCountLabel =
+              i18_local.stockDetails.quantityUnusedReturnedLabel;
+          quantityPartialCountLabel =
+              i18_local.stockDetails.quantityPartialReturnedLabel;
+        } else if (productName == Constants.spaq1 ||
+            productName == Constants.spaq2) {
           quantityCountLabel =
               i18_local.stockDetails.quantityUnusedReturnedLabel;
           quantityPartialCountLabel =

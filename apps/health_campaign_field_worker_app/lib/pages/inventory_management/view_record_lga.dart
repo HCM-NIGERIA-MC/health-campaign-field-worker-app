@@ -258,7 +258,7 @@ class _ViewStockRecordsLGAPageState
         }
         context.read<AuthBloc>().add(
               AuthAddSpaqCountsEvent(
-                bednetCount: context.bednet,
+                bednetCount: bednetCount,
                 spaq1Count: spaq1Count,
                 spaq2Count: spaq2Count,
                 blueVasCount: blueVasCount,
