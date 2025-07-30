@@ -1,5 +1,6 @@
 import 'package:attendance_management/router/attendance_router.dart';
 import 'package:attendance_management/router/attendance_router.gm.dart';
+import 'package:complaints/blocs/localization/app_localization.dart';
 import 'package:complaints/router/complaints_router.dart';
 import 'package:complaints/router/complaints_router.gm.dart';
 import 'package:digit_forms_engine/router/forms_router.dart';
@@ -22,6 +23,7 @@ import '../blocs/localization/app_localization.dart';
 import '../pages/acknowledgement.dart';
 import '../pages/authenticated.dart';
 import '../pages/beneficiary_report/custom_distribution_summary_report_details.dart';
+import '../pages/complaints/custom_complaints_details.dart';
 import '../pages/inventory_management/qr_scanner.dart';
 import '../pages/inventory_management/view_record_lga.dart';
 import '../pages/boundary_selection.dart';
@@ -479,7 +481,7 @@ class AppRouter extends _$AppRouter {
               path: 'complaints-details',
             ),
             AutoRoute(
-              page: ComplaintsDetailsRoute.page,
+              page: CustomComplaintsDetailsRoute.page,
               path: 'custom-complaints-details',
             ),
             RedirectRoute(
