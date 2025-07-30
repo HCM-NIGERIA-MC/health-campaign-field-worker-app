@@ -100,7 +100,11 @@ class _ViewAllTransactionsScreenState extends State<ViewAllTransactionsScreen> {
     }
 
     setState(() {
-      stockList = result;
+      stockList = result.sorted((a, b) {
+        return a.auditDetails?.lastModifiedTime
+                .compareTo(b.auditDetails?.lastModifiedTime ?? 0) ??
+            0;
+      });
     });
   }
 

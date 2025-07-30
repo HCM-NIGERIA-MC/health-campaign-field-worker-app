@@ -1,3 +1,4 @@
+import 'package:collection/collection.dart';
 import 'package:digit_data_model/data_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -34,7 +35,11 @@ class _ViewTransactionsScreenState extends State<ViewTransactionsScreen> {
     final result = await repository.search(StockSearchModel());
 
     setState(() {
-      stockList = result;
+      stockList = result.sorted((a, b) {
+        return a.auditDetails?.lastModifiedTime
+                .compareTo(b.auditDetails?.lastModifiedTime ?? 0) ??
+            0;
+      });
     });
 
     Logger().i("Stock List: $stockList");
