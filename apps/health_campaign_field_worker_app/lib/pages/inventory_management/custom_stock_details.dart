@@ -1088,6 +1088,14 @@ class CustomStockDetailsPageState
                                         List<FacilityModel> filteredFacilities =
                                             [];
 
+                                        Map<String, int> usageCount = {};
+                                        for (var facility in allFacilities) {
+                                          usageCount[facility.usage ?? "null"] =
+                                              (usageCount[facility.usage] ??
+                                                      0) +
+                                                  1;
+                                        }
+
                                         if (context.selectedProject.address
                                                 ?.boundaryType ==
                                             Constants.stateBoundaryLevel) {
@@ -1098,7 +1106,7 @@ class CustomStockDetailsPageState
                                                       element.usage ==
                                                       Constants.centralFacility)
                                                   .toList()
-                                              : allFacilities
+                                              : facilities
                                                   .where((element) =>
                                                       element.usage ==
                                                       Constants.lgaFacility)
@@ -1108,12 +1116,12 @@ class CustomStockDetailsPageState
                                             Constants.lgaBoundaryLevel) {
                                           filteredFacilities = entryType ==
                                                   StockRecordEntryType.receipt
-                                              ? allFacilities
+                                              ? facilities
                                                   .where((element) =>
                                                       element.usage ==
                                                       Constants.stateFacility)
                                                   .toList()
-                                              : allFacilities
+                                              : facilities
                                                   .where((element) =>
                                                       element.usage ==
                                                       Constants.healthFacility)
@@ -1121,7 +1129,7 @@ class CustomStockDetailsPageState
                                         } else {
                                           filteredFacilities = context
                                                   .isDistributor
-                                              ? allFacilities
+                                              ? facilities
                                                   .where((element) =>
                                                       element.usage ==
                                                       Constants.healthFacility)
@@ -1129,7 +1137,7 @@ class CustomStockDetailsPageState
                                               : entryType ==
                                                       StockRecordEntryType
                                                           .receipt
-                                                  ? allFacilities
+                                                  ? facilities
                                                       .where((element) =>
                                                           element.usage ==
                                                           Constants.lgaFacility)
