@@ -245,17 +245,6 @@ abstract class _$AppRouter extends RootStackRouter {
         ),
       );
     },
-    CustomSearchBeneficiaryRoute.name: (routeData) {
-      final args = routeData.argsAs<CustomSearchBeneficiaryRouteArgs>(
-          orElse: () => const CustomSearchBeneficiaryRouteArgs());
-      return AutoRoutePage<dynamic>(
-        routeData: routeData,
-        child: CustomSearchBeneficiaryPage(
-          key: args.key,
-          appLocalizations: args.appLocalizations,
-        ),
-      );
-    },
     CustomSearchReferralReconciliationsRoute.name: (routeData) {
       final args =
           routeData.argsAs<CustomSearchReferralReconciliationsRouteArgs>(
@@ -1383,45 +1372,6 @@ class CustomReferralReconProjectFacilitySelectionRouteArgs {
   @override
   String toString() {
     return 'CustomReferralReconProjectFacilitySelectionRouteArgs{key: $key, appLocalizations: $appLocalizations, projectFacilities: $projectFacilities}';
-  }
-}
-
-/// generated route for
-/// [CustomSearchBeneficiaryPage]
-class CustomSearchBeneficiaryRoute
-    extends PageRouteInfo<CustomSearchBeneficiaryRouteArgs> {
-  CustomSearchBeneficiaryRoute({
-    Key? key,
-    RegistrationDeliveryLocalization? appLocalizations,
-    List<PageRouteInfo>? children,
-  }) : super(
-          CustomSearchBeneficiaryRoute.name,
-          args: CustomSearchBeneficiaryRouteArgs(
-            key: key,
-            appLocalizations: appLocalizations,
-          ),
-          initialChildren: children,
-        );
-
-  static const String name = 'CustomSearchBeneficiaryRoute';
-
-  static const PageInfo<CustomSearchBeneficiaryRouteArgs> page =
-      PageInfo<CustomSearchBeneficiaryRouteArgs>(name);
-}
-
-class CustomSearchBeneficiaryRouteArgs {
-  const CustomSearchBeneficiaryRouteArgs({
-    this.key,
-    this.appLocalizations,
-  });
-
-  final Key? key;
-
-  final RegistrationDeliveryLocalization? appLocalizations;
-
-  @override
-  String toString() {
-    return 'CustomSearchBeneficiaryRouteArgs{key: $key, appLocalizations: $appLocalizations}';
   }
 }
 

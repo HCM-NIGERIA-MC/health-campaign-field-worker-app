@@ -238,10 +238,10 @@ class AppRouter extends _$AppRouter {
               AutoRoute(
                   page: SearchBeneficiaryRoute.page,
                   path: 'search-beneficiary'),
-              AutoRoute(
-                  initial: true,
-                  page: CustomSearchBeneficiaryRoute.page,
-                  path: 'custom-search-beneficiary'),
+              // AutoRoute(
+              //     initial: true,
+              //     page: CustomSearchBeneficiaryRoute.page,
+              //     path: 'custom-search-beneficiary'),
               // RedirectRoute(
               //     path: 'search-beneficiary',
               //     redirectTo: 'custom-search-beneficiary'),
