@@ -80,7 +80,8 @@ class _CustomHouseholdOverviewPageState
             .read<RegistrationWrapperBloc>()
             .add(const RegistrationWrapperEvent.clear());
         WidgetsBinding.instance.addPostFrameCallback((_) {
-          context.router.popUntilRouteWithName(SearchBeneficiaryRoute.name);
+          context.router
+              .popUntilRouteWithName(CustomSearchBeneficiaryRoute.name);
         });
       },
       child: BlocBuilder<RegistrationWrapperBloc, RegistrationWrapperState>(
@@ -112,7 +113,7 @@ class _CustomHouseholdOverviewPageState
                                 .add(const RegistrationWrapperEvent.clear());
                             WidgetsBinding.instance.addPostFrameCallback((_) {
                               context.router.popUntilRouteWithName(
-                                  SearchBeneficiaryRoute.name);
+                                  CustomSearchBeneficiaryRoute.name);
                             });
                           },
                         ),

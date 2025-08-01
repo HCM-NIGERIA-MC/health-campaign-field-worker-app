@@ -146,8 +146,8 @@ class CustomHouseholdAcknowledgementPageState
         DigitButton(
           label: localizations.translate(secondaryProp?.label ??
               i18.acknowledgementSuccess.actionLabelText),
-          onPressed: () =>
-              context.router.popUntilRouteWithName(SearchBeneficiaryRoute.name),
+          onPressed: () => context.router
+              .popUntilRouteWithName(CustomSearchBeneficiaryRoute.name),
           type: DigitButtonType.secondary,
           size: DigitButtonSize.large,
         ),
