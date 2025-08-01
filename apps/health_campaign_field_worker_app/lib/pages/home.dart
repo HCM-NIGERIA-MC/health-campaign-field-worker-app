@@ -365,19 +365,15 @@ class _HomePageState extends LocalizedState<HomePage> {
                 .setHouseholdType(HouseholdType.family);
             final prefs = await SharedPreferences.getInstance();
             final schemaJsonRaw = prefs.getString('app_config_schemas');
-
             if (schemaJsonRaw != null) {
               final allSchemas =
                   json.decode(schemaJsonRaw) as Map<String, dynamic>;
-
               final registrationSchemaEntry =
                   allSchemas['REGISTRATIONFLOW'] as Map<String, dynamic>?;
               final deliverySchemaEntry =
                   allSchemas['DELIVERYFLOW'] as Map<String, dynamic>?;
-
               final registrationSchemaData = registrationSchemaEntry?['data'];
               final deliverySchemaData = deliverySchemaEntry?['data'];
-
               if (registrationSchemaData != null ||
                   deliverySchemaData != null) {
                 // Extract templates from both schemas
@@ -385,17 +381,13 @@ class _HomePageState extends LocalizedState<HomePage> {
                     registrationSchemaData?['templates'];
                 Map<String, dynamic> delTemplatesRaw =
                     deliverySchemaData?['templates'];
-
                 // regTemplatesRaw["HouseholdOverview"]
                 //     ["navigateTo"] = {"name": "DELIVERYFLOW", "type": "form"};
-
                 // registrationSchemaData['pages']['beneficiaryDetails']
                 //     ["navigateTo"] = {"name": "DELIVERYFLOW", "type": "form"};
-
                 Map<String, dynamic> beneficiaryChecklist =
                     deliverySchemaData['pages']["beneficiaryChecklist"]
                         ["properties"];
-
                 Map<String, dynamic> newBeneficiaryChecklist = {};
                 for (int i = 0; i < beneficiaryChecklist.keys.length; i++) {
                   newBeneficiaryChecklist[
@@ -403,20 +395,26 @@ class _HomePageState extends LocalizedState<HomePage> {
                       beneficiaryChecklist[
                           beneficiaryChecklist.keys.elementAt(i)];
                 }
-
                 deliverySchemaData['pages']["beneficiaryChecklist"]
                     ["properties"] = newBeneficiaryChecklist;
-
+                // Navigate into the DeliveryDetails page properties map
+                final deliveryDetails = (deliverySchemaData['pages']
+                    as Map)['DeliveryDetails'] as Map<String, dynamic>;
+                final properties =
+                    deliveryDetails['properties'] as Map<String, dynamic>;
+// 1. Ensure resourceCard exists and set readOnly = true (preserving other fields)
+                properties['resourceCard'] = {
+                  ...?properties['resourceCard'] as Map<String, dynamic>?,
+                  'readOnly': true,
+                };
                 final Map<String, dynamic> regTemplateMap =
                     regTemplatesRaw is Map<String, dynamic>
                         ? regTemplatesRaw
                         : {};
-
                 final Map<String, dynamic> delTemplateMap =
                     delTemplatesRaw is Map<String, dynamic>
                         ? delTemplatesRaw
                         : {};
-
                 regTemplateMap["SearchBeneficiary"]["properties"]
                     ["searchByID"] = regTemplateMap["SearchBeneficiary"]
                         ["properties"]["searchByID"] ??
@@ -441,24 +439,50 @@ class _HomePageState extends LocalizedState<HomePage> {
                       "isMultiSelect": false,
                       "includeInSummary": true
                     };
-
+                final beneficiaryTemplate = delTemplateMap['BeneficiaryDetails']
+                    as Map<String, dynamic>;
+                final templateProperty =
+                    beneficiaryTemplate['properties'] as Map<String, dynamic>;
+                // 2. Add deliveryConditionDialog if not present (or merge if present)
+                templateProperty['deliveryConditionDialog'] = {
+                  ...?properties?['deliveryConditionDialog']
+                      as Map<String, dynamic>?,
+                  'type': 'dynamic',
+                  'enums': [],
+                  'label':
+                      'APPONE_REGISTRATION_BENEFICIARY_DETAILS_deliveryConditiondialog_label',
+                  'order': 3,
+                  'value': '',
+                  'format': 'custom',
+                  'hidden': true,
+                  'tooltip': '',
+                  'helpText': '',
+                  'infoText': '',
+                  'readOnly': false,
+                  'fieldName': 'deliveryConditionDialog',
+                  'deleteFlag': false,
+                  'innerLabel': '',
+                  'systemDate': false,
+                  'validations': [],
+                  'errorMessage': '',
+                  'includeInForm': true,
+                  'isMultiSelect': false,
+                  'includeInSummary': true,
+                };
                 final templates = {
                   for (final entry
                       in {...regTemplateMap, ...delTemplateMap}.entries)
                     entry.key: TemplateConfig.fromJson(
                         entry.value as Map<String, dynamic>)
                 };
-
                 final registrationConfig = json.encode(registrationSchemaData);
                 final deliveryConfig = json.encode(deliverySchemaData);
-
                 RegistrationDeliverySingleton().setTemplateConfigs(templates);
                 RegistrationDeliverySingleton()
                     .setRegistrationConfig(registrationConfig);
                 RegistrationDeliverySingleton()
                     .setDeliveryConfig(deliveryConfig);
               }
-
               if (isTriggerLocalization) {
                 final moduleName =
                     'hcm-registrationflow-${context.selectedProject.referenceID},hcm-deliveryflow-${context.selectedProject.referenceID}';
