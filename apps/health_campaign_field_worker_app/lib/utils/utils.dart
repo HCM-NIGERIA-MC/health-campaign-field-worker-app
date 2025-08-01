@@ -942,42 +942,24 @@ Map<String, dynamic> transformJson(Map<String, dynamic> inputJson) {
 
 Future<void> triggerLocalizationIfUpdated({
   required BuildContext context,
-  required String moduleKey, // e.g., 'REGISTRATIONFLOW'
+  required String moduleKey, // e.g., 'REGISTRATIONFLOW,DELIVERYFLOW'
   required String projectReferenceId,
   required String locale,
 }) async {
-  final prefs = await SharedPreferences.getInstance();
-  final rawSchemas = prefs.getString('app_config_schemas');
-  if (rawSchemas == null) return;
+  final keys = moduleKey.split(',').map((e) => e.trim()).toList();
 
-  final allSchemas = json.decode(rawSchemas) as Map<String, dynamic>;
-  final schemaEntry = allSchemas[moduleKey] as Map<String, dynamic>?;
+  final moduleNames = keys
+      .map((key) => 'hcm-${key.toLowerCase()}-$projectReferenceId')
+      .toList();
 
-  if (schemaEntry == null) return;
+  final fullModuleString = moduleNames.join(',');
 
-  final currentVersion = schemaEntry['currentVersion'];
-  final previousVersion = schemaEntry['previousVersion'];
-  final schemaData = schemaEntry['data'] as Map<String, dynamic>?;
-
-  if (schemaData == null) return;
-
-  final moduleName =
-      'hcm-${schemaData['name'].toLowerCase()}-$projectReferenceId';
-
-  ///TODO; removing check to check current and previous version will refetch localization every time
-  // if (currentVersion != previousVersion) {
   context
       .read<LocalizationBloc>()
       .add(LocalizationEvent.onRemoteLoadLocalization(
-        module: moduleName,
+        module: fullModuleString,
         tenantId: envConfig.variables.tenantId,
         locale: AppSharedPreferences().getSelectedLocale!,
         path: Constants.localizationApiPath,
       ));
-
-  // Update stored previous version
-  schemaEntry['previousVersion'] = currentVersion;
-  allSchemas[moduleKey] = schemaEntry;
-  await prefs.setString('app_config_schemas', json.encode(allSchemas));
-  // }
 }
