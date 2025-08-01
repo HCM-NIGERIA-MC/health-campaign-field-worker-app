@@ -236,6 +236,7 @@ class AppRouter extends _$AppRouter {
             path: 'custom-registration-delivery-wrapper',
             children: [
               AutoRoute(
+                  initial: true,
                   page: SearchBeneficiaryRoute.page,
                   path: 'search-beneficiary'),
               // AutoRoute(
