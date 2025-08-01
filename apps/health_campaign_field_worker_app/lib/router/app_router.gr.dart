@@ -68,17 +68,6 @@ abstract class _$AppRouter extends RootStackRouter {
         ),
       );
     },
-    CustomBeneficiaryDetailsRoute.name: (routeData) {
-      final args = routeData.argsAs<CustomBeneficiaryDetailsRouteArgs>(
-          orElse: () => const CustomBeneficiaryDetailsRouteArgs());
-      return AutoRoutePage<dynamic>(
-        routeData: routeData,
-        child: CustomBeneficiaryDetailsPage(
-          key: args.key,
-          appLocalizations: args.appLocalizations,
-        ),
-      );
-    },
     CustomComplaintsDetailsRoute.name: (routeData) {
       final args = routeData.argsAs<CustomComplaintsDetailsRouteArgs>(
           orElse: () => const CustomComplaintsDetailsRouteArgs());
@@ -738,45 +727,6 @@ class CustomAcknowledgementRouteArgs {
   @override
   String toString() {
     return 'CustomAcknowledgementRouteArgs{key: $key, appLocalizations: $appLocalizations, mrnNumber: $mrnNumber, stockRecords: $stockRecords, entryType: $entryType}';
-  }
-}
-
-/// generated route for
-/// [CustomBeneficiaryDetailsPage]
-class CustomBeneficiaryDetailsRoute
-    extends PageRouteInfo<CustomBeneficiaryDetailsRouteArgs> {
-  CustomBeneficiaryDetailsRoute({
-    Key? key,
-    RegistrationDeliveryLocalization? appLocalizations,
-    List<PageRouteInfo>? children,
-  }) : super(
-          CustomBeneficiaryDetailsRoute.name,
-          args: CustomBeneficiaryDetailsRouteArgs(
-            key: key,
-            appLocalizations: appLocalizations,
-          ),
-          initialChildren: children,
-        );
-
-  static const String name = 'CustomBeneficiaryDetailsRoute';
-
-  static const PageInfo<CustomBeneficiaryDetailsRouteArgs> page =
-      PageInfo<CustomBeneficiaryDetailsRouteArgs>(name);
-}
-
-class CustomBeneficiaryDetailsRouteArgs {
-  const CustomBeneficiaryDetailsRouteArgs({
-    this.key,
-    this.appLocalizations,
-  });
-
-  final Key? key;
-
-  final RegistrationDeliveryLocalization? appLocalizations;
-
-  @override
-  String toString() {
-    return 'CustomBeneficiaryDetailsRouteArgs{key: $key, appLocalizations: $appLocalizations}';
   }
 }
 

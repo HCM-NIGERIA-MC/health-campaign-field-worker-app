@@ -242,9 +242,9 @@ class AppRouter extends _$AppRouter {
                   initial: true,
                   page: CustomSearchBeneficiaryRoute.page,
                   path: 'custom-search-beneficiary'),
-              // RedirectRoute(
-              //     path: 'search-beneficiary',
-              //     redirectTo: 'custom-search-beneficiary'),
+              RedirectRoute(
+                  path: 'search-beneficiary',
+                  redirectTo: 'custom-search-beneficiary'),
               AutoRoute(
                 page: BeneficiaryErrorRoute.page,
                 path: 'beneficiary-error',
@@ -268,14 +268,6 @@ class AppRouter extends _$AppRouter {
               AutoRoute(
                 page: BeneficiaryDetailsRoute.page,
                 path: 'beneficiary-details',
-              ),
-              AutoRoute(
-                page: CustomBeneficiaryDetailsRoute.page,
-                path: 'custom-beneficiary-details',
-              ),
-              RedirectRoute(
-                path: 'beneficiary-details',
-                redirectTo: 'custom-beneficiary-details',
               ),
               AutoRoute(
                 page: HouseholdAcknowledgementRoute.page,
