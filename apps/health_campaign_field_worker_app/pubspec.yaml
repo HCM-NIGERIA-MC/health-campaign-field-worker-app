@@ -67,7 +67,7 @@ dependencies:
   permission_handler: ^11.3.1
   multi_select_flutter: ^4.1.3
   inventory_management: 1.0.7-dev.1
-  registration_delivery: 1.1.0-dev.4-console
+  registration_delivery: 1.1.0-dev.5-console
   survey_form: 1.0.3
   crypto: 3.0.3
   referral_reconciliation: 1.0.6
