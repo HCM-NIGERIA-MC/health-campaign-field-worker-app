@@ -38,7 +38,9 @@ import 'package:registration_delivery/widgets/localized.dart';
 import 'package:registration_delivery/widgets/member_card/member_card.dart';
 import 'package:registration_delivery/widgets/table_card/table_card.dart';
 
+import '../../utils/i18_key_constants.dart' as i18_local;
 import '../../router/app_router.dart';
+import '../../utils/utils.dart';
 
 @RoutePage()
 class CustomHouseholdOverviewPage extends LocalizedStatefulWidget {
@@ -274,6 +276,64 @@ class _CustomHouseholdOverviewPageState
                                                   ? true
                                                   : false,
                                               onPressed: () async {
+                                                int bednet = context.bednet;
+                                                String descriptionText =
+                                                    localizations.translate(
+                                                        i18_local
+                                                            .beneficiaryDetails
+                                                            .insufficientStockMessage);
+                                                if (bednet <= 0) {
+                                                  descriptionText +=
+                                                      "\n ${localizations.translate(i18_local.beneficiaryDetails.bednetUnit)}";
+                                                  return showCustomPopup(
+                                                    context: context,
+                                                    builder: (popupContext) =>
+                                                        Popup(
+                                                      title: localizations
+                                                          .translate(i18_local
+                                                              .beneficiaryDetails
+                                                              .insufficientStockHeading),
+                                                      onOutsideTap: () {
+                                                        Navigator.of(
+                                                                popupContext)
+                                                            .pop(false);
+                                                      },
+                                                      description:
+                                                          descriptionText,
+                                                      type: PopUpType.simple,
+                                                      actions: [
+                                                        DigitButton(
+                                                          label: localizations
+                                                              .translate(
+                                                            i18_local
+                                                                .beneficiaryDetails
+                                                                .goToHome,
+                                                          ),
+                                                          onPressed: () {
+                                                            Navigator.of(
+                                                              popupContext,
+                                                              rootNavigator:
+                                                                  true,
+                                                            ).pop();
+                                                            final parent = context
+                                                                    .router
+                                                                    .parent()
+                                                                as StackRouter;
+                                                            // Pop twice to navigate back to the previous screen
+                                                            parent
+                                                                .popUntilRouteWithName(
+                                                                    HomeRoute
+                                                                        .name);
+                                                          },
+                                                          type: DigitButtonType
+                                                              .primary,
+                                                          size: DigitButtonSize
+                                                              .large,
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  );
+                                                }
                                                 serviceDefinitionState.when(
                                                     empty: () {},
                                                     isloading: () {},

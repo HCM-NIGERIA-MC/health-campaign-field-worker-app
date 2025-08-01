@@ -1401,6 +1401,7 @@ class BeneficiaryDetails {
   String get beneficiaryId => 'BENEFICIARY_ID_TEXT';
   String get backToHouseholdDetails => 'BACK_TO_HOUSEHOLD_DETAILS';
   String get beneficiaryDoseUnit => 'BENEFICIARY_DETAILS_DOSE_UNIT';
+  String get bednetUnit => 'BEDNET_STOCK_ZERO';
   String get spaq1DoseUnit => 'SPAQ1_STOCK_ZERO';
   String get spaq2DoseUnit => 'SPAQ2_STOCK_ZERO';
 

@@ -40,7 +40,10 @@ import 'package:registration_delivery/widgets/beneficiary/view_beneficiary_card.
 import 'package:registration_delivery/widgets/localized.dart';
 import 'package:registration_delivery/widgets/status_filter/status_filter.dart';
 
+import '../../utils/i18_key_constants.dart' as i18_local;
+import '../../router/app_router.dart';
 import '../../utils/registration_delivery/registration_delivery_utils.dart';
+import '../../utils/utils.dart';
 
 @RoutePage()
 class CustomSearchBeneficiaryPage extends LocalizedStatefulWidget {
@@ -1021,6 +1024,43 @@ class _CustomSearchBeneficiaryPageState
           size: DigitButtonSize.large,
           isDisabled: isTextShort,
           onPressed: () async {
+            int bednet = context.bednet;
+            String descriptionText = localizations.translate(
+                i18_local.beneficiaryDetails.insufficientStockMessage);
+            if (bednet <= 0) {
+              descriptionText +=
+                  "\n ${localizations.translate(i18_local.beneficiaryDetails.bednetUnit)}";
+              return showCustomPopup(
+                context: context,
+                builder: (popupContext) => Popup(
+                  title: localizations.translate(
+                      i18_local.beneficiaryDetails.insufficientStockHeading),
+                  onOutsideTap: () {
+                    Navigator.of(popupContext).pop(false);
+                  },
+                  description: descriptionText,
+                  type: PopUpType.simple,
+                  actions: [
+                    DigitButton(
+                      label: localizations.translate(
+                        i18_local.beneficiaryDetails.goToHome,
+                      ),
+                      onPressed: () {
+                        Navigator.of(
+                          popupContext,
+                          rootNavigator: true,
+                        ).pop();
+                        final parent = context.router.parent() as StackRouter;
+                        // Pop twice to navigate back to the previous screen
+                        parent.popUntilRouteWithName(HomeRoute.name);
+                      },
+                      type: DigitButtonType.primary,
+                      size: DigitButtonSize.large,
+                    ),
+                  ],
+                ),
+              );
+            }
             String localBeneficiaryId = await generateBeneficiaryId();
             context
                 .read<FormsBloc>()
