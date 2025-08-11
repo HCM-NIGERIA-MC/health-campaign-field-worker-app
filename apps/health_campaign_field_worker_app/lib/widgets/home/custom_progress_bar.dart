@@ -10,6 +10,7 @@ import 'package:registration_delivery/registration_delivery.dart';
 import '../../../data/repositories/custom_task.dart';
 import '../../../utils/extensions/extensions.dart';
 import '../../data/repositories/custom_project_beneficiary.dart';
+import '../../utils/utils.dart';
 import '../progress_indicator/progress_indicator.dart';
 
 class CustomBeneficiaryProgressBar extends StatefulWidget {
@@ -159,7 +160,7 @@ class _CustomBeneficiaryProgressBarState
 
   @override
   Widget build(BuildContext context) {
-    int target = 60;
+    int target = Constants.targetHouseHold;
 
     return DigitCard(
       child: ProgressIndicatorContainer(

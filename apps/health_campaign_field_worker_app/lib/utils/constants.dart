@@ -112,6 +112,8 @@ class Constants {
   static const String projectBeneficiary = 'ProjectBeneficiary';
   static const String bednetDistributed = 'BednetDistributed';
 
+  static const int targetHouseHold = 200;
+
   // for stock validation
 
   static const String bednet = 'Bednet';
