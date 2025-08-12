@@ -25,7 +25,7 @@ import '../pages/authenticated.dart';
 import '../pages/beneficiary_report/custom_distribution_summary_report_details.dart';
 import '../pages/complaints/custom_complaints_details.dart';
 import '../pages/inventory_management/qr_scanner.dart';
-import '../pages/inventory_management/view_record_lga.dart';
+import '../pages/inventory_management/receive_stock.dart';
 import '../pages/boundary_selection.dart';
 import '../pages/home.dart';
 import '../pages/inventory_management/custom_manage_stock.dart';
@@ -125,13 +125,13 @@ class AppRouter extends _$AppRouter {
           path: 'qr-scanner',
         ),
         AutoRoute(
-          page: ViewStockRecordsLGARoute.page,
+          page: ReceiveStockRoute.page,
           path: 'custom-stock-view-lga',
         ),
-        AutoRoute(
-          page: ViewStockRecordsCDDRoute.page,
-          path: 'custom-stock-view-lga',
-        ),
+        // AutoRoute(
+        //   page: ViewStockRecordsCDDRoute.page,
+        //   path: 'custom-stock-view-lga',
+        // ),
 
         AutoRoute(
           page: CustomMinNumberRoute.page,
