@@ -1,4 +1,5 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:digit_components/widgets/atoms/digit_date_form_picker.dart';
 import 'package:digit_data_model/data_model.dart';
 import 'package:digit_ui_components/digit_components.dart';
 import 'package:digit_ui_components/widgets/atoms/input_wrapper.dart';
@@ -17,17 +18,18 @@ import 'package:reactive_forms/reactive_forms.dart';
 import '../../blocs/auth/auth.dart';
 import '../../router/app_router.dart';
 import '../../utils/constants.dart';
+import '../../utils/date_utils.dart';
 import '../../utils/extensions/extensions.dart';
 import 'package:collection/collection.dart';
 
 import '../../widgets/custom_back_navigation.dart';
 
 @RoutePage()
-class ViewStockRecordsLGAPage extends LocalizedStatefulWidget {
+class ReceiveStockPage extends LocalizedStatefulWidget {
   final String mrnNumber;
   final List<StockModel> stockRecords;
 
-  const ViewStockRecordsLGAPage({
+  const ReceiveStockPage({
     super.key,
     super.appLocalizations,
     required this.mrnNumber,
@@ -35,12 +37,19 @@ class ViewStockRecordsLGAPage extends LocalizedStatefulWidget {
   });
 
   @override
-  State<ViewStockRecordsLGAPage> createState() =>
-      _ViewStockRecordsLGAPageState();
+  State<ReceiveStockPage> createState() => _ViewStockRecordsLGAPageState();
 }
 
-class _ViewStockRecordsLGAPageState
-    extends LocalizedState<ViewStockRecordsLGAPage> {
+class _ViewStockRecordsLGAPageState extends LocalizedState<ReceiveStockPage> {
+  static const _expireDateKey = 'expireDate';
+  static const _quantityReceivedKey = 'quantityReceived';
+  static const _commentsKey = 'comments';
+
+  DateTime before150Years = DateTime(
+      DateTime.now().year - 150, DateTime.now().month, DateTime.now().day);
+  DateTime after150Years = DateTime(
+      DateTime.now().year + 150, DateTime.now().month, DateTime.now().day);
+
   late final FormGroup _form;
   late final Map<String, int> _issuedQuantities;
   bool _commentsRequired = false;
@@ -58,7 +67,7 @@ class _ViewStockRecordsLGAPageState
             '': int.tryParse(stock.quantity ?? '0') ?? 0
     };
     _form = FormGroup({
-      'quantityReceived': FormControl<int>(
+      _quantityReceivedKey: FormControl<int>(
         validators: [
           Validators.required,
           Validators.min(1),
@@ -78,9 +87,14 @@ class _ViewStockRecordsLGAPageState
           })
         ],
       ),
-      'comments': FormControl<String>(),
+      _expireDateKey: FormControl<DateTime>(
+        validators: [
+          Validators.required,
+        ],
+      ),
+      _commentsKey: FormControl<String>(),
     });
-    _form.control('quantityReceived').valueChanges.listen((value) {
+    _form.control(_quantityReceivedKey).valueChanges.listen((value) {
       final received = value ?? 0;
       final productName = widget.stockRecords.first.additionalFields?.fields
               .firstWhereOrNull((f) => f.key == 'productName')
@@ -95,9 +109,9 @@ class _ViewStockRecordsLGAPageState
         });
       }
     });
-    _form.control('comments').setValidators([
+    _form.control(_commentsKey).setValidators([
       Validators.delegate((control) {
-        final received = _form.control('quantityReceived').value ?? 0;
+        final received = _form.control(_quantityReceivedKey).value ?? 0;
         final productName = widget.stockRecords.first.additionalFields?.fields
                 .firstWhereOrNull((f) => f.key == 'productName')
                 ?.value
@@ -112,8 +126,8 @@ class _ViewStockRecordsLGAPageState
         return null;
       })
     ]);
-    _form.control('quantityReceived').valueChanges.listen((value) {
-      _form.control('comments').updateValueAndValidity();
+    _form.control(_quantityReceivedKey).valueChanges.listen((value) {
+      _form.control(_commentsKey).updateValueAndValidity();
     });
     final recordStockBloc = BlocProvider.of<RecordStockBloc>(context);
   }
@@ -127,21 +141,49 @@ class _ViewStockRecordsLGAPageState
   Future<void> _handleSubmission() async {
     if (_form.valid && !isSubmitClicked) {
       isSubmitClicked = true;
+      DateTime? expireDate = _form.control(_expireDateKey).value;
+      Set<String> additionalKeys = {
+        'quantitySent',
+        _quantityReceivedKey,
+        _expireDateKey,
+        _commentsKey,
+      };
       final updatedStocks = widget.stockRecords.map((stock) {
         final additionalFields = stock.additionalFields?.fields ?? [];
+        final filteredAdditionalFields = additionalFields
+            .whereNot((field) => additionalKeys.contains(field.key))
+            .toList();
 
-        final newFields = [
-          ...additionalFields.where((field) =>
-              field.key != 'quantityReceived' && field.key != 'comments'),
-          AdditionalField('quantityReceived',
-              _form.control('quantityReceived').value.toString()),
-          AdditionalField(
-            'quantitySent',
-            stock.quantity ?? '',
-          ),
-          if (_form.control('comments').value != null)
-            AdditionalField('comments', _form.control('comments').value),
-        ];
+        filteredAdditionalFields.addAll([
+          if (stock.quantity != null)
+            AdditionalField(
+              'quantitySent',
+              stock.quantity,
+            ),
+          if (_form.control(_quantityReceivedKey).value != null)
+            AdditionalField(_quantityReceivedKey,
+                _form.control(_quantityReceivedKey).value.toString()),
+          if (expireDate != null)
+            AdditionalField(_expireDateKey, expireDate.millisecondsSinceEpoch),
+          if (_form.control(_commentsKey).value != null)
+            AdditionalField(_commentsKey, _form.control(_commentsKey).value),
+        ]);
+
+        // final newFields = [
+        //   ...additionalFields.where((field) =>
+        //       field.key != _quantityReceivedKey && field.key != _commentsKey),
+        //   AdditionalField(_quantityReceivedKey,
+        //       _form.control(_quantityReceivedKey).value.toString()),
+        //   AdditionalField(
+        //     'quantitySent',
+        //     stock.quantity ?? '',
+        //   ),
+        //   if (_form.control(_expireDateKey).value != null)
+        //     AdditionalField(
+        //         _expireDateKey, _form.control(_expireDateKey).value),
+        //   if (_form.control(_commentsKey).value != null)
+        //     AdditionalField(_commentsKey, _form.control(_commentsKey).value),
+        // ];
 
         return stock.copyWith(
           id: null,
@@ -150,9 +192,9 @@ class _ViewStockRecordsLGAPageState
           referenceId: context.selectedProject.id,
           transactionType: TransactionType.received.toValue(),
           transactionReason: TransactionReason.received.toValue(),
-          quantity: _form.control('quantityReceived').value.toString(),
+          quantity: _form.control(_quantityReceivedKey).value.toString(),
           additionalFields: stock.additionalFields?.copyWith(
-            fields: newFields,
+            fields: filteredAdditionalFields,
           ),
           auditDetails: AuditDetails(
             createdBy: InventorySingleton().loggedInUserUuid,
@@ -212,7 +254,7 @@ class _ViewStockRecordsLGAPageState
         // end of it
         // if (InventorySingleton().isDistributor) {
         final totalQty =
-            int.parse(_form.control('quantityReceived').value.toString());
+            int.parse(_form.control(_quantityReceivedKey).value.toString());
 
         int bednetCount = context.bednet;
 
@@ -410,10 +452,11 @@ class _ViewStockRecordsLGAPageState
                                 ),
                                 const SizedBox(height: 12),
                                 ReactiveWrapperField(
-                                  formControlName: 'quantityReceived',
+                                  formControlName: _quantityReceivedKey,
                                   builder: (field) => InputField(
                                     type: InputType.text,
-                                    label: 'Actual Quantity Received *',
+                                    label: 'Actual Quantity Received',
+                                    isRequired: true,
                                     errorMessage: field.errorText,
                                     keyboardType: TextInputType.number,
                                     onChange: (value) {
@@ -433,9 +476,34 @@ class _ViewStockRecordsLGAPageState
                                         'Received quantity cannot be more than issued quantity',
                                   },
                                 ),
+                                DigitDateFormPicker(
+                                  label: 'Expire Date',
+                                  isRequired: true,
+                                  start: before150Years,
+                                  formControlName: _expireDateKey,
+                                  cancelText: localizations
+                                      .translate(i18.common.coreCommonCancel),
+                                  confirmText: localizations
+                                      .translate(i18.common.coreCommonOk),
+                                  onChangeOfFormControl: (formControl) {
+                                    // Handle changes to the control's value here
+                                    DateTime? value = formControl.value;
+                                    if (value == null) return;
+                                    DigitDOBAge age =
+                                        DigitDateUtils.calculateAge(value);
+                                    if ((age.years == 0 && age.months == 0) ||
+                                        age.months > 11 ||
+                                        (age.years >= 150 && age.months >= 0)) {
+                                      formControl.setErrors({'': true});
+                                    } else {
+                                      formControl.removeError('');
+                                    }
+                                  },
+                                  end: after150Years,
+                                ),
                                 const SizedBox(height: 12),
                                 ReactiveWrapperField(
-                                  formControlName: 'comments',
+                                  formControlName: _commentsKey,
                                   validationMessages: {
                                     'requiredIfShort': (_) =>
                                         'Comments are required if quantity received is less than issued',
