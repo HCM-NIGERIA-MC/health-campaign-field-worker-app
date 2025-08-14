@@ -25,7 +25,13 @@ class LocalSecureStore {
   static const blueVasKey = 'blueVas';
   static const redVasKey = 'redVas';
 
-  List<String> keysToKeep = [spaq1Key, spaq2Key, blueVasKey, redVasKey];
+  List<String> keysToKeep = [
+    bednetKey,
+    spaq1Key,
+    spaq2Key,
+    blueVasKey,
+    redVasKey
+  ];
 
   final storage = const FlutterSecureStorage();
 
