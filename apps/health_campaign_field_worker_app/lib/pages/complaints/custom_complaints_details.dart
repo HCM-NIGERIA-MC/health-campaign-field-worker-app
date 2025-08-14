@@ -404,6 +404,7 @@ class CustomComplaintsDetailsPageState
                                   keyboardType: TextInputType.number,
                                   inputFormatters: [
                                     FilteringTextInputFormatter.digitsOnly,
+                                    LengthLimitingTextInputFormatter(11),
                                   ],
                                   errorMessage: field.errorText,
                                   onChange: (value) => form
@@ -454,16 +455,38 @@ class CustomComplaintsDetailsPageState
                                   i18.complaints.supervisorContactNumber,
                                 ),
                                 child: DigitTextFormInput(
-                                  keyboardType: TextInputType.number,
-                                  initialValue: field.value,
-                                  inputFormatters: [
-                                    FilteringTextInputFormatter.digitsOnly,
-                                  ],
-                                  errorMessage: field.errorText,
-                                  onChange: (value) => form
-                                      .control(_supervisorContactNumber)
-                                      .value = value,
-                                ),
+                                    keyboardType: TextInputType.number,
+                                    initialValue: field.value,
+                                    inputFormatters: [
+                                      FilteringTextInputFormatter.digitsOnly,
+                                      LengthLimitingTextInputFormatter(11),
+                                    ],
+                                    errorMessage: field.errorText,
+                                    onChange: (value) {
+                                      form
+                                          .control(_supervisorContactNumber)
+                                          .value = value;
+                                      if (value.isNotEmpty || value != "") {
+                                        form
+                                            .control(_supervisorContactNumber)
+                                            .setValidators([
+                                          Validators.delegate((validator) =>
+                                              CustomValidator.validMobileNumber(
+                                                  validator)),
+                                          Validators.maxLength(11),
+                                          Validators.minLength(11),
+                                        ], autoValidate: true);
+                                      } else {
+                                        form
+                                            .control(_supervisorContactNumber)
+                                            .setValidators([],
+                                                autoValidate: true);
+                                      }
+
+                                      form
+                                          .control(_supervisorContactNumber)
+                                          .markAsTouched();
+                                    }),
                               );
                             }),
                         ReactiveWrapperField<String>(
@@ -552,12 +575,7 @@ class CustomComplaintsDetailsPageState
       _supervisorContactNumber: FormControl<String>(
         value: complaintDetails?.supervisorContactNumber,
         disabled: shouldDisableForm,
-        validators: [
-          Validators.delegate(
-              (validator) => CustomValidator.validMobileNumber(validator)),
-          Validators.maxLength(11),
-          Validators.minLength(11),
-        ],
+        validators: [],
       ),
       _complaintDescription: FormControl<String>(
         value: complaintDetails?.complaintDescription,
