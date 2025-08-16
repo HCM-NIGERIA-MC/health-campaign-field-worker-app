@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:collection/collection.dart';
+import 'package:digit_components/widgets/atoms/digit_date_form_picker.dart';
 import 'package:digit_components/widgets/atoms/digit_toaster.dart';
 import 'package:digit_data_model/data_model.dart';
 import 'package:digit_scanner/blocs/scanner.dart';
@@ -25,6 +26,7 @@ import 'package:inventory_management/utils/i18_key_constants.dart' as i18;
 import '../../blocs/auth/auth.dart';
 import '../../blocs/inventory_management/stock_bloc.dart';
 import '../../router/app_router.dart';
+import '../../utils/date_utils.dart';
 import '../../utils/i18_key_constants.dart' as i18_local;
 import '../../utils/constants.dart';
 import '../../utils/extensions/extensions.dart';
@@ -62,13 +64,20 @@ class _DynamicTabsPageState extends LocalizedState<DynamicTabsPage>
   static const _transactionReasonKey = 'transactionReason';
   static const _transactionQuantityKey = 'quantity';
   static const _waybillNumberKey = 'waybillNumber';
-  static const _batchNumberKey = 'batchNumberKey';
+  static const _batchNumberKey = 'batchNumber';
+  static const _expireDateKey = 'expireDate';
   static const _commentsKey = 'comments';
+  static const _materialNoteNumberKey = 'materialNoteNumber';
+
   List<InventoryTransportTypes> transportTypes = [];
 
   static const _transactionQuantityPartialKey = 'quantityPartial';
-
   static const _transactionQuantityWastedKey = 'quantityWasted';
+
+  DateTime before150Years = DateTime(
+      DateTime.now().year - 150, DateTime.now().month, DateTime.now().day);
+  DateTime after150Years = DateTime(
+      DateTime.now().year + 150, DateTime.now().month, DateTime.now().day);
 
   @override
   void initState() {
@@ -125,7 +134,7 @@ class _DynamicTabsPageState extends LocalizedState<DynamicTabsPage>
     _forms.addAll({
       for (final product in selectedProducts)
         product: FormGroup({
-          'materialNoteNumber': FormControl<String>(value: _sharedMRN),
+          _materialNoteNumberKey: FormControl<String>(value: _sharedMRN),
           _transactionReasonKey: FormControl<String>(),
           _waybillNumberKey: FormControl<String>(
             validators: InventorySingleton().isWareHouseMgr
@@ -142,10 +151,8 @@ class _DynamicTabsPageState extends LocalizedState<DynamicTabsPage>
             Validators.min(1),
             Validators.max(Constants.stockMaxLimit),
           ]),
-          // _waybillQuantityKey:
-          //     FormControl<String>(validators: [Validators.required]),
+          _expireDateKey: FormControl<DateTime>(validators: []),
           _transactionQuantityPartialKey: FormControl<int>(validators: []),
-
           _transactionQuantityWastedKey: FormControl<int>(validators: []),
           _batchNumberKey: FormControl<String>(),
           _commentsKey: FormControl<String>(),
@@ -258,7 +265,7 @@ class _DynamicTabsPageState extends LocalizedState<DynamicTabsPage>
         fields: [
           AdditionalField('productName', product.sku),
           AdditionalField('variation', product.variation),
-          AdditionalField('materialNoteNumber', _sharedMRN),
+          AdditionalField(_materialNoteNumberKey, _sharedMRN),
           if (distributorName != null)
             AdditionalField('distributorName', distributorName),
         ],
@@ -373,8 +380,14 @@ class _DynamicTabsPageState extends LocalizedState<DynamicTabsPage>
     String pageTitle;
 
     String quantityPartialCountLabel = "";
-
     String quantityWastedCountLabel = "";
+
+    form.control(_expireDateKey).setValidators(
+          (entryType == StockRecordEntryType.receipt)
+              ? [Validators.required]
+              : [],
+          autoValidate: true,
+        );
 
     switch (entryType) {
       case StockRecordEntryType.receipt:
@@ -617,7 +630,32 @@ class _DynamicTabsPageState extends LocalizedState<DynamicTabsPage>
                             ),
                           );
                         }),
-                    // TODO:
+                    if (entryType == StockRecordEntryType.receipt)
+                      DigitDateFormPicker(
+                        label: 'Expire Date',
+                        isRequired: true,
+                        start: before150Years,
+                        formControlName: _expireDateKey,
+                        cancelText: localizations
+                            .translate(i18.common.coreCommonCancel),
+                        confirmText:
+                            localizations.translate(i18.common.coreCommonOk),
+                        onChangeOfFormControl: (formControl) {
+                          // Handle changes to the control's value here
+                          DateTime? value = formControl.value;
+                          if (value == null) return;
+                          DigitDOBAge age = DigitDateUtils.calculateAge(value);
+                          if ((age.years == 0 && age.months == 0) ||
+                              age.months > 11 ||
+                              (age.years >= 150 && age.months >= 0)) {
+                            formControl.setErrors({'': true});
+                          } else {
+                            formControl.removeError('');
+                          }
+                        },
+                        end: after150Years,
+                      ),
+                    const SizedBox(height: 12),
                     if ((entryType == StockRecordEntryType.dispatch &&
                             context.isCommunityDistributor) ||
                         entryType == StockRecordEntryType.returned)
@@ -837,7 +875,20 @@ class _DynamicTabsPageState extends LocalizedState<DynamicTabsPage>
     final form = _forms[productName]!;
     final currentStock = _tabStocks[productName]!;
 
-    final theme = Theme.of(context);
+    DateTime? expireDate = form.control(_expireDateKey).value;
+
+    Set<String> additionalFieldKeys = {
+      _batchNumberKey,
+      _commentsKey,
+      _transactionQuantityPartialKey,
+      _transactionQuantityWastedKey,
+      _expireDateKey,
+    };
+
+    List<AdditionalField> filteredFields = currentStock.additionalFields?.fields
+            .whereNot((e) => additionalFieldKeys.contains(e.key))
+            .toList() ??
+        [];
 
     _tabStocks[productName] = currentStock.copyWith(
       quantity: form.control(_transactionQuantityKey).value?.toString(),
@@ -848,192 +899,23 @@ class _DynamicTabsPageState extends LocalizedState<DynamicTabsPage>
               transactionReason,
       additionalFields: currentStock.additionalFields?.copyWith(
         fields: [
-          ...(currentStock.additionalFields?.fields.where((e) =>
-                  e.key != 'batchNumber' &&
-                  e.key != 'comments' &&
-                  e.key != 'partialBlistersReturned' &&
-                  e.key != 'wastedBlistersReturned') ??
-              []),
+          ...filteredFields,
           if (form.control(_batchNumberKey).value != null)
-            AdditionalField('batchNumber', form.control(_batchNumberKey).value),
+            AdditionalField(
+                _batchNumberKey, form.control(_batchNumberKey).value),
           if (form.control(_commentsKey).value != null)
-            AdditionalField('comments', form.control(_commentsKey).value),
+            AdditionalField(_commentsKey, form.control(_commentsKey).value),
           if (form.control(_transactionQuantityPartialKey).value != null)
-            AdditionalField('partialBlistersReturned',
+            AdditionalField(_transactionQuantityPartialKey,
                 form.control(_transactionQuantityPartialKey).value),
           if (form.control(_transactionQuantityWastedKey).value != null)
-            AdditionalField('wastedBlistersReturned',
+            AdditionalField(_transactionQuantityWastedKey,
                 form.control(_transactionQuantityWastedKey).value),
+          if (expireDate != null)
+            AdditionalField(_expireDateKey, expireDate.millisecondsSinceEpoch),
         ],
       ),
     );
-
-//     bool isSubtracted = (entryType == StockRecordEntryType.dispatch ||
-//         entryType == StockRecordEntryType.returned);
-//     final ss = int.parse(
-//         form.control(_transactionQuantityKey).value?.toString() ?? "0");
-
-//     final spaq1Count = context.spaq1;
-//     final spaq2Count = context.spaq2;
-
-//     final blueVasCount = context.blueVas;
-//     final redVasCount = context.redVas;
-
-//     // Custom logic based on productName
-//     if (productName == Constants.spaq1 && isSubtracted && ss > spaq1Count) {
-//       await DigitToast.show(
-//         context,
-//         options: DigitToastOptions(
-//             localizations.translate((entryType == StockRecordEntryType.dispatch)
-//                 ? i18_local.beneficiaryDetails.validationForExcessStockDispatch
-//                 : i18_local.beneficiaryDetails.validationForExcessStockReturn),
-//             true,
-//             theme),
-//       );
-//       return false;
-//     } else if (productName == Constants.spaq2 &&
-//         isSubtracted &&
-//         ss > spaq2Count) {
-//       await DigitToast.show(
-//         context,
-//         options: DigitToastOptions(
-//             localizations.translate((entryType == StockRecordEntryType.dispatch)
-//                 ? i18_local.beneficiaryDetails.validationForExcessStockDispatch
-//                 : i18_local.beneficiaryDetails.validationForExcessStockReturn),
-//             true,
-//             theme),
-//       );
-//       return false;
-//     } else if (productName == Constants.blueVAS &&
-//         isSubtracted &&
-//         ss > blueVasCount) {
-//       await DigitToast.show(
-//         context,
-//         options: DigitToastOptions(
-//             localizations.translate((entryType == StockRecordEntryType.dispatch)
-//                 ? i18_local.beneficiaryDetails.validationForExcessStockDispatch
-//                 : i18_local.beneficiaryDetails.validationForExcessStockReturn),
-//             true,
-//             theme),
-//       );
-//       return false;
-//     } else if (productName == Constants.redVAS &&
-//         isSubtracted &&
-//         ss > redVasCount) {
-//       await DigitToast.show(
-//         context,
-//         options: DigitToastOptions(
-//             localizations.translate((entryType == StockRecordEntryType.dispatch)
-//                 ? i18_local.beneficiaryDetails.validationForExcessStockDispatch
-//                 : i18_local.beneficiaryDetails.validationForExcessStockReturn),
-//             true,
-//             theme),
-//       );
-//       return false;
-//     }
-
-//     final recordStock = context.read<RecordStockBloc>().state;
-//     context.read<RecordStockBloc>().add(
-//           RecordStockSaveStockDetailsEvent(
-//             stockModel: currentStock,
-//           ),
-//         );
-
-//     final isDistributor = context.isDistributor;
-
-// //     if ((ss > context.spaq1 ||
-// //             ss > context.spaq2 ||
-// //             ss > context.blueVas ||
-// //             ss > context.redVas) &&
-// //         context.isDistributor &&
-// //         recordStock.entryType == StockRecordEntryType.dispatch) {
-// // //       showCustomPopup(
-// // //         context: context,
-// // //         builder: (popupContext) => Popup(
-// // //           title:
-// // //               localizations.translate(i18_local.beneficiaryDetails.errorHeader),
-// // //           onOutsideTap: () {
-// // //             Navigator.of(popupContext).pop(false);
-// // //           },
-// // //           description: localizations.translate(
-// // //             i18_local.beneficiaryDetails.validationForExcessStock,
-// // //           ),
-// // //           type: PopUpType.simple,
-// // //           actions: [
-// // //             DigitButton(
-// // //               label: localizations.translate(
-// // //                 i18_local.common.coreCommonCancel,
-// // //               ),
-// // //               onPressed: () {
-// // //                 Navigator.of(
-// // //                   popupContext,
-// // //                   rootNavigator: true,
-// // //                 ).pop();
-// // // //
-// // //               },
-// // //               type: DigitButtonType.primary,
-// // //               size: DigitButtonSize.large,
-// // //             ),
-// // //           ],
-// // //         ),
-// // //       );
-
-// //       return;
-// //     }
-//     // bool submit = false;
-//     // if (_tabController.index == _tabController.length - 1) {
-//     //   submit = await showCustomPopup(
-//     //     context: context,
-//     //     builder: (popupContext) => Popup(
-//     //       title: localizations.translate(i18.stockDetails.dialogTitle),
-//     //       onOutsideTap: () {
-//     //         Navigator.of(popupContext).pop(false);
-//     //       },
-//     //       description: localizations.translate(
-//     //         i18.stockDetails.dialogContent,
-//     //       ),
-//     //       type: PopUpType.simple,
-//     //       actions: [
-//     //         DigitButton(
-//     //           label: localizations.translate(
-//     //             i18.common.coreCommonSubmit,
-//     //           ),
-//     //           onPressed: () {
-//     //             Navigator.of(
-//     //               popupContext,
-//     //               rootNavigator: true,
-//     //             ).pop(true);
-//     //             Navigator.of(context, rootNavigator: true).pop(true);
-//     //             Navigator.of(context).push(
-//     //               MaterialPageRoute(
-//     //                 builder: (context) => CustomAcknowledgementPage(
-//     //                   mrnNumber: _sharedMRN,
-//     //                   stockRecords: _tabStocks.values.toList(),
-//     //                 ),
-//     //               ),
-//     //             );
-//     //             // todo : correct the routing here to show , page where we can see transactions
-//     //           },
-//     //           type: DigitButtonType.primary,
-//     //           size: DigitButtonSize.large,
-//     //         ),
-//     //         DigitButton(
-//     //           label: localizations.translate(
-//     //             i18.common.coreCommonCancel,
-//     //           ),
-//     //           onPressed: () {
-//     //             Navigator.of(
-//     //               popupContext,
-//     //               rootNavigator: true,
-//     //             ).pop(false);
-//     //           },
-//     //           type: DigitButtonType.secondary,
-//     //           size: DigitButtonSize.large,
-//     //         ),
-//     //       ],
-//     //     ),
-//     //   ) as bool;
-//     // }
 
     return true;
   }
@@ -1111,7 +993,7 @@ class _DynamicTabsPageState extends LocalizedState<DynamicTabsPage>
 
           int quantityWasted = int.parse(stockModel.additionalFields?.fields
                   .firstWhereOrNull(
-                      (element) => element.key == 'wastedBlistersReturned')
+                      (element) => element.key == _transactionQuantityWastedKey)
                   ?.value
                   ?.toString() ??
               '0');
@@ -1268,40 +1150,6 @@ class _DynamicTabsPageState extends LocalizedState<DynamicTabsPage>
       _tabController.animateTo(_tabController.index + 1);
     }
   }
-
-//TODO:
-  // String? wastageQuantity(FormGroup form, BuildContext context) {
-  //   final quantity = form.control(_transactionQuantityKey).value;
-  //   final partialBlisters = form.control(_transactionQuantityKey).value;
-
-  //   if (quantity == null || partialBlisters == null) {
-  //     return null;
-  //   }
-
-  //   int totalQuantity = 0;
-  //   int totalRemainingQuantityInMl = context.spaq1;
-
-  //   int totalExpectedUnusedBottles =
-  //       totalRemainingQuantityInMl ~/ Constants.mlPerBottle;
-
-  //   int totalExpectedPartialQuantityInMl =
-  //       totalRemainingQuantityInMl % Constants.mlPerBottle;
-
-  //   int totalExpectedPartialBottles =
-  //       totalRemainingQuantityInMl % Constants.mlPerBottle != 0 ? 1 : 0;
-
-  //   totalQuantity = quantity != null ? int.parse(quantity.toString()) : 0;
-
-  //   return (((totalExpectedUnusedBottles - totalQuantity) *
-  //               Constants.mlPerBottle) +
-  //           ((totalExpectedPartialBottles >
-  //                   (partialBlisters != null
-  //                       ? int.parse(partialBlisters.toString())
-  //                       : 0))
-  //               ? totalExpectedPartialQuantityInMl
-  //               : 0))
-  //       .toString();
-  // }
 
   num _getQuantityCount(Iterable<StockModel> stocks) {
     return stocks.fold<num>(
