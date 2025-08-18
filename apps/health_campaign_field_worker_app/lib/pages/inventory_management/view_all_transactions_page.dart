@@ -18,11 +18,14 @@ import '../../router/app_router.dart';
 import '../../utils/utils.dart';
 import '../../widgets/action_card/all_transactions_card.dart';
 import '../../widgets/custom_back_navigation.dart';
+import '../../widgets/localized.dart';
 import 'receive_stock.dart';
 import 'package:collection/collection.dart';
 
+import '../../utils/i18_key_constants.dart' as i18_local;
+
 @RoutePage()
-class ViewAllTransactionsScreen extends StatefulWidget {
+class ViewAllTransactionsScreen extends LocalizedStatefulWidget {
   final String? warehouseId;
   const ViewAllTransactionsScreen({super.key, required this.warehouseId});
 
@@ -31,7 +34,8 @@ class ViewAllTransactionsScreen extends StatefulWidget {
       _ViewAllTransactionsScreenState();
 }
 
-class _ViewAllTransactionsScreenState extends State<ViewAllTransactionsScreen> {
+class _ViewAllTransactionsScreenState
+    extends LocalizedState<ViewAllTransactionsScreen> {
   @override
   void initState() {
     super.initState();
@@ -176,7 +180,9 @@ class _ViewAllTransactionsScreenState extends State<ViewAllTransactionsScreen> {
           ),
           children: [
             if (filteredStock.isEmpty)
-              const Center(child: Text('No transactions available.'))
+              Center(
+                  child: Text(localizations.translate(
+                      i18_local.stockDetails.noTransactionsAvailable)))
             else
               Container(
                 decoration: BoxDecoration(
@@ -190,7 +196,10 @@ class _ViewAllTransactionsScreenState extends State<ViewAllTransactionsScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       const SizedBox(height: 16.0),
-                      Text("Select the MIN number", style: textTheme.headingL),
+                      Text(
+                          localizations.translate(
+                              i18_local.stockDetails.selectMRNNumber),
+                          style: textTheme.headingL),
                       const SizedBox(height: 16.0),
                       SizedBox(
                         height: MediaQuery.of(context).size.height * 0.7,

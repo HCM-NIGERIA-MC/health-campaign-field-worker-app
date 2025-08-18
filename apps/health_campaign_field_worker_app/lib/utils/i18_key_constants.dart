@@ -448,6 +448,23 @@ class HomeShowcase {
 
 class StockDetails {
   const StockDetails();
+
+  String get stockReceiptDetails => 'STOCK_DETAILS_STOCK_RECEIPT_DETAILS';
+  String get mrnNumber => 'STOCK_DETAILS_MRN_NUMBER';
+  String get resource => 'STOCK_DETAILS_RESOURCE';
+  String get stockDetails => 'STOCK_DETAILS';
+  String get waybillNumber => 'STOCK_DETAILS_WAYBILL_NUMBER';
+  String get batchNumberLabel => 'STOCK_DETAILS_BATCH_NUMBER';
+  String get quantity => 'STOCK_DETAILS_QUANTITY';
+  String get expireDate => 'STOCK_DETAILS_EXPIRE_DATE';
+  String get partialQuantity => 'STOCK_DETAILS_PARTIAL_QUANTITY';
+  String get wastedQuantity => 'STOCK_DETAILS_WASTED_QUANTITY';
+  String get comments => 'STOCK_DETAILS_COMMENTS';
+
+  String get noTransactionsAvailable =>
+      'STOCK_DETAILS_NO_TRANSACTIONS_AVAILABLE';
+  String get selectMRNNumber => 'STOCK_DETAILS_SELECT_MRN_NUMBER';
+
   String get selectTransactingPartyReturnedFrom =>
       'STOCK_DETAILS_RETURNED_FROM';
 
@@ -474,10 +491,6 @@ class StockDetails {
 
   String get quantityCapsuleReturnedLabel =>
       'STOCK_DETAILS_CAPSULE_QUANTITY_RETURNED';
-
-  String get batchNumberLabel {
-    return 'STOCK_DETAILS_BATCH_NUMBER';
-  }
 
   String get transportTypeLabel => 'STOCK_DETAILS_TYPE_OF_TRANSPORT_LABEL';
 
