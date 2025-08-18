@@ -142,15 +142,15 @@ class _CustomSearchBeneficiaryPageState
           final taskModel =
               createState.householdMembers.firstOrNull?.tasks?.firstOrNull;
 
-          if (createState.lastAction == RegistrationWrapperActionType.created &&
-              individualModel != null &&
-              individualModel.identifiers != null &&
-              individualModel.identifiers?.first.identifierId != null &&
-              individualModel.identifiers?.first.identifierType ==
-                  IdentifierTypes.uniqueBeneficiaryID.toValue()) {
-            context.read<UniqueIdBloc>().add(UniqueIdEvent.updateStatus(
-                id: individualModel.identifiers!.first.identifierId!));
-          }
+          // if (createState.lastAction == RegistrationWrapperActionType.created &&
+          //     individualModel != null &&
+          //     individualModel.identifiers != null &&
+          //     individualModel.identifiers?.first.identifierId != null &&
+          //     individualModel.identifiers?.first.identifierType ==
+          //         IdentifierTypes.uniqueBeneficiaryID.toValue()) {
+          //   context.read<UniqueIdBloc>().add(UniqueIdEvent.updateStatus(
+          //       id: individualModel.identifiers!.first.identifierId!));
+          // }
 
           if (householdModel != null) {
             blocWrapper.add(RegistrationWrapperEvent.fetchDeliveryDetails(
