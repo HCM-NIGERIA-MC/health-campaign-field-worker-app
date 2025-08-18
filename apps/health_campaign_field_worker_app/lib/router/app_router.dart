@@ -41,7 +41,7 @@ import '../pages/inventory_management/custom_acknowledgement.dart';
 import '../pages/inventory_management/view_stock_records.dart';
 import 'package:inventory_management/models/entities/stock.dart';
 import '../pages/inventory_management/view_all_transactions_page.dart';
-import '../pages/inventory_management/view_record_cdd.dart';
+import '../pages/inventory_management/scanned_received_stock.dart';
 import '../pages/inventory_management/qrscanner.dart';
 import '../pages/language_selection.dart';
 import '../pages/login.dart';
