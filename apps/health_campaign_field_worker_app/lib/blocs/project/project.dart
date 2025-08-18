@@ -915,7 +915,8 @@ class ProjectBloc extends Bloc<ProjectEvent, ProjectState> {
       );
       stockEntriesDownloaded =
           await downloadStockEntries(stockSearchModel, lastChangedSince);
-    } else if (userRoles.contains(RolesType.distributor.toValue())) {
+    } else if (userRoles.contains(RolesType.distributor.toValue()) ||
+        userRoles.contains(RolesType.communityDistributor.toValue())) {
       final receiverIds = [context.loggedInUserUuid];
       final stockSearchModel = StockSearchModel(
         receiverId: receiverIds,
