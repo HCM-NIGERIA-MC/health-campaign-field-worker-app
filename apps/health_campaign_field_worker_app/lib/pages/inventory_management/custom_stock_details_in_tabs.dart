@@ -383,7 +383,8 @@ class _DynamicTabsPageState extends LocalizedState<DynamicTabsPage>
     String quantityWastedCountLabel = "";
 
     form.control(_expireDateKey).setValidators(
-          (entryType == StockRecordEntryType.receipt)
+          (entryType == StockRecordEntryType.receipt ||
+                  entryType == StockRecordEntryType.dispatch)
               ? [Validators.required]
               : [],
           autoValidate: true,
@@ -630,7 +631,8 @@ class _DynamicTabsPageState extends LocalizedState<DynamicTabsPage>
                             ),
                           );
                         }),
-                    if (entryType == StockRecordEntryType.receipt)
+                    if (entryType == StockRecordEntryType.receipt ||
+                        entryType == StockRecordEntryType.dispatch)
                       DigitDateFormPicker(
                         label: 'Expire Date',
                         isRequired: true,
