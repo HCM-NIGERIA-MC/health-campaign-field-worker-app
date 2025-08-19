@@ -23,6 +23,7 @@ import '../../utils/extensions/extensions.dart';
 import 'package:collection/collection.dart';
 
 import '../../widgets/custom_back_navigation.dart';
+import '../../utils/i18_key_constants.dart' as i18_local;
 
 @RoutePage()
 class ReceiveStockPage extends LocalizedStatefulWidget {
@@ -299,7 +300,7 @@ class _ViewStockRecordsLGAPageState extends LocalizedState<ReceiveStockPage> {
           redVasCount = totalQty;
         }
         context.read<AuthBloc>().add(
-              AuthAddSpaqCountsEvent(
+              AuthAddProductCountsEvent(
                 bednetCount: bednetCount,
                 spaq1Count: spaq1Count,
                 spaq2Count: spaq2Count,
@@ -355,15 +356,20 @@ class _ViewStockRecordsLGAPageState extends LocalizedState<ReceiveStockPage> {
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Text(
-                            'Stock Receipt Details',
-                            style: TextStyle(
+                          Text(
+                            localizations.translate(
+                                i18_local.stockDetails.stockReceiptDetails),
+                            style: const TextStyle(
                                 fontSize: 24, fontWeight: FontWeight.bold),
                           ),
                           const SizedBox(height: 12),
                           Row(
                             children: [
-                              const Expanded(child: Text('MIN Number')),
+                              Expanded(
+                                  child: Text(
+                                localizations.translate(
+                                    i18_local.stockDetails.mrnNumber),
+                              )),
                               Expanded(child: Text(widget.mrnNumber)),
                             ],
                           ),
@@ -420,7 +426,8 @@ class _ViewStockRecordsLGAPageState extends LocalizedState<ReceiveStockPage> {
                                 const SizedBox(height: 12),
                                 InputField(
                                   type: InputType.text,
-                                  label: 'Waybill Number *',
+                                  label: localizations.translate(
+                                      i18_local.stockDetails.waybillNumber),
                                   initialValue: stock.wayBillNumber ?? '',
                                   isDisabled: true,
                                   readOnly: true,
@@ -428,7 +435,8 @@ class _ViewStockRecordsLGAPageState extends LocalizedState<ReceiveStockPage> {
                                 const SizedBox(height: 12),
                                 InputField(
                                   type: InputType.text,
-                                  label: 'Batch Number',
+                                  label: localizations.translate(
+                                      i18_local.stockDetails.batchNumberLabel),
                                   initialValue: stock.additionalFields?.fields
                                           .firstWhere(
                                             (field) =>
@@ -445,7 +453,8 @@ class _ViewStockRecordsLGAPageState extends LocalizedState<ReceiveStockPage> {
                                 const SizedBox(height: 12),
                                 InputField(
                                   type: InputType.text,
-                                  label: 'Quantity Sent by Warehouse *',
+                                  label: localizations.translate(i18_local
+                                      .stockDetails.quantitySentByWarehouse),
                                   initialValue: stock.quantity ?? '',
                                   isDisabled: true,
                                   readOnly: true,
@@ -455,7 +464,8 @@ class _ViewStockRecordsLGAPageState extends LocalizedState<ReceiveStockPage> {
                                   formControlName: _quantityReceivedKey,
                                   builder: (field) => InputField(
                                     type: InputType.text,
-                                    label: 'Actual Quantity Received',
+                                    label: localizations.translate(i18_local
+                                        .stockDetails.actualQuantityReceived),
                                     isRequired: true,
                                     errorMessage: field.errorText,
                                     keyboardType: TextInputType.number,
@@ -469,18 +479,31 @@ class _ViewStockRecordsLGAPageState extends LocalizedState<ReceiveStockPage> {
                                     },
                                   ),
                                   validationMessages: {
-                                    'required': (_) => 'Quantity is required',
-                                    'min': (_) => 'Must be at least 1',
-                                    'number': (_) => 'Must be a valid number',
-                                    'maxIssued': (_) =>
-                                        'Received quantity cannot be more than issued quantity',
+                                    'required': (_) => localizations.translate(
+                                        i18_local
+                                            .stockDetails.quantityRequired),
+                                    'min': (_) => localizations.translate(
+                                        i18_local
+                                            .stockDetails.quantityMinError),
+                                    'number': (_) => localizations.translate(
+                                        i18_local
+                                            .stockDetails.quantityInvalidError),
+                                    'maxIssued': (_) => localizations.translate(
+                                        i18_local
+                                            .stockDetails.quantityMaxError),
                                   },
                                 ),
                                 DigitDateFormPicker(
-                                  label: 'Expire Date',
+                                  label: localizations.translate(
+                                      i18_local.stockDetails.expireDate),
                                   isRequired: true,
                                   start: before150Years,
                                   formControlName: _expireDateKey,
+                                  validationMessages: {
+                                    'required': (_) => localizations.translate(
+                                        i18_local
+                                            .stockDetails.expireDateRequired),
+                                  },
                                   cancelText: localizations
                                       .translate(i18.common.coreCommonCancel),
                                   confirmText: localizations
@@ -506,12 +529,15 @@ class _ViewStockRecordsLGAPageState extends LocalizedState<ReceiveStockPage> {
                                   formControlName: _commentsKey,
                                   validationMessages: {
                                     'requiredIfShort': (_) =>
-                                        'Comments are required if quantity received is less than issued',
+                                        localizations.translate(i18_local
+                                            .stockDetails
+                                            .commentsRequiredIfShort),
                                   },
                                   builder: (field) => InputField(
                                     isRequired: _commentsRequired,
                                     type: InputType.textArea,
-                                    label: 'Comments',
+                                    label: localizations.translate(
+                                        i18_local.stockDetails.comments),
                                     errorMessage: field.errorText,
                                     onChange: (value) =>
                                         field.control.value = value,

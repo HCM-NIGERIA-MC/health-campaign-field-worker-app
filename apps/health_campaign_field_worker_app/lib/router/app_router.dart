@@ -49,7 +49,6 @@ import '../pages/profile.dart';
 import '../pages/project_facility_selection.dart';
 import '../pages/project_selection.dart';
 import '../pages/qr_details_page.dart';
-import '../pages/registration_delivery/custom_beneficiary_details.dart';
 import '../pages/registration_delivery/custom_household_acknowledgement.dart';
 import '../pages/registration_delivery/custom_household_overview.dart';
 import '../pages/registration_delivery/custom_search_beneficiary.dart';

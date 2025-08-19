@@ -51,7 +51,7 @@ mixin _$AuthEvent {
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
     required TResult Function(AuthLoginEvent value) login,
-    required TResult Function(AuthAddSpaqCountsEvent value) addProductCounts,
+    required TResult Function(AuthAddProductCountsEvent value) addProductCounts,
     required TResult Function(AuthAutoLoginEvent value) autoLogin,
     required TResult Function(AuthLogoutEvent value) logout,
   }) =>
@@ -59,7 +59,7 @@ mixin _$AuthEvent {
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(AuthLoginEvent value)? login,
-    TResult? Function(AuthAddSpaqCountsEvent value)? addProductCounts,
+    TResult? Function(AuthAddProductCountsEvent value)? addProductCounts,
     TResult? Function(AuthAutoLoginEvent value)? autoLogin,
     TResult? Function(AuthLogoutEvent value)? logout,
   }) =>
@@ -67,7 +67,7 @@ mixin _$AuthEvent {
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
     TResult Function(AuthLoginEvent value)? login,
-    TResult Function(AuthAddSpaqCountsEvent value)? addProductCounts,
+    TResult Function(AuthAddProductCountsEvent value)? addProductCounts,
     TResult Function(AuthAutoLoginEvent value)? autoLogin,
     TResult Function(AuthLogoutEvent value)? logout,
     required TResult orElse(),
@@ -221,7 +221,7 @@ class _$AuthLoginEventImpl implements AuthLoginEvent {
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
     required TResult Function(AuthLoginEvent value) login,
-    required TResult Function(AuthAddSpaqCountsEvent value) addProductCounts,
+    required TResult Function(AuthAddProductCountsEvent value) addProductCounts,
     required TResult Function(AuthAutoLoginEvent value) autoLogin,
     required TResult Function(AuthLogoutEvent value) logout,
   }) {
@@ -232,7 +232,7 @@ class _$AuthLoginEventImpl implements AuthLoginEvent {
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(AuthLoginEvent value)? login,
-    TResult? Function(AuthAddSpaqCountsEvent value)? addProductCounts,
+    TResult? Function(AuthAddProductCountsEvent value)? addProductCounts,
     TResult? Function(AuthAutoLoginEvent value)? autoLogin,
     TResult? Function(AuthLogoutEvent value)? logout,
   }) {
@@ -243,7 +243,7 @@ class _$AuthLoginEventImpl implements AuthLoginEvent {
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
     TResult Function(AuthLoginEvent value)? login,
-    TResult Function(AuthAddSpaqCountsEvent value)? addProductCounts,
+    TResult Function(AuthAddProductCountsEvent value)? addProductCounts,
     TResult Function(AuthAutoLoginEvent value)? autoLogin,
     TResult Function(AuthLogoutEvent value)? logout,
     required TResult orElse(),
@@ -270,11 +270,11 @@ abstract class AuthLoginEvent implements AuthEvent {
 }
 
 /// @nodoc
-abstract class _$$AuthAddSpaqCountsEventImplCopyWith<$Res> {
-  factory _$$AuthAddSpaqCountsEventImplCopyWith(
-          _$AuthAddSpaqCountsEventImpl value,
-          $Res Function(_$AuthAddSpaqCountsEventImpl) then) =
-      __$$AuthAddSpaqCountsEventImplCopyWithImpl<$Res>;
+abstract class _$$AuthAddProductCountsEventImplCopyWith<$Res> {
+  factory _$$AuthAddProductCountsEventImplCopyWith(
+          _$AuthAddProductCountsEventImpl value,
+          $Res Function(_$AuthAddProductCountsEventImpl) then) =
+      __$$AuthAddProductCountsEventImplCopyWithImpl<$Res>;
   @useResult
   $Res call(
       {int bednetCount,
@@ -285,12 +285,12 @@ abstract class _$$AuthAddSpaqCountsEventImplCopyWith<$Res> {
 }
 
 /// @nodoc
-class __$$AuthAddSpaqCountsEventImplCopyWithImpl<$Res>
-    extends _$AuthEventCopyWithImpl<$Res, _$AuthAddSpaqCountsEventImpl>
-    implements _$$AuthAddSpaqCountsEventImplCopyWith<$Res> {
-  __$$AuthAddSpaqCountsEventImplCopyWithImpl(
-      _$AuthAddSpaqCountsEventImpl _value,
-      $Res Function(_$AuthAddSpaqCountsEventImpl) _then)
+class __$$AuthAddProductCountsEventImplCopyWithImpl<$Res>
+    extends _$AuthEventCopyWithImpl<$Res, _$AuthAddProductCountsEventImpl>
+    implements _$$AuthAddProductCountsEventImplCopyWith<$Res> {
+  __$$AuthAddProductCountsEventImplCopyWithImpl(
+      _$AuthAddProductCountsEventImpl _value,
+      $Res Function(_$AuthAddProductCountsEventImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -302,7 +302,7 @@ class __$$AuthAddSpaqCountsEventImplCopyWithImpl<$Res>
     Object? blueVasCount = null,
     Object? redVasCount = null,
   }) {
-    return _then(_$AuthAddSpaqCountsEventImpl(
+    return _then(_$AuthAddProductCountsEventImpl(
       bednetCount: null == bednetCount
           ? _value.bednetCount
           : bednetCount // ignore: cast_nullable_to_non_nullable
@@ -329,8 +329,8 @@ class __$$AuthAddSpaqCountsEventImplCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$AuthAddSpaqCountsEventImpl implements AuthAddSpaqCountsEvent {
-  const _$AuthAddSpaqCountsEventImpl(
+class _$AuthAddProductCountsEventImpl implements AuthAddProductCountsEvent {
+  const _$AuthAddProductCountsEventImpl(
       {required this.bednetCount,
       required this.spaq1Count,
       required this.spaq2Count,
@@ -357,7 +357,7 @@ class _$AuthAddSpaqCountsEventImpl implements AuthAddSpaqCountsEvent {
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$AuthAddSpaqCountsEventImpl &&
+            other is _$AuthAddProductCountsEventImpl &&
             (identical(other.bednetCount, bednetCount) ||
                 other.bednetCount == bednetCount) &&
             (identical(other.spaq1Count, spaq1Count) ||
@@ -377,9 +377,9 @@ class _$AuthAddSpaqCountsEventImpl implements AuthAddSpaqCountsEvent {
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$AuthAddSpaqCountsEventImplCopyWith<_$AuthAddSpaqCountsEventImpl>
-      get copyWith => __$$AuthAddSpaqCountsEventImplCopyWithImpl<
-          _$AuthAddSpaqCountsEventImpl>(this, _$identity);
+  _$$AuthAddProductCountsEventImplCopyWith<_$AuthAddProductCountsEventImpl>
+      get copyWith => __$$AuthAddProductCountsEventImplCopyWithImpl<
+          _$AuthAddProductCountsEventImpl>(this, _$identity);
 
   @override
   @optionalTypeArgs
@@ -432,7 +432,7 @@ class _$AuthAddSpaqCountsEventImpl implements AuthAddSpaqCountsEvent {
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
     required TResult Function(AuthLoginEvent value) login,
-    required TResult Function(AuthAddSpaqCountsEvent value) addProductCounts,
+    required TResult Function(AuthAddProductCountsEvent value) addProductCounts,
     required TResult Function(AuthAutoLoginEvent value) autoLogin,
     required TResult Function(AuthLogoutEvent value) logout,
   }) {
@@ -443,7 +443,7 @@ class _$AuthAddSpaqCountsEventImpl implements AuthAddSpaqCountsEvent {
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(AuthLoginEvent value)? login,
-    TResult? Function(AuthAddSpaqCountsEvent value)? addProductCounts,
+    TResult? Function(AuthAddProductCountsEvent value)? addProductCounts,
     TResult? Function(AuthAutoLoginEvent value)? autoLogin,
     TResult? Function(AuthLogoutEvent value)? logout,
   }) {
@@ -454,7 +454,7 @@ class _$AuthAddSpaqCountsEventImpl implements AuthAddSpaqCountsEvent {
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
     TResult Function(AuthLoginEvent value)? login,
-    TResult Function(AuthAddSpaqCountsEvent value)? addProductCounts,
+    TResult Function(AuthAddProductCountsEvent value)? addProductCounts,
     TResult Function(AuthAutoLoginEvent value)? autoLogin,
     TResult Function(AuthLogoutEvent value)? logout,
     required TResult orElse(),
@@ -466,13 +466,13 @@ class _$AuthAddSpaqCountsEventImpl implements AuthAddSpaqCountsEvent {
   }
 }
 
-abstract class AuthAddSpaqCountsEvent implements AuthEvent {
-  const factory AuthAddSpaqCountsEvent(
+abstract class AuthAddProductCountsEvent implements AuthEvent {
+  const factory AuthAddProductCountsEvent(
       {required final int bednetCount,
       required final int spaq1Count,
       required final int spaq2Count,
       required final int blueVasCount,
-      required final int redVasCount}) = _$AuthAddSpaqCountsEventImpl;
+      required final int redVasCount}) = _$AuthAddProductCountsEventImpl;
 
   int get bednetCount;
   int get spaq1Count;
@@ -480,7 +480,7 @@ abstract class AuthAddSpaqCountsEvent implements AuthEvent {
   int get blueVasCount;
   int get redVasCount;
   @JsonKey(ignore: true)
-  _$$AuthAddSpaqCountsEventImplCopyWith<_$AuthAddSpaqCountsEventImpl>
+  _$$AuthAddProductCountsEventImplCopyWith<_$AuthAddProductCountsEventImpl>
       get copyWith => throw _privateConstructorUsedError;
 }
 
@@ -595,7 +595,7 @@ class _$AuthAutoLoginEventImpl implements AuthAutoLoginEvent {
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
     required TResult Function(AuthLoginEvent value) login,
-    required TResult Function(AuthAddSpaqCountsEvent value) addProductCounts,
+    required TResult Function(AuthAddProductCountsEvent value) addProductCounts,
     required TResult Function(AuthAutoLoginEvent value) autoLogin,
     required TResult Function(AuthLogoutEvent value) logout,
   }) {
@@ -606,7 +606,7 @@ class _$AuthAutoLoginEventImpl implements AuthAutoLoginEvent {
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(AuthLoginEvent value)? login,
-    TResult? Function(AuthAddSpaqCountsEvent value)? addProductCounts,
+    TResult? Function(AuthAddProductCountsEvent value)? addProductCounts,
     TResult? Function(AuthAutoLoginEvent value)? autoLogin,
     TResult? Function(AuthLogoutEvent value)? logout,
   }) {
@@ -617,7 +617,7 @@ class _$AuthAutoLoginEventImpl implements AuthAutoLoginEvent {
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
     TResult Function(AuthLoginEvent value)? login,
-    TResult Function(AuthAddSpaqCountsEvent value)? addProductCounts,
+    TResult Function(AuthAddProductCountsEvent value)? addProductCounts,
     TResult Function(AuthAutoLoginEvent value)? autoLogin,
     TResult Function(AuthLogoutEvent value)? logout,
     required TResult orElse(),
@@ -722,7 +722,7 @@ class _$AuthLogoutEventImpl implements AuthLogoutEvent {
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
     required TResult Function(AuthLoginEvent value) login,
-    required TResult Function(AuthAddSpaqCountsEvent value) addProductCounts,
+    required TResult Function(AuthAddProductCountsEvent value) addProductCounts,
     required TResult Function(AuthAutoLoginEvent value) autoLogin,
     required TResult Function(AuthLogoutEvent value) logout,
   }) {
@@ -733,7 +733,7 @@ class _$AuthLogoutEventImpl implements AuthLogoutEvent {
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(AuthLoginEvent value)? login,
-    TResult? Function(AuthAddSpaqCountsEvent value)? addProductCounts,
+    TResult? Function(AuthAddProductCountsEvent value)? addProductCounts,
     TResult? Function(AuthAutoLoginEvent value)? autoLogin,
     TResult? Function(AuthLogoutEvent value)? logout,
   }) {
@@ -744,7 +744,7 @@ class _$AuthLogoutEventImpl implements AuthLogoutEvent {
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
     TResult Function(AuthLoginEvent value)? login,
-    TResult Function(AuthAddSpaqCountsEvent value)? addProductCounts,
+    TResult Function(AuthAddProductCountsEvent value)? addProductCounts,
     TResult Function(AuthAutoLoginEvent value)? autoLogin,
     TResult Function(AuthLogoutEvent value)? logout,
     required TResult orElse(),

@@ -37,7 +37,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on(_onLogin);
     on(_onLogout);
     on(_onAutoLogin);
-    on(_onAddSpaqCounts);
+    on(_onAddProductCounts);
   }
 
   //_onAutoLogin event handles auto-login of the user when the user is already logged in and token is not expired, AuthenticatedWrapper is returned in UI
@@ -53,9 +53,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       final userObject = await localSecureStore.userRequestModel;
       final actionsList = await localSecureStore.savedActions;
       final userIndividualId = await localSecureStore.userIndividualId;
+
+      final bednet = await localSecureStore.bednet;
       final spaq1 = await localSecureStore.spaq1;
       final spaq2 = await localSecureStore.spaq2;
-
       final blueVas = await localSecureStore.blueVas;
       final redVas = await localSecureStore.redVas;
 
@@ -71,6 +72,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           userModel: userObject,
           individualId: userIndividualId,
           actionsWrapper: actionsList,
+          bednetCount: bednet,
           spaq1Count: spaq1,
           spaq2Count: spaq2,
           blueVasCount: blueVas,
@@ -107,6 +109,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         "enabled": true,
       });
       await localSecureStore.setBoundaryRefetch(true);
+      final bednet = await localSecureStore.bednet;
       final spaq1 = await localSecureStore.spaq1;
       final spaq2 = await localSecureStore.spaq2;
       final blueVas = await localSecureStore.blueVas;
@@ -133,6 +136,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
             userModel: result.userRequestModel,
             actionsWrapper: actionsWrapper,
             individualId: await localSecureStore.userIndividualId,
+            bednetCount: bednet,
             spaq1Count: spaq1,
             spaq2Count: spaq2,
             blueVasCount: blueVas,
@@ -165,8 +169,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     emit(const AuthUnauthenticatedState());
   }
 
-  FutureOr<void> _onAddSpaqCounts(
-    AuthAddSpaqCountsEvent event,
+  FutureOr<void> _onAddProductCounts(
+    AuthAddProductCountsEvent event,
     AuthEmitter emit,
   ) async {
     // emit(const AuthLoadingState());
@@ -239,7 +243,7 @@ class AuthEvent with _$AuthEvent {
     required int spaq2Count,
     required int blueVasCount,
     required int redVasCount,
-  }) = AuthAddSpaqCountsEvent;
+  }) = AuthAddProductCountsEvent;
 
   const factory AuthEvent.autoLogin({
     required String tenantId,

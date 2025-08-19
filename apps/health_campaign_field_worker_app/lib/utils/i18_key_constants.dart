@@ -449,6 +449,10 @@ class HomeShowcase {
 class StockDetails {
   const StockDetails();
 
+  String get expireDateRequired => 'STOCK_DETAILS_EXPIRE_DATE_REQUIRED';
+  String get commentsRequiredIfShort =>
+      'STOCK_DETAILS_COMMENTS_REQUIRED_IF_SHORT';
+
   String get stockReceiptDetails => 'STOCK_DETAILS_STOCK_RECEIPT_DETAILS';
   String get mrnNumber => 'STOCK_DETAILS_MRN_NUMBER';
   String get resource => 'STOCK_DETAILS_RESOURCE';
@@ -460,6 +464,15 @@ class StockDetails {
   String get partialQuantity => 'STOCK_DETAILS_PARTIAL_QUANTITY';
   String get wastedQuantity => 'STOCK_DETAILS_WASTED_QUANTITY';
   String get comments => 'STOCK_DETAILS_COMMENTS';
+
+  String get quantityRequired => 'STOCK_DETAILS_QUANTITY_REQUIRED';
+  String get quantityMinError => "STOCK_DETAILS_QUANTITY_MIN_ERROR";
+  String get quantityInvalidError => "STOCK_DETAILS_QUANTITY_INVALID_ERROR";
+  String get quantityMaxError => 'STOCK_DETAILS_QUANTITY_MAX_ERROR';
+
+  String get quantitySentByWarehouse =>
+      'STOCK_DETAILS_QUANTITY_SENT_BY_WAREHOUSE';
+  String get actualQuantityReceived => 'STOCK_DETAILS_ACTUAL_QUANTITY_RECEIVED';
 
   String get noTransactionsAvailable =>
       'STOCK_DETAILS_NO_TRANSACTIONS_AVAILABLE';
