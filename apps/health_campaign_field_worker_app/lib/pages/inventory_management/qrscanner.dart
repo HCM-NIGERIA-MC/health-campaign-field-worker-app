@@ -134,7 +134,7 @@ class _QRScannerPageState extends LocalizedState<QRScannerPage> {
         if (shouldSubmit ?? false) {
           Logger().d("This is the list $stockList");
           context.router.push(
-            ScannedReceivedStockRoute(
+            ReceiveStockRoute(
               mrnNumber: stockList.first.additionalFields?.fields
                       .firstWhere((f) => f.key == 'materialNoteNumber',
                           orElse: () => const AdditionalField('', ''))
