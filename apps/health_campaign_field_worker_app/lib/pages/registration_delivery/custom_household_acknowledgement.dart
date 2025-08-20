@@ -15,6 +15,7 @@ import 'package:registration_delivery/utils/registration_component_keys.dart'
     as registration_keys;
 import 'package:registration_delivery/widgets/localized.dart';
 
+import '../../blocs/auth/auth.dart';
 import '../../router/app_router.dart';
 
 @RoutePage()
@@ -34,6 +35,25 @@ class CustomHouseholdAcknowledgementPage extends LocalizedStatefulWidget {
 
 class CustomHouseholdAcknowledgementPageState
     extends LocalizedState<CustomHouseholdAcknowledgementPage> {
+  late RegistrationWrapperState wrapper;
+
+  updateStock(List<HouseholdWrapper> householdMembers) async {
+    List<TaskModel>? tasks = householdMembers.first.tasks;
+
+    context.read<AuthBloc>().add(
+          AuthDeliveryProductCountsEvent(
+            clientReferenceId: tasks?.first.clientReferenceId ?? "",
+          ),
+        );
+  }
+
+  @override
+  void initState() {
+    wrapper = context.read<RegistrationWrapperBloc>().state;
+    updateStock(wrapper.householdMembers);
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     final pageKey = HouseholdAcknowledgementRoute.name.replaceAll('Route', '');
@@ -53,7 +73,7 @@ class CustomHouseholdAcknowledgementPageState
               child: PanelCard(
                 type: PanelType.success,
                 additionalDetails: [
-                  if (wrapper.householdMembers?.first?.individuals?.lastOrNull!
+                  if (wrapper.householdMembers.first.individuals?.lastOrNull!
                           .identifiers!
                           .lastWhereOrNull(
                             (e) =>
