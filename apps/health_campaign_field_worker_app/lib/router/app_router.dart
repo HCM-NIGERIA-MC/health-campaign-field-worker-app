@@ -23,6 +23,7 @@ import '../blocs/localization/app_localization.dart';
 import '../pages/acknowledgement.dart';
 import '../pages/authenticated.dart';
 import '../pages/beneficiary_report/custom_distribution_summary_report_details.dart';
+import '../pages/complaints/custom_complain_inbox.dart';
 import '../pages/complaints/custom_complaints_details.dart';
 import '../pages/inventory_management/qr_scanner.dart';
 import '../pages/inventory_management/receive_stock.dart';
@@ -127,10 +128,10 @@ class AppRouter extends _$AppRouter {
           page: ReceiveStockRoute.page,
           path: 'custom-stock-view-lga',
         ),
-        // AutoRoute(
-        //   page: ViewStockRecordsCDDRoute.page,
-        //   path: 'custom-stock-view-lga',
-        // ),
+        AutoRoute(
+          page: ScannedReceivedStockRoute.page,
+          path: 'custom-stock-view-lga',
+        ),
 
         AutoRoute(
           page: CustomMinNumberRoute.page,
@@ -425,6 +426,13 @@ class AppRouter extends _$AppRouter {
               path: 'complaints-inbox-items',
               initial: true,
             ),
+            AutoRoute(
+              page: CustomComplaintsInboxRoute.page,
+              path: 'custom-complaints-inbox-items',
+            ),
+            RedirectRoute(
+                path: 'complaints-inbox-items',
+                redirectTo: 'custom-complaints-inbox-items'),
             AutoRoute(
               page: ComplaintsInboxFilterRoute.page,
               path: 'complaints-inbox-filter',
