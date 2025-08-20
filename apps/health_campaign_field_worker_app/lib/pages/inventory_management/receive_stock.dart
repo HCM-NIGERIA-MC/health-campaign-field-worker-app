@@ -170,22 +170,6 @@ class _ViewStockRecordsLGAPageState extends LocalizedState<ReceiveStockPage> {
             AdditionalField(_commentsKey, _form.control(_commentsKey).value),
         ]);
 
-        // final newFields = [
-        //   ...additionalFields.where((field) =>
-        //       field.key != _quantityReceivedKey && field.key != _commentsKey),
-        //   AdditionalField(_quantityReceivedKey,
-        //       _form.control(_quantityReceivedKey).value.toString()),
-        //   AdditionalField(
-        //     'quantitySent',
-        //     stock.quantity ?? '',
-        //   ),
-        //   if (_form.control(_expireDateKey).value != null)
-        //     AdditionalField(
-        //         _expireDateKey, _form.control(_expireDateKey).value),
-        //   if (_form.control(_commentsKey).value != null)
-        //     AdditionalField(_commentsKey, _form.control(_commentsKey).value),
-        // ];
-
         return stock.copyWith(
           id: null,
           rowVersion: 1,
@@ -302,10 +286,6 @@ class _ViewStockRecordsLGAPageState extends LocalizedState<ReceiveStockPage> {
         context.read<AuthBloc>().add(
               AuthAddProductCountsEvent(
                 bednetCount: bednetCount,
-                spaq1Count: spaq1Count,
-                spaq2Count: spaq2Count,
-                blueVasCount: blueVasCount,
-                redVasCount: redVasCount,
               ),
             );
         await Future.delayed(const Duration(milliseconds: 500));
@@ -368,7 +348,7 @@ class _ViewStockRecordsLGAPageState extends LocalizedState<ReceiveStockPage> {
                               Expanded(
                                   child: Text(
                                 localizations.translate(
-                                    i18_local.stockDetails.mrnNumber),
+                                    i18_local.stockDetails.minNumber),
                               )),
                               Expanded(child: Text(widget.mrnNumber)),
                             ],
@@ -497,7 +477,7 @@ class _ViewStockRecordsLGAPageState extends LocalizedState<ReceiveStockPage> {
                                   label: localizations.translate(
                                       i18_local.stockDetails.expireDate),
                                   isRequired: true,
-                                  start: before150Years,
+                                  start: DateTime.now(),
                                   formControlName: _expireDateKey,
                                   validationMessages: {
                                     'required': (_) => localizations.translate(
