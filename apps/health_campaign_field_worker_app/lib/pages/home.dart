@@ -950,7 +950,7 @@ void setPackagesSingleton(BuildContext context) {
               appConfiguration.checklistTypes?.map((e) => e.code).toList() ??
                   [],
         );
-
+        RegistrationDeliverySingleton().setStockCount(context.bednet);
         RegistrationDeliverySingleton().setInitialData(
           beneficiaryIdMinCount:
               appConfiguration.beneficiaryIdConfig?.first.minCount.toInt(),
