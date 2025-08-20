@@ -384,7 +384,8 @@ class _DynamicTabsPageState extends LocalizedState<DynamicTabsPage>
 
     form.control(_expireDateKey).setValidators(
           (entryType == StockRecordEntryType.receipt ||
-                  entryType == StockRecordEntryType.dispatch)
+                  (entryType == StockRecordEntryType.dispatch &&
+                      !context.isDistributor))
               ? [Validators.required]
               : [],
           autoValidate: true,
@@ -632,11 +633,12 @@ class _DynamicTabsPageState extends LocalizedState<DynamicTabsPage>
                           );
                         }),
                     if (entryType == StockRecordEntryType.receipt ||
-                        entryType == StockRecordEntryType.dispatch)
+                        (entryType == StockRecordEntryType.dispatch &&
+                            !context.isDistributor))
                       DigitDateFormPicker(
                         label: 'Expire Date',
                         isRequired: true,
-                        start: before150Years,
+                        start: DateTime.now(),
                         formControlName: _expireDateKey,
                         cancelText: localizations
                             .translate(i18.common.coreCommonCancel),
@@ -1100,10 +1102,6 @@ class _DynamicTabsPageState extends LocalizedState<DynamicTabsPage>
         context.read<AuthBloc>().add(
               AuthAddProductCountsEvent(
                 bednetCount: bednetCount,
-                spaq1Count: spaq1Count,
-                spaq2Count: spaq2Count,
-                blueVasCount: 0,
-                redVasCount: 0,
               ),
             );
 
