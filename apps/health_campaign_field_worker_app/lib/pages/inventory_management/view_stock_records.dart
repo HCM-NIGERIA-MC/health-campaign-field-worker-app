@@ -95,12 +95,7 @@ class _ViewStockRecordsPageState extends LocalizedState<ViewStockRecordsPage>
     final senderIdToShowOnTab = stock.senderId;
 
     String? partialQuantity = stock.additionalFields?.fields
-        .firstWhereOrNull((e) => e.key == "partialBlistersReturned")
-        ?.value
-        .toString();
-
-    String? wastedQuantity = stock.additionalFields?.fields
-        .firstWhereOrNull((e) => e.key == "wastedBlistersReturned")
+        .firstWhereOrNull((e) => e.key == "quantityPartial")
         ?.value
         .toString();
 
@@ -121,8 +116,7 @@ class _ViewStockRecordsPageState extends LocalizedState<ViewStockRecordsPage>
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    localizations
-                        .translate(i18_local.stockDetails.stockReceiptDetails),
+                    localizations.translate(getStockRecordLabel(stock)),
                     style: const TextStyle(
                         fontSize: 16, fontWeight: FontWeight.bold),
                   ),
@@ -131,7 +125,7 @@ class _ViewStockRecordsPageState extends LocalizedState<ViewStockRecordsPage>
                     children: [
                       Expanded(
                           child: Text(localizations
-                              .translate(i18_local.stockDetails.mrnNumber))),
+                              .translate(i18_local.stockDetails.minNumber))),
                       Expanded(child: Text(widget.mrnNumber)),
                     ],
                   ),
@@ -215,8 +209,10 @@ class _ViewStockRecordsPageState extends LocalizedState<ViewStockRecordsPage>
 
                   // Quantity
                   ViewStockField(
-                    label: localizations
-                        .translate(i18_local.stockDetails.quantity),
+                    label: localizations.translate(stock.transactionReason ==
+                            TransactionReason.returned.toValue()
+                        ? i18_local.stockDetails.quantityUnusedReturnedLabel
+                        : i18_local.stockDetails.quantity),
                     value: stock.quantity ?? '',
                   ),
 
@@ -224,8 +220,8 @@ class _ViewStockRecordsPageState extends LocalizedState<ViewStockRecordsPage>
                   if (stock.transactionReason ==
                       TransactionReason.returned.toValue())
                     ViewStockField(
-                      label: localizations
-                          .translate(i18_local.stockDetails.partialQuantity),
+                      label: localizations.translate(
+                          i18_local.stockDetails.quantityWastedReturnedLabel),
                       value: partialQuantity ?? "",
                     ),
 
@@ -244,14 +240,6 @@ class _ViewStockRecordsPageState extends LocalizedState<ViewStockRecordsPage>
                               .translate(i18_local.stockDetails.expireDate),
                     ),
 
-                  // Wasted Quantity
-                  if (wastedQuantity != null)
-                    ViewStockField(
-                      label: localizations
-                          .translate(i18_local.stockDetails.wastedQuantity),
-                      value: wastedQuantity,
-                    ),
-                  if (wastedQuantity != null) const SizedBox(height: 12),
                   // Comments
                   ViewStockField(
                     type: InputType.textArea,
