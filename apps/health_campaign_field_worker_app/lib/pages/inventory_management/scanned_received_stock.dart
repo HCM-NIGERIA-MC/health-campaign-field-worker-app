@@ -1,3 +1,5 @@
+import 'package:digit_components/utils/date_utils.dart';
+import 'package:digit_components/widgets/atoms/digit_date_form_picker.dart';
 import 'package:digit_components/widgets/atoms/digit_toaster.dart';
 import 'package:digit_components/widgets/digit_dialog.dart';
 import 'package:digit_data_model/data_model.dart';
@@ -47,6 +49,9 @@ class _ViewStockRecordsCDDPageState
   static const _quantityReceivedKey = 'quantityReceived';
   static const _commentsKey = 'comments';
 
+  DateTime after150Years = DateTime(
+      DateTime.now().year + 150, DateTime.now().month, DateTime.now().day);
+
   late final List<FormGroup> _forms;
   late TabController _tabController;
   bool isSubmitClicked = false;
@@ -62,7 +67,7 @@ class _ViewStockRecordsCDDPageState
                   Validators.min(1),
                 ],
               ),
-              _expireDateKey: FormControl<String>(
+              _expireDateKey: FormControl<DateTime>(
                 validators: [
                   Validators.required,
                 ],
@@ -169,6 +174,13 @@ class _ViewStockRecordsCDDPageState
 
           isSubmitClicked = true;
 
+          Set<String> additionalKeys = {
+            'quantitySent',
+            _quantityReceivedKey,
+            _expireDateKey,
+            _commentsKey,
+          };
+
           // Proceed with final submission
           context.read<RecordStockBloc>().add(
                 RecordStockSaveTransactionDetailsEvent(
@@ -184,18 +196,27 @@ class _ViewStockRecordsCDDPageState
           final updatedStocks = widget.stockRecords.map((stock) {
             final additionalFields = stock.additionalFields?.fields ?? [];
             final form = _forms[widget.stockRecords.indexOf(stock)];
+            DateTime? expireDate = form.control(_expireDateKey).value;
 
-            final newFields = [
-              ...additionalFields.where((field) =>
-                  field.key != _quantityReceivedKey &&
-                  field.key != _commentsKey),
-              AdditionalField(_quantityReceivedKey,
-                  form.control(_quantityReceivedKey).value.toString()),
-              AdditionalField('quantitySent', stock.quantity ?? ''),
+            final filteredAdditionalFields = additionalFields
+                .whereNot((field) => additionalKeys.contains(field.key))
+                .toList();
+
+            filteredAdditionalFields.addAll([
+              if (stock.quantity != null)
+                AdditionalField(
+                  'quantitySent',
+                  stock.quantity,
+                ),
+              if (form.control(_quantityReceivedKey).value != null)
+                AdditionalField(_quantityReceivedKey,
+                    form.control(_quantityReceivedKey).value.toString()),
+              if (expireDate != null)
+                AdditionalField(
+                    _expireDateKey, expireDate.millisecondsSinceEpoch),
               if (form.control(_commentsKey).value != null)
                 AdditionalField(_commentsKey, form.control(_commentsKey).value),
-              const AdditionalField('received', 'true'),
-            ];
+            ]);
 
             return stock.copyWith(
               id: null,
@@ -206,7 +227,7 @@ class _ViewStockRecordsCDDPageState
               transactionReason: TransactionReason.received.toValue(),
               quantity: form.control(_quantityReceivedKey).value.toString(),
               additionalFields: stock.additionalFields?.copyWith(
-                fields: newFields,
+                fields: filteredAdditionalFields,
               ),
               dateOfEntry: DateTime.now().millisecondsSinceEpoch,
               auditDetails: AuditDetails(
@@ -306,10 +327,6 @@ class _ViewStockRecordsCDDPageState
             context.read<AuthBloc>().add(
                   AuthAddProductCountsEvent(
                     bednetCount: bednetCount,
-                    spaq1Count: spaq1Count,
-                    spaq2Count: spaq2Count,
-                    blueVasCount: blueVasCount,
-                    redVasCount: redVasCount,
                   ),
                 );
 
@@ -428,27 +445,34 @@ class _ViewStockRecordsCDDPageState
                     },
                   ),
                   const SizedBox(height: 12),
-                  ReactiveWrapperField(
+                  DigitDateFormPicker(
+                    label: localizations
+                        .translate(i18_local.stockDetails.expireDate),
+                    isRequired: true,
+                    start: DateTime.now(),
                     formControlName: _expireDateKey,
-                    builder: (field) => InputField(
-                      type: InputType.text,
-                      label: localizations.translate(i18_local
-                          .inventoryReportDetails.actualQuantityReceived),
-                      errorMessage: field.errorText,
-                      keyboardType: TextInputType.number,
-                      onChange: (value) {
-                        if (value != null && value.isNotEmpty) {
-                          field.control.value = int.tryParse(value);
-                        } else {
-                          field.control.value = null;
-                        }
-                      },
-                    ),
                     validationMessages: {
-                      'required': (_) => 'Quantity is required',
-                      'min': (_) => 'Must be at least 1',
-                      'number': (_) => 'Must be a valid number',
+                      'required': (_) => localizations
+                          .translate(i18_local.stockDetails.expireDateRequired),
                     },
+                    cancelText:
+                        localizations.translate(i18.common.coreCommonCancel),
+                    confirmText:
+                        localizations.translate(i18.common.coreCommonOk),
+                    onChangeOfFormControl: (formControl) {
+                      // Handle changes to the control's value here
+                      DateTime? value = formControl.value;
+                      if (value == null) return;
+                      DigitDOBAge age = DigitDateUtils.calculateAge(value);
+                      if ((age.years == 0 && age.months == 0) ||
+                          age.months > 11 ||
+                          (age.years >= 150 && age.months >= 0)) {
+                        formControl.setErrors({'': true});
+                      } else {
+                        formControl.removeError('');
+                      }
+                    },
+                    end: after150Years,
                   ),
                   const SizedBox(height: 12),
                   ReactiveWrapperField(
