@@ -454,7 +454,9 @@ class StockDetails {
       'STOCK_DETAILS_COMMENTS_REQUIRED_IF_SHORT';
 
   String get stockReceiptDetails => 'STOCK_DETAILS_STOCK_RECEIPT_DETAILS';
-  String get mrnNumber => 'STOCK_DETAILS_MRN_NUMBER';
+  String get stockIssueDetails => 'STOCK_DETAILS_STOCK_ISSUE_DETAILS';
+  String get stockReturnDetails => 'STOCK_DETAILS_STOCK_RETURN_DETAILS';
+  String get minNumber => 'STOCK_DETAILS_MIN_NUMBER';
   String get resource => 'STOCK_DETAILS_RESOURCE';
   String get stockDetails => 'STOCK_DETAILS';
   String get waybillNumber => 'STOCK_DETAILS_WAYBILL_NUMBER';
@@ -476,7 +478,7 @@ class StockDetails {
 
   String get noTransactionsAvailable =>
       'STOCK_DETAILS_NO_TRANSACTIONS_AVAILABLE';
-  String get selectMRNNumber => 'STOCK_DETAILS_SELECT_MRN_NUMBER';
+  String get selectMRNNumber => 'STOCK_DETAILS_SELECT_MIN_NUMBER';
 
   String get selectTransactingPartyReturnedFrom =>
       'STOCK_DETAILS_RETURNED_FROM';
