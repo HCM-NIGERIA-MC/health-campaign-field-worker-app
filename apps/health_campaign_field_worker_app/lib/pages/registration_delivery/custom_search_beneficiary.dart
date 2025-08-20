@@ -1022,7 +1022,7 @@ class _CustomSearchBeneficiaryPageState
           mainAxisSize: MainAxisSize.max,
           type: DigitButtonType.primary,
           size: DigitButtonSize.large,
-          isDisabled: isTextShort,
+          // isDisabled: isTextShort,
           onPressed: () async {
             int bednet = context.bednet;
             String descriptionText = localizations.translate(
