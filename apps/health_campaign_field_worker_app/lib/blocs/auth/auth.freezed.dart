@@ -20,9 +20,10 @@ mixin _$AuthEvent {
   TResult when<TResult extends Object?>({
     required TResult Function(String userId, String password, String tenantId)
         login,
-    required TResult Function(int bednetCount, int spaq1Count, int spaq2Count,
-            int blueVasCount, int redVasCount)
+    required TResult Function(int? bednetCount, int? spaq1Count,
+            int? spaq2Count, int? blueVasCount, int? redVasCount)
         addProductCounts,
+    required TResult Function(String clientReferenceId) deliveryProductCounts,
     required TResult Function(String tenantId) autoLogin,
     required TResult Function() logout,
   }) =>
@@ -30,9 +31,10 @@ mixin _$AuthEvent {
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function(String userId, String password, String tenantId)? login,
-    TResult? Function(int bednetCount, int spaq1Count, int spaq2Count,
-            int blueVasCount, int redVasCount)?
+    TResult? Function(int? bednetCount, int? spaq1Count, int? spaq2Count,
+            int? blueVasCount, int? redVasCount)?
         addProductCounts,
+    TResult? Function(String clientReferenceId)? deliveryProductCounts,
     TResult? Function(String tenantId)? autoLogin,
     TResult? Function()? logout,
   }) =>
@@ -40,9 +42,10 @@ mixin _$AuthEvent {
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function(String userId, String password, String tenantId)? login,
-    TResult Function(int bednetCount, int spaq1Count, int spaq2Count,
-            int blueVasCount, int redVasCount)?
+    TResult Function(int? bednetCount, int? spaq1Count, int? spaq2Count,
+            int? blueVasCount, int? redVasCount)?
         addProductCounts,
+    TResult Function(String clientReferenceId)? deliveryProductCounts,
     TResult Function(String tenantId)? autoLogin,
     TResult Function()? logout,
     required TResult orElse(),
@@ -52,6 +55,8 @@ mixin _$AuthEvent {
   TResult map<TResult extends Object?>({
     required TResult Function(AuthLoginEvent value) login,
     required TResult Function(AuthAddProductCountsEvent value) addProductCounts,
+    required TResult Function(AuthDeliveryProductCountsEvent value)
+        deliveryProductCounts,
     required TResult Function(AuthAutoLoginEvent value) autoLogin,
     required TResult Function(AuthLogoutEvent value) logout,
   }) =>
@@ -60,6 +65,8 @@ mixin _$AuthEvent {
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(AuthLoginEvent value)? login,
     TResult? Function(AuthAddProductCountsEvent value)? addProductCounts,
+    TResult? Function(AuthDeliveryProductCountsEvent value)?
+        deliveryProductCounts,
     TResult? Function(AuthAutoLoginEvent value)? autoLogin,
     TResult? Function(AuthLogoutEvent value)? logout,
   }) =>
@@ -68,6 +75,8 @@ mixin _$AuthEvent {
   TResult maybeMap<TResult extends Object?>({
     TResult Function(AuthLoginEvent value)? login,
     TResult Function(AuthAddProductCountsEvent value)? addProductCounts,
+    TResult Function(AuthDeliveryProductCountsEvent value)?
+        deliveryProductCounts,
     TResult Function(AuthAutoLoginEvent value)? autoLogin,
     TResult Function(AuthLogoutEvent value)? logout,
     required TResult orElse(),
@@ -178,9 +187,10 @@ class _$AuthLoginEventImpl implements AuthLoginEvent {
   TResult when<TResult extends Object?>({
     required TResult Function(String userId, String password, String tenantId)
         login,
-    required TResult Function(int bednetCount, int spaq1Count, int spaq2Count,
-            int blueVasCount, int redVasCount)
+    required TResult Function(int? bednetCount, int? spaq1Count,
+            int? spaq2Count, int? blueVasCount, int? redVasCount)
         addProductCounts,
+    required TResult Function(String clientReferenceId) deliveryProductCounts,
     required TResult Function(String tenantId) autoLogin,
     required TResult Function() logout,
   }) {
@@ -191,9 +201,10 @@ class _$AuthLoginEventImpl implements AuthLoginEvent {
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function(String userId, String password, String tenantId)? login,
-    TResult? Function(int bednetCount, int spaq1Count, int spaq2Count,
-            int blueVasCount, int redVasCount)?
+    TResult? Function(int? bednetCount, int? spaq1Count, int? spaq2Count,
+            int? blueVasCount, int? redVasCount)?
         addProductCounts,
+    TResult? Function(String clientReferenceId)? deliveryProductCounts,
     TResult? Function(String tenantId)? autoLogin,
     TResult? Function()? logout,
   }) {
@@ -204,9 +215,10 @@ class _$AuthLoginEventImpl implements AuthLoginEvent {
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function(String userId, String password, String tenantId)? login,
-    TResult Function(int bednetCount, int spaq1Count, int spaq2Count,
-            int blueVasCount, int redVasCount)?
+    TResult Function(int? bednetCount, int? spaq1Count, int? spaq2Count,
+            int? blueVasCount, int? redVasCount)?
         addProductCounts,
+    TResult Function(String clientReferenceId)? deliveryProductCounts,
     TResult Function(String tenantId)? autoLogin,
     TResult Function()? logout,
     required TResult orElse(),
@@ -222,6 +234,8 @@ class _$AuthLoginEventImpl implements AuthLoginEvent {
   TResult map<TResult extends Object?>({
     required TResult Function(AuthLoginEvent value) login,
     required TResult Function(AuthAddProductCountsEvent value) addProductCounts,
+    required TResult Function(AuthDeliveryProductCountsEvent value)
+        deliveryProductCounts,
     required TResult Function(AuthAutoLoginEvent value) autoLogin,
     required TResult Function(AuthLogoutEvent value) logout,
   }) {
@@ -233,6 +247,8 @@ class _$AuthLoginEventImpl implements AuthLoginEvent {
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(AuthLoginEvent value)? login,
     TResult? Function(AuthAddProductCountsEvent value)? addProductCounts,
+    TResult? Function(AuthDeliveryProductCountsEvent value)?
+        deliveryProductCounts,
     TResult? Function(AuthAutoLoginEvent value)? autoLogin,
     TResult? Function(AuthLogoutEvent value)? logout,
   }) {
@@ -244,6 +260,8 @@ class _$AuthLoginEventImpl implements AuthLoginEvent {
   TResult maybeMap<TResult extends Object?>({
     TResult Function(AuthLoginEvent value)? login,
     TResult Function(AuthAddProductCountsEvent value)? addProductCounts,
+    TResult Function(AuthDeliveryProductCountsEvent value)?
+        deliveryProductCounts,
     TResult Function(AuthAutoLoginEvent value)? autoLogin,
     TResult Function(AuthLogoutEvent value)? logout,
     required TResult orElse(),
@@ -277,11 +295,11 @@ abstract class _$$AuthAddProductCountsEventImplCopyWith<$Res> {
       __$$AuthAddProductCountsEventImplCopyWithImpl<$Res>;
   @useResult
   $Res call(
-      {int bednetCount,
-      int spaq1Count,
-      int spaq2Count,
-      int blueVasCount,
-      int redVasCount});
+      {int? bednetCount,
+      int? spaq1Count,
+      int? spaq2Count,
+      int? blueVasCount,
+      int? redVasCount});
 }
 
 /// @nodoc
@@ -296,33 +314,33 @@ class __$$AuthAddProductCountsEventImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? bednetCount = null,
-    Object? spaq1Count = null,
-    Object? spaq2Count = null,
-    Object? blueVasCount = null,
-    Object? redVasCount = null,
+    Object? bednetCount = freezed,
+    Object? spaq1Count = freezed,
+    Object? spaq2Count = freezed,
+    Object? blueVasCount = freezed,
+    Object? redVasCount = freezed,
   }) {
     return _then(_$AuthAddProductCountsEventImpl(
-      bednetCount: null == bednetCount
+      bednetCount: freezed == bednetCount
           ? _value.bednetCount
           : bednetCount // ignore: cast_nullable_to_non_nullable
-              as int,
-      spaq1Count: null == spaq1Count
+              as int?,
+      spaq1Count: freezed == spaq1Count
           ? _value.spaq1Count
           : spaq1Count // ignore: cast_nullable_to_non_nullable
-              as int,
-      spaq2Count: null == spaq2Count
+              as int?,
+      spaq2Count: freezed == spaq2Count
           ? _value.spaq2Count
           : spaq2Count // ignore: cast_nullable_to_non_nullable
-              as int,
-      blueVasCount: null == blueVasCount
+              as int?,
+      blueVasCount: freezed == blueVasCount
           ? _value.blueVasCount
           : blueVasCount // ignore: cast_nullable_to_non_nullable
-              as int,
-      redVasCount: null == redVasCount
+              as int?,
+      redVasCount: freezed == redVasCount
           ? _value.redVasCount
           : redVasCount // ignore: cast_nullable_to_non_nullable
-              as int,
+              as int?,
     ));
   }
 }
@@ -331,22 +349,22 @@ class __$$AuthAddProductCountsEventImplCopyWithImpl<$Res>
 
 class _$AuthAddProductCountsEventImpl implements AuthAddProductCountsEvent {
   const _$AuthAddProductCountsEventImpl(
-      {required this.bednetCount,
-      required this.spaq1Count,
-      required this.spaq2Count,
-      required this.blueVasCount,
-      required this.redVasCount});
+      {this.bednetCount,
+      this.spaq1Count,
+      this.spaq2Count,
+      this.blueVasCount,
+      this.redVasCount});
 
   @override
-  final int bednetCount;
+  final int? bednetCount;
   @override
-  final int spaq1Count;
+  final int? spaq1Count;
   @override
-  final int spaq2Count;
+  final int? spaq2Count;
   @override
-  final int blueVasCount;
+  final int? blueVasCount;
   @override
-  final int redVasCount;
+  final int? redVasCount;
 
   @override
   String toString() {
@@ -386,9 +404,10 @@ class _$AuthAddProductCountsEventImpl implements AuthAddProductCountsEvent {
   TResult when<TResult extends Object?>({
     required TResult Function(String userId, String password, String tenantId)
         login,
-    required TResult Function(int bednetCount, int spaq1Count, int spaq2Count,
-            int blueVasCount, int redVasCount)
+    required TResult Function(int? bednetCount, int? spaq1Count,
+            int? spaq2Count, int? blueVasCount, int? redVasCount)
         addProductCounts,
+    required TResult Function(String clientReferenceId) deliveryProductCounts,
     required TResult Function(String tenantId) autoLogin,
     required TResult Function() logout,
   }) {
@@ -400,9 +419,10 @@ class _$AuthAddProductCountsEventImpl implements AuthAddProductCountsEvent {
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function(String userId, String password, String tenantId)? login,
-    TResult? Function(int bednetCount, int spaq1Count, int spaq2Count,
-            int blueVasCount, int redVasCount)?
+    TResult? Function(int? bednetCount, int? spaq1Count, int? spaq2Count,
+            int? blueVasCount, int? redVasCount)?
         addProductCounts,
+    TResult? Function(String clientReferenceId)? deliveryProductCounts,
     TResult? Function(String tenantId)? autoLogin,
     TResult? Function()? logout,
   }) {
@@ -414,9 +434,10 @@ class _$AuthAddProductCountsEventImpl implements AuthAddProductCountsEvent {
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function(String userId, String password, String tenantId)? login,
-    TResult Function(int bednetCount, int spaq1Count, int spaq2Count,
-            int blueVasCount, int redVasCount)?
+    TResult Function(int? bednetCount, int? spaq1Count, int? spaq2Count,
+            int? blueVasCount, int? redVasCount)?
         addProductCounts,
+    TResult Function(String clientReferenceId)? deliveryProductCounts,
     TResult Function(String tenantId)? autoLogin,
     TResult Function()? logout,
     required TResult orElse(),
@@ -433,6 +454,8 @@ class _$AuthAddProductCountsEventImpl implements AuthAddProductCountsEvent {
   TResult map<TResult extends Object?>({
     required TResult Function(AuthLoginEvent value) login,
     required TResult Function(AuthAddProductCountsEvent value) addProductCounts,
+    required TResult Function(AuthDeliveryProductCountsEvent value)
+        deliveryProductCounts,
     required TResult Function(AuthAutoLoginEvent value) autoLogin,
     required TResult Function(AuthLogoutEvent value) logout,
   }) {
@@ -444,6 +467,8 @@ class _$AuthAddProductCountsEventImpl implements AuthAddProductCountsEvent {
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(AuthLoginEvent value)? login,
     TResult? Function(AuthAddProductCountsEvent value)? addProductCounts,
+    TResult? Function(AuthDeliveryProductCountsEvent value)?
+        deliveryProductCounts,
     TResult? Function(AuthAutoLoginEvent value)? autoLogin,
     TResult? Function(AuthLogoutEvent value)? logout,
   }) {
@@ -455,6 +480,8 @@ class _$AuthAddProductCountsEventImpl implements AuthAddProductCountsEvent {
   TResult maybeMap<TResult extends Object?>({
     TResult Function(AuthLoginEvent value)? login,
     TResult Function(AuthAddProductCountsEvent value)? addProductCounts,
+    TResult Function(AuthDeliveryProductCountsEvent value)?
+        deliveryProductCounts,
     TResult Function(AuthAutoLoginEvent value)? autoLogin,
     TResult Function(AuthLogoutEvent value)? logout,
     required TResult orElse(),
@@ -468,19 +495,189 @@ class _$AuthAddProductCountsEventImpl implements AuthAddProductCountsEvent {
 
 abstract class AuthAddProductCountsEvent implements AuthEvent {
   const factory AuthAddProductCountsEvent(
-      {required final int bednetCount,
-      required final int spaq1Count,
-      required final int spaq2Count,
-      required final int blueVasCount,
-      required final int redVasCount}) = _$AuthAddProductCountsEventImpl;
+      {final int? bednetCount,
+      final int? spaq1Count,
+      final int? spaq2Count,
+      final int? blueVasCount,
+      final int? redVasCount}) = _$AuthAddProductCountsEventImpl;
 
-  int get bednetCount;
-  int get spaq1Count;
-  int get spaq2Count;
-  int get blueVasCount;
-  int get redVasCount;
+  int? get bednetCount;
+  int? get spaq1Count;
+  int? get spaq2Count;
+  int? get blueVasCount;
+  int? get redVasCount;
   @JsonKey(ignore: true)
   _$$AuthAddProductCountsEventImplCopyWith<_$AuthAddProductCountsEventImpl>
+      get copyWith => throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class _$$AuthDeliveryProductCountsEventImplCopyWith<$Res> {
+  factory _$$AuthDeliveryProductCountsEventImplCopyWith(
+          _$AuthDeliveryProductCountsEventImpl value,
+          $Res Function(_$AuthDeliveryProductCountsEventImpl) then) =
+      __$$AuthDeliveryProductCountsEventImplCopyWithImpl<$Res>;
+  @useResult
+  $Res call({String clientReferenceId});
+}
+
+/// @nodoc
+class __$$AuthDeliveryProductCountsEventImplCopyWithImpl<$Res>
+    extends _$AuthEventCopyWithImpl<$Res, _$AuthDeliveryProductCountsEventImpl>
+    implements _$$AuthDeliveryProductCountsEventImplCopyWith<$Res> {
+  __$$AuthDeliveryProductCountsEventImplCopyWithImpl(
+      _$AuthDeliveryProductCountsEventImpl _value,
+      $Res Function(_$AuthDeliveryProductCountsEventImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? clientReferenceId = null,
+  }) {
+    return _then(_$AuthDeliveryProductCountsEventImpl(
+      clientReferenceId: null == clientReferenceId
+          ? _value.clientReferenceId
+          : clientReferenceId // ignore: cast_nullable_to_non_nullable
+              as String,
+    ));
+  }
+}
+
+/// @nodoc
+
+class _$AuthDeliveryProductCountsEventImpl
+    implements AuthDeliveryProductCountsEvent {
+  const _$AuthDeliveryProductCountsEventImpl({required this.clientReferenceId});
+
+  @override
+  final String clientReferenceId;
+
+  @override
+  String toString() {
+    return 'AuthEvent.deliveryProductCounts(clientReferenceId: $clientReferenceId)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$AuthDeliveryProductCountsEventImpl &&
+            (identical(other.clientReferenceId, clientReferenceId) ||
+                other.clientReferenceId == clientReferenceId));
+  }
+
+  @override
+  int get hashCode => Object.hash(runtimeType, clientReferenceId);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$AuthDeliveryProductCountsEventImplCopyWith<
+          _$AuthDeliveryProductCountsEventImpl>
+      get copyWith => __$$AuthDeliveryProductCountsEventImplCopyWithImpl<
+          _$AuthDeliveryProductCountsEventImpl>(this, _$identity);
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function(String userId, String password, String tenantId)
+        login,
+    required TResult Function(int? bednetCount, int? spaq1Count,
+            int? spaq2Count, int? blueVasCount, int? redVasCount)
+        addProductCounts,
+    required TResult Function(String clientReferenceId) deliveryProductCounts,
+    required TResult Function(String tenantId) autoLogin,
+    required TResult Function() logout,
+  }) {
+    return deliveryProductCounts(clientReferenceId);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function(String userId, String password, String tenantId)? login,
+    TResult? Function(int? bednetCount, int? spaq1Count, int? spaq2Count,
+            int? blueVasCount, int? redVasCount)?
+        addProductCounts,
+    TResult? Function(String clientReferenceId)? deliveryProductCounts,
+    TResult? Function(String tenantId)? autoLogin,
+    TResult? Function()? logout,
+  }) {
+    return deliveryProductCounts?.call(clientReferenceId);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function(String userId, String password, String tenantId)? login,
+    TResult Function(int? bednetCount, int? spaq1Count, int? spaq2Count,
+            int? blueVasCount, int? redVasCount)?
+        addProductCounts,
+    TResult Function(String clientReferenceId)? deliveryProductCounts,
+    TResult Function(String tenantId)? autoLogin,
+    TResult Function()? logout,
+    required TResult orElse(),
+  }) {
+    if (deliveryProductCounts != null) {
+      return deliveryProductCounts(clientReferenceId);
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(AuthLoginEvent value) login,
+    required TResult Function(AuthAddProductCountsEvent value) addProductCounts,
+    required TResult Function(AuthDeliveryProductCountsEvent value)
+        deliveryProductCounts,
+    required TResult Function(AuthAutoLoginEvent value) autoLogin,
+    required TResult Function(AuthLogoutEvent value) logout,
+  }) {
+    return deliveryProductCounts(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(AuthLoginEvent value)? login,
+    TResult? Function(AuthAddProductCountsEvent value)? addProductCounts,
+    TResult? Function(AuthDeliveryProductCountsEvent value)?
+        deliveryProductCounts,
+    TResult? Function(AuthAutoLoginEvent value)? autoLogin,
+    TResult? Function(AuthLogoutEvent value)? logout,
+  }) {
+    return deliveryProductCounts?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(AuthLoginEvent value)? login,
+    TResult Function(AuthAddProductCountsEvent value)? addProductCounts,
+    TResult Function(AuthDeliveryProductCountsEvent value)?
+        deliveryProductCounts,
+    TResult Function(AuthAutoLoginEvent value)? autoLogin,
+    TResult Function(AuthLogoutEvent value)? logout,
+    required TResult orElse(),
+  }) {
+    if (deliveryProductCounts != null) {
+      return deliveryProductCounts(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class AuthDeliveryProductCountsEvent implements AuthEvent {
+  const factory AuthDeliveryProductCountsEvent(
+          {required final String clientReferenceId}) =
+      _$AuthDeliveryProductCountsEventImpl;
+
+  String get clientReferenceId;
+  @JsonKey(ignore: true)
+  _$$AuthDeliveryProductCountsEventImplCopyWith<
+          _$AuthDeliveryProductCountsEventImpl>
       get copyWith => throw _privateConstructorUsedError;
 }
 
@@ -552,9 +749,10 @@ class _$AuthAutoLoginEventImpl implements AuthAutoLoginEvent {
   TResult when<TResult extends Object?>({
     required TResult Function(String userId, String password, String tenantId)
         login,
-    required TResult Function(int bednetCount, int spaq1Count, int spaq2Count,
-            int blueVasCount, int redVasCount)
+    required TResult Function(int? bednetCount, int? spaq1Count,
+            int? spaq2Count, int? blueVasCount, int? redVasCount)
         addProductCounts,
+    required TResult Function(String clientReferenceId) deliveryProductCounts,
     required TResult Function(String tenantId) autoLogin,
     required TResult Function() logout,
   }) {
@@ -565,9 +763,10 @@ class _$AuthAutoLoginEventImpl implements AuthAutoLoginEvent {
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function(String userId, String password, String tenantId)? login,
-    TResult? Function(int bednetCount, int spaq1Count, int spaq2Count,
-            int blueVasCount, int redVasCount)?
+    TResult? Function(int? bednetCount, int? spaq1Count, int? spaq2Count,
+            int? blueVasCount, int? redVasCount)?
         addProductCounts,
+    TResult? Function(String clientReferenceId)? deliveryProductCounts,
     TResult? Function(String tenantId)? autoLogin,
     TResult? Function()? logout,
   }) {
@@ -578,9 +777,10 @@ class _$AuthAutoLoginEventImpl implements AuthAutoLoginEvent {
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function(String userId, String password, String tenantId)? login,
-    TResult Function(int bednetCount, int spaq1Count, int spaq2Count,
-            int blueVasCount, int redVasCount)?
+    TResult Function(int? bednetCount, int? spaq1Count, int? spaq2Count,
+            int? blueVasCount, int? redVasCount)?
         addProductCounts,
+    TResult Function(String clientReferenceId)? deliveryProductCounts,
     TResult Function(String tenantId)? autoLogin,
     TResult Function()? logout,
     required TResult orElse(),
@@ -596,6 +796,8 @@ class _$AuthAutoLoginEventImpl implements AuthAutoLoginEvent {
   TResult map<TResult extends Object?>({
     required TResult Function(AuthLoginEvent value) login,
     required TResult Function(AuthAddProductCountsEvent value) addProductCounts,
+    required TResult Function(AuthDeliveryProductCountsEvent value)
+        deliveryProductCounts,
     required TResult Function(AuthAutoLoginEvent value) autoLogin,
     required TResult Function(AuthLogoutEvent value) logout,
   }) {
@@ -607,6 +809,8 @@ class _$AuthAutoLoginEventImpl implements AuthAutoLoginEvent {
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(AuthLoginEvent value)? login,
     TResult? Function(AuthAddProductCountsEvent value)? addProductCounts,
+    TResult? Function(AuthDeliveryProductCountsEvent value)?
+        deliveryProductCounts,
     TResult? Function(AuthAutoLoginEvent value)? autoLogin,
     TResult? Function(AuthLogoutEvent value)? logout,
   }) {
@@ -618,6 +822,8 @@ class _$AuthAutoLoginEventImpl implements AuthAutoLoginEvent {
   TResult maybeMap<TResult extends Object?>({
     TResult Function(AuthLoginEvent value)? login,
     TResult Function(AuthAddProductCountsEvent value)? addProductCounts,
+    TResult Function(AuthDeliveryProductCountsEvent value)?
+        deliveryProductCounts,
     TResult Function(AuthAutoLoginEvent value)? autoLogin,
     TResult Function(AuthLogoutEvent value)? logout,
     required TResult orElse(),
@@ -679,9 +885,10 @@ class _$AuthLogoutEventImpl implements AuthLogoutEvent {
   TResult when<TResult extends Object?>({
     required TResult Function(String userId, String password, String tenantId)
         login,
-    required TResult Function(int bednetCount, int spaq1Count, int spaq2Count,
-            int blueVasCount, int redVasCount)
+    required TResult Function(int? bednetCount, int? spaq1Count,
+            int? spaq2Count, int? blueVasCount, int? redVasCount)
         addProductCounts,
+    required TResult Function(String clientReferenceId) deliveryProductCounts,
     required TResult Function(String tenantId) autoLogin,
     required TResult Function() logout,
   }) {
@@ -692,9 +899,10 @@ class _$AuthLogoutEventImpl implements AuthLogoutEvent {
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function(String userId, String password, String tenantId)? login,
-    TResult? Function(int bednetCount, int spaq1Count, int spaq2Count,
-            int blueVasCount, int redVasCount)?
+    TResult? Function(int? bednetCount, int? spaq1Count, int? spaq2Count,
+            int? blueVasCount, int? redVasCount)?
         addProductCounts,
+    TResult? Function(String clientReferenceId)? deliveryProductCounts,
     TResult? Function(String tenantId)? autoLogin,
     TResult? Function()? logout,
   }) {
@@ -705,9 +913,10 @@ class _$AuthLogoutEventImpl implements AuthLogoutEvent {
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function(String userId, String password, String tenantId)? login,
-    TResult Function(int bednetCount, int spaq1Count, int spaq2Count,
-            int blueVasCount, int redVasCount)?
+    TResult Function(int? bednetCount, int? spaq1Count, int? spaq2Count,
+            int? blueVasCount, int? redVasCount)?
         addProductCounts,
+    TResult Function(String clientReferenceId)? deliveryProductCounts,
     TResult Function(String tenantId)? autoLogin,
     TResult Function()? logout,
     required TResult orElse(),
@@ -723,6 +932,8 @@ class _$AuthLogoutEventImpl implements AuthLogoutEvent {
   TResult map<TResult extends Object?>({
     required TResult Function(AuthLoginEvent value) login,
     required TResult Function(AuthAddProductCountsEvent value) addProductCounts,
+    required TResult Function(AuthDeliveryProductCountsEvent value)
+        deliveryProductCounts,
     required TResult Function(AuthAutoLoginEvent value) autoLogin,
     required TResult Function(AuthLogoutEvent value) logout,
   }) {
@@ -734,6 +945,8 @@ class _$AuthLogoutEventImpl implements AuthLogoutEvent {
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(AuthLoginEvent value)? login,
     TResult? Function(AuthAddProductCountsEvent value)? addProductCounts,
+    TResult? Function(AuthDeliveryProductCountsEvent value)?
+        deliveryProductCounts,
     TResult? Function(AuthAutoLoginEvent value)? autoLogin,
     TResult? Function(AuthLogoutEvent value)? logout,
   }) {
@@ -745,6 +958,8 @@ class _$AuthLogoutEventImpl implements AuthLogoutEvent {
   TResult maybeMap<TResult extends Object?>({
     TResult Function(AuthLoginEvent value)? login,
     TResult Function(AuthAddProductCountsEvent value)? addProductCounts,
+    TResult Function(AuthDeliveryProductCountsEvent value)?
+        deliveryProductCounts,
     TResult Function(AuthAutoLoginEvent value)? autoLogin,
     TResult Function(AuthLogoutEvent value)? logout,
     required TResult orElse(),
