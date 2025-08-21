@@ -381,13 +381,12 @@ class _HomePageState extends LocalizedState<HomePage> {
                     registrationSchemaData?['templates'];
                 Map<String, dynamic> delTemplatesRaw =
                     deliverySchemaData?['templates'];
-                // regTemplatesRaw["HouseholdOverview"]
-                //     ["navigateTo"] = {"name": "DELIVERYFLOW", "type": "form"};
-                // registrationSchemaData['pages']['beneficiaryDetails']
-                //     ["navigateTo"] = {"name": "DELIVERYFLOW", "type": "form"};
+
                 Map<String, dynamic> beneficiaryChecklist =
                     deliverySchemaData['pages']["beneficiaryChecklist"]
                         ["properties"];
+
+                // Fix the beneficiary checklist keys
                 Map<String, dynamic> newBeneficiaryChecklist = {};
                 for (int i = 0; i < beneficiaryChecklist.keys.length; i++) {
                   newBeneficiaryChecklist[
@@ -397,6 +396,83 @@ class _HomePageState extends LocalizedState<HomePage> {
                 }
                 deliverySchemaData['pages']["beneficiaryChecklist"]
                     ["properties"] = newBeneficiaryChecklist;
+
+                // Make the head of household field true
+                registrationSchemaData['pages']["beneficiaryDetails"]
+                    ["properties"]['isHeadOfFamily'] = {
+                  "type": "boolean",
+                  "label":
+                      "APPONE_REGISTRATION_BENEFICIARYDETAILS_label_isHeadOfFamily",
+                  "order": 2,
+                  "value": true,
+                  "format": "checkbox",
+                  "hidden": false,
+                  "tooltip": "",
+                  "helpText": "",
+                  "infoText": "",
+                  "readOnly": false,
+                  "fieldName": "isHeadOfFamily",
+                  "deleteFlag": false,
+                  "innerLabel": "",
+                  "systemDate": false,
+                  "validations": [
+                    {
+                      "type": "required",
+                      "value": true,
+                      "message":
+                          "APPONE_REGISTRATION_BENEFICIARYDETAILS_label_isHeadOfFamily_mandatory_message"
+                    }
+                  ],
+                  "errorMessage": "",
+                  "includeInForm": true,
+                  "isMultiSelect": false,
+                  "includeInSummary": true
+                };
+
+                // Added phone number validation
+                registrationSchemaData['pages']["beneficiaryDetails"]
+                    ["properties"]["phone"] = {
+                  "type": "string",
+                  "label": "APPONE_REGISTRATION_BENEFICIARYDETAILS_label_phone",
+                  "order": 6,
+                  "value": "",
+                  "format": "text",
+                  "hidden": false,
+                  "tooltip":
+                      "APPONE_REGISTRATION_BENEFICIARYDETAILS_label_phone_tooltip",
+                  "helpText":
+                      "APPONE_REGISTRATION_BENEFICIARYDETAILS_label_phone_helpText",
+                  "infoText": "",
+                  "readOnly": false,
+                  "fieldName": "phone",
+                  "deleteFlag": false,
+                  "innerLabel": "",
+                  "systemDate": false,
+                  "validations": [
+                    {
+                      "type": "maxLength",
+                      "value": 11,
+                      "message": "Should have 11 digits"
+                    },
+                    {
+                      "type": "minLength",
+                      "value": 11,
+                      "message": "Should have 11 digits"
+                    },
+                    {
+                      "type": "pattern",
+                      "value": r"^[0-9]*$",
+                      "message":
+                          "APPONE_REGISTRATION_BENEFICIARYDETAILS_label_phone_regex"
+                    }
+                  ],
+                  "errorMessage":
+                      "CMP-2025-08-18-000034_REGISTRATIONFLOW_beneficiaryDetails_errorMessage_phone",
+                  "includeInForm": true,
+                  "isMultiSelect": false,
+                  "includeInSummary": true
+                };
+
                 // Navigate into the DeliveryDetails page properties map
                 final deliveryDetails = (deliverySchemaData['pages']
                     as Map)['DeliveryDetails'] as Map<String, dynamic>;
