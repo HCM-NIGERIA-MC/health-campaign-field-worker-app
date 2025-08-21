@@ -44,6 +44,7 @@ import '../../utils/i18_key_constants.dart' as i18_local;
 import '../../router/app_router.dart';
 import '../../utils/registration_delivery/registration_delivery_utils.dart';
 import '../../utils/utils.dart';
+import '../../widgets/registration_delivery/custom_view_beneficiary_card.dart';
 
 @RoutePage()
 class CustomSearchBeneficiaryPage extends LocalizedStatefulWidget {
@@ -789,7 +790,7 @@ class _CustomSearchBeneficiaryPageState
                                 return Container(
                                   margin:
                                       const EdgeInsets.only(bottom: spacer2),
-                                  child: ViewBeneficiaryCard(
+                                  child: CustomViewBeneficiaryCard(
                                     distance:
                                         isProximityEnabled ? distance : null,
                                     householdWrapper: i,
