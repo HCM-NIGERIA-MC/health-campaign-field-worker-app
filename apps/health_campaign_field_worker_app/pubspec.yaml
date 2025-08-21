@@ -1,7 +1,7 @@
 name: health_campaign_field_worker_app
 description: A new Flutter project.
 publish_to: "none"
-version: 1.8.11+11
+version: 1.8.14+14
 
 environment:
   sdk: ">=3.3.0 <=4.0.0"
@@ -67,7 +67,7 @@ dependencies:
   permission_handler: ^11.3.1
   multi_select_flutter: ^4.1.3
   inventory_management: 1.0.7-dev.1
-  registration_delivery: 1.1.0-dev.6-console
+  registration_delivery: 1.1.1-dev.2-console
   survey_form: 1.0.3
   crypto: 3.0.3
   referral_reconciliation: 1.0.6
