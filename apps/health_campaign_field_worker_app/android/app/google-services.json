@@ -45,6 +45,25 @@
     },
     {
       "client_info": {
+        "mobilesdk_app_id": "1:397617237644:android:55bec018a3018ceaf6b5a9",
+        "android_client_info": {
+          "package_name": "org.egov.azm.kano"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBzE5f156_ia7HumLb1fDg8A-88uhmQ68Y"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
         "mobilesdk_app_id": "1:397617237644:android:eacd9c6a4018a760f6b5a9",
         "android_client_info": {
           "package_name": "org.egov.bauchi"
@@ -83,6 +102,25 @@
     },
     {
       "client_info": {
+        "mobilesdk_app_id": "1:397617237644:android:0d59b2d002f5b097f6b5a9",
+        "android_client_info": {
+          "package_name": "org.egov.borno"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBzE5f156_ia7HumLb1fDg8A-88uhmQ68Y"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
         "mobilesdk_app_id": "1:397617237644:android:0b5afbe541140b18f6b5a9",
         "android_client_info": {
           "package_name": "org.egov.congo"
@@ -102,9 +140,9 @@
     },
     {
       "client_info": {
-        "mobilesdk_app_id": "1:397617237644:android:ef3ef88b83bb9896f6b5a9",
+        "mobilesdk_app_id": "1:397617237644:android:335a4cda3f50b48ef6b5a9",
         "android_client_info": {
-          "package_name": "org.egov.devicetracking"
+          "package_name": "org.egov.health_campaign_field_worker_app"
         }
       },
       "oauth_client": [],
@@ -121,9 +159,9 @@
     },
     {
       "client_info": {
-        "mobilesdk_app_id": "1:397617237644:android:335a4cda3f50b48ef6b5a9",
+        "mobilesdk_app_id": "1:397617237644:android:d0f82d42462b471df6b5a9",
         "android_client_info": {
-          "package_name": "org.egov.health_campaign_field_worker_app"
+          "package_name": "org.egov.jigawa"
         }
       },
       "oauth_client": [],
@@ -197,25 +235,6 @@
     },
     {
       "client_info": {
-        "mobilesdk_app_id": "1:397617237644:android:0d59b2d002f5b097f6b5a9",
-        "android_client_info": {
-          "package_name": "org.egov.borno"
-        }
-      },
-      "oauth_client": [],
-      "api_key": [
-        {
-          "current_key": "AIzaSyBzE5f156_ia7HumLb1fDg8A-88uhmQ68Y"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": []
-        }
-      }
-    },
-    {
-      "client_info": {
         "mobilesdk_app_id": "1:397617237644:android:c07e9af3e599533ff6b5a9",
         "android_client_info": {
           "package_name": "org.egov.ng"
@@ -254,9 +273,9 @@
     },
     {
       "client_info": {
-        "mobilesdk_app_id": "1:397617237644:android:4cf0a3c41f89cc1df6b5a9",
+        "mobilesdk_app_id": "1:397617237644:android:03f7e437c54fbf4cf6b5a9",
         "android_client_info": {
-          "package_name": "org.egov.oyo"
+          "package_name": "org.egov.ondo"
         }
       },
       "oauth_client": [],
@@ -273,9 +292,9 @@
     },
     {
       "client_info": {
-        "mobilesdk_app_id": "1:397617237644:android:f14b769685186d04f6b5a9",
+        "mobilesdk_app_id": "1:397617237644:android:4cf0a3c41f89cc1df6b5a9",
         "android_client_info": {
-          "package_name": "org.egov.pemba"
+          "package_name": "org.egov.oyo"
         }
       },
       "oauth_client": [],
@@ -314,25 +333,6 @@
         "mobilesdk_app_id": "1:397617237644:android:2efde986bec30f99f6b5a9",
         "android_client_info": {
           "package_name": "org.egov.qa.bi"
-        }
-      },
-      "oauth_client": [],
-      "api_key": [
-        {
-          "current_key": "AIzaSyBzE5f156_ia7HumLb1fDg8A-88uhmQ68Y"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": []
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:397617237644:android:3faa1b851b138a75f6b5a9",
-        "android_client_info": {
-          "package_name": "org.egov.qa.ng"
         }
       },
       "oauth_client": [],
@@ -406,9 +406,85 @@
     },
     {
       "client_info": {
+        "mobilesdk_app_id": "1:397617237644:android:720258df0d912107f6b5a9",
+        "android_client_info": {
+          "package_name": "org.egov.salama.pidom"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBzE5f156_ia7HumLb1fDg8A-88uhmQ68Y"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
         "mobilesdk_app_id": "1:397617237644:android:816d126813b37b48f6b5a9",
         "android_client_info": {
           "package_name": "org.egov.salama.smc"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBzE5f156_ia7HumLb1fDg8A-88uhmQ68Y"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:397617237644:android:dbaa4be19cc65e8bf6b5a9",
+        "android_client_info": {
+          "package_name": "org.egov.sokoto"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBzE5f156_ia7HumLb1fDg8A-88uhmQ68Y"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:397617237644:android:472e07271c80e36af6b5a9",
+        "android_client_info": {
+          "package_name": "org.egov.taraba"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBzE5f156_ia7HumLb1fDg8A-88uhmQ68Y"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:397617237644:android:c89ef72bdd5dc4fff6b5a9",
+        "android_client_info": {
+          "package_name": "org.egov.togo"
         }
       },
       "oauth_client": [],
