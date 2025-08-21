@@ -424,11 +424,11 @@ class AppRouter extends _$AppRouter {
             AutoRoute(
               page: ComplaintsInboxRoute.page,
               path: 'complaints-inbox-items',
-              initial: true,
             ),
             AutoRoute(
               page: CustomComplaintsInboxRoute.page,
               path: 'custom-complaints-inbox-items',
+              initial: true,
             ),
             RedirectRoute(
                 path: 'complaints-inbox-items',
