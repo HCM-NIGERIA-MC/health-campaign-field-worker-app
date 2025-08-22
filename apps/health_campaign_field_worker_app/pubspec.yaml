@@ -57,10 +57,10 @@ dependencies:
   digit_showcase: ^1.0.2
   qr_flutter: ^4.1.0
   disk_space_update: ^0.0.2
-  sync_service: ^1.0.1
+  sync_service: ^1.0.4
   attendance_management: ^1.0.4+1
   digit_scanner: ^1.0.5
-  digit_data_model: ^1.2.0-dev.1-console
+  digit_data_model: ^1.2.0-dev.2-console
   disable_battery_optimization: ^1.1.1
   digit_dss: ^1.0.4
   digit_location_tracker: ^1.0.0
