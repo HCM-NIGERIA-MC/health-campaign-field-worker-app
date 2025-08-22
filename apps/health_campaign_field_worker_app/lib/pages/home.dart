@@ -1,20 +1,13 @@
 import 'dart:convert';
 
-import 'package:closed_household/utils/utils.dart';
 import 'package:digit_data_model/models/templates/template_config.dart';
 import 'package:recase/recase.dart';
 import 'package:referral_reconciliation/referral_reconciliation.dart';
-import 'package:referral_reconciliation/router/referral_reconciliation_router.gm.dart';
-
-import 'package:referral_reconciliation/blocs/search_referral_reconciliations.dart';
-import 'package:referral_reconciliation/referral_reconciliation.dart';
-import 'package:referral_reconciliation/router/referral_reconciliation_router.gm.dart';
 
 import 'package:attendance_management/attendance_management.dart';
 import 'package:attendance_management/router/attendance_router.gm.dart';
 import 'package:complaints/complaints.dart';
 
-import 'package:complaints/models/pgr_complaints.dart';
 import 'package:complaints/router/complaints_router.gm.dart';
 
 import 'package:digit_data_model/models/entities/household_type.dart';
@@ -27,7 +20,6 @@ import 'dart:async';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:digit_data_model/data_model.dart';
-import 'package:digit_data_model/models/entities/user_action.dart';
 import 'package:digit_dss/data/local_store/no_sql/schema/dashboard_config_schema.dart';
 import 'package:digit_dss/models/entities/dashboard_response_model.dart';
 import 'package:digit_dss/router/dashboard_router.gm.dart';
@@ -36,14 +28,12 @@ import 'package:digit_location_tracker/utils/utils.dart';
 import 'package:digit_ui_components/digit_components.dart';
 import 'package:digit_ui_components/utils/component_utils.dart';
 import 'package:drift_db_viewer/drift_db_viewer.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:survey_form/models/entities/service.dart';
-import 'package:survey_form/router/survey_form_router.gm.dart';
 import 'package:survey_form/utils/utils.dart';
 import 'package:sync_service/blocs/sync/sync.dart';
 
@@ -66,10 +56,6 @@ import '../widgets/home/custom_progress_bar.dart';
 import '../widgets/home/home_item_card.dart';
 import '../widgets/localized.dart';
 import '../widgets/showcase/config/showcase_constants.dart';
-import '../widgets/showcase/showcase_button.dart';
-// import 'package:referral_reconciliation/blocs/search_referral_reconciliations.dart';
-// import 'package:referral_reconciliation/router/referral_reconciliation_router.gm.dart';
-// import 'package:referral_reconciliation/pages/search_referral_reconciliations.dart';
 
 @RoutePage()
 class HomePage extends LocalizedStatefulWidget {
@@ -478,7 +464,8 @@ class _HomePageState extends LocalizedState<HomePage> {
                     as Map)['DeliveryDetails'] as Map<String, dynamic>;
                 final properties =
                     deliveryDetails['properties'] as Map<String, dynamic>;
-// 1. Ensure resourceCard exists and set readOnly = true (preserving other fields)
+
+                // 1. Ensure resourceCard exists and set readOnly = true (preserving other fields)
                 properties['resourceCard'] = {
                   ...?properties['resourceCard'] as Map<String, dynamic>?,
                   'readOnly': true,
@@ -519,9 +506,10 @@ class _HomePageState extends LocalizedState<HomePage> {
                     as Map<String, dynamic>;
                 final templateProperty =
                     beneficiaryTemplate['properties'] as Map<String, dynamic>;
+
                 // 2. Add deliveryConditionDialog if not present (or merge if present)
                 templateProperty['deliveryConditionDialog'] = {
-                  ...?properties?['deliveryConditionDialog']
+                  ...?properties['deliveryConditionDialog']
                       as Map<String, dynamic>?,
                   'type': 'dynamic',
                   'enums': [],
@@ -939,36 +927,7 @@ class _HomePageState extends LocalizedState<HomePage> {
           },
         );
   }
-
-  // void triggerLocalization() {
-  //   context.read<AppInitializationBloc>().state.maybeWhen(
-  //         orElse: () {},
-  //         initialized: (
-  //           AppConfiguration appConfiguration,
-  //           _,
-  //           __,
-  //         ) {
-  //           final appConfig = appConfiguration;
-  //           final localizationModulesList = appConfiguration.backendInterface;
-  //           final selectedLocale =
-  //               "en_NG"; //AppSharedPreferences().getSelectedLocale;
-  //           LocalizationParams()
-  //               .setCode(LeastLevelBoundarySingleton().boundary);
-  //           context
-  //               .read<LocalizationBloc>()
-  //               .add(LocalizationEvent.onLoadLocalization(
-  //                 module:
-  //                     "${localizationModulesList?.interfaces.where((element) => element.type == Modules.localizationModule).map((e) => e.name.toString()).join(',')}",
-  //                 tenantId: appConfig.tenantId ?? "default",
-  //                 locale: selectedLocale!,
-  //                 path: Constants.localizationApiPath,
-  //               ));
-  //         },
-  //       );
-  // }
 }
-
-// Function to set initial Data required for the packages to run
 
 // Function to set initial Data required for the packages to run
 void setPackagesSingleton(BuildContext context) {
