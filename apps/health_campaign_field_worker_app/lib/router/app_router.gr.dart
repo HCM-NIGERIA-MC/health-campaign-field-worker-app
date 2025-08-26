@@ -480,18 +480,6 @@ abstract class _$AppRouter extends RootStackRouter {
         ),
       );
     },
-    ScannedReceivedStockRoute.name: (routeData) {
-      final args = routeData.argsAs<ScannedReceivedStockRouteArgs>();
-      return AutoRoutePage<dynamic>(
-        routeData: routeData,
-        child: ScannedReceivedStockPage(
-          key: args.key,
-          appLocalizations: args.appLocalizations,
-          mrnNumber: args.mrnNumber,
-          stockRecords: args.stockRecords,
-        ),
-      );
-    },
     UnauthenticatedRouteWrapper.name: (routeData) {
       return AutoRoutePage<dynamic>(
         routeData: routeData,
@@ -2217,55 +2205,6 @@ class ReceiveStockRouteArgs {
   @override
   String toString() {
     return 'ReceiveStockRouteArgs{key: $key, appLocalizations: $appLocalizations, mrnNumber: $mrnNumber, stockRecords: $stockRecords}';
-  }
-}
-
-/// generated route for
-/// [ScannedReceivedStockPage]
-class ScannedReceivedStockRoute
-    extends PageRouteInfo<ScannedReceivedStockRouteArgs> {
-  ScannedReceivedStockRoute({
-    Key? key,
-    RegistrationDeliveryLocalization? appLocalizations,
-    required String mrnNumber,
-    required List<StockModel> stockRecords,
-    List<PageRouteInfo>? children,
-  }) : super(
-          ScannedReceivedStockRoute.name,
-          args: ScannedReceivedStockRouteArgs(
-            key: key,
-            appLocalizations: appLocalizations,
-            mrnNumber: mrnNumber,
-            stockRecords: stockRecords,
-          ),
-          initialChildren: children,
-        );
-
-  static const String name = 'ScannedReceivedStockRoute';
-
-  static const PageInfo<ScannedReceivedStockRouteArgs> page =
-      PageInfo<ScannedReceivedStockRouteArgs>(name);
-}
-
-class ScannedReceivedStockRouteArgs {
-  const ScannedReceivedStockRouteArgs({
-    this.key,
-    this.appLocalizations,
-    required this.mrnNumber,
-    required this.stockRecords,
-  });
-
-  final Key? key;
-
-  final RegistrationDeliveryLocalization? appLocalizations;
-
-  final String mrnNumber;
-
-  final List<StockModel> stockRecords;
-
-  @override
-  String toString() {
-    return 'ScannedReceivedStockRouteArgs{key: $key, appLocalizations: $appLocalizations, mrnNumber: $mrnNumber, stockRecords: $stockRecords}';
   }
 }
 

@@ -22,6 +22,7 @@ import '../../utils/date_utils.dart';
 import '../../utils/extensions/extensions.dart';
 import 'package:collection/collection.dart';
 
+import '../../utils/utils.dart';
 import '../../widgets/custom_back_navigation.dart';
 import '../../utils/i18_key_constants.dart' as i18_local;
 
@@ -348,7 +349,7 @@ class _ViewStockRecordsLGAPageState extends LocalizedState<ReceiveStockPage> {
                               Expanded(
                                   child: Text(
                                 localizations.translate(
-                                    i18_local.stockDetails.minNumber),
+                                    i18_local.stockDetails.mrnNumberLabel),
                               )),
                               Expanded(child: Text(widget.mrnNumber)),
                             ],
@@ -356,7 +357,10 @@ class _ViewStockRecordsLGAPageState extends LocalizedState<ReceiveStockPage> {
                           const SizedBox(height: 8),
                           Row(
                             children: [
-                              const Expanded(child: Text('Received from')),
+                              Expanded(
+                                  child: Text(localizations.translate(i18_local
+                                      .inventoryReportDetails
+                                      .receivedFromText))),
                               // TODO : verify this , showing senderId here
                               Expanded(
                                 child: Text(localizations
@@ -388,7 +392,7 @@ class _ViewStockRecordsLGAPageState extends LocalizedState<ReceiveStockPage> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  productName,
+                                  localizations.translate(productName),
                                   style: TextStyle(
                                     fontSize: 16,
                                     fontWeight: FontWeight.bold,

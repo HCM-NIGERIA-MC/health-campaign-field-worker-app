@@ -5,9 +5,7 @@ import 'package:digit_ui_components/digit_components.dart';
 import 'package:digit_ui_components/widgets/atoms/input_wrapper.dart';
 import 'package:digit_ui_components/widgets/molecules/digit_card.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
-import 'package:inventory_management/blocs/record_stock.dart';
 import 'package:inventory_management/models/entities/stock.dart';
 import 'package:inventory_management/models/entities/transaction_reason.dart';
 import 'package:inventory_management/utils/i18_key_constants.dart' as i18;
@@ -71,7 +69,7 @@ class _ViewStockRecordsPageState extends LocalizedState<ViewStockRecordsPage>
           isScrollable: true,
           tabs: widget.stockRecords
               .map((stock) => Tab(
-                    text: stock.additionalFields?.fields
+                    text: localizations.translate(stock.additionalFields?.fields
                             .firstWhere(
                               (field) => field.key == 'productName',
                               orElse: () =>
@@ -79,7 +77,7 @@ class _ViewStockRecordsPageState extends LocalizedState<ViewStockRecordsPage>
                             )
                             .value
                             ?.toString() ??
-                        '',
+                        ''),
                   ))
               .toList(),
         ),
@@ -92,8 +90,6 @@ class _ViewStockRecordsPageState extends LocalizedState<ViewStockRecordsPage>
   }
 
   Widget _buildStockRecordTab(StockModel stock) {
-    final senderIdToShowOnTab = stock.senderId;
-
     String? partialQuantity = stock.additionalFields?.fields
         .firstWhereOrNull((e) => e.key == "quantityPartial")
         ?.value
@@ -124,8 +120,11 @@ class _ViewStockRecordsPageState extends LocalizedState<ViewStockRecordsPage>
                   Row(
                     children: [
                       Expanded(
-                          child: Text(localizations
-                              .translate(i18_local.stockDetails.minNumber))),
+                          child: Text(localizations.translate(
+                              (stock.transactionType == "RECEIVED" ||
+                                      stock.transactionReason == "RETURNED")
+                                  ? i18_local.stockDetails.mrnNumberLabel
+                                  : i18_local.stockDetails.minNumberLabel))),
                       Expanded(child: Text(widget.mrnNumber)),
                     ],
                   ),
@@ -137,7 +136,7 @@ class _ViewStockRecordsPageState extends LocalizedState<ViewStockRecordsPage>
                               .translate(i18_local.stockDetails.resource))),
                       Expanded(
                         child: Text(
-                          stock.additionalFields?.fields
+                          localizations.translate(stock.additionalFields?.fields
                                   .firstWhere(
                                     (field) => field.key == 'productName',
                                     orElse: () => const AdditionalField(
@@ -145,7 +144,7 @@ class _ViewStockRecordsPageState extends LocalizedState<ViewStockRecordsPage>
                                   )
                                   .value
                                   ?.toString() ??
-                              '',
+                              ''),
                         ),
                       ),
                     ],
@@ -221,7 +220,7 @@ class _ViewStockRecordsPageState extends LocalizedState<ViewStockRecordsPage>
                       TransactionReason.returned.toValue())
                     ViewStockField(
                       label: localizations.translate(
-                          i18_local.stockDetails.quantityWastedReturnedLabel),
+                          i18_local.stockDetails.quantityPartialReturnedLabel),
                       value: partialQuantity ?? "",
                     ),
 

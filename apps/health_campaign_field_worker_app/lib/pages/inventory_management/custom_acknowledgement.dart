@@ -38,27 +38,31 @@ class CustomAcknowledgementPageState
     extends LocalizedState<CustomAcknowledgementPage> {
   @override
   Widget build(BuildContext context) {
-    var showLabel = localizations
-        .translate(i18_local.acknowledgementSuccess.mrnNumberLabel);
-    var showDescription = localizations
-        .translate(i18_local.acknowledgementSuccess.mrrnNumberDescription);
-    var showHeading = localizations
-        .translate(i18_local.acknowledgementSuccess.mrrnNumberHeading);
+    var showLabel = "";
+    var showDescription = "";
+    var showHeading = "";
 
     if (widget.entryType == StockRecordEntryType.dispatch) {
-      showLabel = localizations
-          .translate(i18_local.acknowledgementSuccess.minNumberLabel);
+      showLabel =
+          localizations.translate(i18_local.stockDetails.minNumberLabel);
       showDescription = localizations
-          .translate(i18_local.acknowledgementSuccess.minNumberDescription);
+          .translate(i18_local.acknowledgementSuccess.materialIssueDescription);
       showHeading = localizations
-          .translate(i18_local.acknowledgementSuccess.minNumberHeading);
+          .translate(i18_local.acknowledgementSuccess.materialIssueHeading);
     } else if (widget.entryType == StockRecordEntryType.returned) {
-      showLabel = localizations
-          .translate(i18_local.acknowledgementSuccess.mrnNumberLabel);
-      showDescription = localizations
-          .translate(i18_local.acknowledgementSuccess.mrnNumberDescription);
+      showLabel =
+          localizations.translate(i18_local.stockDetails.mrnNumberLabel);
+      showDescription = localizations.translate(
+          i18_local.acknowledgementSuccess.materialReturnDescription);
       showHeading = localizations
-          .translate(i18_local.acknowledgementSuccess.mrnNumberHeading);
+          .translate(i18_local.acknowledgementSuccess.materialReturnHeading);
+    } else {
+      showLabel =
+          localizations.translate(i18_local.stockDetails.mrnNumberLabel);
+      showDescription = localizations.translate(
+          i18_local.acknowledgementSuccess.materialReceiveDescription);
+      showHeading = localizations
+          .translate(i18_local.acknowledgementSuccess.materialReceiveHeading);
     }
 
     Map<String, String> mrnnumber = {

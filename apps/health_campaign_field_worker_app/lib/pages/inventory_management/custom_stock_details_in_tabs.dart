@@ -503,8 +503,11 @@ class _DynamicTabsPageState extends LocalizedState<DynamicTabsPage>
                     const SizedBox(height: 12),
                     Row(
                       children: [
-                        const Expanded(child: Text('Resource')),
-                        Expanded(child: Text(productName)),
+                        Expanded(
+                            child: Text(localizations
+                                .translate(i18_local.stockDetails.resource))),
+                        Expanded(
+                            child: Text(localizations.translate(productName))),
                       ],
                     ),
                     const SizedBox(height: 8),
@@ -1131,7 +1134,8 @@ class _DynamicTabsPageState extends LocalizedState<DynamicTabsPage>
           controller: _tabController,
           isScrollable: true,
           tabs: selectedProducts
-              .map((product) => Tab(text: product.toUpperCase()))
+              .map((product) =>
+                  Tab(text: localizations.translate(product).toUpperCase()))
               .toList(),
         ),
       ),

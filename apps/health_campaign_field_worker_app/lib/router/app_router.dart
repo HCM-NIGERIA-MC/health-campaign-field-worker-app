@@ -128,10 +128,10 @@ class AppRouter extends _$AppRouter {
           page: ReceiveStockRoute.page,
           path: 'custom-stock-view-lga',
         ),
-        AutoRoute(
-          page: ScannedReceivedStockRoute.page,
-          path: 'custom-stock-view-lga',
-        ),
+        // AutoRoute(
+        //   page: ScannedReceivedStockRoute.page,
+        //   path: 'custom-stock-view-lga',
+        // ),
 
         AutoRoute(
           page: CustomMinNumberRoute.page,

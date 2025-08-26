@@ -453,10 +453,13 @@ class StockDetails {
   String get commentsRequiredIfShort =>
       'STOCK_DETAILS_COMMENTS_REQUIRED_IF_SHORT';
 
+  String get minNumberLabel => 'MIN_NUMBER_LABEL';
+  String get mrnNumberLabel => 'MRN_NUMBER_LABEL';
+
   String get stockReceiptDetails => 'STOCK_DETAILS_STOCK_RECEIPT_DETAILS';
   String get stockIssueDetails => 'STOCK_DETAILS_STOCK_ISSUE_DETAILS';
   String get stockReturnDetails => 'STOCK_DETAILS_STOCK_RETURN_DETAILS';
-  String get minNumber => 'STOCK_DETAILS_MIN_NUMBER';
+
   String get resource => 'STOCK_DETAILS_RESOURCE';
   String get stockDetails => 'STOCK_DETAILS';
   String get waybillNumber => 'STOCK_DETAILS_WAYBILL_NUMBER';
@@ -478,7 +481,8 @@ class StockDetails {
 
   String get noTransactionsAvailable =>
       'STOCK_DETAILS_NO_TRANSACTIONS_AVAILABLE';
-  String get selectMRNNumber => 'STOCK_DETAILS_SELECT_MIN_NUMBER';
+  String get selectMINNumber => 'STOCK_DETAILS_SELECT_MIN_NUMBER';
+  String get selectMRNNumber => 'STOCK_DETAILS_SELECT_MRN_NUMBER';
 
   String get selectTransactingPartyReturnedFrom =>
       'STOCK_DETAILS_RETURNED_FROM';
@@ -488,6 +492,8 @@ class StockDetails {
   String get viewCreatedTransactionLabel => 'VIEW_CREATED_TRANSACTION';
 
   String get createNewTransactionLabel => 'CREATE_NEW_TRANSACTION';
+
+  String get noTransactionsFound => 'STOCK_DETAILS_NO_TRANSACTIONS_FOUND';
 
 //TODO:
   String get quantityCapsulePartialReturnedLabel =>
@@ -503,6 +509,9 @@ class StockDetails {
       'STOCK_DETAILS_CAPSULE_QUANTITY_RECEIVED';
 
   String get quantityCapsuleSentLabel => 'STOCK_DETAILS_CAPSULE_QUANTITY_SENT';
+
+  String get blisters => 'STOCK_DETAILS_BLISTERS';
+  String get capsules => 'STOCK_DETAILS_CAPSULES';
 
   String get quantityCapsuleReturnedLabel =>
       'STOCK_DETAILS_CAPSULE_QUANTITY_RETURNED';
@@ -968,21 +977,13 @@ class AcknowledgementSuccess {
   String get acknowledgementSuccessUpdateLabelText =>
       "ACKNOWLEDGEMENT_SUCCESS_UPDATE_LABEL_TEXT";
 
-  String get mrrnNumberDescription => "MRRN_NUMBER_DESCRIPTION";
+  String get materialIssueHeading => "MATERIAL_ISSUE_HEADING";
+  String get materialReceiveHeading => "MATERIAL_RECEIVE_HEADING";
+  String get materialReturnHeading => "MATERIAL_RETURN_HEADING";
 
-  String get mrrnNumberHeading => "MRRN_NUMBER_HEADING";
-
-  String get minNumberLabel => 'MIN_NUMBER_LABEL';
-
-  String get minNumberDescription => "MIN_NUMBER_DESCRIPTION";
-
-  String get minNumberHeading => "MIN_NUMBER_HEADING";
-
-  String get mrnNumberLabel => 'MRN_NUMBER_LABEL';
-
-  String get mrnNumberDescription => "MRN_NUMBER_DESCRIPTION";
-
-  String get mrnNumberHeading => "MRN_NUMBER_HEADING";
+  String get materialIssueDescription => "MATERIAL_ISSUE_DESCRIPTION";
+  String get materialReceiveDescription => "MATERIAL_RECEIVE_DESCRIPTION";
+  String get materialReturnDescription => "MATERIAL_RETURN_DESCRIPTION";
 
   String get actionLabelText => 'ACKNOWLEDGEMENT_SUCCESS_ACTION_LABEL_TEXT';
 

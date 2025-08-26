@@ -263,7 +263,7 @@ class _ViewAllTransactionsScreenState
                                                 0),
                                         items: [
                                           {
-                                            'name':
+                                            'name': localizations.translate(
                                                 stock.additionalFields?.fields
                                                         .firstWhere(
                                                           (field) =>
@@ -276,7 +276,7 @@ class _ViewAllTransactionsScreenState
                                                         )
                                                         .value
                                                         ?.toString() ??
-                                                    'N/A',
+                                                    'N/A'),
                                             'quantity':
                                                 (stock.quantity ?? 0).toString()
                                           }
