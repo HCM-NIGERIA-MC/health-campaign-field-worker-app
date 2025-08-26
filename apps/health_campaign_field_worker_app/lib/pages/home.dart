@@ -416,6 +416,13 @@ class _HomePageState extends LocalizedState<HomePage> {
                 };
 
                 // Added phone number validation
+                var phoneValidation = registrationSchemaData['pages']
+                        ["beneficiaryDetails"]["properties"]["phone"]
+                    ["validations"] as List<dynamic>?;
+                String maxLength = phoneValidation?.firstWhere(
+                      (element) => element["type"] == "maxLength",
+                    )["value"] ??
+                    "11";
                 registrationSchemaData['pages']["beneficiaryDetails"]
                     ["properties"]["phone"] = {
                   "type": "string",
@@ -437,12 +444,12 @@ class _HomePageState extends LocalizedState<HomePage> {
                   "validations": [
                     {
                       "type": "maxLength",
-                      "value": 11,
+                      "value": int.parse(maxLength),
                       "message": "Should have 11 digits"
                     },
                     {
                       "type": "minLength",
-                      "value": 11,
+                      "value": int.parse(maxLength),
                       "message": "Should have 11 digits"
                     },
                     {
