@@ -116,7 +116,7 @@ class Constants {
 
   // for stock validation
 
-  static const String bednet = 'Bednet';
+  static const String bednet = 'ITN';
   static const String spaq1 = "SPAQ 1";
   static const String spaq2 = "SPAQ 2";
   static const String blueVAS = "Blue VAS";
