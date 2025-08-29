@@ -117,8 +117,7 @@ class Constants {
 
   // intervention point
 
-  static List<String> get interventionPointList =>
-      ["HEAD_TO_HEAD", "CHURCH", "MOSQUE"];
+  static List<String> get interventionPointList => ["HEAD_TO_HEAD", "CHURCH"];
   static const String pointKey = "interventionPoint";
 
   // todo enable before cycle2
