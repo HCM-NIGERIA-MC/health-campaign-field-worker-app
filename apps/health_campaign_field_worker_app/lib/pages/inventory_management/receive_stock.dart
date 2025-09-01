@@ -90,9 +90,7 @@ class _ViewStockRecordsLGAPageState extends LocalizedState<ReceiveStockPage> {
         ],
       ),
       _expireDateKey: FormControl<DateTime>(
-        validators: [
-          Validators.required,
-        ],
+        validators: [],
       ),
       _commentsKey: FormControl<String>(),
     });
@@ -480,7 +478,6 @@ class _ViewStockRecordsLGAPageState extends LocalizedState<ReceiveStockPage> {
                                 DigitDateFormPicker(
                                   label: localizations.translate(
                                       i18_local.stockDetails.expireDate),
-                                  isRequired: true,
                                   start: DateTime.now(),
                                   formControlName: _expireDateKey,
                                   validationMessages: {

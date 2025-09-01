@@ -382,15 +382,6 @@ class _DynamicTabsPageState extends LocalizedState<DynamicTabsPage>
     String quantityPartialCountLabel = "";
     String quantityWastedCountLabel = "";
 
-    form.control(_expireDateKey).setValidators(
-          (entryType == StockRecordEntryType.receipt ||
-                  (entryType == StockRecordEntryType.dispatch &&
-                      !context.isDistributor))
-              ? [Validators.required]
-              : [],
-          autoValidate: true,
-        );
-
     switch (entryType) {
       case StockRecordEntryType.receipt:
         pageTitle = i18.stockDetails.receivedPageTitle;
@@ -640,7 +631,6 @@ class _DynamicTabsPageState extends LocalizedState<DynamicTabsPage>
                             !context.isDistributor))
                       DigitDateFormPicker(
                         label: 'Expire Date',
-                        isRequired: true,
                         start: DateTime.now(),
                         formControlName: _expireDateKey,
                         cancelText: localizations
