@@ -725,13 +725,10 @@ class ComplaintTypeShowcase {
   }
 }
 
-
-
-class InterventionPoint{
+class InterventionPoint {
   const InterventionPoint();
 
-  String get pointLabelText =>
-      'INTERVENTION_POINT_LABEL_TEXT_DROP_DOWN';
+  String get pointLabelText => 'INTERVENTION_POINT_LABEL_TEXT_DROP_DOWN';
 
   String get pointInterventionHeaderLabel => 'INTERVENTION_POINT_HEADER_LABEL';
 
@@ -741,7 +738,6 @@ class InterventionPoint{
   String get caregiverConsentActionLabelText =>
       'CARE_GIVER_CONSENT_ACTION_LABEL_TEXT';
 }
-
 
 class CaregiverConsent {
   const CaregiverConsent();
@@ -1358,6 +1354,12 @@ class IndividualDetails {
   String get mobileNumberLabelText => 'MOBILE_NUMBER_LABEL_TEXT';
 
   String get heightLabelText => 'HEIGHT_LABEL_TEXT';
+
+  String get careGiverAddress => 'CAREGIVER_ADDRESS';
+
+  String get previousCycleAdministeredLabel => 'PREVIOUS_CYCLE_QUESTION';
+
+  String get existingbeneficiaryId => 'EXISTING_BENEFICIARY_ID';
 
   String get submitButtonLabelText => 'INDIVIDUAL_DETAILS_SUBMIT';
 

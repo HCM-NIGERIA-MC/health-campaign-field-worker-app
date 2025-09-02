@@ -33,6 +33,7 @@ import 'package:registration_delivery/utils/utils.dart';
 // import 'package:registration_delivery/widgets/back_navigation_help_header.dart';
 import 'package:registration_delivery/widgets/localized.dart';
 import 'package:registration_delivery/widgets/showcase/config/showcase_constants.dart';
+import 'package:digit_ui_components/models/RadioButtonModel.dart';
 
 import '../../blocs/registration_delivery/custom_beneficairy_registration.dart';
 import '../../blocs/registration_delivery/custom_search_household.dart';
@@ -64,6 +65,12 @@ class CustomIndividualDetailsPageState
   static const _dobKey = 'dob';
   static const _genderKey = 'gender';
   static const _mobileNumberKey = 'mobileNumber';
+  static const _careGiverAddress = 'careGiverAddress';
+  static const _existingBeneficiaryId = 'existingBeneficiaryId';
+  static const _existingBeneficiaryFlag = 'hasExistingBeneficiary';
+  static const _hasExistingBeneficiaryKey = 'hasExistingBeneficiaryControl';
+  static const yesValue = 'YES';
+  static const noValue = 'NO';
   bool isDuplicateTag = false;
   static const maxLength = 200;
   final clickedStatus = ValueNotifier<bool>(false);
@@ -74,6 +81,7 @@ class CustomIndividualDetailsPageState
 
   final beneficiaryType = RegistrationDeliverySingleton().beneficiaryType!;
   Set<String>? beneficiaryId;
+  bool _hasExistingBeneficiary = false; // default No
 
   late final CustomSearchHouseholdsBloc customSearchHouseholdsBloc;
 
@@ -695,6 +703,140 @@ class CustomIndividualDetailsPageState
                             ),
                           ),
                         ),
+                        // New Yes/No radio for existing beneficiary
+                        Offstage(
+                          offstage: widget.isHeadOfHousehold,
+                          child: LabeledField(
+                            label: localizations.translate(
+                              i18_local.individualDetails
+                                  .previousCycleAdministeredLabel,
+                            ),
+                            isRequired: true,
+                            child: Column(
+                              children: [
+                                Align(
+                                  alignment: AlignmentDirectional.topStart,
+                                  child: Padding(
+                                    padding:
+                                        const EdgeInsets.only(top: spacer2),
+                                    child: RadioList(
+                                      radioDigitButtons: [
+                                        RadioButtonModel(
+                                          code: yesValue,
+                                          name: localizations.translate(
+                                            i18_local.common.coreCommonYes,
+                                          ),
+                                        ),
+                                        RadioButtonModel(
+                                          code: noValue,
+                                          name: localizations.translate(
+                                            i18_local.common.coreCommonNo,
+                                          ),
+                                        ),
+                                      ],
+                                      groupValue: _safeHasExistingValue(form),
+                                      onChanged: (value) {
+                                        setState(() {
+                                          _hasExistingBeneficiary =
+                                              value.code == yesValue;
+                                          form
+                                              .control(
+                                                  _hasExistingBeneficiaryKey)
+                                              .value = value.code;
+                                          if (value.code != yesValue) {
+                                            form
+                                                .control(_existingBeneficiaryId)
+                                                .value = null;
+                                          }
+                                        });
+                                      },
+                                    ),
+                                  ),
+                                ),
+                                if (form.touched &&
+                                    (form.contains(
+                                            _hasExistingBeneficiaryKey) &&
+                                        form
+                                            .control(_hasExistingBeneficiaryKey)
+                                            .invalid))
+                                  Align(
+                                    alignment: Alignment.topLeft,
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(
+                                        top: spacer1,
+                                        bottom: spacer1,
+                                      ),
+                                      child: Text(
+                                        localizations.translate(i18_local
+                                            .complaints
+                                            .validationRadioRequiredError),
+                                        style: TextStyle(
+                                          color: theme.colorTheme.alert.error,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        Offstage(
+                          offstage: widget.isHeadOfHousehold ||
+                              !(((form.contains(_hasExistingBeneficiaryKey) &&
+                                      form
+                                              .control(
+                                                  _hasExistingBeneficiaryKey)
+                                              .value ==
+                                          yesValue)) ||
+                                  _hasExistingBeneficiary),
+                          child: ReactiveWrapperField(
+                            formControlName: _existingBeneficiaryId,
+                            validationMessages: {
+                              'minLength': (_) => localizations.translate(
+                                    i18_local.common.min2CharsRequired,
+                                  ),
+                            },
+                            builder: (field) => LabeledField(
+                              label: localizations.translate(
+                                i18_local
+                                    .individualDetails.existingbeneficiaryId,
+                              ),
+                              child: DigitTextFormInput(
+                                initialValue:
+                                    form.control(_existingBeneficiaryId).value,
+                                onChange: (value) {
+                                  form.control(_existingBeneficiaryId).value =
+                                      value;
+                                },
+                                errorMessage: field.errorText,
+                              ),
+                            ),
+                          ),
+                        ),
+                        Offstage(
+                          offstage: !widget.isHeadOfHousehold,
+                          child: ReactiveWrapperField(
+                            formControlName: _careGiverAddress,
+                            validationMessages: {
+                              'minLength': (_) => localizations.translate(
+                                    i18_local.common.min2CharsRequired,
+                                  ),
+                            },
+                            builder: (field) => LabeledField(
+                              label: localizations.translate(
+                                i18_local.individualDetails.careGiverAddress,
+                              ),
+                              child: DigitTextFormInput(
+                                initialValue:
+                                    form.control(_careGiverAddress).value,
+                                onChange: (value) {
+                                  form.control(_careGiverAddress).value = value;
+                                },
+                                errorMessage: field.errorText,
+                              ),
+                            ),
+                          ),
+                        ),
                       ]),
                 ),
               ],
@@ -815,6 +957,67 @@ class CustomIndividualDetailsPageState
             ],
     );
 
+    String? existingBeneficiaryId =
+        form.control(_existingBeneficiaryId).value as String?;
+    String? careGiverAddress = form.control(_careGiverAddress).value as String?;
+
+    // Update or create additional fields
+    List<AdditionalField> updatedFields = [];
+    IndividualAdditionalFields? individualAdditionalFields =
+        individual.additionalFields;
+
+    // Preserve existing fields
+    if (individualAdditionalFields != null &&
+        individualAdditionalFields.fields.isNotEmpty) {
+      updatedFields.addAll(individualAdditionalFields.fields);
+    }
+
+    // Persist hasExistingBeneficiary flag from form control
+    final hasExistingValue = _safeHasExistingValue(form);
+    updatedFields.removeWhere((field) => field.key == _existingBeneficiaryFlag);
+    updatedFields
+        .add(AdditionalField(_existingBeneficiaryFlag, hasExistingValue));
+
+    // Update or add caregiver address if provided
+    if (careGiverAddress != null && careGiverAddress.isNotEmpty) {
+      // Check minimum length (2 characters)
+      if (careGiverAddress.trim().length >= 2) {
+        // Remove existing caregiver address field if it exists
+        updatedFields.removeWhere((field) => field.key == _careGiverAddress);
+        // Add new caregiver address field
+        updatedFields.add(AdditionalField(_careGiverAddress, careGiverAddress));
+      }
+    }
+
+    // Update or add existing beneficiary ID if provided and only when flag is YES
+    if (hasExistingValue == yesValue &&
+        existingBeneficiaryId != null &&
+        existingBeneficiaryId.isNotEmpty) {
+      // Check minimum length (2 characters)
+      if (existingBeneficiaryId.trim().length >= 2) {
+        // Remove existing beneficiary ID field if it exists
+        updatedFields
+            .removeWhere((field) => field.key == _existingBeneficiaryId);
+        // Add new existing beneficiary ID field
+        updatedFields.add(
+            AdditionalField(_existingBeneficiaryId, existingBeneficiaryId));
+      }
+    } else {
+      // Ensure value is cleared when NO is selected
+      updatedFields.removeWhere((field) => field.key == _existingBeneficiaryId);
+    }
+
+    // Create new additional fields if we have data
+    if (updatedFields.isNotEmpty) {
+      individual = individual.copyWith(
+        additionalFields: IndividualAdditionalFields(
+          schema: 'individual',
+          version: 1,
+          fields: updatedFields,
+        ),
+      );
+    }
+
     return individual;
   }
 
@@ -875,6 +1078,24 @@ class CustomIndividualDetailsPageState
         if (widget.isHeadOfHousehold) Validators.required,
         // Validators.required,
       ]),
+      _hasExistingBeneficiaryKey: FormControl<String>(
+        value: (_getHasExistingBeneficiary(individual) ?? false)
+            ? yesValue
+            : noValue,
+        validators: [Validators.required],
+      ),
+      _existingBeneficiaryId: FormControl<String>(
+        value: _getExistingBeneficiaryId(individual),
+        validators: [
+          Validators.delegate((validator) => _validateMinLength(validator, 2)),
+        ],
+      ),
+      _careGiverAddress: FormControl<String>(
+        value: _getCareGiverAddress(individual),
+        validators: [
+          Validators.delegate((validator) => _validateMinLength(validator, 2)),
+        ],
+      ),
     });
   }
 
@@ -893,5 +1114,59 @@ class CustomIndividualDetailsPageState
         : null;
 
     return date;
+  }
+
+  String? _getExistingBeneficiaryId(IndividualModel? individual) {
+    if (individual?.additionalFields?.fields == null) return null;
+
+    final existingField = individual!.additionalFields!.fields!
+        .firstWhereOrNull((field) => field.key == _existingBeneficiaryId);
+
+    return existingField?.value?.toString();
+  }
+
+  String? _getCareGiverAddress(IndividualModel? individual) {
+    if (individual?.additionalFields?.fields == null) return null;
+
+    final addressField = individual!.additionalFields!.fields!
+        .firstWhereOrNull((field) => field.key == _careGiverAddress);
+
+    return addressField?.value?.toString();
+  }
+
+  bool? _getHasExistingBeneficiary(IndividualModel? individual) {
+    if (individual?.additionalFields?.fields == null) return null;
+
+    final flagField = individual!.additionalFields!.fields!
+        .firstWhereOrNull((field) => field.key == _existingBeneficiaryFlag);
+
+    final val = flagField?.value?.toString().toUpperCase();
+    if (val == yesValue) return true;
+    if (val == noValue) return false;
+    return null;
+  }
+
+  String _safeHasExistingValue(FormGroup form) {
+    final v = form.contains(_hasExistingBeneficiaryKey)
+        ? form.control(_hasExistingBeneficiaryKey).value as String?
+        : null;
+    return v ?? (_hasExistingBeneficiary ? yesValue : noValue);
+  }
+
+  Map<String, dynamic>? _validateMinLength(
+      AbstractControl control, int minLength) {
+    final value = control.value as String?;
+
+    // Allow null or empty values (optional fields)
+    if (value == null || value.isEmpty) {
+      return null;
+    }
+
+    // Check if the value has at least the minimum length
+    if (value.trim().length < minLength) {
+      return {'minLength': true};
+    }
+
+    return null;
   }
 }
