@@ -114,14 +114,6 @@ class Constants {
 
   static const int targetHouseHold = 200;
 
-  // for stock validation
-
-  static const String bednet = 'ITN';
-  static const String spaq1 = "SPAQ 1";
-  static const String spaq2 = "SPAQ 2";
-  static const String blueVAS = "Blue VAS";
-  static const String redVAS = "Red VAS";
-
   // todo enable before cycle2
   static const bool isDownSyncEnabled = false;
   static const String dashboardAnalyticsPath =

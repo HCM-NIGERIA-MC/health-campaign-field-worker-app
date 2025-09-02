@@ -366,7 +366,7 @@ class _DynamicTabsPageState extends LocalizedState<DynamicTabsPage>
   }
 
   Widget _buildTabContent(BuildContext context, String productName,
-      String receivedFrom, List<String> selectedProducts) {
+      String receivedFrom, List<String> selectedProduct) {
     // final theme = Theme.of(context);
     // final textTheme = theme.digitTextTheme(context);
     // final isDistributor = context.isDistributor;
@@ -385,62 +385,32 @@ class _DynamicTabsPageState extends LocalizedState<DynamicTabsPage>
     switch (entryType) {
       case StockRecordEntryType.receipt:
         pageTitle = i18.stockDetails.receivedPageTitle;
-        if (productName == Constants.bednet) {
-          quantityCountLabel = i18.stockDetails.quantityReceivedLabel;
-        } else if (productName == Constants.spaq1 ||
-            productName == Constants.spaq2) {
-          quantityCountLabel = i18.stockDetails.quantityReceivedLabel;
-        } else {
-          quantityCountLabel = i18.stockDetails.quantityReceivedLabel;
-        }
+        quantityCountLabel = i18.stockDetails.quantityReceivedLabel;
+
         break;
       case StockRecordEntryType.dispatch:
         pageTitle = InventorySingleton().isWareHouseMgr
             ? i18.stockDetails.issuedPageTitle
             : i18.stockDetails.returnedPageTitle;
-        if (productName == Constants.bednet) {
-          quantityCountLabel = InventorySingleton().isWareHouseMgr
-              ? i18.stockDetails.quantitySentLabel
-              : i18.stockDetails.quantityReturnedLabel;
 
-          quantityPartialCountLabel =
-              i18_local.stockDetails.quantityPartialReturnedLabel;
+        quantityCountLabel = InventorySingleton().isWareHouseMgr
+            ? i18.stockDetails.quantitySentLabel
+            : i18.stockDetails.quantityReturnedLabel;
 
-          quantityWastedCountLabel =
-              i18_local.stockDetails.quantityWastedReturnedLabel;
-        } else if (productName == Constants.spaq1 ||
-            productName == Constants.spaq2) {
-          quantityCountLabel = InventorySingleton().isWareHouseMgr
-              ? i18.stockDetails.quantitySentLabel
-              : i18.stockDetails.quantityReturnedLabel;
+        quantityPartialCountLabel =
+            i18_local.stockDetails.quantityPartialReturnedLabel;
 
-          quantityPartialCountLabel =
-              i18_local.stockDetails.quantityPartialReturnedLabel;
+        quantityWastedCountLabel =
+            i18_local.stockDetails.quantityWastedReturnedLabel;
 
-          quantityWastedCountLabel =
-              i18_local.stockDetails.quantityWastedReturnedLabel;
-        } else {
-          quantityCountLabel = InventorySingleton().isWareHouseMgr
-              ? i18.stockDetails.quantitySentLabel
-              : i18.stockDetails.quantityReturnedLabel;
-        }
         break;
       case StockRecordEntryType.returned:
         pageTitle = i18.stockDetails.returnedPageTitle;
-        if (productName == Constants.bednet) {
-          quantityCountLabel =
-              i18_local.stockDetails.quantityUnusedReturnedLabel;
-          quantityPartialCountLabel =
-              i18_local.stockDetails.quantityPartialReturnedLabel;
-        } else if (productName == Constants.spaq1 ||
-            productName == Constants.spaq2) {
-          quantityCountLabel =
-              i18_local.stockDetails.quantityUnusedReturnedLabel;
-          quantityPartialCountLabel =
-              i18_local.stockDetails.quantityPartialReturnedLabel;
-        } else {
-          quantityCountLabel = i18.stockDetails.quantityReturnedLabel;
-        }
+
+        quantityCountLabel = i18_local.stockDetails.quantityUnusedReturnedLabel;
+        quantityPartialCountLabel =
+            i18_local.stockDetails.quantityPartialReturnedLabel;
+
         break;
       case StockRecordEntryType.loss:
         pageTitle = i18.stockDetails.lostPageTitle;
@@ -838,7 +808,7 @@ class _DynamicTabsPageState extends LocalizedState<DynamicTabsPage>
                           index++;
                         }
                         await _handleFinalSubmission(
-                            context, entryType, selectedProducts);
+                            context, entryType, selectedProduct);
                       }
                     } else {
                       form.markAllAsTouched();
@@ -968,16 +938,7 @@ class _DynamicTabsPageState extends LocalizedState<DynamicTabsPage>
         isSubmitClicked = true;
 
         int currentBednetCount = context.bednet;
-
-        int currentSpaq1Count = context.spaq1;
-
-        int currentSpaq2Count = context.spaq2;
-
         int bednetCount = 0;
-
-        int spaq1Count = 0;
-
-        int spaq2Count = 0;
 
         for (var productName in selectedProducts) {
           await _saveCurrentTabData(productName, entryType);
@@ -1007,38 +968,7 @@ class _DynamicTabsPageState extends LocalizedState<DynamicTabsPage>
           // Custom logic based on productName
 
           if (entryType == StockRecordEntryType.dispatch) {
-            if (productName == Constants.bednet &&
-                (currentBednetCount + totalQty < 0)) {
-              await DigitToast.show(
-                context,
-                options: DigitToastOptions(
-                    localizations.translate(context.isCDD
-                        ? i18_local
-                            .beneficiaryDetails.validationForExcessStockReturn
-                        : i18_local.beneficiaryDetails
-                            .validationForExcessStockDispatch),
-                    true,
-                    theme),
-              );
-              isSubmitClicked = false;
-              return;
-            } else if (productName == Constants.spaq1 &&
-                (currentSpaq1Count + totalQty < 0)) {
-              await DigitToast.show(
-                context,
-                options: DigitToastOptions(
-                    localizations.translate(context.isCDD
-                        ? i18_local
-                            .beneficiaryDetails.validationForExcessStockReturn
-                        : i18_local.beneficiaryDetails
-                            .validationForExcessStockDispatch),
-                    true,
-                    theme),
-              );
-              isSubmitClicked = false;
-              return;
-            } else if (productName == Constants.spaq2 &&
-                (currentSpaq2Count + totalQty < 0)) {
+            if (currentBednetCount + totalQty < 0) {
               await DigitToast.show(
                 context,
                 options: DigitToastOptions(
@@ -1055,13 +985,7 @@ class _DynamicTabsPageState extends LocalizedState<DynamicTabsPage>
             }
           }
 
-          if (productName == Constants.bednet) {
-            bednetCount = totalQty;
-          } else if (productName == Constants.spaq1) {
-            spaq1Count = totalQty;
-          } else if (productName == Constants.spaq2) {
-            spaq2Count = totalQty;
-          }
+          bednetCount = totalQty;
 
           final bloc = RecordStockBloc(
             stockRepository: context.repository<StockModel, StockSearchModel>(),

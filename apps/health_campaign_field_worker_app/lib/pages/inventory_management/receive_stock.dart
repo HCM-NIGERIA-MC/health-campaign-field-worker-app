@@ -242,45 +242,12 @@ class _ViewStockRecordsLGAPageState extends LocalizedState<ReceiveStockPage> {
 
         int bednetCount = context.bednet;
 
-        int spaq1Count = context.spaq1;
-        int spaq2Count = context.spaq2;
-
-        int blueVasCount = context.blueVas;
-        int redVasCount = context.redVas;
         String productName = stock.additionalFields?.fields
             .firstWhereOrNull((element) => element.key == "productName")
             ?.value;
         // Custom logic based on productName
-        if (productName == Constants.bednet) {
+        if (productName == productName) {
           bednetCount = totalQty;
-          spaq1Count = 0;
-          spaq2Count = 0;
-          redVasCount = 0;
-          blueVasCount = 0;
-        } else if (productName == Constants.spaq1) {
-          bednetCount = 0;
-          spaq1Count = totalQty;
-          spaq2Count = 0;
-          redVasCount = 0;
-          blueVasCount = 0;
-        } else if (productName == Constants.spaq2) {
-          bednetCount = 0;
-          spaq2Count = totalQty;
-          spaq1Count = 0;
-          redVasCount = 0;
-          blueVasCount = 0;
-        } else if (productName == Constants.blueVAS) {
-          bednetCount = 0;
-          blueVasCount = totalQty;
-          spaq1Count = 0;
-          spaq2Count = 0;
-          redVasCount = 0;
-        } else {
-          bednetCount = 0;
-          blueVasCount = 0;
-          spaq1Count = 0;
-          spaq2Count = 0;
-          redVasCount = totalQty;
         }
         context.read<AuthBloc>().add(
               AuthAddProductCountsEvent(
@@ -288,12 +255,6 @@ class _ViewStockRecordsLGAPageState extends LocalizedState<ReceiveStockPage> {
               ),
             );
         await Future.delayed(const Duration(milliseconds: 500));
-        // _tabController.animateTo(_tabController.index + 1);
-        // await Future.delayed(const Duration(milliseconds: 500));
-        // context.read<RecordStockBloc>().add(
-        //       const RecordStockCreateStockEntryEvent(),
-        //     );
-        // }
       }
 
       context.router.push(
@@ -310,10 +271,9 @@ class _ViewStockRecordsLGAPageState extends LocalizedState<ReceiveStockPage> {
   @override
   Widget build(BuildContext context) {
     // Assumption sender receiver Id not changed ,
-    //using the same as downloaded stock data
+    // using the same as downloaded stock data
     // and this flow is for stock receipt for LGA
     final senderIdToShowOnTab = widget.stockRecords.first.senderId;
-    bool commentRequired = false;
 
     return Scaffold(
       body: ScrollableContent(
@@ -394,15 +354,7 @@ class _ViewStockRecordsLGAPageState extends LocalizedState<ReceiveStockPage> {
                                   style: TextStyle(
                                     fontSize: 16,
                                     fontWeight: FontWeight.bold,
-                                    color: productName == 'SPAQ 1' ||
-                                            productName == 'SPAQ 2'
-                                        ? Colors.orange
-                                        : productName == 'Red VAS'
-                                            ? Colors.red
-                                            : productName == 'Blue VAS'
-                                                ? Colors.blue
-                                                : Theme.of(context)
-                                                    .primaryColor,
+                                    color: Theme.of(context).primaryColor,
                                   ),
                                 ),
                                 const SizedBox(height: 12),
