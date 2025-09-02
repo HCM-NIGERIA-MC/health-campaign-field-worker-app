@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:collection/collection.dart';
 import 'package:digit_data_model/models/templates/template_config.dart';
 import 'package:recase/recase.dart';
 import 'package:referral_reconciliation/referral_reconciliation.dart';
@@ -416,12 +417,13 @@ class _HomePageState extends LocalizedState<HomePage> {
                 };
 
                 // Added phone number validation
-                var phoneValidation = registrationSchemaData['pages']
-                        ["beneficiaryDetails"]["properties"]["phone"]
-                    ["validations"] as List<dynamic>?;
-                String maxLength = phoneValidation?.firstWhere(
+                List<dynamic> phoneValidation = registrationSchemaData['pages']
+                            ["beneficiaryDetails"]["properties"]["phone"]
+                        ["validations"] ??
+                    [];
+                String maxLength = phoneValidation.firstWhereOrNull(
                       (element) => element["type"] == "maxLength",
-                    )["value"] ??
+                    )?["value"] ??
                     "11";
                 registrationSchemaData['pages']["beneficiaryDetails"]
                     ["properties"]["phone"] = {
