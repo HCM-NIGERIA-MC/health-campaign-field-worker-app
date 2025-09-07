@@ -119,7 +119,7 @@ class SyncServiceMapper extends SyncEntityMapperListener {
           case DataModelType.task:
           case DataModelType.stock:
           case DataModelType.stockReconciliation:
-          case DataModelType.service:
+          // case DataModelType.service:
           case DataModelType.complaints:
           case DataModelType.sideEffect:
           case DataModelType.referral:
