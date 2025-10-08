@@ -214,7 +214,7 @@ class CustomMemberCard extends StatelessWidget {
     final textTheme = theme.digitTextTheme(context);
     List<TaskModel>? smcTasks = _getSMCStatusData();
 
-    final doseStatus =  checkStatusSMC(smcTasks, context.selectedCycle);
+    final doseStatus = checkStatusSMC(smcTasks, context.selectedCycle);
     bool smcAssessmentPendingStatus =
         assessmentSMCPending(smcTasks, context.selectedCycle);
 
@@ -294,11 +294,6 @@ class CustomMemberCard extends StatelessWidget {
                     .lastOrNull;
                 if (redosePendingStatus) {
                   final spaq1 = context.spaq1;
-                  final spaq2 = context.spaq2;
-
-                  int doseCount = double.parse(
-                    successfulTask?.resources?.first.quantity ?? "0",
-                  ).round();
 
                   final value = variant
                       .firstWhere(
@@ -308,16 +303,7 @@ class CustomMemberCard extends StatelessWidget {
                       )
                       .sku;
 
-                  if (successfulTask != null &&
-                      value != null &&
-                      ((value.contains(
-                                Constants.spaq1,
-                              ) &&
-                              spaq1 > 0) ||
-                          (value.contains(
-                                Constants.spaq2,
-                              ) &&
-                              spaq2 > 0))) {
+                  if (successfulTask != null && value != null && spaq1 > 0) {
                     context.router.push(
                       RecordRedoseRoute(
                         tasks: [successfulTask],
@@ -334,19 +320,12 @@ class CustomMemberCard extends StatelessWidget {
                           Icons.warning,
                           color: DigitTheme.instance.colorScheme.error,
                         ),
-                        contentText: (value == Constants.spaq1)
-                            ? "${localizations.translate(
-                                i18_local.beneficiaryDetails
-                                    .insufficientAZTStockMessageDelivery,
-                              )} \n ${localizations.translate(
-                                i18_local.beneficiaryDetails.spaq1DoseUnit,
-                              )}"
-                            : "${localizations.translate(
-                                i18_local.beneficiaryDetails
-                                    .insufficientAZTStockMessageDelivery,
-                              )} \n ${localizations.translate(
-                                i18_local.beneficiaryDetails.spaq2DoseUnit,
-                              )}",
+                        contentText: "${localizations.translate(
+                          i18_local.beneficiaryDetails
+                              .insufficientAZTStockMessageDelivery,
+                        )} \n ${localizations.translate(
+                          i18_local.beneficiaryDetails.spaq1DoseUnit,
+                        )}",
                         primaryAction: DigitDialogActions(
                           label: localizations.translate(i18_local
                               .beneficiaryDetails.backToHouseholdDetails),

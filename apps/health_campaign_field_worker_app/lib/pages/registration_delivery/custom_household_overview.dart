@@ -942,10 +942,7 @@ class _CustomHouseholdOverviewPageState
                                     mainAxisSize: MainAxisSize.max,
                                     onPressed: () {
                                       int spaq1 = context.spaq1;
-                                      int spaq2 = context.spaq2;
-                                      //TODO: comment vas
-                                      // int blueVas = context.blueVas;
-                                      // int redVas = context.redVas;
+
                                       String descriptionText =
                                           localizations.translate(i18_local
                                               .beneficiaryDetails
@@ -954,26 +951,8 @@ class _CustomHouseholdOverviewPageState
                                         descriptionText +=
                                             "\n ${localizations.translate(i18_local.beneficiaryDetails.spaq1DoseUnit)}";
                                       }
-                                      if (spaq2 <= 0) {
-                                        descriptionText +=
-                                            "\n ${localizations.translate(i18_local.beneficiaryDetails.spaq2DoseUnit)}";
-                                      }
-                                      //TODO: comment for vas
-                                      // if (blueVas == 0) {
-                                      //   descriptionText +=
-                                      //       "\n ${localizations.translate(i18_local.beneficiaryDetails.blueVasZeroQuantity)}";
-                                      // }
-                                      // if (redVas == 0) {
-                                      //   descriptionText +=
-                                      //       "\n ${localizations.translate(i18_local.beneficiaryDetails.redVasZeroQuantity)}";
-                                      // }
 
-                                      if (context.spaq1 > 0 || context.spaq2 > 0
-                                          //TODO: comment for VAS
-                                          // ||
-                                          // context.blueVas > 0 ||
-                                          // context.redVas > 0
-                                          ) {
+                                      if (context.spaq1 > 0) {
                                         addIndividual(
                                           context,
                                           state

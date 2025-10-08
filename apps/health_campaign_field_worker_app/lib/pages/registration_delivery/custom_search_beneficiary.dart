@@ -694,7 +694,6 @@ class _CustomSearchBeneficiaryPageState
                       isDisabled: false,
                       onPressed: () {
                         int spaq1 = context.spaq1;
-                        int spaq2 = context.spaq2;
 
                         String descriptionText = localizations.translate(
                             i18_local
@@ -704,12 +703,8 @@ class _CustomSearchBeneficiaryPageState
                           descriptionText +=
                               "\n ${localizations.translate(i18_local.beneficiaryDetails.spaq1DoseUnit)}";
                         }
-                        if (spaq2 == 0) {
-                          descriptionText +=
-                              "\n ${localizations.translate(i18_local.beneficiaryDetails.spaq2DoseUnit)}";
-                        }
 
-                        if ((spaq1 > 0 || spaq2 > 0)) {
+                        if ((spaq1 > 0)) {
                           FocusManager.instance.primaryFocus?.unfocus();
                           context.read<DigitScannerBloc>().add(
                                 const DigitScannerEvent.handleScanner(),
