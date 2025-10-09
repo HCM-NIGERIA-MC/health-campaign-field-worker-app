@@ -6,15 +6,18 @@ import 'package:digit_ui_components/utils/date_utils.dart';
 import 'package:health_campaign_field_worker_app/utils/constants.dart';
 import 'package:reactive_forms/reactive_forms.dart';
 import 'package:registration_delivery/models/entities/additional_fields_type.dart';
+import 'package:registration_delivery/models/entities/household.dart';
 import 'package:registration_delivery/models/entities/side_effect.dart';
 import 'package:registration_delivery/models/entities/status.dart';
 import 'package:registration_delivery/models/entities/task.dart';
+import 'package:registration_delivery/utils/utils.dart';
 
 import '../../models/entities/additional_fields_type.dart'
     as additional_fields_local;
 import '../app_enums.dart';
 import '../../../models/entities/assessment_checklist/status.dart'
     as status_local;
+import 'package:formula_parser/src/formula_parser_base.dart';
 
 bool checkStatusSMC(List<TaskModel>? tasks, ProjectCycle? currentCycle) {
   if (currentCycle == null) {
@@ -259,8 +262,11 @@ bool checkEligibilityForAgeAndSideEffectAll(
   ProjectTypeModel? projectType,
   TaskModel? tasks,
   List<SideEffectModel>? sideEffects,
+  IndividualModel? individual,
+  HouseholdModel? household,
 ) {
   int totalAgeMonths = age.years * 12 + age.months;
+  bool skipAge = false;
   final currentCycle = projectType?.cycles?.firstWhereOrNull(
     (e) =>
         (e.startDate!) < DateTime.now().millisecondsSinceEpoch &&
@@ -282,22 +288,31 @@ bool checkEligibilityForAgeAndSideEffectAll(
 
       return projectType?.validMinAge != null &&
               projectType?.validMaxAge != null
-          ? totalAgeMonths >= projectType!.validMinAge! &&
-                  totalAgeMonths <= projectType.validMaxAge!
-              ? recordedSideEffect && !checkStatusSMC([tasks], currentCycle)
+          ? skipAge ||
+                  (totalAgeMonths >= projectType!.validMinAge! &&
+                      totalAgeMonths <= projectType.validMaxAge!)
+              ? recordedSideEffect && !checkStatus([tasks], currentCycle)
                   ? false
                   : true
               : false
           : false;
     } else {
-      if (projectType?.validMaxAge != null &&
-          projectType?.validMinAge != null) {
-        return totalAgeMonths >= projectType!.validMinAge! &&
-                totalAgeMonths <= projectType.validMaxAge!
+      if (individual != null) {
+        return (fetchProductVariant(
+                  currentCycle.deliveries!.firstOrNull,
+                  individual,
+                  household!,
+                ) !=
+                null)
             ? true
             : false;
       }
-      return false;
+
+      return skipAge ||
+              (totalAgeMonths >= projectType!.validMinAge! &&
+                  totalAgeMonths <= projectType.validMaxAge!)
+          ? true
+          : false;
     }
   }
 
@@ -476,6 +491,143 @@ Map<String, dynamic>? minimumAgeValidator(AbstractControl control) {
 
   if (age < 18) {
     return {'minAge': true};
+  }
+
+  return null;
+}
+
+DeliveryDoseCriteria? fetchProductVariant(ProjectCycleDelivery? currentDelivery,
+    IndividualModel? individualModel, HouseholdModel? householdModel) {
+  if (currentDelivery != null) {
+    int? individualAgeInMonths = 0;
+    int? gender;
+    int? roomCount;
+    int? memberCount;
+    String? structureType;
+    int? height;
+    int? weight;
+
+    if (individualModel != null) {
+      final individualAge = DigitDateUtils.calculateAge(
+        DigitDateUtils.getFormattedDateToDateTime(
+              individualModel.dateOfBirth!,
+            ) ??
+            DateTime.now(),
+      );
+      individualAgeInMonths = individualAge.years * 12 + individualAge.months;
+
+      gender = individualModel.gender?.index;
+
+      final height = int.parse(individualModel.additionalFields != null &&
+              individualModel.additionalFields!.fields
+                  .where((element) => element.key == Constants.height)
+                  .isNotEmpty
+          ? individualModel.additionalFields?.fields
+              .where((element) => element.key == Constants.height)
+              .firstOrNull!
+              .value
+          : '0');
+
+      final weight = double.parse(individualModel.additionalFields != null &&
+              individualModel.additionalFields!.fields
+                  .where((element) => element.key == Constants.weight)
+                  .isNotEmpty
+          ? individualModel.additionalFields?.fields
+              .where((element) => element.key == Constants.weight)
+              .firstOrNull!
+              .value
+          : '0');
+    }
+    if (householdModel != null && householdModel.additionalFields != null) {
+      memberCount = householdModel.memberCount;
+      roomCount = int.tryParse(householdModel.additionalFields?.fields
+              .where((h) => h.key == AdditionalFieldsType.noOfRooms.toValue())
+              .firstOrNull
+              ?.value
+              .toString() ??
+          '1')!;
+      structureType = householdModel.additionalFields?.fields
+          .where((h) =>
+              h.key == AdditionalFieldsType.houseStructureTypes.toValue())
+          .firstOrNull
+          ?.value
+          .toString();
+    }
+
+    final filteredCriteria = currentDelivery.doseCriteria?.where((criteria) {
+      final condition = criteria.condition;
+      if (condition != null) {
+        if (condition.contains('and')) {
+          final conditions = condition.split('and');
+
+          List expressionParser = [];
+          for (var element in conditions) {
+            final expression = FormulaParser(
+              element,
+              {
+                'age': individualAgeInMonths,
+                if (gender != null) 'gender': gender,
+                if (memberCount != null) 'memberCount': memberCount,
+                if (roomCount != null) 'roomCount': roomCount
+              },
+            );
+            final error = expression.parse;
+            expressionParser.add(error["value"]);
+          }
+
+          return expressionParser.where((element) => element == true).length ==
+              conditions.length;
+        } else if (condition.contains('or')) {
+          final conditions = condition.split('or');
+
+          List expressionParser = [];
+          for (var element in conditions) {
+            final expression = CustomFormulaParser.parseCondition(element, {
+              if (individualModel != null && individualAgeInMonths != 0)
+                'age': individualAgeInMonths,
+              if (gender != null) 'gender': gender,
+              if (memberCount != null) 'memberCount': memberCount,
+              if (roomCount != null) 'roomCount': roomCount,
+              if (structureType != null) 'type_of_structure': structureType
+            }, stringKeys: [
+              'type_of_structure'
+            ]);
+            final error = expression;
+            expressionParser.add(error["value"]);
+          }
+
+          return expressionParser.where((element) => element == true).isNotEmpty
+              ? true
+              : false;
+        } else {
+          final conditions = condition.split(
+              'and'); // Assuming there's only one condition since we have contain for and check above and split with and will return the first condition so this is valid
+
+          List expressionParser = [];
+          for (var element in conditions) {
+            final expression = CustomFormulaParser.parseCondition(element, {
+              if (individualModel != null && individualAgeInMonths != 0)
+                'age': individualAgeInMonths,
+              if (gender != null) 'gender': gender,
+              if (memberCount != null) 'memberCount': memberCount,
+              if (roomCount != null) 'roomCount': roomCount,
+              if (structureType != null) 'type_of_structure': structureType
+            }, stringKeys: [
+              'type_of_structure'
+            ]);
+            final error = expression;
+            expressionParser.add(error["value"]);
+          }
+
+          return expressionParser.where((element) => element == true).length ==
+              conditions.length;
+        }
+      }
+
+      return false;
+    }).toList();
+
+    return (filteredCriteria ?? []).isNotEmpty ? filteredCriteria?.first : null;
   }
 
   return null;

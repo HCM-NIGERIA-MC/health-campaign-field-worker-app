@@ -851,6 +851,10 @@ class _CustomHouseholdOverviewPageState
                                                                           ?.lastOrNull
                                                                       : null,
                                                                   sideEffectData,
+                                                                  e,
+                                                                  state
+                                                                      .householdMemberWrapper
+                                                                      .household,
                                                                 )
                                                               : false,
                                                       // isNotEligibleVAS:
