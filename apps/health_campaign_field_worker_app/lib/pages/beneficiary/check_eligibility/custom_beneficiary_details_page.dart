@@ -348,9 +348,9 @@ class CustomBeneficiaryDetailsPageState
                                                                             .beneficiaryDetails
                                                                             .insufficientAZTStockMessageDelivery,
                                                                       )} \n ${localizations.translate(
-                                                                        (value.contains(Constants.spaq1)
-                                                                            ? i18_local.beneficiaryDetails.spaq1DoseUnit
-                                                                            : i18_local.beneficiaryDetails.spaq2DoseUnit),
+                                                                        (i18_local
+                                                                            .beneficiaryDetails
+                                                                            .spaq1DoseUnit),
                                                                       )}",
                                                                       primaryAction:
                                                                           DigitDialogActions(
