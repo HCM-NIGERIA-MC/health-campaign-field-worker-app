@@ -1,6 +1,8 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:collection/collection.dart';
 import 'package:dart_mappable/dart_mappable.dart';
+import 'package:digit_components/utils/date_utils.dart';
+import 'package:digit_components/widgets/atoms/digit_text_form_field.dart';
 import 'package:registration_delivery/models/entities/household.dart';
 // import 'package:digit_components/utils/date_utils.dart' as digits;
 import '../../utils/date_utils.dart' as digits;
@@ -41,7 +43,6 @@ import '../../router/app_router.dart';
 import '../../utils/utils.dart' as local_utils;
 import '../../utils/registration_delivery/registration_delivery_utils.dart';
 import 'custom_beneficiary_acknowledgement.dart';
-import '../../utils/i18_key_constants.dart' as i18_local;
 
 @RoutePage()
 class CustomIndividualDetailsPage extends LocalizedStatefulWidget {
@@ -64,13 +65,48 @@ class CustomIndividualDetailsPageState
   static const _dobKey = 'dob';
   static const _genderKey = 'gender';
   static const _mobileNumberKey = 'mobileNumber';
+  static const _weight = 'weight';
+  static const _height = 'height';
   bool isDuplicateTag = false;
   static const maxLength = 200;
   final clickedStatus = ValueNotifier<bool>(false);
   DateTime now = DateTime.now();
 
+  final ValueNotifier<dynamic> heightWeight = ValueNotifier(null);
+
   bool isEditIndividual = false;
   bool isAddIndividual = false;
+
+  void updateStatus(FormGroup form, dynamic age, BuildContext context) {
+    // Updating the Value updateStatuseNotifier
+
+    if (age == null) {
+      if (heightWeight.value != "") {
+        heightWeight.value = ""; // Only update if necessary
+        form.control(_weight).value = "";
+        form.control(_height).value = "";
+      }
+    } else {
+      final cat = local_utils.getCategory(
+        local_utils.getAgeMonths(age),
+      );
+      final newValue = (cat == local_utils.Constants.height ||
+              cat == local_utils.Constants.weight)
+          ? cat
+          : "";
+
+      if (cat == local_utils.Constants.height) {
+        form.control(_weight).value = "";
+      } else {
+        form.control(_weight).value = "";
+        form.control(_height).value = "";
+      }
+
+      if (heightWeight.value != newValue) {
+        heightWeight.value = newValue; // Update only if changed
+      }
+    }
+  }
 
   final beneficiaryType = RegistrationDeliverySingleton().beneficiaryType!;
   Set<String>? beneficiaryId;
@@ -109,6 +145,12 @@ class CustomIndividualDetailsPageState
     DateTime before150Years = DateTime(now.year - 150, now.month, now.day);
     final textTheme = theme.digitTextTheme(context);
 
+    final individual = bloc.state.mapOrNull<IndividualModel>(
+      editIndividual: (value) {
+        return value.individualModel;
+      },
+    );
+
     return Scaffold(
       body: ReactiveFormBuilder(
         form: () => buildForm(bloc.state),
@@ -140,6 +182,15 @@ class CustomIndividualDetailsPageState
             );
           },
           builder: (context, state) {
+            form.control(_dobKey).valueChanges.listen((value) {
+              if (value == null) {
+                updateStatus(form, null, context);
+              } else {
+                DigitDOBAge age = DigitDateUtils.calculateAge(value);
+
+                updateStatus(form, age, context);
+              }
+            });
             return ScrollableContent(
               enableFixedDigitButton: true,
               header: Column(children: [
@@ -175,6 +226,55 @@ class CustomIndividualDetailsPageState
                           size: DigitButtonSize.large,
                           mainAxisSize: MainAxisSize.max,
                           onPressed: () async {
+                            final String checkCategory =
+                                local_utils.getCategory(
+                              local_utils.getAgeMonths(
+                                DigitDateUtils.calculateAge(
+                                  form.control(_dobKey).value,
+                                ),
+                              ),
+                            );
+
+                            switch (checkCategory) {
+                              case local_utils.Constants.height:
+                                final value = form.control(_height).value;
+                                if (value == null || value == "") {
+                                  await DigitToast.show(
+                                    context,
+                                    options: DigitToastOptions(
+                                      localizations.translate(
+                                        i18_local.individualDetails
+                                            .heightErrorValidationText,
+                                      ),
+                                      true,
+                                      theme,
+                                    ),
+                                  );
+
+                                  return;
+                                }
+                                break;
+                              case local_utils.Constants.weight:
+                                final value = form.control(_weight).value;
+                                if (value == null || value == "") {
+                                  await DigitToast.show(
+                                    context,
+                                    options: DigitToastOptions(
+                                      localizations.translate(
+                                        i18_local.individualDetails
+                                            .weightErrorValidationText,
+                                      ),
+                                      true,
+                                      theme,
+                                    ),
+                                  );
+
+                                  return;
+                                }
+                                break;
+
+                              default:
+                            }
                             final submit = await showDialog(
                               context: context,
                               builder: (ctx) => Popup(
@@ -596,6 +696,23 @@ class CustomIndividualDetailsPageState
                             onChangeOfFormControl: (formControl) {
                               // Handle changes to the control's value here
                               final value = formControl.value;
+                              if (value == null) {
+                                updateStatus(form, null, context);
+                                formControl.setErrors({'': true});
+                              } else {
+                                DigitDOBAge age =
+                                    DigitDateUtils.calculateAge(value);
+
+                                updateStatus(form, age, context);
+                                if ((age.years == 0 && age.months == 0) ||
+                                    age.months > 11 ||
+                                    (age.years > 150 ||
+                                        (age.years == 150 && age.months > 0))) {
+                                  formControl.setErrors({'': true});
+                                } else {
+                                  formControl.removeError('');
+                                }
+                              }
 
                               if (value == null) {
                                 return;
@@ -649,6 +766,102 @@ class CustomIndividualDetailsPageState
                               form.control(_genderKey).setErrors({'': true});
                             }
                           },
+                        ),
+                        Offstage(
+                          offstage: widget.isHeadOfHousehold,
+                          child: ValueListenableBuilder<dynamic>(
+                            valueListenable: heightWeight,
+                            builder: (context, isVisible, child) {
+                              String? formControlKey;
+
+                              bool isIndividual = false;
+                              if (isVisible != null) {
+                                isIndividual = true;
+                              }
+
+                              if (isVisible == local_utils.Constants.weight) {
+                                formControlKey = _weight;
+                              } else if (isVisible ==
+                                  local_utils.Constants.height) {
+                                formControlKey = _height;
+                              } else if (isVisible == "" && isIndividual) {
+                                formControlKey = isVisible;
+                              } else if ((individual != null &&
+                                  local_utils.getCategory(
+                                        local_utils.getAgeMonths(
+                                          DigitDateUtils.calculateAge(
+                                            DateFormat('dd/MM/yyyy').parse(
+                                              individual.dateOfBirth!,
+                                            ),
+                                          ),
+                                        ),
+                                      ) ==
+                                      local_utils.Constants.weight)) {
+                                formControlKey = _weight;
+                              } else if ((individual != null &&
+                                  local_utils.getCategory(
+                                        local_utils.getAgeMonths(
+                                          DigitDateUtils.calculateAge(
+                                            DateFormat('dd/MM/yyyy').parse(
+                                              individual.dateOfBirth!,
+                                            ),
+                                          ),
+                                        ),
+                                      ) ==
+                                      local_utils.Constants.height)) {
+                                formControlKey = _height;
+                              }
+
+                              if (formControlKey == null ||
+                                  formControlKey == "") {
+                                return const SizedBox(); // Return empty widget if no valid key
+                              }
+
+                              return DigitTextFormField(
+                                key: ValueKey(
+                                  formControlKey,
+                                ), // Ensure new key when control changes
+                                maxLength: formControlKey == _weight ? 4 : 3,
+                                inputFormatters: formControlKey == _weight
+                                    ? [
+                                        FilteringTextInputFormatter.allow(
+                                          RegExp(r'^\d*\.?\d{0,2}'),
+                                        ),
+                                      ]
+                                    : [
+                                        FilteringTextInputFormatter.digitsOnly,
+                                      ],
+                                formControlName: formControlKey,
+                                label: localizations.translate(
+                                  formControlKey == _weight
+                                      ? i18_local
+                                          .individualDetails.weightHeadLabelText
+                                      : i18_local.individualDetails
+                                          .heightHeadLabelText,
+                                ),
+                                isRequired:
+                                    true, // If it's being rendered, it's required
+                                validationMessages: {
+                                  'minAllowed': (object) =>
+                                      localizations.translate(
+                                        formControlKey == _weight
+                                            ? i18_local.individualDetails
+                                                .minWeightLengthError
+                                            : i18_local.individualDetails
+                                                .minHeightLengthError,
+                                      ),
+                                  'maxAllowed': (object) =>
+                                      localizations.translate(
+                                        formControlKey == _weight
+                                            ? i18_local.individualDetails
+                                                .maxWeightLengthError
+                                            : i18_local.individualDetails
+                                                .maxHeightLengthError,
+                                      ),
+                                },
+                              );
+                            },
+                          ),
                         ),
                         individualDetailsShowcaseData.mobile.buildWith(
                           child: Offstage(
@@ -815,6 +1028,106 @@ class CustomIndividualDetailsPageState
             ],
     );
 
+    // final cycleIndex =
+    //     context.selectedCycle.id == 0 ? "" : "0${context.selectedCycle.id}";
+
+    // final projectTypeId = context.selectedProjectType == null
+    //     ? ""
+    //     : context.selectedProjectType!.id;
+    individual = individual.copyWith(
+      additionalFields: individual.additionalFields == null
+          ? IndividualAdditionalFields(
+              version: 1,
+              fields: [
+                AdditionalField(
+                  "projectId",
+                  context.projectId,
+                ),
+                // if (cycleIndex.isNotEmpty)
+                //   AdditionalField(
+                //     "cycleIndex",
+                //     cycleIndex,
+                //   ),
+                // if (projectTypeId.isNotEmpty)
+                //   AdditionalField(
+                //     "projectTypeId",
+                //     projectTypeId,
+                //   ),
+                if (local_utils.getCategory(
+                      local_utils.getAgeMonths(
+                        DigitDateUtils.calculateAge(
+                          DateFormat('dd/MM/yyyy').parse(
+                            dobString!,
+                          ),
+                        ),
+                      ),
+                    ) ==
+                    local_utils.Constants.height)
+                  AdditionalField(
+                    local_utils.Constants.height,
+                    (form.control(_height).value).toString().length == 1
+                        ? '0${(form.control(_height).value)}'
+                        : (form.control(_height).value),
+                  ),
+                if (local_utils.getCategory(
+                      local_utils.getAgeMonths(
+                        DigitDateUtils.calculateAge(
+                          DateFormat('dd/MM/yyyy').parse(
+                            dobString,
+                          ),
+                        ),
+                      ),
+                    ) ==
+                    local_utils.Constants.weight)
+                  AdditionalField(
+                    local_utils.Constants.weight,
+                    (form.control(_weight).value).toString().length == 1
+                        ? '0${(form.control(_weight).value)}'
+                        : (form.control(_weight).value),
+                  ),
+              ],
+            )
+          : individual.additionalFields!.copyWith(
+              fields: [
+                // Filter out any existing `Constants.weight` or `Constants.height` fields
+                ...individual.additionalFields!.fields.where(
+                  (field) =>
+                      field.key != local_utils.Constants.weight &&
+                      field.key != local_utils.Constants.height,
+                ),
+                // Add new `Constants.height` field if the condition matches
+                if (local_utils.getCategory(
+                      local_utils.getAgeMonths(
+                        DigitDateUtils.calculateAge(
+                          DateFormat('dd/MM/yyyy').parse(dobString!),
+                        ),
+                      ),
+                    ) ==
+                    local_utils.Constants.height)
+                  AdditionalField(
+                    local_utils.Constants.height,
+                    (form.control(_height).value).toString().length == 1
+                        ? '0${(form.control(_height).value)}'
+                        : (form.control(_height).value),
+                  ),
+                if (local_utils.getCategory(
+                      local_utils.getAgeMonths(
+                        DigitDateUtils.calculateAge(
+                          DateFormat('dd/MM/yyyy').parse(dobString!),
+                        ),
+                      ),
+                    ) ==
+                    local_utils.Constants.weight)
+                  AdditionalField(
+                    local_utils.Constants.weight,
+                    (form.control(_weight).value).toString().length == 1
+                        ? '0${(form.control(_weight).value)}'
+                        : (form.control(_weight).value),
+                  ),
+              ],
+            ),
+    );
+
     return individual;
   }
 
@@ -857,6 +1170,42 @@ class CustomIndividualDetailsPageState
                     HouseholdType.community)
                 ? null
                 : searchQuery?.trim()),
+      ),
+      _weight: FormControl<String>(
+        value: (individual != null &&
+                local_utils.getCategory(
+                      digits.DigitDateUtils.getAgeMonths(
+                          digits.DigitDateUtils.calculateAge(
+                        DateFormat('dd/MM/yyyy').parse(
+                          individual.dateOfBirth!,
+                        ),
+                      )),
+                    ) ==
+                    local_utils.Constants.weight)
+            ? individual.additionalFields?.fields
+                    .firstWhere((element) =>
+                        element.key == local_utils.Constants.weight)
+                    .value ??
+                ""
+            : "",
+      ),
+      _height: FormControl<String>(
+        value: (individual != null &&
+                local_utils.getCategory(
+                      digits.DigitDateUtils.getAgeMonths(
+                          digits.DigitDateUtils.calculateAge(
+                        DateFormat('dd/MM/yyyy').parse(
+                          individual.dateOfBirth!,
+                        ),
+                      )),
+                    ) ==
+                    local_utils.Constants.height)
+            ? individual.additionalFields?.fields
+                    .firstWhereOrNull((element) =>
+                        element.key == local_utils.Constants.height)
+                    ?.value ??
+                ""
+            : "",
       ),
       _dobKey: FormControl<DateTime>(
         value: individual?.dateOfBirth != null

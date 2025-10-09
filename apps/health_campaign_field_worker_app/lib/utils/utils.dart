@@ -498,6 +498,16 @@ String getSecondaryPartyValue(StockModel? stock) {
   return value;
 }
 
+String getCategory(int number) {
+  if (number >= 1 && number <= 11) {
+    return Constants.weight;
+  } else if (number >= 12 && number <= 59) {
+    return Constants.height;
+  } else {
+    return "Invalid number";
+  }
+}
+
 void showDownloadDialog(
   BuildContext context, {
   required DownloadBeneficiary model,

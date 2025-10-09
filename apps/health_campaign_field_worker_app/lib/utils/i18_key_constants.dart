@@ -1357,6 +1357,17 @@ class IndividualDetails {
   String get yearsAndMonthsErrorText => 'ERR_YEARS_AND_MONTHS';
 
   String get linkVoucherToIndividual => 'LINK_VOUCHER_TO_INDIVIDUAL';
+
+  String get heightHeadLabelText => 'CHILD_LABEL_HEIGHT_TEXT';
+  String get weightHeadLabelText => 'CHILD_LABEL_WEIGHT_TEXT';
+
+  String get weightErrorValidationText => 'WEIGHT_ERROR_VALIDATION_TEXT';
+  String get heightErrorValidationText => 'HEIGHT_ERROR_VALIDATION_TEXT';
+
+  String get maxWeightLengthError => "MAX_WEIGHT_LENGTH_ERROR";
+  String get minWeightLengthError => "MIN_WEIGHT_LENGTH_ERROR";
+  String get minHeightLengthError => "MIN_HEIGHT_LENGTH_ERROR";
+  String get maxHeightLengthError => "MAX_HEIGHT_LENGTH_ERROR";
 }
 
 class BeneficiaryDetails {

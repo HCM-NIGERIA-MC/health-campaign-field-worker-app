@@ -31,6 +31,10 @@ class DigitDateUtils {
     );
   }
 
+  static int getAgeMonths(DigitDOBAge age) {
+    return (age.years * 12) + age.months;
+  }
+
   static DateTime calculateDob(DigitDOBAge givenDOBAge) {
     DateTime currentDate = DateTime.now();
     // Calculate the difference in years, months, and days
