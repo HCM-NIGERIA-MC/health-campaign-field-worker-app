@@ -505,7 +505,7 @@ DeliveryDoseCriteria? fetchProductVariant(ProjectCycleDelivery? currentDelivery,
     int? memberCount;
     String? structureType;
     int? height;
-    int? weight;
+    double? weight;
 
     if (individualModel != null) {
       final individualAge = DigitDateUtils.calculateAge(
@@ -518,25 +518,28 @@ DeliveryDoseCriteria? fetchProductVariant(ProjectCycleDelivery? currentDelivery,
 
       gender = individualModel.gender?.index;
 
-      final height = int.parse(individualModel.additionalFields != null &&
-              individualModel.additionalFields!.fields
-                  .where((element) => element.key == Constants.height)
-                  .isNotEmpty
-          ? individualModel.additionalFields?.fields
-              .where((element) => element.key == Constants.height)
-              .firstOrNull!
-              .value
-          : '0');
-
-      final weight = double.parse(individualModel.additionalFields != null &&
-              individualModel.additionalFields!.fields
+      if (individualModel.additionalFields != null) {
+        if (individualModel.additionalFields!.fields.isNotEmpty &&
+            individualModel.additionalFields!.fields
+                .where((element) => element.key == Constants.weight)
+                .isNotEmpty) {
+          weight = double.parse(individualModel.additionalFields!.fields
                   .where((element) => element.key == Constants.weight)
-                  .isNotEmpty
-          ? individualModel.additionalFields?.fields
-              .where((element) => element.key == Constants.weight)
-              .firstOrNull!
-              .value
-          : '0');
+                  .first
+                  .value ??
+              '0');
+        }
+        if (individualModel.additionalFields!.fields.isNotEmpty &&
+            individualModel.additionalFields!.fields
+                .where((element) => element.key == Constants.height)
+                .isNotEmpty) {
+          height = int.parse(individualModel.additionalFields!.fields
+                  .where((element) => element.key == Constants.height)
+                  .first
+                  .value ??
+              '0');
+        }
+      }
     }
     if (householdModel != null && householdModel.additionalFields != null) {
       memberCount = householdModel.memberCount;
@@ -556,6 +559,23 @@ DeliveryDoseCriteria? fetchProductVariant(ProjectCycleDelivery? currentDelivery,
 
     final filteredCriteria = currentDelivery.doseCriteria?.where((criteria) {
       final condition = criteria.condition;
+      final variables = individualModel!.additionalFields != null &&
+              individualModel.additionalFields!.fields
+                  .any((field) => field.key == Constants.weight)
+          ? {
+              'weight': weight, // Provide default values if null
+              'age': individualAgeInMonths,
+            }
+          : individualModel.additionalFields != null &&
+                  individualModel.additionalFields!.fields
+                      .any((field) => field.key == Constants.height)
+              ? {
+                  'height': height, // Provide default values if null
+                  'age': individualAgeInMonths,
+                }
+              : {
+                  'age': individualAgeInMonths,
+                };
       if (condition != null) {
         if (condition.contains('and')) {
           final conditions = condition.split('and');
@@ -565,7 +585,8 @@ DeliveryDoseCriteria? fetchProductVariant(ProjectCycleDelivery? currentDelivery,
             final expression = FormulaParser(
               element,
               {
-                'age': individualAgeInMonths,
+                ...variables,
+                // 'age': individualAgeInMonths,
                 if (gender != null) 'gender': gender,
                 if (memberCount != null) 'memberCount': memberCount,
                 if (roomCount != null) 'roomCount': roomCount
@@ -583,8 +604,9 @@ DeliveryDoseCriteria? fetchProductVariant(ProjectCycleDelivery? currentDelivery,
           List expressionParser = [];
           for (var element in conditions) {
             final expression = CustomFormulaParser.parseCondition(element, {
-              if (individualModel != null && individualAgeInMonths != 0)
-                'age': individualAgeInMonths,
+              // if (individualModel != null && individualAgeInMonths != 0)
+              //   'age': individualAgeInMonths,
+              ...variables,
               if (gender != null) 'gender': gender,
               if (memberCount != null) 'memberCount': memberCount,
               if (roomCount != null) 'roomCount': roomCount,
@@ -606,8 +628,9 @@ DeliveryDoseCriteria? fetchProductVariant(ProjectCycleDelivery? currentDelivery,
           List expressionParser = [];
           for (var element in conditions) {
             final expression = CustomFormulaParser.parseCondition(element, {
-              if (individualModel != null && individualAgeInMonths != 0)
-                'age': individualAgeInMonths,
+              // if (individualModel != null && individualAgeInMonths != 0)
+              //   'age': individualAgeInMonths,
+              ...variables,
               if (gender != null) 'gender': gender,
               if (memberCount != null) 'memberCount': memberCount,
               if (roomCount != null) 'roomCount': roomCount,

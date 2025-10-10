@@ -728,6 +728,8 @@ class CaregiverConsent {
 
   String get caregiverConsentDescriptionTextSMC =>
       'CARE_GIVER_CONSENT_DESCRIPTION_TEXT_SMC';
+  String get caregiverConsentDescriptionTextAZM =>
+      'CARE_GIVER_CONSENT_DESCRIPTION_TEXT_AZM';
 
   String get caregiverConsentLabelText => 'CARE_GIVER_CONSENT_LABEL_TEXT';
 
