@@ -115,6 +115,9 @@ class Constants {
   static const String blueVAS = "Blue VAS";
   static const String redVAS = "Red VAS";
 
+  static const String height = "height";
+  static const String weight = "weight";
+
   // todo enable before cycle2
   static const bool isDownSyncEnabled = true;
   static const String dashboardAnalyticsPath =
