@@ -291,6 +291,17 @@ class Constants {
     KeyValue('CORE_COMMON_NO', false),
   ];
 
+  static const String height = "height";
+  static const String weight = "weight";
+
+  // min and max consideration for both weight and height
+
+  static const int minHeight = 01;
+  static const int maxHeight = 138;
+
+  static const double minWeight = 0.01;
+  static const double maxWeight = 15.0;
+
   void setInitialDataOfPackages() {
     DigitDataModelSingleton().setData(
         syncDownRetryCount: envConfig.variables.syncDownRetryCount,
