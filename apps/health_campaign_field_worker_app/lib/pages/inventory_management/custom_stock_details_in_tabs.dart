@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:auto_route/auto_route.dart';
 import 'package:collection/collection.dart';
+import 'package:digit_components/widgets/atoms/digit_text_form_field.dart';
 import 'package:digit_components/widgets/atoms/digit_toaster.dart';
 import 'package:digit_data_model/data_model.dart';
 import 'package:digit_data_model/models/entities/product_variant.dart';
@@ -433,15 +434,15 @@ class _DynamicTabsPageState extends LocalizedState<DynamicTabsPage>
       ], autoValidate: true);
     }
 
-    if (entryType == StockRecordEntryType.dispatch &&
-        context.isCommunityDistributor) {
-      form.control(_transactionQuantityWastedKey).setValidators([
-        Validators.number(),
-        Validators.required,
-        Validators.min(0),
-        Validators.max(Constants.stockMaxLimit),
-      ], autoValidate: true);
-    }
+    // if (entryType == StockRecordEntryType.dispatch &&
+    //     context.isCommunityDistributor) {
+    //   form.control(_transactionQuantityWastedKey).setValidators([
+    //     Validators.number(),
+    //     Validators.required,
+    //     Validators.min(0),
+    //     Validators.max(Constants.stockMaxLimit),
+    //   ], autoValidate: true);
+    // }
 
     return _KeepAliveTabContent(
       child: ReactiveForm(
@@ -584,6 +585,18 @@ class _DynamicTabsPageState extends LocalizedState<DynamicTabsPage>
                                 } else {
                                   if (val != '') {
                                     field.control.value = int.parse(val);
+                                    if ([
+                                          StockRecordEntryType.dispatch,
+                                        ].contains(entryType) &&
+                                        context.isDistributor) {
+                                      int wastageValQuantity = int.parse(
+                                          wastageQuantity(form, context)
+                                              .toString());
+                                      form
+                                          .control(
+                                              _transactionQuantityWastedKey)
+                                          .updateValue(wastageValQuantity);
+                                    }
                                   } else {
                                     field.control.value = null;
                                   }
@@ -625,9 +638,13 @@ class _DynamicTabsPageState extends LocalizedState<DynamicTabsPage>
                                 ),
                                 inputFormatters: [
                                   FilteringTextInputFormatter.allow(
-                                    RegExp(r'[0-9]'),
+                                    context.isDistributor
+                                        ? RegExp("[0-1]")
+                                        : RegExp("[0-9]"),
                                   ),
-                                  LengthLimitingTextInputFormatter(9),
+                                  LengthLimitingTextInputFormatter(
+                                    context.isDistributor ? 1 : 9,
+                                  ),
                                 ],
                                 onChange: (val) {
                                   field.control.markAsTouched();
@@ -644,6 +661,18 @@ class _DynamicTabsPageState extends LocalizedState<DynamicTabsPage>
                                   } else {
                                     if (val != '') {
                                       field.control.value = int.parse(val);
+                                      if ([
+                                            StockRecordEntryType.dispatch,
+                                          ].contains(entryType) &&
+                                          context.isDistributor) {
+                                        int wastageValQuantity = int.parse(
+                                            wastageQuantity(form, context)
+                                                .toString());
+                                        form
+                                            .control(
+                                                _transactionQuantityWastedKey)
+                                            .updateValue(wastageValQuantity);
+                                      }
                                     } else {
                                       field.control.value = null;
                                     }
@@ -653,64 +682,76 @@ class _DynamicTabsPageState extends LocalizedState<DynamicTabsPage>
                             );
                           }),
 
-                    if (entryType == StockRecordEntryType.dispatch &&
-                        context.isCommunityDistributor)
-                      ReactiveWrapperField(
-                          formControlName: _transactionQuantityWastedKey,
-                          validationMessages: {
-                            "number": (object) => localizations.translate(
-                                  '${quantityCountLabel}_ERROR',
-                                ),
-                            "max": (object) => localizations.translate(
-                                  i18_local.stockDetails.stockMaxError,
-                                ),
-                            "min": (object) => localizations.translate(
-                                  '${quantityCountLabel}_MIN_ERROR',
-                                ),
-                          },
-                          showErrors: (control) =>
-                              control.invalid && control.touched,
-                          builder: (field) {
-                            return LabeledField(
-                              label: localizations.translate(
-                                quantityWastedCountLabel,
-                              ),
-                              isRequired: true,
-                              child: BaseDigitFormInput(
-                                errorMessage: field.errorText,
-                                keyboardType:
-                                    const TextInputType.numberWithOptions(
-                                  decimal: true,
-                                ),
-                                inputFormatters: [
-                                  FilteringTextInputFormatter.allow(
-                                    RegExp(r'[0-9]'),
-                                  ),
-                                  LengthLimitingTextInputFormatter(9),
-                                ],
-                                onChange: (val) {
-                                  field.control.markAsTouched();
+                    // if (entryType == StockRecordEntryType.dispatch &&
+                    //     context.isCommunityDistributor)
+                    //   ReactiveWrapperField(
+                    //       formControlName: _transactionQuantityWastedKey,
+                    //       validationMessages: {
+                    //         "number": (object) => localizations.translate(
+                    //               '${quantityCountLabel}_ERROR',
+                    //             ),
+                    //         "max": (object) => localizations.translate(
+                    //               i18_local.stockDetails.stockMaxError,
+                    //             ),
+                    //         "min": (object) => localizations.translate(
+                    //               '${quantityCountLabel}_MIN_ERROR',
+                    //             ),
+                    //       },
+                    //       showErrors: (control) =>
+                    //           control.invalid && control.touched,
+                    //       builder: (field) {
+                    //         return LabeledField(
+                    //           label: localizations.translate(
+                    //             quantityWastedCountLabel,
+                    //           ),
+                    //           isRequired: true,
+                    //           child: BaseDigitFormInput(
+                    //             errorMessage: field.errorText,
+                    //             keyboardType:
+                    //                 const TextInputType.numberWithOptions(
+                    //               decimal: true,
+                    //             ),
+                    //             inputFormatters: [
+                    //               FilteringTextInputFormatter.allow(
+                    //                 RegExp(r'[0-9]'),
+                    //               ),
+                    //               LengthLimitingTextInputFormatter(9),
+                    //             ],
+                    //             onChange: (val) {
+                    //               field.control.markAsTouched();
 
-                                  if (val == "") {
-                                    field.control.value = null;
+                    //               if (val == "") {
+                    //                 field.control.value = null;
 
-                                    return;
-                                  }
+                    //                 return;
+                    //               }
 
-                                  if (int.parse(val) > 10000000000) {
-                                    field.control.value =
-                                        Constants.stockMaxLimit;
-                                  } else {
-                                    if (val != '') {
-                                      field.control.value = int.parse(val);
-                                    } else {
-                                      field.control.value = null;
-                                    }
-                                  }
-                                },
-                              ),
-                            );
-                          }),
+                    //               if (int.parse(val) > 10000000000) {
+                    //                 field.control.value =
+                    //                     Constants.stockMaxLimit;
+                    //               } else {
+                    //                 if (val != '') {
+                    //                   field.control.value = int.parse(val);
+                    //                 } else {
+                    //                   field.control.value = null;
+                    //                 }
+                    //               }
+                    //             },
+                    //           ),
+                    //         );
+                    //       }),
+                    if ([
+                          StockRecordEntryType.dispatch,
+                        ].contains(entryType) &&
+                        context.isDistributor)
+                      DigitTextFormField(
+                        formControlName: _transactionQuantityWastedKey,
+                        readOnly: true,
+                        isRequired: true,
+                        label: localizations.translate(
+                          quantityWastedCountLabel,
+                        ),
+                      ),
                     // ReactiveWrapperField(
                     //   formControlName: _waybillQuantityKey,
                     //   builder: (field) {
@@ -920,10 +961,10 @@ class _DynamicTabsPageState extends LocalizedState<DynamicTabsPage>
                   ?.toString() ??
               '0');
 
-          final totalQty = ((entryType == StockRecordEntryType.dispatch)
+          final totalQty = (((entryType == StockRecordEntryType.dispatch)
                   ? quantity * -1
                   : quantity) -
-              quantityWasted;
+              quantityWasted ~/ Constants.mlPerBottle);
 
           String? productName = stockModel.additionalFields?.fields
               .firstWhereOrNull((element) => element.key == 'productName')
@@ -1036,7 +1077,7 @@ class _DynamicTabsPageState extends LocalizedState<DynamicTabsPage>
 
   String? wastageQuantity(FormGroup form, BuildContext context) {
     final quantity = form.control(_transactionQuantityKey).value;
-    final partialBlisters = form.control(_transactionQuantityKey).value;
+    final partialBlisters = form.control(_transactionQuantityPartialKey).value;
 
     if (quantity == null || partialBlisters == null) {
       return null;
