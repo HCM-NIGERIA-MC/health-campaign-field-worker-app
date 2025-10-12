@@ -39,6 +39,7 @@ import '../../../models/entities/additional_fields_type.dart'
     as additional_fields_local;
 import '../../../utils/utils.dart' show getIndividualAdditionalFields;
 import '../../../widgets/custom_back_navigation.dart';
+import '/utils/registration_delivery/utils_smc.dart' as utils_smc;
 
 @RoutePage()
 class CustomDeliverInterventionPage extends LocalizedStatefulWidget {
@@ -283,7 +284,8 @@ class CustomDeliverInterventionPageState
                                   ?.additionalProjectType;
                       List<DeliveryProductVariant>? productVariants =
                           projectTypeModel?.cycles?.isNotEmpty == true
-                              ? (fetchProductVariant(
+                              ? (utils_smc
+                                  .fetchProductVariant(
                                       projectTypeModel
                                               ?.cycles![
                                                   deliveryInterventionState
@@ -932,7 +934,8 @@ class CustomDeliverInterventionPageState
     if (_controllers.isEmpty) {
       final int r = projectTypeModel?.cycles == null
           ? 1
-          : fetchProductVariant(
+          : utils_smc
+                  .fetchProductVariant(
                       projectTypeModel
                           ?.cycles![bloc.cycle - 1].deliveries?[bloc.dose - 1],
                       overViewbloc.selectedIndividual,
