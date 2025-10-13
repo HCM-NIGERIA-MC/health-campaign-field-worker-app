@@ -98,6 +98,8 @@ import '../pages/checklist/custom_survey_form_preview.dart';
 import '../pages/checklist/custom_survey_form_boundary_view.dart';
 import '../pages/checklist/custom_survey_form_acknowledgement.dart';
 import '../pages/checklist/custom_survey_form_wrapper.dart';
+import 'package:digit_scanner/blocs/app_localization.dart';
+import '../pages/inventory_management/qr_scanner.dart';
 
 part 'app_router.gr.dart';
 

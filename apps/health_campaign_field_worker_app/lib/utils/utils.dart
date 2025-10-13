@@ -263,107 +263,93 @@ bool validateStockSubmission({
 // }
 
 String customFormatAgeRange(String condition) {
-  if (condition == null || condition.trim().isEmpty) return condition;
+  if (condition.trim().isEmpty) return condition;
 
-  // Helper to format numbers: drop .0 for integers
-  String fmtNum(String s) {
-    final n = num.tryParse(s);
-    if (n == null) return s;
-    if (n is int || n == n.roundToDouble()) return n.toInt().toString();
+  // Helper: format numbers nicely (e.g. 3.0 → 3)
+  String fmtNum(double n) {
+    if (n == n.roundToDouble()) return n.toInt().toString();
     return n.toString();
   }
 
-  // normalized string: ensure consistent separators for "and" and lower-case
+  // Normalize
   final normalized = condition.replaceAll(RegExp(r'\s+'), '').toLowerCase();
 
-  // map to hold min/max values for keys we care about
-  final Map<String, double?> minMap = {
-    'age': null,
-    'weight': null,
-    'height': null
-  };
-  final Map<String, double?> maxMap = {
-    'age': null,
-    'weight': null,
-    'height': null
-  };
+  // Split safely by 'and' (case-insensitive)
+  final parts = normalized.split(RegExp('and', caseSensitive: false));
 
-  // match patterns like: key > number   or   key <= number
-  final reg =
-      RegExp(r'([a-z_]+)(>=|<=|>|<)(-?\d+\.?\d*)', caseSensitive: false);
+  // Store min/max values per key
+  final Map<String, double?> minMap = {};
+  final Map<String, double?> maxMap = {};
 
-  for (final m in reg.allMatches(normalized)) {
+  final tokenRe = RegExp(r'^([a-z_]+)(>=|<=|>|<)(-?\d+\.?\d*)$');
+
+  for (final raw in parts) {
+    final m = tokenRe.firstMatch(raw);
+    if (m == null) continue;
     final key = m.group(1)!.toLowerCase();
     final op = m.group(2)!;
-    final raw = m.group(3)!;
-    final value = double.tryParse(raw);
-    if (value == null) continue;
+    final val = double.tryParse(m.group(3)!);
+    if (val == null) continue;
 
-    if (!minMap.containsKey(key)) {
-      // ignore unknown keys but could be extended
-      continue;
-    }
+    minMap.putIfAbsent(key, () => null);
+    maxMap.putIfAbsent(key, () => null);
 
     if (op == '>' || op == '>=') {
-      // set/keep the largest min
       final existing = minMap[key];
-      if (existing == null || value > existing) minMap[key] = value;
+      if (existing == null || val > existing) minMap[key] = val;
     } else if (op == '<' || op == '<=') {
-      // set/keep the smallest max
       final existing = maxMap[key];
-      if (existing == null || value < existing) maxMap[key] = value;
+      if (existing == null || val < existing) maxMap[key] = val;
     }
   }
 
-  // Build formatted text
+  // --- AGE SECTION ---
   String agePart = '';
   final ageMin = minMap['age'];
   final ageMax = maxMap['age'];
-
   if (ageMin != null || ageMax != null) {
-    final minStr = ageMin != null ? fmtNum(ageMin.toString()) : '';
-    final maxStr = ageMax != null ? fmtNum(ageMax.toString()) : '';
+    final minStr = ageMin != null ? fmtNum(ageMin) : '';
+    final maxStr = ageMax != null ? fmtNum(ageMax) : '';
     if (minStr.isNotEmpty && maxStr.isNotEmpty) {
-      agePart = 'age $minStr-$maxStr months';
+      agePart = '$minStr-$maxStr months';
     } else if (minStr.isNotEmpty) {
-      agePart = 'age ≥ $minStr months';
+      agePart = '≥ $minStr months';
     } else {
-      agePart = 'age ≤ $maxStr months';
+      agePart = '≤ $maxStr months';
     }
   }
 
-  // collect weight/height parts if present
-  final details = <String>[];
-  final weightMin = minMap['weight'];
-  final weightMax = maxMap['weight'];
-  if (weightMin != null || weightMax != null) {
-    final wm = weightMin != null ? fmtNum(weightMin.toString()) : '';
-    final wx = weightMax != null ? fmtNum(weightMax.toString()) : '';
-    final body = (wm.isNotEmpty && wx.isNotEmpty)
-        ? '$wm-$wx'
-        : (wm.isNotEmpty ? '≥ $wm' : '≤ $wx');
-    details.add('weight: $body');
-  }
-  final heightMin = minMap['height'];
-  final heightMax = maxMap['height'];
-  if (heightMin != null || heightMax != null) {
-    final hm = heightMin != null ? fmtNum(heightMin.toString()) : '';
-    final hx = heightMax != null ? fmtNum(heightMax.toString()) : '';
-    final body = (hm.isNotEmpty && hx.isNotEmpty)
-        ? '$hm-$hx'
-        : (hm.isNotEmpty ? '≥ $hm' : '≤ $hx');
-    details.add('height: $body');
-  }
-
-  final detailsPart = details.isNotEmpty ? ' (${details.join(', ')})' : '';
-
-  if (agePart.isEmpty && details.isNotEmpty) {
-    // If no age found but we have details, just return details
-    return details.join(', ');
+  // --- HEIGHT OR WEIGHT SECTION ---
+  String detailPart = '';
+  if (minMap.containsKey('height') || maxMap.containsKey('height')) {
+    final hMin = minMap['height'];
+    final hMax = maxMap['height'];
+    if (hMin != null || hMax != null) {
+      final hm = hMin != null ? fmtNum(hMin) : '';
+      final hx = hMax != null ? fmtNum(hMax) : '';
+      final body = (hm.isNotEmpty && hx.isNotEmpty)
+          ? '$hm-$hx'
+          : (hm.isNotEmpty ? '≥ $hm' : '≤ $hx');
+      detailPart = body;
+    }
+  } else if (minMap.containsKey('weight') || maxMap.containsKey('weight')) {
+    final wMin = minMap['weight'];
+    final wMax = maxMap['weight'];
+    if (wMin != null || wMax != null) {
+      final wm = wMin != null ? fmtNum(wMin) : '';
+      final wx = wMax != null ? fmtNum(wMax) : '';
+      final body = (wm.isNotEmpty && wx.isNotEmpty)
+          ? '$wm-$wx'
+          : (wm.isNotEmpty ? '≥ $wm' : '≤ $wx');
+      detailPart = body;
+    }
   }
 
-  if (agePart.isEmpty) return condition; // nothing parsed
-  return '$agePart$detailsPart';
+  // --- FINAL OUTPUT ---
+  if (agePart.isEmpty && detailPart.isEmpty) return condition;
+  if (agePart.isEmpty) return '($detailPart).';
+  if (detailPart.isEmpty) return '$agePart.';
+  return '$agePart ($detailPart).';
 }
 
 String? getAgeConditionStringFromVariant(

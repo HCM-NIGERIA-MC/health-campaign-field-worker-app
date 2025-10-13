@@ -196,6 +196,7 @@ class DeliverIntervention {
       'DELIVER_INTERVENTION_OTHER_REASON_FOR_REDOSE_LABEL';
   String get deliverInterventionSMCLabel => 'DELIVER_INTERVENTION_SMC_LABEL';
   String get deliverInterventionVASLabel => 'DELIVER_INTERVENTION_VAS_LABEL';
+  String get DeliverInterventionAZMLabel => 'DELIVER_INTERVENTION_AZM_LABEL';
   String get recordRedoseLabel => 'DELIVER_INTERVENTION_RECORD_REDOSE_LABEL';
   String get selectTheResourcDeliveredLabel => 'Select the Resource delivered';
   String get reasonForRedoseLabel =>
@@ -233,6 +234,7 @@ class DeliverIntervention {
   String get spaqRedirectionScreenDescription => 'SPAQ_REDIRECTED_SCREEN_DESC';
   String get deliversmcintervention => 'DELIVER_SMC_INTERVENTION';
   String get deliverVASIntervention => 'DELIVER_VAS_INTERVENTION';
+  String get deliverAZMIntervention => 'DELIVER_AZM_INTERVENTION';
   String get recordsmcdeliverdetails => 'RECORD_SMC_DELIVER_DETAILS';
   String get doseadministeredby => 'DOSE_ADMINISTERED_BY_LABEL';
   String get proceedToVASLabel => 'PROCEED_TO_VAS_LABEL';

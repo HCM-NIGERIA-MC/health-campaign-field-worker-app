@@ -58,7 +58,6 @@ class CustomBeneficiaryDetailsPageState
     extends LocalizedState<CustomBeneficiaryDetailsPage> {
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
   }
 
@@ -421,13 +420,15 @@ class CustomBeneficiaryDetailsPageState
                               margin: const EdgeInsets.all(spacer2),
                               children: [
                                 Text(
-                                  localizations.translate(
-                                      widget.eligibilityAssessmentType ==
-                                              EligibilityAssessmentType.smc
-                                          ? i18_local.deliverIntervention
-                                              .deliversmcintervention
-                                          : i18_local.deliverIntervention
-                                              .deliverVASIntervention),
+                                  localizations.translate(i18_local
+                                      .deliverIntervention
+                                      .deliverAZMIntervention),
+                                  // widget.eligibilityAssessmentType ==
+                                  //         EligibilityAssessmentType.smc
+                                  //     ? i18_local.deliverIntervention
+                                  //         .deliversmcintervention
+                                  //     : i18_local.deliverIntervention
+                                  //         .deliverVASIntervention),
                                   style: textTheme.headingXl.copyWith(
                                       color: theme.colorTheme.text.primary),
                                 ),
@@ -518,6 +519,30 @@ class CustomBeneficiaryDetailsPageState
 
                                       return DateFormat('dd MMMM yyyy')
                                           .format(registrationDate);
+                                    }(),
+                                    localizations.translate(i18_local
+                                        .individualDetails
+                                        .heightHeadLabelText): () {
+                                      final height = state.selectedIndividual
+                                          ?.additionalFields?.fields
+                                          .firstWhereOrNull(
+                                              (e) => e.key == Constants.height)
+                                          ?.value;
+                                      return height != null && height.isNotEmpty
+                                          ? '$height cm'
+                                          : '--';
+                                    }(),
+                                    localizations.translate(i18_local
+                                        .individualDetails
+                                        .weightHeadLabelText): () {
+                                      final weight = state.selectedIndividual
+                                          ?.additionalFields?.fields
+                                          .firstWhereOrNull(
+                                              (e) => e.key == Constants.weight)
+                                          ?.value;
+                                      return weight != null && weight.isNotEmpty
+                                          ? '$weight Kg'
+                                          : '--';
                                     }(),
                                   },
                                 ),

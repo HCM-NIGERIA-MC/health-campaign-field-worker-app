@@ -53,7 +53,7 @@ Widget buildTableContentSMC(
       .fetchProductVariant(item, individualModel, householdModel)
       ?.productVariants;
   final numRows = productVariants?.length ?? 0;
-  const rowHeight = 84;
+  const rowHeight = 42;
   final quantity = productVariants?.firstOrNull?.quantity ?? 0;
   const paddingHeight = (spacer2 * 2);
   final containerHeight = (numRows + 1) * rowHeight + (paddingHeight * 2);
@@ -76,7 +76,7 @@ Widget buildTableContentSMC(
           padding: const EdgeInsets.only(bottom: spacer1),
           child: DigitTableCard(
             topPadding: const EdgeInsets.only(top: 0.0),
-            fraction: 2.5,
+            fraction: 4,
             element: {
               localizations.translate(
                 i18.beneficiaryDetails.beneficiaryAge,

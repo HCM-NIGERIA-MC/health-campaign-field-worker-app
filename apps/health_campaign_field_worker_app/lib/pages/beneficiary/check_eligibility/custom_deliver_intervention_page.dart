@@ -271,6 +271,24 @@ class CustomDeliverInterventionPageState
                 : BlocBuilder<DeliverInterventionBloc,
                     DeliverInterventionState>(
                     builder: (context, deliveryInterventionState) {
+                      final currentCycle = deliveryInterventionState.cycle >= 0
+                          ? deliveryInterventionState.cycle
+                          : 0;
+                      final currentDose = deliveryInterventionState.dose >= 0
+                          ? deliveryInterventionState.dose
+                          : 0;
+                      final individualModel = state.selectedIndividual;
+                      final householdModel = householdMemberWrapper.household;
+                      final ProjectTypeModel projectType =
+                          RegistrationDeliverySingleton().projectType!;
+                      final item = projectType.cycles?[currentCycle - 1]
+                          .deliveries?[currentDose - 1];
+                      final productVariant = utils_smc
+                          .fetchProductVariant(
+                              item, individualModel, householdModel)
+                          ?.productVariants;
+                      final productQuantity =
+                          productVariant?.firstOrNull?.quantity ?? 0;
                       ProjectTypeModel? projectTypeModel =
                           widget.eligibilityAssessmentType ==
                                   EligibilityAssessmentType.smc
@@ -544,19 +562,11 @@ class CustomDeliverInterventionPageState
                                                   const EdgeInsets.all(spacer2),
                                               children: [
                                                 Text(
-                                                  widget.eligibilityAssessmentType ==
-                                                          EligibilityAssessmentType
-                                                              .smc
-                                                      ? localizations.translate(
-                                                          i18_local
-                                                              .deliverIntervention
-                                                              .deliverInterventionSMCLabel,
-                                                        )
-                                                      : localizations.translate(
-                                                          i18_local
-                                                              .deliverIntervention
-                                                              .deliverInterventionVASLabel,
-                                                        ),
+                                                  localizations.translate(
+                                                    i18_local
+                                                        .deliverIntervention
+                                                        .DeliverInterventionAZMLabel,
+                                                  ),
                                                   style: textTheme.headingL
                                                       .copyWith(
                                                           color: theme
@@ -679,6 +689,8 @@ class CustomDeliverInterventionPageState
                                                 ),
                                                 ..._controllers.map((e) =>
                                                     CustomResourceBeneficiaryCard(
+                                                      productQuantity:
+                                                          productQuantity,
                                                       form: form,
                                                       eligibilityAssessmentType:
                                                           widget
@@ -999,8 +1011,10 @@ class CustomResourceBeneficiaryCard extends LocalizedStatefulWidget {
   final FormGroup form;
   final int totalItems;
   final EligibilityAssessmentType eligibilityAssessmentType;
+  final int productQuantity;
 
   const CustomResourceBeneficiaryCard({
+    required this.productQuantity,
     super.key,
     super.appLocalizations,
     required this.onDelete,
@@ -1073,7 +1087,7 @@ class CustomResourceBeneficiaryCardState
                         isDisabled: true,
                         minValue: 1,
                         step: 1,
-                        initialValue: "1",
+                        initialValue: widget.productQuantity.toString(),
                         onChange: (value) {
                           widget.form
                               .control(
