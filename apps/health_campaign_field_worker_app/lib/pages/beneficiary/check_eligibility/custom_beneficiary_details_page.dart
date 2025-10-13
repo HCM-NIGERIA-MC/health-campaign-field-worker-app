@@ -38,6 +38,7 @@ import 'package:registration_delivery/widgets/table_card/table_card.dart';
 
 import '../../../widgets/registration_delivery/past_delivery_vas.dart';
 import 'custom_record_delivery_cycle.dart';
+import '/utils/registration_delivery/utils_smc.dart' as utils_smc;
 
 @RoutePage()
 class CustomBeneficiaryDetailsPage extends LocalizedStatefulWidget {
@@ -287,7 +288,8 @@ class CustomBeneficiaryDetailsPageState
                                                                         ? deliverState
                                                                             .dose
                                                                         : 0;
-                                                                final productVariants = fetchProductVariant(
+                                                                final productVariants = utils_smc
+                                                                    .fetchProductVariant(
                                                                         projectType
                                                                             .cycles![currentCycle -
                                                                                 1]
@@ -314,6 +316,10 @@ class CustomBeneficiaryDetailsPageState
                                                                     (value.contains(Constants
                                                                             .spaq2) &&
                                                                         spaq2 >
+                                                                            0) ||
+                                                                    (value.contains(Constants
+                                                                            .azm) &&
+                                                                        spaq1 >
                                                                             0)) {
                                                                   router.push(
                                                                     CustomDeliverInterventionRoute(

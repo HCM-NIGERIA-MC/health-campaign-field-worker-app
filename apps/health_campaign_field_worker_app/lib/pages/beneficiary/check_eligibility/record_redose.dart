@@ -42,6 +42,7 @@ import '../../../utils/utils.dart';
 import '../../../widgets/header/back_navigation_help_header.dart';
 import '../../../widgets/localized.dart';
 import '../../../widgets/registration_delivery/custom_resourse_beneficiary_card.dart';
+import '/utils/registration_delivery/utils_smc.dart' as utils_smc;
 
 @RoutePage()
 class RecordRedosePage extends LocalizedStatefulWidget {
@@ -105,27 +106,29 @@ class _RecordRedosePageState extends LocalizedState<RecordRedosePage> {
         .projectType!
         .cycles![deliveryInterventionstate.cycle - 1]
         .deliveries![deliveryInterventionstate.dose - 1];
-    List<DeliveryProductVariant>? productVariants = fetchProductVariant(
-      ProjectCycleDelivery(
-        id: deliveryModel.id,
-        deliveryStrategy: deliveryModel.deliveryStrategy!,
-        doseCriteria: deliveryModel.doseCriteria
-            ?.map((DoseCriteriaModel e) => DeliveryDoseCriteria(
-                  condition: e.condition,
-                  productVariants: e.productVariants
-                      ?.map((e) => DeliveryProductVariant(
-                            productVariantId: e.productVariantId!,
-                            quantity: e.quantity,
-                          ))
-                      .toList(),
-                ))
-            .toList(),
-        mandatoryWaitSinceLastDeliveryInDays: int.parse(
-            deliveryModel.mandatoryWaitSinceLastDeliveryInDays ?? '0'),
-      ),
-      householdOverviewState.selectedIndividual,
-      null,
-    )?.productVariants;
+    List<DeliveryProductVariant>? productVariants = utils_smc
+        .fetchProductVariant(
+          ProjectCycleDelivery(
+            id: deliveryModel.id,
+            deliveryStrategy: deliveryModel.deliveryStrategy!,
+            doseCriteria: deliveryModel.doseCriteria
+                ?.map((DoseCriteriaModel e) => DeliveryDoseCriteria(
+                      condition: e.condition,
+                      productVariants: e.productVariants
+                          ?.map((e) => DeliveryProductVariant(
+                                productVariantId: e.productVariantId!,
+                                quantity: e.quantity,
+                              ))
+                          .toList(),
+                    ))
+                .toList(),
+            mandatoryWaitSinceLastDeliveryInDays: int.parse(
+                deliveryModel.mandatoryWaitSinceLastDeliveryInDays ?? '0'),
+          ),
+          householdOverviewState.selectedIndividual,
+          null,
+        )
+        ?.productVariants;
     if (productVariants == null) {
       return [];
     }

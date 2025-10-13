@@ -1121,21 +1121,23 @@ class _EligibilityChecklistViewPage
     List<String?> referralReasons,
   ) {
     var isReferral = false;
-    var q1Key = "KBEA1";
-    var q2Key = "KBEA2";
-    var q4Key = "KBEA3.NO.ADT1";
-    var q6Key = "KBEA5";
-    var q7Key = "KBEA6";
+    var q1Key = "A1";
+    var q2Key = "A2";
+    var q3Key = "A3";
+    var q4Key = "A4";
+    // var q6Key = "KBEA5";
+    // var q7Key = "KBEA6";
     // var q8Key = "KBEA7";
     // var q3Key = "KBEA3";
     Map<String, String> referralKeysVsCode = {
-      q1Key: "SICK",
-      q2Key: "FEVER",
-      q4Key: "DRUG_SE_PC",
-      q6Key: "RESPIRATORY_INFECTION",
+      q1Key: "ALLERGIES",
+      q2Key: "LIVER_DISEASE",
+      q3Key: "TAKEN_ANTIBIOTICS",
+      q4Key: "CHRONIC_ILLNESS",
+      // q6Key: "RESPIRATORY_INFECTION",
       // q7Key: "TAKEN_VITAMIN_A",
       // q8Key: "SIDE_EFFECTS_TO_VITAMIN_A",
-      q7Key: "DRUG_SE_PC",
+      // q7Key: "DRUG_SE_PC",
     };
     // TODO Configure the reasons ,verify hardcoded strings
 
@@ -1148,22 +1150,26 @@ class _EligibilityChecklistViewPage
         isReferral = responses[q2Key] == yes ? true : false;
       }
       if (!isReferral &&
+          (responses.containsKey(q3Key) && responses[q3Key]!.isNotEmpty)) {
+        isReferral = responses[q3Key] == yes ? true : false;
+      }
+      if (!isReferral &&
           (responses.containsKey(q4Key) && responses[q4Key]!.isNotEmpty)) {
         isReferral = responses[q4Key] == yes ? true : false;
       }
-      if (!isReferral &&
-              (responses.containsKey(q6Key) && responses[q6Key]!.isNotEmpty)
-          // && (responses.containsKey(q7Key) && responses[q7Key]!.isNotEmpty)
-          ) {
-        isReferral = (responses[q6Key] == yes)
-            // && (responses[q7Key] == yes)
-            ? true
-            : false;
-      }
-      if (!isReferral &&
-          (responses.containsKey(q7Key) && responses[q7Key]!.isNotEmpty)) {
-        isReferral = responses[q7Key] == yes ? true : false;
-      }
+      // if (!isReferral &&
+      //         (responses.containsKey(q6Key) && responses[q6Key]!.isNotEmpty)
+      //     // && (responses.containsKey(q7Key) && responses[q7Key]!.isNotEmpty)
+      //     ) {
+      //   isReferral = (responses[q6Key] == yes)
+      //       // && (responses[q7Key] == yes)
+      //       ? true
+      //       : false;
+      // }
+      // if (!isReferral &&
+      //     (responses.containsKey(q7Key) && responses[q7Key]!.isNotEmpty)) {
+      //   isReferral = responses[q7Key] == yes ? true : false;
+      // }
     }
     if (isReferral) {
       for (var entry in referralKeysVsCode.entries) {

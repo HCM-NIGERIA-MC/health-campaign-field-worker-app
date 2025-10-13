@@ -37,6 +37,7 @@ import '../../../models/entities/identifier_types.dart';
 import '../../../router/app_router.dart';
 import '../../../utils/app_enums.dart';
 import '../../../utils/utils.dart' show getIndividualAdditionalFields;
+import '/utils/registration_delivery/utils_smc.dart' as utils_smc;
 
 @RoutePage()
 class CustomDoseAdministeredPage extends LocalizedStatefulWidget {
@@ -173,7 +174,8 @@ class CustomDoseAdministeredPageState
                                           createdTime:
                                               context.millisecondsSinceEpoch(),
                                         ),
-                                        resources: fetchProductVariant(
+                                        resources: utils_smc
+                                            .fetchProductVariant(
                                                 e,
                                                 overViewBloc.selectedIndividual,
                                                 overViewBloc

@@ -11,6 +11,7 @@ import 'package:registration_delivery/utils/utils.dart';
 import 'package:registration_delivery/widgets/table_card/table_card.dart';
 import '../../../utils/i18_key_constants.dart' as i18;
 import '../../../utils/utils.dart';
+import '../../utils/registration_delivery/utils_smc.dart' as utils_smc;
 
 // This function builds a table with the given data and headers
 Widget buildTableContentSMC(
@@ -48,11 +49,12 @@ Widget buildTableContentSMC(
       RegistrationDeliverySingleton().projectType!;
   final item =
       projectType.cycles?[currentCycle - 1].deliveries?[currentDose - 1];
-  final productVariants =
-      fetchProductVariant(item, individualModel, householdModel)
-          ?.productVariants;
+  final productVariants = utils_smc
+      .fetchProductVariant(item, individualModel, householdModel)
+      ?.productVariants;
   final numRows = productVariants?.length ?? 0;
   const rowHeight = 84;
+  final quantity = productVariants?.firstOrNull?.quantity ?? 0;
   const paddingHeight = (spacer2 * 2);
   final containerHeight = (numRows + 1) * rowHeight + (paddingHeight * 2);
   const columnWidth = spacer10 * 3;
@@ -78,10 +80,13 @@ Widget buildTableContentSMC(
             element: {
               localizations.translate(
                 i18.beneficiaryDetails.beneficiaryAge,
-              ): fetchProductVariant(item, individualModel, householdModel)
+              ): utils_smc
+                          .fetchProductVariant(
+                              item, individualModel, householdModel)
                           ?.condition !=
                       null
-                  ? customFormatAgeRange(fetchProductVariant(
+                  ? customFormatAgeRange(utils_smc
+                      .fetchProductVariant(
                           item, individualModel, householdModel)!
                       .condition!)
                   : null,
@@ -90,7 +95,8 @@ Widget buildTableContentSMC(
         ),
         const DigitDivider(),
         // Build the DigitTable with the data
-        if (fetchProductVariant(item, individualModel, householdModel)
+        if (utils_smc
+                .fetchProductVariant(item, individualModel, householdModel)
                 ?.productVariants !=
             null)
           DigitTable(
@@ -102,7 +108,8 @@ Widget buildTableContentSMC(
             scrollPhysics: const ClampingScrollPhysics(),
             columns: columnListResource,
             rows: [
-              ...fetchProductVariant(item, individualModel, householdModel)!
+              ...utils_smc
+                  .fetchProductVariant(item, individualModel, householdModel)!
                   .productVariants!
                   .map(
                 (e) {
@@ -117,7 +124,9 @@ Widget buildTableContentSMC(
                     // Display the dose information in the first column if it's the first row,
                     // otherwise, display an empty cell.
 
-                    fetchProductVariant(item, individualModel, householdModel)
+                    utils_smc
+                                .fetchProductVariant(
+                                    item, individualModel, householdModel)
                                 ?.productVariants
                                 ?.indexOf(e) ==
                             0
@@ -153,6 +162,17 @@ Widget buildTableContentSMC(
                                   style: const TextStyle(
                                     fontWeight: FontWeight.bold,
                                     color: Colors.red,
+                                  ),
+                                ),
+                              ];
+                            } else if (translated == "AZM") {
+                              return [
+                                TextSpan(
+                                  text:
+                                      "$translated ${quantity * Constants.mlPerBottle}ml",
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.blue,
                                   ),
                                 ),
                               ];

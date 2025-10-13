@@ -243,23 +243,127 @@ bool validateStockSubmission({
   return total <= availableBalance;
 }
 
+// String customFormatAgeRange(String condition) {
+//   final regex =
+//       RegExp(r'(\d+)\s*<\s*ageandage\s*<\s*(\d+)', caseSensitive: false);
+//   final match = regex.firstMatch(condition);
+//   if (match != null && match.groupCount == 2) {
+//     // final min = match.group(1);
+//     // final max = match.group(2);
+//     int min = int.parse(match.group(1)!);
+//     int max = int.parse(match.group(2)!);
+
+//     max -= 1;
+//     min += 1;
+
+//     print('min: $min, max: $max');
+//     return '$min - $max months';
+//   }
+//   return condition;
+// }
+
 String customFormatAgeRange(String condition) {
-  final regex =
-      RegExp(r'(\d+)\s*<\s*ageandage\s*<\s*(\d+)', caseSensitive: false);
-  final match = regex.firstMatch(condition);
-  if (match != null && match.groupCount == 2) {
-    // final min = match.group(1);
-    // final max = match.group(2);
-    int min = int.parse(match.group(1)!);
-    int max = int.parse(match.group(2)!);
+  if (condition == null || condition.trim().isEmpty) return condition;
 
-    max -= 1;
-    min += 1;
-
-    print('min: $min, max: $max');
-    return '$min - $max months';
+  // Helper to format numbers: drop .0 for integers
+  String fmtNum(String s) {
+    final n = num.tryParse(s);
+    if (n == null) return s;
+    if (n is int || n == n.roundToDouble()) return n.toInt().toString();
+    return n.toString();
   }
-  return condition;
+
+  // normalized string: ensure consistent separators for "and" and lower-case
+  final normalized = condition.replaceAll(RegExp(r'\s+'), '').toLowerCase();
+
+  // map to hold min/max values for keys we care about
+  final Map<String, double?> minMap = {
+    'age': null,
+    'weight': null,
+    'height': null
+  };
+  final Map<String, double?> maxMap = {
+    'age': null,
+    'weight': null,
+    'height': null
+  };
+
+  // match patterns like: key > number   or   key <= number
+  final reg =
+      RegExp(r'([a-z_]+)(>=|<=|>|<)(-?\d+\.?\d*)', caseSensitive: false);
+
+  for (final m in reg.allMatches(normalized)) {
+    final key = m.group(1)!.toLowerCase();
+    final op = m.group(2)!;
+    final raw = m.group(3)!;
+    final value = double.tryParse(raw);
+    if (value == null) continue;
+
+    if (!minMap.containsKey(key)) {
+      // ignore unknown keys but could be extended
+      continue;
+    }
+
+    if (op == '>' || op == '>=') {
+      // set/keep the largest min
+      final existing = minMap[key];
+      if (existing == null || value > existing) minMap[key] = value;
+    } else if (op == '<' || op == '<=') {
+      // set/keep the smallest max
+      final existing = maxMap[key];
+      if (existing == null || value < existing) maxMap[key] = value;
+    }
+  }
+
+  // Build formatted text
+  String agePart = '';
+  final ageMin = minMap['age'];
+  final ageMax = maxMap['age'];
+
+  if (ageMin != null || ageMax != null) {
+    final minStr = ageMin != null ? fmtNum(ageMin.toString()) : '';
+    final maxStr = ageMax != null ? fmtNum(ageMax.toString()) : '';
+    if (minStr.isNotEmpty && maxStr.isNotEmpty) {
+      agePart = 'age $minStr-$maxStr months';
+    } else if (minStr.isNotEmpty) {
+      agePart = 'age ≥ $minStr months';
+    } else {
+      agePart = 'age ≤ $maxStr months';
+    }
+  }
+
+  // collect weight/height parts if present
+  final details = <String>[];
+  final weightMin = minMap['weight'];
+  final weightMax = maxMap['weight'];
+  if (weightMin != null || weightMax != null) {
+    final wm = weightMin != null ? fmtNum(weightMin.toString()) : '';
+    final wx = weightMax != null ? fmtNum(weightMax.toString()) : '';
+    final body = (wm.isNotEmpty && wx.isNotEmpty)
+        ? '$wm-$wx'
+        : (wm.isNotEmpty ? '≥ $wm' : '≤ $wx');
+    details.add('weight: $body');
+  }
+  final heightMin = minMap['height'];
+  final heightMax = maxMap['height'];
+  if (heightMin != null || heightMax != null) {
+    final hm = heightMin != null ? fmtNum(heightMin.toString()) : '';
+    final hx = heightMax != null ? fmtNum(heightMax.toString()) : '';
+    final body = (hm.isNotEmpty && hx.isNotEmpty)
+        ? '$hm-$hx'
+        : (hm.isNotEmpty ? '≥ $hm' : '≤ $hx');
+    details.add('height: $body');
+  }
+
+  final detailsPart = details.isNotEmpty ? ' (${details.join(', ')})' : '';
+
+  if (agePart.isEmpty && details.isNotEmpty) {
+    // If no age found but we have details, just return details
+    return details.join(', ');
+  }
+
+  if (agePart.isEmpty) return condition; // nothing parsed
+  return '$agePart$detailsPart';
 }
 
 String? getAgeConditionStringFromVariant(
