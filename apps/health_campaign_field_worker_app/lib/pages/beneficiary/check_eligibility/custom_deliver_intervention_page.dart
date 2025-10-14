@@ -689,8 +689,6 @@ class CustomDeliverInterventionPageState
                                                 ),
                                                 ..._controllers.map((e) =>
                                                     CustomResourceBeneficiaryCard(
-                                                      productQuantity:
-                                                          productQuantity,
                                                       form: form,
                                                       eligibilityAssessmentType:
                                                           widget
@@ -1011,10 +1009,8 @@ class CustomResourceBeneficiaryCard extends LocalizedStatefulWidget {
   final FormGroup form;
   final int totalItems;
   final EligibilityAssessmentType eligibilityAssessmentType;
-  final int productQuantity;
 
   const CustomResourceBeneficiaryCard({
-    required this.productQuantity,
     super.key,
     super.appLocalizations,
     required this.onDelete,
@@ -1087,7 +1083,7 @@ class CustomResourceBeneficiaryCardState
                         isDisabled: true,
                         minValue: 1,
                         step: 1,
-                        initialValue: widget.productQuantity.toString(),
+                        initialValue: '1',
                         onChange: (value) {
                           widget.form
                               .control(
