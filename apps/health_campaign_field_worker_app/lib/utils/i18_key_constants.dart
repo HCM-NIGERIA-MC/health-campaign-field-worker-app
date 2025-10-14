@@ -164,6 +164,8 @@ class HouseholdOverView {
 
   String get householdOverViewSMCAssessmentActionText =>
       'HOUSEHOLD_OVER_VIEW_SMC_ASSESSMENT_ACTION_TEXT';
+  String get householdOverviewAZMAssessmentActionText =>
+      'HOUSEHOLD_OVER_VIEW_AZM_ASSESSMENT_ACTION_TEXT';
 
   String get householdOverViewVASAssessmentActionText =>
       'HOUSEHOLD_OVER_VIEW_VAS_ASSESSMENT_ACTION_TEXT';
@@ -1407,6 +1409,7 @@ class BeneficiaryDetails {
   String get beneficiaryDoseUnit => 'BENEFICIARY_DETAILS_DOSE_UNIT';
   String get spaq1DoseUnit => 'SPAQ1_STOCK_ZERO';
   String get spaq2DoseUnit => 'SPAQ2_STOCK_ZERO';
+  String get azmDoseUnit => 'AZM_DOSE_UNIT';
 
   String get beneficiarysDetailsLabelText => 'BENEFICIARY_DETAILS_LABEL_TEXT';
   String get beneficiarysDetailsEditIconLabelText =>

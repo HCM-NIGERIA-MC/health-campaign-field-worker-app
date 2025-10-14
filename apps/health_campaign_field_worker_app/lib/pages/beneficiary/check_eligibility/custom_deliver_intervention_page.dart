@@ -666,7 +666,7 @@ class CustomDeliverInterventionPageState
                                                     initialValue:
                                                         RegistrationDeliverySingleton()
                                                                 .loggedInUser
-                                                                ?.name ??
+                                                                ?.userName ??
                                                             '',
                                                   ),
                                                 ),

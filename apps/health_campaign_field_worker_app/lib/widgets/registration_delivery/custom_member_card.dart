@@ -243,7 +243,7 @@ class CustomMemberCard extends StatelessWidget {
               child: Text(
                 localizations.translate(
                   i18_local.householdOverView
-                      .householdOverViewSMCAssessmentActionText,
+                      .householdOverviewAZMAssessmentActionText,
                 ),
                 style: textTheme.headingM.copyWith(color: Colors.white),
               ),

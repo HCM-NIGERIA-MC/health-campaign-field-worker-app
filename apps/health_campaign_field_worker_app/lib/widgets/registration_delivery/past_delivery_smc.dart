@@ -168,8 +168,7 @@ Widget buildTableContentSMC(
                             } else if (translated == "AZM") {
                               return [
                                 TextSpan(
-                                  text:
-                                      "$translated ${quantity * Constants.mlPerBottle}ml",
+                                  text: "$translated $quantity mL",
                                   style: const TextStyle(
                                     fontWeight: FontWeight.bold,
                                     color: Colors.blue,

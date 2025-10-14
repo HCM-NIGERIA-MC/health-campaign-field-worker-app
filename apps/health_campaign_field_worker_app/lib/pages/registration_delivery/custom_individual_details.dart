@@ -356,7 +356,7 @@ class CustomIndividualDetailsPageState
 
                                 return;
                               } else if (!widget.isHeadOfHousehold &&
-                                  (ageInMonths < 3 || ageInMonths > 59)) {
+                                  (ageInMonths > 59)) {
                                 await DigitToast.show(
                                   context,
                                   options: DigitToastOptions(

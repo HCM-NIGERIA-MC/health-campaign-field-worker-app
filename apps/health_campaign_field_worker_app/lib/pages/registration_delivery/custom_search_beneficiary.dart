@@ -701,7 +701,7 @@ class _CustomSearchBeneficiaryPageState
 
                         if (spaq1 == 0) {
                           descriptionText +=
-                              "\n ${localizations.translate(i18_local.beneficiaryDetails.spaq1DoseUnit)}";
+                              "\n ${localizations.translate(i18_local.beneficiaryDetails.azmDoseUnit)}";
                         }
 
                         if ((spaq1 > 0)) {
