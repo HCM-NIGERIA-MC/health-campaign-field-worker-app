@@ -33,6 +33,9 @@ class CustomStockLocalRepository
     return retryLocalCallOperation<List<StockModel>>(() async {
       var results = [];
       final selectQuery = sql.select(sql.stock).join([]);
+      final now = DateTime.now();
+      final startOfDay = DateTime(now.year, now.month, now.day);
+      final endOfDay = startOfDay.add(const Duration(days: 1));
       results = await (selectQuery
             ..where(
               buildAnd(
@@ -63,6 +66,10 @@ class CustomStockLocalRepository
                     sql.stock.transactionReason.isIn(
                       query.transactionReason!,
                     ),
+                  sql.stock.clientCreatedTime.isBiggerOrEqualValue(
+                          startOfDay.millisecondsSinceEpoch) &
+                      sql.stock.clientCreatedTime
+                          .isSmallerThanValue(endOfDay.millisecondsSinceEpoch),
                 ],
               ),
             )

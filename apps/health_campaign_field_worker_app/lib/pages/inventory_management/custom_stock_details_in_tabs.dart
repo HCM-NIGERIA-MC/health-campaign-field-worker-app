@@ -748,6 +748,7 @@ class _DynamicTabsPageState extends LocalizedState<DynamicTabsPage>
                         formControlName: _transactionQuantityWastedKey,
                         readOnly: true,
                         isRequired: true,
+                        padding: EdgeInsets.only(top: 1),
                         label: localizations.translate(
                           quantityWastedCountLabel,
                         ),
