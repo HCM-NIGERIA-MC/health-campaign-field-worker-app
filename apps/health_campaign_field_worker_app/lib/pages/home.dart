@@ -571,9 +571,9 @@ class _HomePageState extends LocalizedState<HomePage> {
             .toList()
             .contains(element))
         .toList();
-
+    filteredLabels.add(i18.home.db);
     final showcaseKeys = filteredLabels
-        .where((f) => f != i18.home.db)
+        // .where((f) => f != i18.home.db)
         .map((label) => homeItemsShowcaseMap[label]!)
         .toList();
 
