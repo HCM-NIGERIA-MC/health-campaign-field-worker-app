@@ -974,7 +974,8 @@ class _DynamicTabsPageState extends LocalizedState<DynamicTabsPage>
           // Custom logic based on productName
 
           if (entryType == StockRecordEntryType.dispatch &&
-              currentSpaq1Count + totalQty * Constants.mlPerBottle < 0) {
+              (currentSpaq1Count + totalQty * Constants.mlPerBottle < 0 ||
+                  quantityWasted < 0)) {
             await DigitToast.show(
               context,
               options: DigitToastOptions(

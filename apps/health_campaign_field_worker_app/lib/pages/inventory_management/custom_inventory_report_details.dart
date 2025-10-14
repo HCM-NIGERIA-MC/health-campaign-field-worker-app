@@ -75,9 +75,11 @@ class CustomInventoryReportDetailsPageState
       FormGroup form, CustomInventoryReportBloc inventoryReportBloc) {
     final event = widget.reportType == InventoryReportType.reconciliation
         ? InventoryReportLoadStockReconciliationDataEvent(
-            facilityId: form.control(_facilityKey).value != null
-                ? selectedFacilityId!
-                : '',
+            facilityId: context.isCDD
+                ? context.loggedInUserUuid
+                : form.control(_facilityKey).value != null
+                    ? selectedFacilityId!
+                    : '',
             productVariantId: form.control(_productVariantKey).value != null
                 ? (form.control(_productVariantKey).value
                         as ProductVariantModel)
