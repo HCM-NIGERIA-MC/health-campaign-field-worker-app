@@ -1036,7 +1036,10 @@ class _DynamicTabsPageState extends LocalizedState<DynamicTabsPage>
         context.router.push(CustomAcknowledgementRoute(
             mrnNumber: _sharedMRN,
             stockRecords: _tabStocks.values.toList(),
-            entryType: entryType));
+            entryType:
+                context.isCDD && entryType == StockRecordEntryType.dispatch
+                    ? StockRecordEntryType.returned
+                    : entryType));
       }
     }
   }
