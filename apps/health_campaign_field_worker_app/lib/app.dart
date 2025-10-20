@@ -21,6 +21,7 @@ import 'package:survey_form/survey_form.dart';
 
 import 'blocs/app_initialization/app_initialization.dart';
 import 'blocs/auth/auth.dart';
+import 'blocs/inventory_management/custom_summary_report_bloc.dart';
 import 'blocs/inventory_management/stock_bloc.dart';
 import 'blocs/localization/localization.dart';
 import 'blocs/project/project.dart';
@@ -264,6 +265,22 @@ class MainApplicationState extends State<MainApplication>
                     return MultiBlocProvider(
                       providers: [
                         BlocProvider(
+                          create: (context) => SummaryReportBloc(
+                            householdRepository: context.repository<
+                                HouseholdModel, HouseholdSearchModel>(),
+                            householdMemberRepository: context.repository<
+                                HouseholdMemberModel,
+                                HouseholdMemberSearchModel>(),
+                            taskDataRepository: context
+                                .repository<TaskModel, TaskSearchModel>(),
+                            productVariantDataRepository: context.repository<
+                                ProductVariantModel,
+                                ProductVariantSearchModel>(),
+                            customStockLocalRepository: context
+                                .repository<StockModel, StockSearchModel>(),
+                          ),
+                        ),
+                        BlocProvider(
                             create: (_) => IndividualGlobalSearchSMCBloc(
                                 userUid: RegistrationDeliverySingleton()
                                     .loggedInUserUuid!,
@@ -377,8 +394,9 @@ class MainApplicationState extends State<MainApplication>
                                 LocalRepository<StockModel,
                                     StockSearchModel>>(),
                             stockRemoteRepository: ctx.read<
-                                RemoteRepository<StockModel,
-                                    StockSearchModel>>() as StockRemoteRepository,
+                                    RemoteRepository<StockModel,
+                                        StockSearchModel>>()
+                                as StockRemoteRepository,
                             context: context,
                             attendanceLogLocalRepository: ctx.read<
                                 LocalRepository<AttendanceLogModel,

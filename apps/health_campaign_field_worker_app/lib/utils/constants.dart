@@ -119,6 +119,11 @@ class Constants {
   static const String height = "height";
   static const String weight = "weight";
 
+  static const String registered = "registered";
+  static const String administered = "administered";
+  static const String household = "household";
+  static const String azmStock = "AZM Stock";
+
   // todo enable before cycle2
   static const bool isDownSyncEnabled = true;
   static const String dashboardAnalyticsPath =

@@ -93,6 +93,21 @@ class CustomDeliverInterventionPageState
       IndividualModel? selectedIndividual) async {
     final lat = locationState.latitude;
     final long = locationState.longitude;
+    final currentCycle = deliverInterventionState.cycle >= 0
+        ? deliverInterventionState.cycle
+        : 0;
+    final currentDose =
+        deliverInterventionState.dose >= 0 ? deliverInterventionState.dose : 0;
+    final householdModel = householdMember.household;
+    final ProjectTypeModel projectType =
+        RegistrationDeliverySingleton().projectType!;
+    final item =
+        projectType.cycles?[currentCycle - 1].deliveries?[currentDose - 1];
+    final productVariant = utils_smc
+        .fetchProductVariant(item, selectedIndividual, householdModel)
+        ?.productVariants;
+    final productQuantity = productVariant?.firstOrNull?.quantity ?? 0;
+
     TaskModel taskModel = _getTaskModel(context,
         form: form,
         oldTask: RegistrationDeliverySingleton().beneficiaryType ==
@@ -107,6 +122,7 @@ class CustomDeliverInterventionPageState
         address: householdMember.members?.first.address?.first,
         latitude: lat,
         longitude: long,
+        productQuantity: productQuantity,
         selectedIndividual: selectedIndividual);
     context.read<DeliverInterventionBloc>().add(
           DeliverInterventionSubmitEvent(
@@ -689,6 +705,8 @@ class CustomDeliverInterventionPageState
                                                 ),
                                                 ..._controllers.map((e) =>
                                                     CustomResourceBeneficiaryCard(
+                                                      productQuantity:
+                                                          productQuantity,
                                                       form: form,
                                                       eligibilityAssessmentType:
                                                           widget
@@ -804,6 +822,7 @@ class CustomDeliverInterventionPageState
     AddressModel? address,
     double? latitude,
     double? longitude,
+    int? productQuantity,
     IndividualModel? selectedIndividual,
   }) {
     // Initialize task with oldTask if available, or create a new one
@@ -843,9 +862,10 @@ class CustomDeliverInterventionPageState
                 taskId: task?.id,
                 tenantId: RegistrationDeliverySingleton().tenantId,
                 rowVersion: oldTask?.rowVersion ?? 1,
-                quantity: (((form.control(_quantityDistributedKey) as FormArray)
-                        .value)?[productvariantList.indexOf(e)])
-                    .toString(),
+                quantity: productQuantity.toString(),
+                //  (((form.control(_quantityDistributedKey) as FormArray)
+                //         .value)?[productvariantList.indexOf(e)])
+                //     .toString(),
                 clientAuditDetails: ClientAuditDetails(
                   createdBy: RegistrationDeliverySingleton().loggedInUserUuid!,
                   createdTime: context.millisecondsSinceEpoch(),
@@ -1004,6 +1024,7 @@ class CustomDeliverInterventionPageState
 }
 
 class CustomResourceBeneficiaryCard extends LocalizedStatefulWidget {
+  final int productQuantity;
   final void Function(int) onDelete;
   final int cardIndex;
   final FormGroup form;
@@ -1013,6 +1034,7 @@ class CustomResourceBeneficiaryCard extends LocalizedStatefulWidget {
   const CustomResourceBeneficiaryCard({
     super.key,
     super.appLocalizations,
+    required this.productQuantity,
     required this.onDelete,
     required this.cardIndex,
     required this.form,
@@ -1083,7 +1105,7 @@ class CustomResourceBeneficiaryCardState
                         isDisabled: true,
                         minValue: 1,
                         step: 1,
-                        initialValue: '1',
+                        initialValue: '${widget.productQuantity}',
                         onChange: (value) {
                           widget.form
                               .control(

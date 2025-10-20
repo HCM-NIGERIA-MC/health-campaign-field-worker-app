@@ -377,6 +377,50 @@ class ForgotPassword {
 class HomeShowcase {
   const HomeShowcase();
 
+  String get summaryReport {
+    return 'HOME_SHOWCASE_SUMMARY_REPORT_LABEL';
+  }
+
+  String get summaryReportDate {
+    return 'HOME_SHOWCASE_SUMMARY_REPORT_DATE';
+  }
+
+  String get householdRegistered {
+    return 'HOME_SHOWCASE_SUMMARY_REPORT_HOUSEHOLD_REGISTERED';
+  }
+
+  String get childrenTreated {
+    return 'HOME_SHOWCASE_SUMMARY_REPORT_CHILDREN_TREATED';
+  }
+
+  String get childrenTreatedCoverage {
+    return 'HOME_SHOWCASE_SUMMARY_REPORT_CHILDREN_TREATED_COVERAGE';
+  }
+
+  String get drugsReceived {
+    return 'HOME_SHOWCASE_SUMMARY_REPORT_DRUGS_RECEIVED';
+  }
+
+  String get drugsUtilized {
+    return 'HOME_SHOWCASE_SUMMARY_REPORT_DRUGS_UTILIZED';
+  }
+
+  String get drugsBalance {
+    return 'HOME_SHOWCASE_SUMMARY_REPORT_DRUGS_BALANCE';
+  }
+
+  String get summaryReportRegistredChildren {
+    return 'HOME_SHOWCASE_SUMMARY_REPORT_REGISTRED_CHILDREN';
+  }
+
+  String get summaryReportAdministredChildren {
+    return 'HOME_SHOWCASE_SUMMARY_REPORT_ADMINISTRED_CHILDREN';
+  }
+
+  String get summaryReportAZM {
+    return 'HOME_SHOWCASE_SUMMARY_REPORT_AZM';
+  }
+
   String get distributorProgressBar {
     return 'DISTRIBUTOR_HOME_SHOWCASE_PROGRESS_BAR';
   }
@@ -899,6 +943,8 @@ class Home {
   String get viewReportsLabel => 'HOME_VIEW_REPORTS_LABEL';
 
   String get syncDataLabel => 'HOME_SYNC_DATA_LABEL';
+
+  String get summaryLabel => 'HOME_SUMMARY_LABEL';
 
   String get callbackLabel => 'HOME_CALL_BACK_LABEL';
 
