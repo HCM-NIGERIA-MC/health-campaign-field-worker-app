@@ -44,6 +44,8 @@ class SummaryReportBloc extends Bloc<SummaryReportEvent, SummaryReportState> {
     SummaryReportEmitter emit,
   ) async {
     emit(const SummaryReportLoadingState());
+    
+    try {
 
     List<HouseholdModel> householdList = [];
     List<HouseholdMemberModel> householdMemberList = [];
@@ -67,11 +69,13 @@ class SummaryReportBloc extends Bloc<SummaryReportEvent, SummaryReportState> {
     }
 
     for (var task in administeredChildrenList) {
-      for (var resource in task.resources!) {
-        for (var productVariant in productVariantList) {
-          if (productVariant.id == resource.productVariantId &&
-              productVariant.sku == Constants.azm) {
-            AzmList.add(resource);
+      if (task.resources != null) {
+        for (var resource in task.resources!) {
+          for (var productVariant in productVariantList) {
+            if (productVariant.id == resource.productVariantId &&
+                productVariant.sku == Constants.azm) {
+              AzmList.add(resource);
+            }
           }
         }
       }
@@ -157,6 +161,10 @@ class SummaryReportBloc extends Bloc<SummaryReportEvent, SummaryReportState> {
     dateVsEntityVsCountMap = addTotalEntryToMap(dateVsEntityVsCountMap);
 
     emit(SummaryReportDataState(data: dateVsEntityVsCountMap));
+    } catch (e) {
+      // Log the error and emit empty state to prevent infinite loading
+      emit(const SummaryReportEmptyState());
+    }
   }
 
   void getUniqueSetOfDates(
@@ -186,7 +194,8 @@ class SummaryReportBloc extends Bloc<SummaryReportEvent, SummaryReportState> {
     map.forEach((key, value) {
       int total = 0;
       for (final e in value) {
-        total += int.parse(e.quantity!);
+        // Handle decimal strings like "14.0" by parsing as double first
+        total += (double.tryParse(e.quantity ?? '0') ?? 0).toInt();
       }
       dateVsCount[key] = total;
     });
@@ -197,7 +206,8 @@ class SummaryReportBloc extends Bloc<SummaryReportEvent, SummaryReportState> {
     map.forEach((key, value) {
       int total = 0;
       for (final e in value) {
-        total += int.parse(e.quantity!);
+        // Handle decimal strings like "14.0" by parsing as double first
+        total += (double.tryParse(e.quantity ?? '0') ?? 0).toInt();
       }
       dateVsCount[key] = total;
     });

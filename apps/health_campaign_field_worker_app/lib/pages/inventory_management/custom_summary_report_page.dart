@@ -70,6 +70,27 @@ class _CustomSummaryReportState
               child: CircularProgressIndicator(),
             );
           }
+          if (sumamryReportState is SummaryReportEmptyState) {
+            return ScrollableContent(
+              footer: Padding(
+                padding: const EdgeInsets.fromLTRB(kPadding, 0, kPadding, 0),
+                child: DigitElevatedButton(
+                  child: Text(localizations
+                      .translate(i18Local.acknowledgementSuccess.goToHome)),
+                  onPressed: () {
+                    context.router.popUntilRouteWithName(HomeRoute.name);
+                  },
+                ),
+              ),
+              children: [
+                const BackNavigationHelpHeaderWidget(),
+                _NoReportContent(
+                  title: localizations.translate(i18Local.homeShowcase.summaryReport),
+                  message: 'No data available. Please try again later.',
+                ),
+              ],
+            );
+          }
           return ScrollableContent(
             footer: Padding(
               padding: const EdgeInsets.fromLTRB(kPadding, 0, kPadding, 0),
@@ -181,7 +202,7 @@ class _CustomSummaryReportState
                                   ),
                                   DigitGridCell(
                                     key: _azmStockReceivedKey,
-                                    value: ((entry.value[Constants.azmStock])! *
+                                    value: ((entry.value[Constants.azmStock] ?? 0) *
                                             (Constants.mlPerBottle))
                                         .toString(),
                                   ),
