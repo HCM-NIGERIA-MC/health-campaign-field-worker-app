@@ -101,6 +101,13 @@ class _ViewStockRecordsPageState extends LocalizedState<ViewStockRecordsPage>
         ?.value
         .toString();
 
+    String? batchNumber = stock.additionalFields?.fields
+        .firstWhere(
+          (field) => field.key == 'batchNumber',
+          orElse: () => const AdditionalField('batchNumber', ''),
+        )
+        .value;
+
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
       child: Column(
@@ -184,21 +191,14 @@ class _ViewStockRecordsPageState extends LocalizedState<ViewStockRecordsPage>
                     ),
                     const SizedBox(height: 12),
                     // Batch Number
-                    InputField(
-                      type: InputType.text,
-                      label: 'Batch Number',
-                      initialValue: stock.additionalFields?.fields
-                              .firstWhere(
-                                (field) => field.key == 'batchNumber',
-                                orElse: () =>
-                                    const AdditionalField('batchNumber', ''),
-                              )
-                              .value
-                              ?.toString() ??
-                          '',
-                      isDisabled: true,
-                      readOnly: true,
-                    ),
+                    if (batchNumber != null && batchNumber.isNotEmpty)
+                      InputField(
+                        type: InputType.text,
+                        label: 'Batch Number',
+                        initialValue: batchNumber ?? '',
+                        isDisabled: true,
+                        readOnly: true,
+                      ),
                     const SizedBox(height: 12),
                   ],
 
