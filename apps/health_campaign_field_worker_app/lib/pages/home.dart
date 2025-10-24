@@ -449,7 +449,7 @@ class _HomePageState extends LocalizedState<HomePage> {
       i18.home.summaryLabel: homeShowcaseData.summaryReport.buildWith(
         child: HomeItemCard(
           icon: Icons.summarize,
-          label: i18.home.summaryLabel,
+          label: localizations.translate(i18.home.summaryLabel),
           onPressed: () {
             context.router.push(CustomSummaryReportRoute());
           },

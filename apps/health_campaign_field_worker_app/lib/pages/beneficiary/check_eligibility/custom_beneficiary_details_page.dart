@@ -532,18 +532,6 @@ class CustomBeneficiaryDetailsPageState
                                           ? '$height cm'
                                           : '--';
                                     }(),
-                                    localizations.translate(i18_local
-                                        .individualDetails
-                                        .weightHeadLabelText): () {
-                                      final weight = state.selectedIndividual
-                                          ?.additionalFields?.fields
-                                          .firstWhereOrNull(
-                                              (e) => e.key == Constants.weight)
-                                          ?.value;
-                                      return weight != null && weight.isNotEmpty
-                                          ? '$weight Kg'
-                                          : '--';
-                                    }(),
                                   },
                                 ),
                               ]),

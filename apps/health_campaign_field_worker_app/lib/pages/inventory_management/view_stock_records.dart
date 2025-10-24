@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:inventory_management/blocs/record_stock.dart';
 import 'package:inventory_management/models/entities/stock.dart';
+import 'package:inventory_management/models/entities/transaction_type.dart';
 import 'package:inventory_management/utils/i18_key_constants.dart' as i18;
 import 'package:inventory_management/utils/utils.dart';
 import 'package:registration_delivery/widgets/localized.dart';
@@ -119,7 +120,14 @@ class _ViewStockRecordsPageState extends LocalizedState<ViewStockRecordsPage>
                   const SizedBox(height: 12),
                   Row(
                     children: [
-                      const Expanded(child: Text('MRN Number')),
+                      Expanded(
+                        child: Text(
+                          stock.transactionType ==
+                                  TransactionType.dispatched.toValue()
+                              ? 'MIN Number'
+                              : 'MRN Number',
+                        ),
+                      ),
                       Expanded(child: Text(widget.mrnNumber)),
                     ],
                   ),

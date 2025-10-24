@@ -287,6 +287,8 @@ String customFormatAgeRange(String condition) {
     final m = tokenRe.firstMatch(raw);
     if (m == null) continue;
     final key = m.group(1)!.toLowerCase();
+    if (key == 'weight') continue;
+
     final op = m.group(2)!;
     final val = double.tryParse(m.group(3)!);
     if (val == null) continue;
@@ -319,7 +321,7 @@ String customFormatAgeRange(String condition) {
     }
   }
 
-  // --- HEIGHT OR WEIGHT SECTION ---
+  // --- HEIGHT SECTION ONLY (weight removed) ---
   String detailPart = '';
   if (minMap.containsKey('height') || maxMap.containsKey('height')) {
     final hMin = minMap['height'];
@@ -330,17 +332,6 @@ String customFormatAgeRange(String condition) {
       final body = (hm.isNotEmpty && hx.isNotEmpty)
           ? '$hm-$hx'
           : (hm.isNotEmpty ? '≥ $hm' : '≤ $hx');
-      detailPart = body;
-    }
-  } else if (minMap.containsKey('weight') || maxMap.containsKey('weight')) {
-    final wMin = minMap['weight'];
-    final wMax = maxMap['weight'];
-    if (wMin != null || wMax != null) {
-      final wm = wMin != null ? fmtNum(wMin) : '';
-      final wx = wMax != null ? fmtNum(wMax) : '';
-      final body = (wm.isNotEmpty && wx.isNotEmpty)
-          ? '$wm-$wx'
-          : (wm.isNotEmpty ? '≥ $wm' : '≤ $wx');
       detailPart = body;
     }
   }
@@ -589,9 +580,7 @@ String getSecondaryPartyValue(StockModel? stock) {
 }
 
 String getCategory(int number) {
-  if (number >= 1 && number <= 11) {
-    return Constants.weight;
-  } else if (number >= 12 && number <= 59) {
+  if (number >= 12 && number <= 59) {
     return Constants.height;
   } else {
     return "Invalid number";

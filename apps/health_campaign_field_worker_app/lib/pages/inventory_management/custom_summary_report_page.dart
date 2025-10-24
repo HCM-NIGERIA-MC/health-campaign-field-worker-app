@@ -85,7 +85,8 @@ class _CustomSummaryReportState
               children: [
                 const BackNavigationHelpHeaderWidget(),
                 _NoReportContent(
-                  title: localizations.translate(i18Local.homeShowcase.summaryReport),
+                  title: localizations
+                      .translate(i18Local.homeShowcase.summaryReport),
                   message: 'No data available. Please try again later.',
                 ),
               ],
@@ -139,7 +140,7 @@ class _CustomSummaryReportState
                               label: localizations.translate(
                                   i18Local.homeShowcase.householdRegistered),
                               key: _householdRegisteredKey,
-                              width: 120,
+                              width: 180,
                             ),
                             DigitGridColumn(
                               // label: "Children treated",
@@ -202,7 +203,8 @@ class _CustomSummaryReportState
                                   ),
                                   DigitGridCell(
                                     key: _azmStockReceivedKey,
-                                    value: ((entry.value[Constants.azmStock] ?? 0) *
+                                    value: ((entry.value[Constants.azmStock] ??
+                                                0) *
                                             (Constants.mlPerBottle))
                                         .toString(),
                                   ),

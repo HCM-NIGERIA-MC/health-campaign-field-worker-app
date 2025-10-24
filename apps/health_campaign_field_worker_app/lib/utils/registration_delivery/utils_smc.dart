@@ -505,7 +505,6 @@ DeliveryDoseCriteria? fetchProductVariant(ProjectCycleDelivery? currentDelivery,
     int? memberCount;
     String? structureType;
     int? height;
-    double? weight;
 
     if (individualModel != null) {
       final individualAge = DigitDateUtils.calculateAge(
@@ -519,16 +518,6 @@ DeliveryDoseCriteria? fetchProductVariant(ProjectCycleDelivery? currentDelivery,
       gender = individualModel.gender?.index;
 
       if (individualModel.additionalFields != null) {
-        if (individualModel.additionalFields!.fields.isNotEmpty &&
-            individualModel.additionalFields!.fields
-                .where((element) => element.key == Constants.weight)
-                .isNotEmpty) {
-          weight = double.parse(individualModel.additionalFields!.fields
-                  .where((element) => element.key == Constants.weight)
-                  .first
-                  .value ??
-              '0');
-        }
         if (individualModel.additionalFields!.fields.isNotEmpty &&
             individualModel.additionalFields!.fields
                 .where((element) => element.key == Constants.height)
@@ -559,26 +548,41 @@ DeliveryDoseCriteria? fetchProductVariant(ProjectCycleDelivery? currentDelivery,
 
     final filteredCriteria = currentDelivery.doseCriteria?.where((criteria) {
       final condition = criteria.condition;
-      final variables = individualModel!.additionalFields != null &&
-              individualModel.additionalFields!.fields
-                  .any((field) => field.key == Constants.weight)
-          ? {
-              'weight': weight, // Provide default values if null
-              'age': individualAgeInMonths,
-            }
-          : individualModel.additionalFields != null &&
-                  individualModel.additionalFields!.fields
-                      .any((field) => field.key == Constants.height)
-              ? {
-                  'height': height, // Provide default values if null
-                  'age': individualAgeInMonths,
-                }
-              : {
-                  'age': individualAgeInMonths,
-                };
+      // Build variables map with age and height (if available for 12-59 months)
+      final variables = {
+        'age': individualAgeInMonths,
+        if (height != null) 'height': height,
+      };
       if (condition != null) {
-        if (condition.contains('and')) {
-          final conditions = condition.split('and');
+        // if (condition.contains('and')) {
+        //   final conditions = condition.split('and');
+
+        //   List expressionParser = [];
+        //   for (var element in conditions) {
+        //     final expression = FormulaParser(
+        //       element,
+        //       {
+        //         ...variables,
+        //         // 'age': individualAgeInMonths,
+        //         if (gender != null) 'gender': gender,
+        //         if (memberCount != null) 'memberCount': memberCount,
+        //         if (roomCount != null) 'roomCount': roomCount
+        //       },
+        //     );
+        //     final error = expression.parse;
+        //     expressionParser.add(error["value"]);
+        //   }
+
+        //   return expressionParser.where((element) => element == true).length ==
+        //       conditions.length;
+        final normalized = condition.replaceAll(' ', '');
+
+        // Split by logical operators
+        if (normalized.contains('and')) {
+          final conditions = normalized
+              .split('and')
+              .where((c) => !c.contains('weight'))
+              .toList();
 
           List expressionParser = [];
           for (var element in conditions) {
@@ -586,7 +590,6 @@ DeliveryDoseCriteria? fetchProductVariant(ProjectCycleDelivery? currentDelivery,
               element,
               {
                 ...variables,
-                // 'age': individualAgeInMonths,
                 if (gender != null) 'gender': gender,
                 if (memberCount != null) 'memberCount': memberCount,
                 if (roomCount != null) 'roomCount': roomCount
@@ -596,7 +599,8 @@ DeliveryDoseCriteria? fetchProductVariant(ProjectCycleDelivery? currentDelivery,
             expressionParser.add(error["value"]);
           }
 
-          return expressionParser.where((element) => element == true).length ==
+          // If all valid conditions pass, it's true
+          return expressionParser.where((e) => e == true).length ==
               conditions.length;
         } else if (condition.contains('or')) {
           final conditions = condition.split('or');

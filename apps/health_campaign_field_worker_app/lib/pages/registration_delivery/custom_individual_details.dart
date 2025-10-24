@@ -65,7 +65,6 @@ class CustomIndividualDetailsPageState
   static const _dobKey = 'dob';
   static const _genderKey = 'gender';
   static const _mobileNumberKey = 'mobileNumber';
-  static const _weight = 'weight';
   static const _height = 'height';
   bool isDuplicateTag = false;
   static const maxLength = 200;
@@ -83,22 +82,17 @@ class CustomIndividualDetailsPageState
     if (age == null) {
       if (heightWeight.value != "") {
         heightWeight.value = ""; // Only update if necessary
-        form.control(_weight).value = "";
         form.control(_height).value = "";
       }
     } else {
       final cat = local_utils.getCategory(
         local_utils.getAgeMonths(age),
       );
-      final newValue = (cat == local_utils.Constants.height ||
-              cat == local_utils.Constants.weight)
+      final newValue = (cat == local_utils.Constants.height)
           ? cat
           : "";
 
-      if (cat == local_utils.Constants.height) {
-        form.control(_weight).value = "";
-      } else {
-        form.control(_weight).value = "";
+      if (cat != local_utils.Constants.height) {
         form.control(_height).value = "";
       }
 
@@ -245,24 +239,6 @@ class CustomIndividualDetailsPageState
                                       localizations.translate(
                                         i18_local.individualDetails
                                             .heightErrorValidationText,
-                                      ),
-                                      true,
-                                      theme,
-                                    ),
-                                  );
-
-                                  return;
-                                }
-                                break;
-                              case local_utils.Constants.weight:
-                                final value = form.control(_weight).value;
-                                if (value == null || value == "") {
-                                  await DigitToast.show(
-                                    context,
-                                    options: DigitToastOptions(
-                                      localizations.translate(
-                                        i18_local.individualDetails
-                                            .weightErrorValidationText,
                                       ),
                                       true,
                                       theme,
@@ -779,25 +755,11 @@ class CustomIndividualDetailsPageState
                                 isIndividual = true;
                               }
 
-                              if (isVisible == local_utils.Constants.weight) {
-                                formControlKey = _weight;
-                              } else if (isVisible ==
+                              if (isVisible ==
                                   local_utils.Constants.height) {
                                 formControlKey = _height;
                               } else if (isVisible == "" && isIndividual) {
                                 formControlKey = isVisible;
-                              } else if ((individual != null &&
-                                  local_utils.getCategory(
-                                        local_utils.getAgeMonths(
-                                          DigitDateUtils.calculateAge(
-                                            DateFormat('dd/MM/yyyy').parse(
-                                              individual.dateOfBirth!,
-                                            ),
-                                          ),
-                                        ),
-                                      ) ==
-                                      local_utils.Constants.weight)) {
-                                formControlKey = _weight;
                               } else if ((individual != null &&
                                   local_utils.getCategory(
                                         local_utils.getAgeMonths(
@@ -821,42 +783,27 @@ class CustomIndividualDetailsPageState
                                 key: ValueKey(
                                   formControlKey,
                                 ), // Ensure new key when control changes
-                                maxLength: formControlKey == _weight ? 4 : 3,
-                                inputFormatters: formControlKey == _weight
-                                    ? [
-                                        FilteringTextInputFormatter.allow(
-                                          RegExp(r'^\d*\.?\d{0,2}'),
-                                        ),
-                                      ]
-                                    : [
-                                        FilteringTextInputFormatter.digitsOnly,
-                                      ],
+                                maxLength: 3,
+                                inputFormatters: [
+                                  FilteringTextInputFormatter.digitsOnly,
+                                ],
                                 formControlName: formControlKey,
                                 label: localizations.translate(
-                                  formControlKey == _weight
-                                      ? i18_local
-                                          .individualDetails.weightHeadLabelText
-                                      : i18_local.individualDetails
-                                          .heightHeadLabelText,
+                                  i18_local.individualDetails
+                                      .heightHeadLabelText,
                                 ),
                                 isRequired:
                                     true, // If it's being rendered, it's required
                                 validationMessages: {
                                   'minAllowed': (object) =>
                                       localizations.translate(
-                                        formControlKey == _weight
-                                            ? i18_local.individualDetails
-                                                .minWeightLengthError
-                                            : i18_local.individualDetails
-                                                .minHeightLengthError,
+                                        i18_local.individualDetails
+                                            .minHeightLengthError,
                                       ),
                                   'maxAllowed': (object) =>
                                       localizations.translate(
-                                        formControlKey == _weight
-                                            ? i18_local.individualDetails
-                                                .maxWeightLengthError
-                                            : i18_local.individualDetails
-                                                .maxHeightLengthError,
+                                        i18_local.individualDetails
+                                            .maxHeightLengthError,
                                       ),
                                 },
                               );
@@ -1069,30 +1016,13 @@ class CustomIndividualDetailsPageState
                         ? '0${(form.control(_height).value)}'
                         : (form.control(_height).value),
                   ),
-                if (local_utils.getCategory(
-                      local_utils.getAgeMonths(
-                        DigitDateUtils.calculateAge(
-                          DateFormat('dd/MM/yyyy').parse(
-                            dobString,
-                          ),
-                        ),
-                      ),
-                    ) ==
-                    local_utils.Constants.weight)
-                  AdditionalField(
-                    local_utils.Constants.weight,
-                    (form.control(_weight).value).toString().length == 1
-                        ? '0${(form.control(_weight).value)}'
-                        : (form.control(_weight).value),
-                  ),
               ],
             )
           : individual.additionalFields!.copyWith(
               fields: [
-                // Filter out any existing `Constants.weight` or `Constants.height` fields
+                // Filter out any existing `Constants.height` field
                 ...individual.additionalFields!.fields.where(
                   (field) =>
-                      field.key != local_utils.Constants.weight &&
                       field.key != local_utils.Constants.height,
                 ),
                 // Add new `Constants.height` field if the condition matches
@@ -1109,20 +1039,6 @@ class CustomIndividualDetailsPageState
                     (form.control(_height).value).toString().length == 1
                         ? '0${(form.control(_height).value)}'
                         : (form.control(_height).value),
-                  ),
-                if (local_utils.getCategory(
-                      local_utils.getAgeMonths(
-                        DigitDateUtils.calculateAge(
-                          DateFormat('dd/MM/yyyy').parse(dobString!),
-                        ),
-                      ),
-                    ) ==
-                    local_utils.Constants.weight)
-                  AdditionalField(
-                    local_utils.Constants.weight,
-                    (form.control(_weight).value).toString().length == 1
-                        ? '0${(form.control(_weight).value)}'
-                        : (form.control(_weight).value),
                   ),
               ],
             ),
@@ -1170,24 +1086,6 @@ class CustomIndividualDetailsPageState
                     HouseholdType.community)
                 ? null
                 : searchQuery?.trim()),
-      ),
-      _weight: FormControl<String>(
-        value: (individual != null &&
-                local_utils.getCategory(
-                      digits.DigitDateUtils.getAgeMonths(
-                          digits.DigitDateUtils.calculateAge(
-                        DateFormat('dd/MM/yyyy').parse(
-                          individual.dateOfBirth!,
-                        ),
-                      )),
-                    ) ==
-                    local_utils.Constants.weight)
-            ? individual.additionalFields?.fields
-                    .firstWhere((element) =>
-                        element.key == local_utils.Constants.weight)
-                    .value ??
-                ""
-            : "",
       ),
       _height: FormControl<String>(
         value: (individual != null &&
