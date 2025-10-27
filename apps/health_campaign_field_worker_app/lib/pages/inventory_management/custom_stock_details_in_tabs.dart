@@ -55,6 +55,7 @@ class _DynamicTabsPageState extends LocalizedState<DynamicTabsPage>
   bool _isInitializing = true;
   String? senderIdToShowOnTab = '';
   bool isSubmitClicked = false;
+  final clickedStatus = ValueNotifier<bool>(false);
 
 // fields to capture stock metadata
   String? senderId;
@@ -820,13 +821,18 @@ class _DynamicTabsPageState extends LocalizedState<DynamicTabsPage>
                       formControlName: _commentsKey,
                       builder: (field) {
                         return InputField(
-                          type: InputType.textArea,
-                          label: localizations.translate(
-                            i18.stockDetails.commentsLabel,
-                          ),
-                          errorMessage: field.errorText,
-                          onChange: (val) => field.control.value = val,
-                        );
+                            type: InputType.textArea,
+                            label: localizations.translate(
+                              i18.stockDetails.commentsLabel,
+                            ),
+                            errorMessage: field.errorText,
+                            onChange: (val) {
+                              if (val == '') {
+                                field.control.value = null;
+                                return;
+                              }
+                              field.control.value = val;
+                            });
                       },
                     ),
                   ],
@@ -837,43 +843,51 @@ class _DynamicTabsPageState extends LocalizedState<DynamicTabsPage>
             Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                DigitButton(
-                  size: DigitButtonSize.large,
-                  type: DigitButtonType.primary,
-                  onPressed: () async {
-                    if (form.valid) {
-                      //TODO:
-                      // bool isValid =
-                      //     await _saveCurrentTabData(productName, entryType);
-                      // if (!isValid) {
-                      //   return;
-                      // }
+                ValueListenableBuilder(
+                    valueListenable: clickedStatus,
+                    builder: (context, bool isClicked, _) {
+                      return DigitButton(
+                        size: DigitButtonSize.large,
+                        type: DigitButtonType.primary,
+                        isDisabled: isClicked,
+                        onPressed: () async {
+                          if (form.valid) {
+                            //TODO:
+                            // bool isValid =
+                            //     await _saveCurrentTabData(productName, entryType);
+                            // if (!isValid) {
+                            //   return;
+                            // }
 
-                      if (_tabController.index < products.length - 1) {
-                        if (form.valid) {
-                          _tabController.animateTo(_tabController.index + 1);
-                        }
-                      } else {
-                        int index = 0;
-                        for (final form in _forms.values) {
-                          form.markAllAsTouched();
-                          if (form.invalid) {
-                            _tabController.animateTo(index);
-                            return;
+                            if (_tabController.index < products.length - 1) {
+                              if (form.valid) {
+                                _tabController
+                                    .animateTo(_tabController.index + 1);
+                              }
+                            } else {
+                              int index = 0;
+                              for (final form in _forms.values) {
+                                form.markAllAsTouched();
+                                if (form.invalid) {
+                                  _tabController.animateTo(index);
+                                  return;
+                                }
+                                index++;
+                              }
+                              await _handleFinalSubmission(
+                                  context, entryType, selectedProducts);
+                            }
+                          } else {
+                            form.markAllAsTouched();
                           }
-                          index++;
-                        }
-                        await _handleFinalSubmission(
-                            context, entryType, selectedProducts);
-                      }
-                    } else {
-                      form.markAllAsTouched();
-                    }
-                  },
-                  label: isLastTab
-                      ? localizations.translate(i18.common.coreCommonSubmit)
-                      : localizations.translate(i18.common.coreCommonNext),
-                ),
+                        },
+                        label: isLastTab
+                            ? localizations
+                                .translate(i18.common.coreCommonSubmit)
+                            : localizations
+                                .translate(i18.common.coreCommonNext),
+                      );
+                    }),
                 const SizedBox(height: 12),
                 // DigitButton(
                 //   type: DigitButtonType.secondary,
@@ -900,6 +914,8 @@ class _DynamicTabsPageState extends LocalizedState<DynamicTabsPage>
 
     final theme = Theme.of(context);
 
+    String? comments = form.control(_commentsKey).value?.toString();
+
     _tabStocks[productName] = currentStock.copyWith(
       quantity: form.control(_transactionQuantityKey).value?.toString(),
       referenceId: context.selectedProject.id,
@@ -917,8 +933,10 @@ class _DynamicTabsPageState extends LocalizedState<DynamicTabsPage>
               []),
           if (form.control(_batchNumberKey).value != null)
             AdditionalField('batchNumber', form.control(_batchNumberKey).value),
-          if (form.control(_commentsKey).value != null)
-            AdditionalField('comments', form.control(_commentsKey).value),
+          if (comments != null &&
+              comments.trim().isNotEmpty &&
+              comments.trim().length > 1)
+            AdditionalField('comments', comments),
           if (form.control(_transactionQuantityPartialKey).value != null)
             AdditionalField('partialBlistersReturned',
                 form.control(_transactionQuantityPartialKey).value),

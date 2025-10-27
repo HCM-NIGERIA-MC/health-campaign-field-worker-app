@@ -124,6 +124,7 @@ class CustomDeliverInterventionPageState
         longitude: long,
         productQuantity: productQuantity,
         selectedIndividual: selectedIndividual);
+
     context.read<DeliverInterventionBloc>().add(
           DeliverInterventionSubmitEvent(
               task: taskModel,
@@ -133,7 +134,7 @@ class CustomDeliverInterventionPageState
                   ? true
                   : false,
               boundaryModel: RegistrationDeliverySingleton().boundary!,
-              navigateToSummary: true,
+              navigateToSummary: false,
               householdMemberWrapper: householdMember),
         );
 
@@ -199,18 +200,6 @@ class CustomDeliverInterventionPageState
     TaskModel taskModel,
     DeliverInterventionState deliverState,
   ) async {
-    context.read<DeliverInterventionBloc>().add(
-          DeliverInterventionSubmitEvent(
-            task: deliverState.oldTask ?? taskModel,
-            isEditing: (deliverState.tasks ?? []).isNotEmpty &&
-                    RegistrationDeliverySingleton().beneficiaryType ==
-                        BeneficiaryType.household
-                ? true
-                : false,
-            boundaryModel: RegistrationDeliverySingleton().boundary!,
-          ),
-        );
-
     ProjectTypeModel? projectTypeModel =
         widget.eligibilityAssessmentType == EligibilityAssessmentType.smc
             ? RegistrationDeliverySingleton()
