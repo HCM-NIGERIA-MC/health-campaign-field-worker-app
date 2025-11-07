@@ -41,7 +41,8 @@ class _BoundarySelectionPageState
   int i = 0;
   int pendingSyncCount = 0;
   final clickedStatus = ValueNotifier<bool>(false);
-  StreamController<double> downloadProgress = StreamController<double>.broadcast();
+  StreamController<double> downloadProgress =
+      StreamController<double>.broadcast();
 
   Map<String, TextEditingController> dropdownControllers = {};
   late StreamSubscription syncSubscription;
@@ -337,7 +338,9 @@ class _BoundarySelectionPageState
                                         descriptionTableData: {
                                           localizations.translate(
                                             i18.beneficiaryDetails.boundary,
-                                          ): localizations.translate(result.locality ?? result.boundaryName!),
+                                          ): localizations.translate(
+                                              result.locality ??
+                                                  result.boundaryName!),
                                           localizations.translate(
                                             i18.beneficiaryDetails.status,
                                           ): localizations.translate(
@@ -469,7 +472,7 @@ class _BoundarySelectionPageState
                                             onPressed: () async {
                                               if (!form.valid ||
                                                   validateAllBoundarySelection(
-                                                    context.isDistributor,
+                                                    false,
                                                   )) {
                                                 clickedStatus.value = false;
                                                 Toast.showToast(
@@ -613,9 +616,7 @@ class _BoundarySelectionPageState
                                             builder: (field) => LabeledField(
                                               label: localizations
                                                   .translate(label),
-                                              isRequired:
-                                                  context.isDistributor ||
-                                                      labelIndex == 0,
+                                              isRequired: labelIndex == 0,
                                               child:
                                                   DigitDropdown<BoundaryModel>(
                                                 onTap: () {
