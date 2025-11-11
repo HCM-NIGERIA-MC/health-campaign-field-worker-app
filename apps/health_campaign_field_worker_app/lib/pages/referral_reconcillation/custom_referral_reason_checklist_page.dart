@@ -385,8 +385,8 @@ class _CustomReferralReasonChecklistPageState
                                   FormField<String>(validator: (value) {
                                     if (((controller[index].text == '') &&
                                         e.required == true)) {
-                                      return localizations
-                                          .translate("${e.code}_REQUIRED");
+                                      return localizations.translate(
+                                          i18.common.corecommonRequired);
                                     }
                                     if (e.regex != null) {
                                       return (RegExp(e.regex!)
@@ -778,7 +778,7 @@ class _CustomReferralReasonChecklistPageState
           validator: (value) {
             // Custom validation logic
             if (((controller[index].text == '') && item.required == true)) {
-              return localizations.translate("${item.code}_REQUIRED");
+              return localizations.translate(i18.common.corecommonRequired);
             }
             if (item.regex != null) {
               return (RegExp(item.regex!).hasMatch(controller[index].text))
