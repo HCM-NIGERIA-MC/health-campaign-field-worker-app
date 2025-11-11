@@ -401,13 +401,13 @@ class _CustomHouseholdOverviewPageState
                                                           .locality
                                                           ?.code ??
                                                       i18.common.coreCommonNA),
-                                                  // localizations.translate(
-                                                  //   i18.deliverIntervention
-                                                  //       .memberCountText,
-                                                  // ): state
-                                                  // .householdMemberWrapper
-                                                  // .household
-                                                  // ?.memberCount,
+                                                  localizations.translate(
+                                                    i18.deliverIntervention
+                                                        .memberCountText,
+                                                  ): state
+                                                      .householdMemberWrapper
+                                                      .household
+                                                      ?.memberCount,
                                                   if (shouldShowStatus)
                                                     localizations.translate(i18
                                                             .beneficiaryDetails
@@ -945,7 +945,8 @@ class _CustomHouseholdOverviewPageState
                                   DigitButton(
                                     mainAxisSize: MainAxisSize.max,
                                     onPressed: () {
-                                      int spaq1 = context.spaq1;
+                                      int spaq1 = 1;
+                                      ;
 
                                       String descriptionText =
                                           localizations.translate(i18_local
