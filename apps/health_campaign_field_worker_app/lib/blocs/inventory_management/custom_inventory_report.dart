@@ -142,9 +142,7 @@ class CustomInventoryReportBloc
     final data = await stockReconciliationRepository.search(
       StockReconciliationSearchModel(
         tenantId: InventorySingleton().tenantId,
-        facilityId: InventorySingleton().isDistributor
-            ? event.facilityId
-            : InventorySingleton().loggedInUserUuid,
+        facilityId: event.facilityId,
         productVariantId: event.productVariantId,
       ),
     );

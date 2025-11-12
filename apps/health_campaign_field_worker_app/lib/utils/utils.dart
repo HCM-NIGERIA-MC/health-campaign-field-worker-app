@@ -854,6 +854,28 @@ bool isHFUser(BuildContext context) {
   }
 }
 
+String getIndividualHeight(IndividualModel? individualModel) {
+  if (individualModel == null) {
+    return '';
+  }
+  final height = individualModel.additionalFields?.fields
+      .firstWhereOrNull((e) => e.key == Constants.height)
+      ?.value;
+
+  return height != null ? height.toString() : '';
+}
+
+String getIndividualWeight(IndividualModel? individualModel) {
+  if (individualModel == null) {
+    return '';
+  }
+  final weight = individualModel.additionalFields?.fields
+      .firstWhereOrNull((e) => e.key == Constants.weight)
+      ?.value;
+
+  return weight != null ? weight.toString() : '';
+}
+
 String getIndividualAge(IndividualModel individualModel) {
   DateTime dateOfBirth =
       DateFormat("dd/MM/yyyy").parse(individualModel.dateOfBirth ?? '');
@@ -873,6 +895,9 @@ String? getBeneficiaryId(IndividualModel individualModel) {
 
 List<AdditionalField> getIndividualAdditionalFields(
     IndividualModel? individualModel) {
+  // find height weight from additional fields
+  final height = getIndividualHeight(individualModel);
+  final weight = getIndividualWeight(individualModel);
   return [
     if (individualModel != null)
       AdditionalField(
@@ -893,6 +918,16 @@ List<AdditionalField> getIndividualAdditionalFields(
       AdditionalField(
         'uniqueBeneficiaryId',
         getBeneficiaryId(individualModel),
+      ),
+    if (individualModel != null && height.isNotEmpty)
+      AdditionalField(
+        Constants.height,
+        height,
+      ),
+    if (individualModel != null && weight.isNotEmpty)
+      AdditionalField(
+        Constants.weight,
+        weight,
       ),
   ];
 }

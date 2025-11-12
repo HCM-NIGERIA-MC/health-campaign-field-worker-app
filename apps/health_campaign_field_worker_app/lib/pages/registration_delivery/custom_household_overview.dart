@@ -401,13 +401,13 @@ class _CustomHouseholdOverviewPageState
                                                           .locality
                                                           ?.code ??
                                                       i18.common.coreCommonNA),
-                                                  // localizations.translate(
-                                                  //   i18.deliverIntervention
-                                                  //       .memberCountText,
-                                                  // ): state
-                                                  // .householdMemberWrapper
-                                                  // .household
-                                                  // ?.memberCount,
+                                                  localizations.translate(
+                                                    i18.deliverIntervention
+                                                        .memberCountText,
+                                                  ): state
+                                                      .householdMemberWrapper
+                                                      .household
+                                                      ?.memberCount,
                                                   if (shouldShowStatus)
                                                     localizations.translate(i18
                                                             .beneficiaryDetails

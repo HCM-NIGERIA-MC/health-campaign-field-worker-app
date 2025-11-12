@@ -567,6 +567,25 @@ class _CustomSearchBeneficiaryPageState
                         if (searchSMCstate.loading) {
                           return const Center(
                               child: CircularProgressIndicator());
+                        } else if (searchSMCstate.householdMembers.isEmpty &&
+                            searchSMCstate.loading == false &&
+                            isBeneficiaryIdValidPattern(
+                                searchController.text.trim()) &&
+                            isBeneficiaryIdValid(
+                                searchController.text.trim())) {
+                          return SliverList(
+                              delegate:
+                                  SliverChildBuilderDelegate((ctx, index) {
+                            return DigitInfoCard(
+                              description: localizations.translate(
+                                i18_local.searchBeneficiary
+                                    .beneficiaryInfoDescription,
+                              ),
+                              title: localizations.translate(
+                                i18.searchBeneficiary.beneficiaryInfoTitle,
+                              ),
+                            );
+                          }, childCount: 1));
                         } else {
                           return SliverList(
                             delegate: SliverChildBuilderDelegate(
