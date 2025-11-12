@@ -718,12 +718,12 @@ class _CustomSearchBeneficiaryPageState
                             i18_local
                                 .beneficiaryDetails.insufficientStockMessage);
 
-                        if (false) {
+                        if (spaq1 == 0) {
                           descriptionText +=
                               "\n ${localizations.translate(i18_local.beneficiaryDetails.azmDoseUnit)}";
                         }
 
-                        if ((spaq1 > -1)) {
+                        if ((spaq1 > 0)) {
                           FocusManager.instance.primaryFocus?.unfocus();
                           context.read<DigitScannerBloc>().add(
                                 const DigitScannerEvent.handleScanner(),

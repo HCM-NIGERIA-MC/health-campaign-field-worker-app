@@ -945,8 +945,7 @@ class _CustomHouseholdOverviewPageState
                                   DigitButton(
                                     mainAxisSize: MainAxisSize.max,
                                     onPressed: () {
-                                      int spaq1 = 1;
-                                      ;
+                                      int spaq1 = context.spaq1;
 
                                       String descriptionText =
                                           localizations.translate(i18_local
