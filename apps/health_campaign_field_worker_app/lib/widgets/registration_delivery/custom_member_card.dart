@@ -396,9 +396,12 @@ class CustomMemberCard extends StatelessWidget {
                                         .lastWhere(
                                           (e) =>
                                               e.identifierType ==
-                                              IdentifierTypes
-                                                  .uniqueBeneficiaryID
-                                                  .toValue(),
+                                                  IdentifierTypes
+                                                      .uniqueBeneficiaryID
+                                                      .toValue() ||
+                                              e.identifierType ==
+                                                  Constants
+                                                      .uniqueBeneficiaryIdKey,
                                         )
                                         .identifierId ??
                                     localizations

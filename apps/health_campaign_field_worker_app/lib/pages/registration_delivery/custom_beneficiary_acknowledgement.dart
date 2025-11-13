@@ -14,6 +14,7 @@ import 'package:registration_delivery/router/registration_delivery_router.gm.dar
 import '../../blocs/registration_delivery/custom_beneficairy_registration.dart';
 import '../../blocs/registration_delivery/custom_search_household.dart';
 import '../../models/entities/identifier_types.dart';
+import '../../utils/constants.dart';
 import '../../widgets/digit_ui_component/custom_panel_card.dart';
 import '../../utils/i18_key_constants.dart' as i18_local;
 
@@ -48,7 +49,8 @@ class CustomBeneficiaryAcknowledgementPageState
       String? householdId) {
     String? beneficiaryId = householdMember?.members?.lastOrNull?.identifiers
         ?.lastWhereOrNull((e) =>
-            e.identifierType == IdentifierTypes.uniqueBeneficiaryID.toValue())
+            e.identifierType == IdentifierTypes.uniqueBeneficiaryID.toValue() ||
+            e.identifierType == Constants.uniqueBeneficiaryIdKey)
         ?.identifierId;
     String? beneficiaryName =
         householdMember?.members?.lastOrNull?.name?.givenName;

@@ -889,7 +889,8 @@ String getIndividualAge(IndividualModel individualModel) {
 String? getBeneficiaryId(IndividualModel individualModel) {
   return individualModel.identifiers
       ?.firstWhereOrNull((e) =>
-          e.identifierType == IdentifierTypes.uniqueBeneficiaryID.toValue())
+          e.identifierType == IdentifierTypes.uniqueBeneficiaryID.toValue() ||
+          e.identifierType == Constants.uniqueBeneficiaryIdKey)
       ?.identifierId;
 }
 
