@@ -107,6 +107,7 @@ class Constants {
   static const int apiCallLimit = 1000;
   static const String pipeSeparator = '||';
   static const int stockMaxLimit = 100000000;
+  static const String uniqueBeneficiaryIdKey = 'uniqueBeneficiaryID';
 
   // for stock validation
 
