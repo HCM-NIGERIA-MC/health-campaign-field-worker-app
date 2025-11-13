@@ -479,7 +479,7 @@ class CustomHouseholdLocationPageState
                                       .translate(i18.common.min3CharsRequired),
                                   'maxLength': (object) => localizations
                                       .translate(i18.common.maxCharsRequired)
-                                      .replaceAll('{}', maxLength.toString()),
+                                      .replaceAll('{}', 6.toString()),
                                 },
                                 builder: (field) => LabeledField(
                                     isRequired: true,
