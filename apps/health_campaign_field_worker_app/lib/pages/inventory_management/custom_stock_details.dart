@@ -873,49 +873,56 @@ class CustomStockDetailsPageState
                                             ),
                                             isRequired: true,
 
-                                            child: MultiSelectDropDown(
-                                              // errorText: field.errorText,
-                                              selectionType:
-                                                  SelectionType.defaultSelect,
-                                              options: productVariants
-                                                  .map((variant) {
-                                                return DropdownItem(
-                                                  name: localizations.translate(
-                                                      variant.sku ??
-                                                          variant.id),
-                                                  code: variant.id,
-                                                );
-                                              }).toList(),
-                                              // selectedOptions: (form
-                                              //                 .control(
-                                              //                     _productVariantKey)
-                                              //                 .value
-                                              //             as List<
-                                              //                 ProductVariantModel>?)
-                                              //         ?.map((variant) =>
-                                              //             DropdownItem(
-                                              //               name: localizations
-                                              //                   .translate(variant
-                                              //                           .sku ??
-                                              //                       variant.id),
-                                              //               code: variant.id,
-                                              //             ))
-                                              //         .toList() ??
-                                              //     [],
-                                              onOptionSelected:
-                                                  (List<DropdownItem>
-                                                      selectedOptionsList) {
-                                                final selectedVariants =
-                                                    selectedOptionsList
-                                                        .map((item) {
-                                                  return productVariants
-                                                      .firstWhere((variant) =>
-                                                          variant.id ==
-                                                          item.code);
-                                                }).toList();
-                                                field.control.value =
-                                                    selectedVariants;
-                                              },
+                                            child: Padding(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: spacer1,
+                                                      vertical: 0),
+                                              child: MultiSelectDropDown(
+                                                // errorText: field.errorText,
+                                                selectionType:
+                                                    SelectionType.defaultSelect,
+                                                options: productVariants
+                                                    .map((variant) {
+                                                  return DropdownItem(
+                                                    name:
+                                                        localizations.translate(
+                                                            variant.sku ??
+                                                                variant.id),
+                                                    code: variant.id,
+                                                  );
+                                                }).toList(),
+                                                // selectedOptions: (form
+                                                //                 .control(
+                                                //                     _productVariantKey)
+                                                //                 .value
+                                                //             as List<
+                                                //                 ProductVariantModel>?)
+                                                //         ?.map((variant) =>
+                                                //             DropdownItem(
+                                                //               name: localizations
+                                                //                   .translate(variant
+                                                //                           .sku ??
+                                                //                       variant.id),
+                                                //               code: variant.id,
+                                                //             ))
+                                                //         .toList() ??
+                                                //     [],
+                                                onOptionSelected:
+                                                    (List<DropdownItem>
+                                                        selectedOptionsList) {
+                                                  final selectedVariants =
+                                                      selectedOptionsList
+                                                          .map((item) {
+                                                    return productVariants
+                                                        .firstWhere((variant) =>
+                                                            variant.id ==
+                                                            item.code);
+                                                  }).toList();
+                                                  field.control.value =
+                                                      selectedVariants;
+                                                },
+                                              ),
                                             ),
 
                                             // child: DigitDropdown(

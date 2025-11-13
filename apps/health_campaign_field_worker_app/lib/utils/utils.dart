@@ -871,6 +871,13 @@ String? getBeneficiaryId(IndividualModel individualModel) {
       ?.identifierId;
 }
 
+String? getIndividualHeight(IndividualModel individualModel) {
+  return individualModel.additionalFields?.fields
+      .firstWhereOrNull((e) => e.key == Constants.height)
+      ?.value
+      ?.toString();
+}
+
 List<AdditionalField> getIndividualAdditionalFields(
     IndividualModel? individualModel) {
   return [
@@ -893,6 +900,16 @@ List<AdditionalField> getIndividualAdditionalFields(
       AdditionalField(
         'uniqueBeneficiaryId',
         getBeneficiaryId(individualModel),
+      ),
+    if (individualModel != null &&
+        individualModel.additionalFields != null &&
+        individualModel.additionalFields!.fields.isNotEmpty &&
+        individualModel.additionalFields!.fields
+            .where((element) => element.key == Constants.height)
+            .isNotEmpty)
+      AdditionalField(
+        'height',
+        getIndividualHeight(individualModel),
       ),
   ];
 }

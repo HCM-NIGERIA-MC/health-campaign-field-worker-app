@@ -17,6 +17,7 @@ class CustomSyncRegistry implements SyncUpOperation {
       await remote.bulkUpdate(entities);
     } catch (e) {
       debugPrint('$e');
+      rethrow;
     }
   }
 
@@ -26,6 +27,7 @@ class CustomSyncRegistry implements SyncUpOperation {
       await remote.bulkDelete(entities);
     } catch (e) {
       debugPrint('$e');
+      rethrow;
     }
   }
 

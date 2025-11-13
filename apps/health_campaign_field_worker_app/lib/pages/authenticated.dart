@@ -305,7 +305,7 @@ class AuthenticatedPageWrapper extends StatelessWidget {
                 color: theme.colorScheme.secondary.withOpacity(0.12),
                 padding: const EdgeInsets.all(kPadding),
                 child: SizedBox(
-                  height: 280,
+                  height: 300,
                   child: state.maybeMap(
                     authenticated: (value) => Column(
                       mainAxisAlignment: MainAxisAlignment.center,
