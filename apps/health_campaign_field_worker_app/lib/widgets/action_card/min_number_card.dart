@@ -144,7 +144,7 @@ class MinNumberCard extends StatelessWidget {
     } else if (resourceName.contains('AZM')) {
       return 'Bottles';
     } else {
-      return 'Capsules';
+      return 'Bottles';
     }
   }
 }
