@@ -143,8 +143,8 @@ class CustomInventoryReportBloc
       StockReconciliationSearchModel(
         tenantId: InventorySingleton().tenantId,
         facilityId: InventorySingleton().isDistributor
-            ? event.facilityId
-            : InventorySingleton().loggedInUserUuid,
+            ? InventorySingleton().loggedInUserUuid
+            : event.facilityId,
         productVariantId: event.productVariantId,
       ),
     );

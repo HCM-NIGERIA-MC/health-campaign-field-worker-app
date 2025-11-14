@@ -1310,7 +1310,7 @@ class _CustomRecordReferralDetailsPageState
                     0 &&
                 ReferralReconSingleton()
                         .validIndividualAgeForCampaign
-                        .validMinAge !=
+                        .validMinAge >=
                     0)
             ? [
                 Validators.required,
