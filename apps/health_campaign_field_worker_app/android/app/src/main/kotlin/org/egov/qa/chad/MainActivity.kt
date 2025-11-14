@@ -1,4 +1,4 @@
-package org.egov.qa.ondo
+package org.egov.qa.chad
 
 import android.content.BroadcastReceiver
 import android.content.Context
