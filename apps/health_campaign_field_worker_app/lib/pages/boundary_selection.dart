@@ -48,11 +48,13 @@ class _BoundarySelectionPageState
   late StreamSubscription syncSubscription;
   var leastLevelBoundaries;
 
-  final String setLocale = "en_NG";
+  late String setLocale;
 
   @override
   void initState() {
     context.syncRefresh();
+    setLocale = AppSharedPreferences().getSelectedLocale ??
+        Constants.defaultLocalization;
     LocalizationParams()
         .setModule(['hcm-common', 'hcm-beneficiary', 'hcm-home'], false);
     // LocalizationParams().setModule('common', false);
@@ -87,6 +89,13 @@ class _BoundarySelectionPageState
           (role) =>
               role.code == RolesType.distributor.toValue() ||
               role.code == RolesType.communityDistributor.toValue(),
+        )
+        .toList()
+        .isNotEmpty;
+
+    bool isRegistrar = context.loggedInUserRoles
+        .where(
+          (role) => role.code == RolesType.registrar.toValue(),
         )
         .toList()
         .isNotEmpty;
@@ -500,6 +509,7 @@ class _BoundarySelectionPageState
                                                 if (context.mounted) {
                                                   if (isOnline &&
                                                       isDistributor &&
+                                                      !isRegistrar &&
                                                       Constants
                                                           .isDownSyncEnabled) {
                                                     context
