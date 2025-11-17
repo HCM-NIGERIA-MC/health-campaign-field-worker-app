@@ -397,7 +397,7 @@ class _HomePageState extends LocalizedState<HomePage> {
                   "tooltip": "",
                   "helpText": "",
                   "infoText": "",
-                  "readOnly": false,
+                  "readOnly": true,
                   "fieldName": "isHeadOfFamily",
                   "deleteFlag": false,
                   "innerLabel": "",
@@ -466,6 +466,69 @@ class _HomePageState extends LocalizedState<HomePage> {
                   "includeInForm": true,
                   "isMultiSelect": false,
                   "includeInSummary": true
+                };
+
+                registrationSchemaData['pages']["beneficiaryDetails"]
+                        ["properties"]
+                    .remove("scanner");
+
+                registrationSchemaData['pages']["beneficiaryDetails"]
+                    ["properties"]['tag'] = {
+                  "type": "string",
+                  "label":
+                      "APPONE_REGISTRATION_BENEFICIARYDETAILS_label_scanner",
+                  "order": 7,
+                  "value": null,
+                  "format": "scanner",
+                  "hidden": false,
+                  "tooltip": null,
+                  "helpText": null,
+                  "infoText": null,
+                  "readOnly": false,
+                  "fieldName": "tag",
+                  "deleteFlag": false,
+                  "innerLabel": null,
+                  "systemDate": false,
+                  "validations": [],
+                  "errorMessage": null,
+                  "includeInForm": true,
+                  "isMultiSelect": false,
+                  "includeInSummary": true
+                };
+
+                deliverySchemaData['pages']['DeliveryDetails']['properties']
+                    ['scanner'] = {
+                  "type": "string",
+                  "label": "APPONE_DELIVERY_DELIVERYDETAILS_label_scanner",
+                  "order": 4,
+                  "value": "",
+                  "format": "scanner",
+                  "hidden": false,
+                  "tooltip": "",
+                  "helpText": "",
+                  "infoText": "",
+                  "readOnly": false,
+                  "fieldName": "scanner",
+                  "deleteFlag": false,
+                  "innerLabel": "",
+                  "systemDate": false,
+                  "validations": [
+                    {
+                      "type": "scanLimit",
+                      "value": "5",
+                      "message": "quantity exceeded"
+                    },
+                    {
+                      "type": "isGS1",
+                      "value": true,
+                      "message": "quantity exceeded"
+                    }
+                  ],
+                  "errorMessage": "",
+                  "includeInForm": true,
+                  "isMultiSelect": false,
+                  "includeInSummary": true,
+                  "visibilityCondition": {}
                 };
 
                 // Navigate into the DeliveryDetails page properties map
@@ -558,7 +621,7 @@ class _HomePageState extends LocalizedState<HomePage> {
               }
               if (isTriggerLocalization) {
                 final moduleName =
-                    'hcm-registrationflow-${context.selectedProject.referenceID},hcm-deliveryflow-${context.selectedProject.referenceID}';
+                    'hcm-registration-${context.selectedProject.referenceID},hcm-delivery-${context.selectedProject.referenceID}';
                 triggerLocalization(module: moduleName, loadOnline: true);
                 isTriggerLocalization = false;
               }
@@ -583,44 +646,44 @@ class _HomePageState extends LocalizedState<HomePage> {
       //     },
       //   ),
       // ),
-      i18.home.manageStockLabel:
-          homeShowcaseData.warehouseManagerManageStock.buildWith(
-        child: HomeItemCard(
-          icon: Icons.store_mall_directory,
-          label: i18.home.manageStockLabel,
-          onPressed: () {
-            context.read<AppInitializationBloc>().state.maybeWhen(
-                  orElse: () {},
-                  initialized: (
-                    AppConfiguration appConfiguration,
-                    _,
-                    __,
-                  ) {
-                    context.router.push(CustomManageStocksRoute());
-                  },
-                );
-          },
-        ),
-      ),
-      i18.home.stockReconciliationLabel:
-          homeShowcaseData.wareHouseManagerStockReconciliation.buildWith(
-        child: HomeItemCard(
-          icon: Icons.menu_book,
-          label: i18.home.stockReconciliationLabel,
-          onPressed: () {
-            context.router.push(CustomStockReconciliationRoute());
-          },
-        ),
-      ),
-      i18.home.viewReportsLabel: homeShowcaseData.inventoryReport.buildWith(
-        child: HomeItemCard(
-          icon: Icons.announcement,
-          label: i18.home.viewReportsLabel,
-          onPressed: () {
-            context.router.push(CustomInventoryReportSelectionRoute());
-          },
-        ),
-      ),
+      // i18.home.manageStockLabel:
+      //     homeShowcaseData.warehouseManagerManageStock.buildWith(
+      //   child: HomeItemCard(
+      //     icon: Icons.store_mall_directory,
+      //     label: i18.home.manageStockLabel,
+      //     onPressed: () {
+      //       context.read<AppInitializationBloc>().state.maybeWhen(
+      //             orElse: () {},
+      //             initialized: (
+      //               AppConfiguration appConfiguration,
+      //               _,
+      //               __,
+      //             ) {
+      //               context.router.push(CustomManageStocksRoute());
+      //             },
+      //           );
+      //     },
+      //   ),
+      // ),
+      // i18.home.stockReconciliationLabel:
+      //     homeShowcaseData.wareHouseManagerStockReconciliation.buildWith(
+      //   child: HomeItemCard(
+      //     icon: Icons.menu_book,
+      //     label: i18.home.stockReconciliationLabel,
+      //     onPressed: () {
+      //       context.router.push(CustomStockReconciliationRoute());
+      //     },
+      //   ),
+      // ),
+      // i18.home.viewReportsLabel: homeShowcaseData.inventoryReport.buildWith(
+      //   child: HomeItemCard(
+      //     icon: Icons.announcement,
+      //     label: i18.home.viewReportsLabel,
+      //     onPressed: () {
+      //       context.router.push(CustomInventoryReportSelectionRoute());
+      //     },
+      //   ),
+      // ),
       i18.home.viewSummaryReportsLabel:
           homeShowcaseData.summaryReport.buildWith(
         child: HomeItemCard(
@@ -702,7 +765,9 @@ class _HomePageState extends LocalizedState<HomePage> {
           label: i18.home.fileComplaint,
           onPressed: () {
             if (isTriggerLocalization) {
-              triggerLocalization();
+              final moduleName =
+                  'hcm-complaints-${context.selectedProject.referenceID}';
+              triggerLocalization(module: moduleName, loadOnline: true);
               isTriggerLocalization = false;
             }
             context.router.push(const ComplaintsInboxWrapperRoute());
@@ -778,9 +843,9 @@ class _HomePageState extends LocalizedState<HomePage> {
       // i18.home.beneficiaryReferralLabel,
       i18.home.mySurveyForm,
       i18.home.beneficiaryLabel,
-      i18.home.manageStockLabel,
-      i18.home.stockReconciliationLabel,
-      i18.home.viewReportsLabel,
+      // i18.home.manageStockLabel,
+      // i18.home.stockReconciliationLabel,
+      // i18.home.viewReportsLabel,
       i18.home.viewSummaryReportsLabel,
       i18.home.syncDataLabel,
       i18.home.fileComplaint,
@@ -994,7 +1059,7 @@ void setPackagesSingleton(BuildContext context) {
               appConfiguration.checklistTypes?.map((e) => e.code).toList() ??
                   [],
         );
-        RegistrationDeliverySingleton().setStockCount(context.bednet);
+        // RegistrationDeliverySingleton().setStockCount(context.bednet);  TODO: uncommet it to add stock validation
         RegistrationDeliverySingleton().setInitialData(
           beneficiaryIdMinCount:
               appConfiguration.beneficiaryIdConfig?.first.minCount.toInt(),
@@ -1149,12 +1214,14 @@ void setPackagesSingleton(BuildContext context) {
 void loadLocalization(
     BuildContext context, AppConfiguration appConfiguration) async {
   LocalizationParams().setModule(['boundary'], true);
+  final selectedLocale =
+      AppSharedPreferences().getSelectedLocale ?? Constants.defaultLocalization;
   context
       .read<LocalizationBloc>()
       .add(LocalizationEvent.onUpdateLocalizationIndex(
         index: appConfiguration.languages!
-            .indexWhere((element) => element.value == "en_NG"),
-        code: "en_NG", //AppSharedPreferences().getSelectedLocale!
+            .indexWhere((element) => element.value == selectedLocale),
+        code: selectedLocale,
       ));
 }
 
