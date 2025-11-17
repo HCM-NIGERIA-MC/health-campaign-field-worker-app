@@ -53,6 +53,16 @@ class AdditionalFieldsTypeMapper extends EnumMapper<AdditionalFieldsType> {
         return AdditionalFieldsType.gender;
       case "age":
         return AdditionalFieldsType.age;
+      case "memberCount":
+        return AdditionalFieldsType.memberCount;
+      case "householdHeadName":
+        return AdditionalFieldsType.householdHeadName;
+      case "householdHeadMobileNumber":
+        return AdditionalFieldsType.householdHeadMobileNumber;
+      case "householdHeadGender":
+        return AdditionalFieldsType.householdHeadGender;
+      case "householdHeadAge":
+        return AdditionalFieldsType.householdHeadAge;
       case "deliveryComment":
         return AdditionalFieldsType.deliveryComment;
       case "deliveryType":
@@ -101,6 +111,16 @@ class AdditionalFieldsTypeMapper extends EnumMapper<AdditionalFieldsType> {
         return "gender";
       case AdditionalFieldsType.age:
         return "age";
+      case AdditionalFieldsType.memberCount:
+        return "memberCount";
+      case AdditionalFieldsType.householdHeadName:
+        return "householdHeadName";
+      case AdditionalFieldsType.householdHeadMobileNumber:
+        return "householdHeadMobileNumber";
+      case AdditionalFieldsType.householdHeadGender:
+        return "householdHeadGender";
+      case AdditionalFieldsType.householdHeadAge:
+        return "householdHeadAge";
       case AdditionalFieldsType.deliveryComment:
         return "deliveryComment";
       case AdditionalFieldsType.deliveryType:

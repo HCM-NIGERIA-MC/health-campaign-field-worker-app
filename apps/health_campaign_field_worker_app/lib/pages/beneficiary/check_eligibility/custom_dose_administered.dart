@@ -284,6 +284,8 @@ class CustomDoseAdministeredPageState
                                             ),
                                             ...getIndividualAdditionalFields(
                                               overViewBloc.selectedIndividual,
+                                              overViewBloc
+                                                  .householdMemberWrapper,
                                             ),
                                           ],
                                         ),
