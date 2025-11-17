@@ -202,7 +202,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       blueVas = blueVas + additionBlueVasCount;
       redVas = redVas + additionRedVasCount;
 
-      RegistrationDeliverySingleton().setStockCount(bednet);
+      // RegistrationDeliverySingleton().setStockCount(bednet); TODO: uncommet it to add stock validation
       localSecureStore.setSpaqCounts(bednet, spaq1, spaq2, blueVas, redVas);
 
       final accessToken = await localSecureStore.accessToken;
@@ -261,7 +261,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       redVas = redVas - 0;
 
       localSecureStore.setSpaqCounts(bednet, spaq1, spaq2, blueVas, redVas);
-      RegistrationDeliverySingleton().setStockCount(bednet);
+      // RegistrationDeliverySingleton().setStockCount(bednet); TODO: uncommet it to add stock validation
 
       final accessToken = await localSecureStore.accessToken;
       final refreshToken = await localSecureStore.refreshToken;
