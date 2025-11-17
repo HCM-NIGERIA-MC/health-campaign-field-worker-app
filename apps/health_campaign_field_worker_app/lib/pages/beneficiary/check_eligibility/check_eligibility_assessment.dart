@@ -514,6 +514,8 @@ class _EligibilityChecklistViewPage
                                                     ),
                                                     ...getIndividualAdditionalFields(
                                                       widget.individual,
+                                                      householdOverviewState
+                                                          .householdMemberWrapper,
                                                     ),
                                                   ],
                                                 ),
