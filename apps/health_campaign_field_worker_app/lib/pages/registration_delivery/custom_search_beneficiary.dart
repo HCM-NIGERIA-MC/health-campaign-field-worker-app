@@ -40,12 +40,6 @@ import 'package:registration_delivery/widgets/beneficiary/view_beneficiary_card.
 import 'package:registration_delivery/widgets/localized.dart';
 import 'package:registration_delivery/widgets/status_filter/status_filter.dart';
 
-import '../../utils/i18_key_constants.dart' as i18_local;
-import '../../router/app_router.dart';
-import '../../utils/registration_delivery/registration_delivery_utils.dart';
-import '../../utils/utils.dart';
-import '../../widgets/registration_delivery/custom_view_beneficiary_card.dart';
-
 @RoutePage()
 class CustomSearchBeneficiaryPage extends LocalizedStatefulWidget {
   const CustomSearchBeneficiaryPage({
@@ -70,12 +64,14 @@ class _CustomSearchBeneficiaryPageState
   List<String> selectedFilters = [];
   bool _isProgressDialogVisible = false;
   final ProgressDialog _progressDialog = ProgressDialog();
+  bool _shouldUpdateFromScanner = false;
 
   late final RegistrationWrapperBloc blocWrapper; // Declare BlocWrapper
 
   @override
   void initState() {
     // Initialize the BlocWrapper with instances of SearchHouseholdsBloc, SearchMemberBloc, and ProximitySearchBloc
+
     Future.microtask(() {
       context.read<CrudBloc>().add(const CrudEventInitialize());
     });
@@ -105,22 +101,6 @@ class _CustomSearchBeneficiaryPageState
     super.dispose();
   }
 
-  Future<String> generateBeneficiaryId() async {
-    final code = RegistrationDeliverySingleton().boundary?.code;
-    final name = RegistrationDeliverySingleton().boundary?.name;
-
-    LocalityModel? locality = code == null || name == null
-        ? null
-        : LocalityModel(code: code, name: name);
-
-    final beneficiaryIds = await UniqueIdGeneration().generateUniqueId(
-      localityCode: locality!.code,
-      loggedInUserId: RegistrationDeliverySingleton().loggedInUserUuid!,
-      returnCombinedIds: false,
-    );
-    return beneficiaryIds.first;
-  }
-
   @override
   Widget build(BuildContext context) {
     final pageKey = SearchBeneficiaryRoute.name.replaceAll('Route', '');
@@ -130,6 +110,21 @@ class _CustomSearchBeneficiaryPageState
     final textTheme = theme.digitTextTheme(context);
 
     return BlocListener<RegistrationWrapperBloc, RegistrationWrapperState>(
+      listenWhen: (previous, current) {
+        // Only trigger when lastAction ACTUALLY CHANGES to one of the action types
+        // OR when error state changes from null to non-null
+        // This prevents multiple triggers for the same state
+        final actionChanged = previous.lastAction != current.lastAction &&
+            (current.lastAction == RegistrationWrapperActionType.created ||
+                current.lastAction == RegistrationWrapperActionType.updated ||
+                current.lastAction ==
+                    RegistrationWrapperActionType.createAndUpdate);
+
+        final errorOccurred =
+            previous.error != current.error && current.error != null;
+
+        return actionChanged || errorOccurred;
+      },
       listener: (context, createState) {
         if (createState.lastAction == RegistrationWrapperActionType.created ||
             createState.lastAction == RegistrationWrapperActionType.updated ||
@@ -143,15 +138,15 @@ class _CustomSearchBeneficiaryPageState
           final taskModel =
               createState.householdMembers.firstOrNull?.tasks?.firstOrNull;
 
-          // if (createState.lastAction == RegistrationWrapperActionType.created &&
-          //     individualModel != null &&
-          //     individualModel.identifiers != null &&
-          //     individualModel.identifiers?.first.identifierId != null &&
-          //     individualModel.identifiers?.first.identifierType ==
-          //         IdentifierTypes.uniqueBeneficiaryID.toValue()) {
-          //   context.read<UniqueIdBloc>().add(UniqueIdEvent.updateStatus(
-          //       id: individualModel.identifiers!.first.identifierId!));
-          // }
+          if (createState.lastAction == RegistrationWrapperActionType.created &&
+              individualModel != null &&
+              individualModel.identifiers != null &&
+              individualModel.identifiers?.first.identifierId != null &&
+              individualModel.identifiers?.first.identifierType ==
+                  IdentifierTypes.uniqueBeneficiaryID.toValue()) {
+            // context.read<UniqueIdBloc>().add(UniqueIdEvent.updateStatus(
+            //     id: individualModel.identifiers!.first.identifierId!));
+          }
 
           if (householdModel != null) {
             blocWrapper.add(RegistrationWrapperEvent.fetchDeliveryDetails(
@@ -181,6 +176,11 @@ class _CustomSearchBeneficiaryPageState
                 const FormsEvent.clearForm(
                     schemaKey:
                         'REGISTRATIONFLOW'), // or create a FormsResetEvent
+              );
+
+          context.read<FormsBloc>().add(
+                const FormsEvent.clearForm(
+                    schemaKey: 'DELIVERYFLOW'), // or create a FormsResetEvent
               );
 
           final pages = currentSchema?.pages.entries.toList()
@@ -276,6 +276,12 @@ class _CustomSearchBeneficiaryPageState
         }
       },
       child: BlocListener<FormsBloc, FormsState>(
+        listenWhen: (previous, current) {
+          // Only trigger when state actually changes to FormsSubmittedState
+          // Prevents multiple triggers for the same submission
+          return previous.runtimeType != current.runtimeType &&
+              current is FormsSubmittedState;
+        },
         listener: (context, formState) {
           if (formState is FormsSubmittedState) {
             DigitLoaders.overlayLoader(context: context);
@@ -763,11 +769,19 @@ class _CustomSearchBeneficiaryPageState
                       RegistrationWrapperState>(builder: (context, blocState) {
                     final items = blocState.householdMembers;
                     return BlocListener<DigitScannerBloc, DigitScannerState>(
+                      listenWhen: (previous, current) {
+                        // Only listen when SearchBeneficiaryPage is the active route
+                        return ModalRoute.of(context)?.isCurrent ?? false;
+                      },
                       listener: (context, scannerState) {
-                        if (scannerState.qrCodes.isNotEmpty) {
+                        if (_shouldUpdateFromScanner &&
+                            scannerState.qrCodes.isNotEmpty &&
+                            selectedTag != scannerState.qrCodes.lastOrNull) {
                           setState(() {
                             selectedTag = scannerState.qrCodes.lastOrNull ?? "";
+                            _shouldUpdateFromScanner = false;
                           });
+                          triggerGlobalSearchEvent();
                         }
                       },
                       child: BlocBuilder<LocationBloc, LocationState>(
@@ -790,7 +804,7 @@ class _CustomSearchBeneficiaryPageState
                                 return Container(
                                   margin:
                                       const EdgeInsets.only(bottom: spacer2),
-                                  child: CustomViewBeneficiaryCard(
+                                  child: ViewBeneficiaryCard(
                                     distance:
                                         isProximityEnabled ? distance : null,
                                     householdWrapper: i,
@@ -843,7 +857,20 @@ class _CustomSearchBeneficiaryPageState
                                           pageName: pageName!,
 
                                           /// as registration is there assuming form won't be null
-                                          defaultValues: formData,
+                                          defaultValues: {
+                                            ...formData,
+                                            'administrativeArea':
+                                                localizations.translate(
+                                                    RegistrationDeliverySingleton()
+                                                            .boundary
+                                                            ?.code ??
+                                                        ''),
+                                            'availableIDs': {
+                                              'DEFAULT':
+                                                  IdGen.instance.identifier,
+                                            },
+                                            "eToken": ""
+                                          },
                                         ));
 
                                         blocWrapper.add(RegistrationWrapperEvent
@@ -873,6 +900,9 @@ class _CustomSearchBeneficiaryPageState
                                         blocWrapper.add(
                                             const RegistrationWrapperEvent
                                                 .clear());
+                                        context.read<DigitScannerBloc>().add(
+                                            const DigitScannerEvent
+                                                .handleScanner());
                                         blocWrapper.add(RegistrationWrapperEvent
                                             .fetchDeliveryDetails(
                                                 projectId:
@@ -1024,81 +1054,47 @@ class _CustomSearchBeneficiaryPageState
           type: DigitButtonType.primary,
           size: DigitButtonSize.large,
           // isDisabled: isTextShort,
-          onPressed: () async {
-            int bednet = context.bednet;
-            String descriptionText = localizations.translate(
-                i18_local.beneficiaryDetails.insufficientStockMessage);
-            if (bednet <= 0) {
-              descriptionText +=
-                  "\n ${localizations.translate(i18_local.beneficiaryDetails.bednetUnit)}";
-              return showCustomPopup(
-                context: context,
-                builder: (popupContext) => Popup(
-                  title: localizations.translate(
-                      i18_local.beneficiaryDetails.insufficientStockHeading),
-                  onOutsideTap: () {
-                    Navigator.of(popupContext).pop(false);
+          onPressed: () {
+            if (template?.properties?['searchByID']?.hidden == true) {
+              context.read<FormsBloc>().add(
+                  const FormsEvent.clearForm(schemaKey: 'REGISTRATIONFLOW'));
+
+              final pageName = context
+                  .read<FormsBloc>()
+                  .state
+                  .cachedSchemas['REGISTRATIONFLOW']
+                  ?.pages
+                  .entries
+                  .first
+                  .key;
+
+              if (pageName == null) {
+                Toast.showToast(
+                  context,
+                  message:
+                      localizations.translate('NO_FORM_FOUND_FOR_REGISTRATION'),
+                  type: ToastType.error,
+                );
+              } else {
+                context.router.push(FormsRenderRoute(
+                  currentSchemaKey: 'REGISTRATIONFLOW',
+                  pageName: pageName,
+                  defaultValues: {
+                    'administrativeArea': localizations.translate(
+                        RegistrationDeliverySingleton().boundary?.code ?? ''),
+                    'nameOfIndividual': value.text,
+                    'availableIDs': {
+                      'DEFAULT': IdGen.instance.identifier,
+                    },
+                    "eToken": ""
                   },
-                  description: descriptionText,
-                  type: PopUpType.simple,
-                  actions: [
-                    DigitButton(
-                      label: localizations.translate(
-                        i18_local.beneficiaryDetails.goToHome,
-                      ),
-                      onPressed: () {
-                        Navigator.of(
-                          popupContext,
-                          rootNavigator: true,
-                        ).pop();
-                        final parent = context.router.parent() as StackRouter;
-                        // Pop twice to navigate back to the previous screen
-                        parent.popUntilRouteWithName(HomeRoute.name);
-                      },
-                      type: DigitButtonType.primary,
-                      size: DigitButtonSize.large,
-                    ),
-                  ],
-                ),
-              );
-            }
-            String localBeneficiaryId = await generateBeneficiaryId();
-            context
-                .read<FormsBloc>()
-                .add(const FormsEvent.clearForm(schemaKey: 'REGISTRATIONFLOW'));
-
-            final pageName = context
-                .read<FormsBloc>()
-                .state
-                .cachedSchemas['REGISTRATIONFLOW']
-                ?.pages
-                .entries
-                .first
-                .key;
-
-            if (pageName == null) {
-              Toast.showToast(
-                context,
-                message:
-                    localizations.translate('NO_FORM_FOUND_FOR_REGISTRATION'),
-                type: ToastType.error,
-              );
+                ));
+                searchController.clear();
+                selectedTag = "";
+                FocusManager.instance.primaryFocus?.unfocus();
+              }
             } else {
-              context.router.push(FormsRenderRoute(
-                currentSchemaKey: 'REGISTRATIONFLOW',
-                pageName: pageName,
-                defaultValues: {
-                  'administrativeArea': localizations.translate(
-                      RegistrationDeliverySingleton().boundary?.code ?? ''),
-                  'nameOfIndividual': value.text,
-                  'availableIDs': {
-                    'DEFAULT': IdGen.instance.identifier,
-                    'UNIQUE_BENEFICIARY_ID': localBeneficiaryId,
-                  }
-                },
-              ));
-              searchController.clear();
-              FocusManager.instance.primaryFocus?.unfocus();
+              // fetchBeneficiaryIdCount();
             }
 
             context
@@ -1124,7 +1120,11 @@ class _CustomSearchBeneficiaryPageState
           onPressed: () {
             blocWrapper.add(const RegistrationWrapperEvent.clear());
             selectedFilters = [];
+            selectedTag = "";
             searchController.clear();
+            setState(() {
+              _shouldUpdateFromScanner = true;
+            });
             Navigator.of(context).push(
               MaterialPageRoute(
                 builder: (context) => const DigitScannerPage(
@@ -1228,4 +1228,8 @@ class _CustomSearchBeneficiaryPageState
               RegistrationDeliverySingleton().beneficiaryType?.toValue()));
     }
   }
+
+  // void fetchBeneficiaryIdCount() {
+  //   context.read<UniqueIdBloc>().add(const UniqueIdEvent.fetchIdCount());
+  // }
 }
