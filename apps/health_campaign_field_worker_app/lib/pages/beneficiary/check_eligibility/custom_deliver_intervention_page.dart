@@ -123,7 +123,8 @@ class CustomDeliverInterventionPageState
         latitude: lat,
         longitude: long,
         productQuantity: productQuantity,
-        selectedIndividual: selectedIndividual);
+        selectedIndividual: selectedIndividual,
+        householdMemberWrapper: householdMember);
     context.read<DeliverInterventionBloc>().add(
           DeliverInterventionSubmitEvent(
               task: taskModel,
@@ -824,6 +825,7 @@ class CustomDeliverInterventionPageState
     double? longitude,
     int? productQuantity,
     IndividualModel? selectedIndividual,
+    HouseholdMemberWrapper? householdMemberWrapper,
   }) {
     // Initialize task with oldTask if available, or create a new one
     var task = oldTask;
@@ -929,8 +931,7 @@ class CustomDeliverInterventionPageState
                 : EligibilityAssessmentStatus.vasDone.name,
           ),
           ...getIndividualAdditionalFields(
-            selectedIndividual,
-          ),
+              selectedIndividual, householdMemberWrapper),
         ],
       ),
     );
