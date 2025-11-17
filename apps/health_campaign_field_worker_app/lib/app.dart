@@ -247,14 +247,14 @@ class MainApplicationState extends State<MainApplication>
                     final appConfig = appConfigState.appConfiguration;
 
                     final localizationModulesList = appConfig.backendInterface;
-                    var firstLanguage;
-                    firstLanguage =
-                        "en_NG"; //appConfig.languages?.lastOrNull?.value;
+                    String firstLanguage =
+                        appConfig.languages?.lastOrNull?.value ??
+                            Constants.defaultLocalization;
 
                     final selectedLocale =
                         AppSharedPreferences().getSelectedLocale ??
                             firstLanguage;
-                    AppSharedPreferences().setSelectedLocale("en_NG");
+                    AppSharedPreferences().setSelectedLocale(selectedLocale);
                     LocalizationParams().setLocale(Locale(selectedLocale));
                     final languages = appConfig.languages;
 
@@ -452,7 +452,7 @@ class MainApplicationState extends State<MainApplication>
                       ],
                       child: BlocBuilder<LocalizationBloc, LocalizationState>(
                         builder: (context, langState) {
-                          final selectedLocale =
+                          String selectedLocale =
                               AppSharedPreferences().getSelectedLocale ??
                                   firstLanguage;
 
@@ -486,23 +486,23 @@ class MainApplicationState extends State<MainApplication>
 
                                     return results.isNotEmpty
                                         ? Locale(results.first, results.last)
-                                        : firstLanguage;
+                                        : Locale(firstLanguage);
                                   })
-                                : [firstLanguage],
+                                : [Locale(firstLanguage)],
                             localizationsDelegates: getAppLocalizationDelegates(
                               sql: widget.sql,
                               appConfig: appConfig,
                               selectedLocale: Locale(
-                                selectedLocale!.split("_").first,
+                                selectedLocale.split("_").first,
                                 selectedLocale.split("_").last,
                               ),
                             ),
                             locale: languages != null
                                 ? Locale(
-                                    selectedLocale!.split("_").first,
+                                    selectedLocale.split("_").first,
                                     selectedLocale.split("_").last,
                                   )
-                                : firstLanguage,
+                                : Locale(firstLanguage),
                             theme: DigitTheme.instance.mobileTheme,
                             routeInformationParser:
                                 widget.appRouter.defaultRouteParser(),

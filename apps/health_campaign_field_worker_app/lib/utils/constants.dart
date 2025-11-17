@@ -85,6 +85,8 @@ class Constants {
     }
   }
 
+  static const String defaultLocalization = "en_NG";
+
   static const String localizationApiPath = 'localization/messages/v1/_search';
   static const String surveyFormPreviewDateFormat = 'dd MMMM yyyy';
   static const String defaultDateFormat = 'dd/MM/yyyy';
@@ -115,7 +117,7 @@ class Constants {
   static const int targetHouseHold = 200;
 
   // todo enable before cycle2
-  static const bool isDownSyncEnabled = false;
+  static const bool isDownSyncEnabled = true;
   static const String dashboardAnalyticsPath =
       '/dashboard-analytics/dashboard/getChartV2';
 
