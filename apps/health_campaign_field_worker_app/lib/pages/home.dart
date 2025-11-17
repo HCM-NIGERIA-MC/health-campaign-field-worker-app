@@ -515,7 +515,7 @@ class _HomePageState extends LocalizedState<HomePage> {
                   "validations": [
                     {
                       "type": "scanLimit",
-                      "value": "5",
+                      "value": "{{resourceCard.first.quantityDistributed}}",
                       "message": "quantity exceeded"
                     },
                     {
