@@ -6,13 +6,16 @@ import 'package:digit_ui_components/theme/digit_extended_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:registration_delivery/blocs/app_localization.dart';
+import 'package:registration_delivery/blocs/delivery_intervention/deliver_intervention.dart';
 import 'package:registration_delivery/blocs/household_overview/household_overview.dart';
+import 'package:registration_delivery/models/entities/additional_fields_type.dart';
 import 'package:registration_delivery/models/entities/project_beneficiary.dart';
 import 'package:registration_delivery/models/entities/side_effect.dart';
 import 'package:registration_delivery/models/entities/status.dart';
 import 'package:registration_delivery/models/entities/task.dart';
 import 'package:registration_delivery/router/registration_delivery_router.gm.dart';
 import 'package:registration_delivery/utils/i18_key_constants.dart' as i18;
+import 'package:registration_delivery/utils/utils.dart';
 import '../../blocs/localization/app_localization.dart';
 import '../../models/entities/identifier_types.dart';
 // import '../../utils/registration_delivery/utils_smc.dart';
@@ -304,6 +307,52 @@ class CustomMemberCard extends StatelessWidget {
                       .sku;
 
                   if (successfulTask != null && value != null && spaq1 > 0) {
+                    final projectType = RegistrationDeliverySingleton()
+                        .selectedProject
+                        ?.additionalDetails
+                        ?.projectType;
+                    final lastDose = successfulTask != null
+                        ? successfulTask.additionalFields?.fields
+                                .firstWhereOrNull(
+                                  (e) =>
+                                      e.key ==
+                                      AdditionalFieldsType.doseIndex.toValue(),
+                                )
+                                ?.value ??
+                            '1'
+                        : '0';
+                    final lastCycle = successfulTask != null
+                        ? successfulTask.additionalFields?.fields
+                                .firstWhereOrNull(
+                                  (e) =>
+                                      e.key ==
+                                      AdditionalFieldsType.cycleIndex.toValue(),
+                                )
+                                ?.value ??
+                            '1'
+                        : '1';
+                    final deliverBloc = context.read<DeliverInterventionBloc>();
+                    if (projectType != null) {
+                      deliverBloc.add(
+                        DeliverInterventionEvent.setActiveCycleDose(
+                          lastDose: successfulTask != null
+                              ? int.tryParse(
+                                    lastDose,
+                                  ) ??
+                                  1
+                              : 0,
+                          lastCycle: successfulTask != null
+                              ? int.tryParse(
+                                    lastCycle,
+                                  ) ??
+                                  1
+                              : 1,
+                          individualModel: individual,
+                          projectType: projectType,
+                        ),
+                      );
+                    }
+
                     context.router.push(
                       RecordRedoseRoute(
                         tasks: [successfulTask],
