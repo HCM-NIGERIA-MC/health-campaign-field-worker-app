@@ -43,6 +43,8 @@ enum AdditionalFieldsType {
   householdHeadGender,
   @MappableValue("householdHeadAge")
   householdHeadAge,
+  @MappableValue("childName")
+  childName,
   @MappableValue("deliveryComment")
   deliveryComment,
   @MappableValue("deliveryType")

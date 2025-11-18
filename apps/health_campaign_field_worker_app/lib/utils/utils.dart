@@ -911,6 +911,12 @@ List<AdditionalField> getAdditionalIndividualInfoFromHouseholdMemberWrapper(
         'headOfHouseholdClientReferenceId',
         householdMemberWrapper.headOfHousehold?.clientReferenceId,
       ),
+    if (householdMemberWrapper.household != null &&
+        householdMemberWrapper.household?.clientReferenceId != null)
+      AdditionalField(
+        'householdClientReferenceId',
+        householdMemberWrapper.household?.clientReferenceId,
+      ),
     if (householdMemberWrapper.headOfHousehold != null)
       AdditionalField(
         'headOfHouseholdUniqueBeneficiaryId',
@@ -952,6 +958,13 @@ List<AdditionalField> getIndividualAdditionalFields(
       AdditionalField(
         'height',
         getIndividualHeight(individualModel),
+      ),
+    if (individualModel != null &&
+        individualModel.name != null &&
+        individualModel.name?.givenName != null)
+      AdditionalField(
+        additional_fields_local.AdditionalFieldsType.childName.toValue(),
+        individualModel.name?.givenName,
       ),
     if (householdMemberWrapper != null)
       ...getAdditionalIndividualInfoFromHouseholdMemberWrapper(
