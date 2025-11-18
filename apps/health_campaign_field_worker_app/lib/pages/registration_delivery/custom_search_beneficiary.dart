@@ -567,6 +567,11 @@ class _CustomSearchBeneficiaryPageState
                                                 blocWrapper.add(
                                                     const RegistrationWrapperEvent
                                                         .clear());
+                                                context
+                                                    .read<DigitScannerBloc>()
+                                                    .add(const DigitScannerEvent
+                                                        .handleScanner());
+                                                selectedTag = "";
                                                 setState(() {
                                                   isProximityEnabled = value;
                                                   lat = locationState.latitude!;
@@ -616,6 +621,10 @@ class _CustomSearchBeneficiaryPageState
                                           blocWrapper.add(
                                               const RegistrationWrapperEvent
                                                   .clear());
+                                          context.read<DigitScannerBloc>().add(
+                                              const DigitScannerEvent
+                                                  .handleScanner());
+                                          selectedTag = "";
                                           triggerGlobalSearchEvent();
                                         },
                                       ),
@@ -647,6 +656,13 @@ class _CustomSearchBeneficiaryPageState
                                       onChanged: (value) {
                                         if (value.isEmpty ||
                                             value.trim().length > 2) {
+                                          blocWrapper.add(
+                                              const RegistrationWrapperEvent
+                                                  .clear());
+                                          context.read<DigitScannerBloc>().add(
+                                              const DigitScannerEvent
+                                                  .handleScanner());
+                                          selectedTag = "";
                                           triggerGlobalSearchEvent();
                                         }
                                       },
