@@ -558,6 +558,7 @@ class CustomHouseholdLocationPageState
       ),
       _addressLine1Key:
           FormControl<String>(value: addressModel?.addressLine1, validators: [
+        Validators.required,
         Validators.delegate(
             (validator) => CustomValidator.requiredMin(validator)),
         Validators.maxLength(64),
@@ -580,6 +581,7 @@ class CustomHouseholdLocationPageState
       ]),
       _postalCodeKey:
           FormControl<String>(value: addressModel?.pincode, validators: [
+        Validators.required,
         Validators.delegate(
             (validator) => CustomValidator.requiredMin(validator)),
         Validators.maxLength(6),
