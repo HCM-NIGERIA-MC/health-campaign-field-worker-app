@@ -85,7 +85,7 @@ class Constants {
     }
   }
 
-  static const String defaultLocalization = "en_NG";
+  static const String defaultLocalization = "fr_NG";
 
   static const String localizationApiPath = 'localization/messages/v1/_search';
   static const String surveyFormPreviewDateFormat = 'dd MMMM yyyy';
