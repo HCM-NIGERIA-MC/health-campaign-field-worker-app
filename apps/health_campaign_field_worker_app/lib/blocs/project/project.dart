@@ -439,48 +439,49 @@ class ProjectBloc extends Bloc<ProjectEvent, ProjectState> {
 
     List<BoundaryModel> boundaries;
     try {
-      if (context.loggedInUserRoles
-          .where(
-            (role) => role.code == RolesType.attendanceStaff.toValue(),
-          )
-          .toList()
-          .isNotEmpty) {
-        final attendanceRegisters = await attendanceRemoteRepository.search(
-          AttendanceRegisterSearchModel(
-            staffId: context.loggedInIndividualId,
-            referenceId: event.model.id,
-            localityCode: event.model.address?.boundary,
-          ),
-        );
-        await attendanceLocalRepository.bulkCreate(attendanceRegisters);
+      // enable attendance when attendance module is live, here not needed
+      // if (context.loggedInUserRoles
+      //     .where(
+      //       (role) => role.code == RolesType.attendanceStaff.toValue(),
+      //     )
+      //     .toList()
+      //     .isNotEmpty) {
+      //   final attendanceRegisters = await attendanceRemoteRepository.search(
+      //     AttendanceRegisterSearchModel(
+      //       staffId: context.loggedInIndividualId,
+      //       referenceId: event.model.id,
+      //       localityCode: event.model.address?.boundary,
+      //     ),
+      //   );
+      //   await attendanceLocalRepository.bulkCreate(attendanceRegisters);
 
-        for (final register in attendanceRegisters) {
-          if (register.attendees != null &&
-              (register.attendees ?? []).isNotEmpty) {
-            try {
-              final individuals = await individualRemoteRepository.search(
-                IndividualSearchModel(
-                  id: register.attendees!.map((e) => e.individualId!).toList(),
-                ),
-              );
-              await individualLocalRepository.bulkCreate(individuals);
-              final logs = await attendanceLogRemoteRepository.search(
-                AttendanceLogSearchModel(
-                  registerId: register.id,
-                ),
-              );
-              await attendanceLogLocalRepository.bulkCreate(logs);
-            } catch (_) {
-              emit(state.copyWith(
-                loading: false,
-                syncError: ProjectSyncErrorType.project,
-              ));
+      //   for (final register in attendanceRegisters) {
+      //     if (register.attendees != null &&
+      //         (register.attendees ?? []).isNotEmpty) {
+      //       try {
+      //         final individuals = await individualRemoteRepository.search(
+      //           IndividualSearchModel(
+      //             id: register.attendees!.map((e) => e.individualId!).toList(),
+      //           ),
+      //         );
+      //         await individualLocalRepository.bulkCreate(individuals);
+      //         final logs = await attendanceLogRemoteRepository.search(
+      //           AttendanceLogSearchModel(
+      //             registerId: register.id,
+      //           ),
+      //         );
+      //         await attendanceLogLocalRepository.bulkCreate(logs);
+      //       } catch (_) {
+      //         emit(state.copyWith(
+      //           loading: false,
+      //           syncError: ProjectSyncErrorType.project,
+      //         ));
 
-              return;
-            }
-          }
-        }
-      }
+      //         return;
+      //       }
+      //     }
+      //   }
+      // }
       final configResult = await mdmsRepository.searchAppConfig(
         envConfig.variables.mdmsApiPath,
         MdmsRequestModel(
@@ -615,8 +616,6 @@ class ProjectBloc extends Bloc<ProjectEvent, ProjectState> {
       ));
     }
 
-    
-
     final getSelectedProjectType = await localSecureStore.selectedProjectType;
     final currentRunningCycle = getSelectedProjectType?.cycles
         ?.where(
@@ -627,14 +626,13 @@ class ProjectBloc extends Bloc<ProjectEvent, ProjectState> {
         )
         .firstOrNull;
 
-
-        try {
+    try {
       final projectFacilities = await projectFacilityLocalRepository
           .search(ProjectFacilitySearchModel());
       final facilities =
           await facilityLocalRepository.search(FacilitySearchModel());
-      await downloadStockDataBasedOnRole(
-          projectFacilities, facilities, event.model.address?.boundaryType, currentRunningCycle);
+      await downloadStockDataBasedOnRole(projectFacilities, facilities,
+          event.model.address?.boundaryType, currentRunningCycle);
     } catch (_) {
       emit(state.copyWith(
         loading: false,
@@ -702,7 +700,8 @@ class ProjectBloc extends Bloc<ProjectEvent, ProjectState> {
   FutureOr<void> downloadStockDataBasedOnRole(
       List<ProjectFacilityModel> projectFacilities,
       List<FacilityModel> allFacilities,
-      String? boundaryType, Cycle? currentRunningCycle) async {
+      String? boundaryType,
+      Cycle? currentRunningCycle) async {
     final userObject = await localSecureStore.userRequestModel;
     final userRoles = userObject!.roles.map((e) => e.code);
     final lastChangedSince = currentRunningCycle?.startDate;
@@ -775,7 +774,9 @@ class ProjectBloc extends Bloc<ProjectEvent, ProjectState> {
     var initialLimit = Constants.apiCallLimit;
 
     final stockEntries = await stockRemoteRepository.search(stockSearchModel,
-        limit: initialLimit, offSet: offset, lastChangedSince: lastChangedSince);
+        limit: initialLimit,
+        offSet: offset,
+        lastChangedSince: lastChangedSince);
 
     return stockEntries;
   }
