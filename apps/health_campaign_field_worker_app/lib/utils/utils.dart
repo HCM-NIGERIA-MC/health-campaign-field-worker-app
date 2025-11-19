@@ -298,8 +298,9 @@ String customFormatAgeRange(String condition) {
 
   // --- AGE SECTION ---
   String agePart = '';
-  final ageMin = minMap['age'];
-  final ageMax = maxMap['age'];
+  double? ageMin = minMap['age']! + 1;
+  double? ageMax = maxMap['age']! - 1;
+
   if (ageMin != null || ageMax != null) {
     final minStr = ageMin != null ? fmtNum(ageMin) : '';
     final maxStr = ageMax != null ? fmtNum(ageMax) : '';
