@@ -9,8 +9,10 @@ import 'package:registration_delivery/models/entities/household.dart';
 import 'package:registration_delivery/models/entities/household_member.dart';
 import 'package:registration_delivery/models/entities/task.dart';
 import 'package:registration_delivery/models/entities/task_resource.dart';
+import 'package:registration_delivery/registration_delivery.dart';
 import 'package:registration_delivery/utils/typedefs.dart';
 
+import '../../data/repositories/custom_task.dart';
 import '../../data/repositories/local/inventory_management/custom_stock.dart';
 import '../../models/entities/assessment_checklist/status.dart';
 import '../../utils/app_enums.dart';
@@ -46,6 +48,19 @@ class SummaryReportBloc extends Bloc<SummaryReportEvent, SummaryReportState> {
     emit(const SummaryReportLoadingState());
 
     try {
+      final selectedCycle = RegistrationDeliverySingleton()
+          .selectedProject
+          ?.additionalDetails
+          ?.projectType
+          ?.cycles
+          ?.where(
+            (e) =>
+                (e.startDate) < DateTime.now().millisecondsSinceEpoch &&
+                (e.endDate) > DateTime.now().millisecondsSinceEpoch,
+          )
+          .firstOrNull;
+      // date to start from
+      final cycleStartDate = selectedCycle?.startDate ?? 0;
       List<HouseholdModel> householdList = [];
       List<HouseholdMemberModel> householdMemberList = [];
       List<TaskModel> taskList = [];
@@ -57,7 +72,9 @@ class SummaryReportBloc extends Bloc<SummaryReportEvent, SummaryReportState> {
           await (householdRepository).search(HouseholdSearchModel());
       householdMemberList = await (householdMemberRepository)
           .search(HouseholdMemberSearchModel(isHeadOfHousehold: false));
-      taskList = await (taskDataRepository).search(TaskSearchModel());
+      taskList = await (taskDataRepository as CustomTaskLocalRepository)
+          .conditionalSearch(TaskSearchModel(),
+              RegistrationDeliverySingleton().loggedInUserUuid, cycleStartDate);
       productVariantList = await (productVariantDataRepository)
           .search(ProductVariantSearchModel());
       for (var element in taskList) {
@@ -102,33 +119,45 @@ class SummaryReportBloc extends Bloc<SummaryReportEvent, SummaryReportState> {
       Map<String, int> dateVsAzmStockCount = {};
       Map<String, Map<String, int>> dateVsEntityVsCountMap = {};
       for (var element in householdMemberList) {
-        var dateKey = DigitDateUtils.getDateFromTimestamp(
-            element.clientAuditDetails!.createdTime);
-        dateVsHouseholdMembersList.putIfAbsent(dateKey, () => []).add(element);
+        if (element.clientAuditDetails!.createdTime >= cycleStartDate) {
+          var dateKey = DigitDateUtils.getDateFromTimestamp(
+              element.clientAuditDetails!.createdTime);
+          dateVsHouseholdMembersList
+              .putIfAbsent(dateKey, () => [])
+              .add(element);
+        }
       }
       for (var element in administeredChildrenList) {
-        var dateKey = DigitDateUtils.getDateFromTimestamp(
-            element.clientAuditDetails!.createdTime);
-        dateVsAdministeredChilderenList
-            .putIfAbsent(dateKey, () => [])
-            .add(element);
+        if (element.clientAuditDetails!.createdTime >= cycleStartDate) {
+          var dateKey = DigitDateUtils.getDateFromTimestamp(
+              element.clientAuditDetails!.createdTime);
+          dateVsAdministeredChilderenList
+              .putIfAbsent(dateKey, () => [])
+              .add(element);
+        }
       }
       for (var element in AzmList) {
-        var dateKey = DigitDateUtils.getDateFromTimestamp(
-            element.auditDetails!.createdTime);
-        dateVsAzmList.putIfAbsent(dateKey, () => []).add(element);
+        if (element.auditDetails!.createdTime >= cycleStartDate) {
+          var dateKey = DigitDateUtils.getDateFromTimestamp(
+              element.auditDetails!.createdTime);
+          dateVsAzmList.putIfAbsent(dateKey, () => []).add(element);
+        }
       }
 
       for (var element in AzmStockList) {
-        var dateKey = DigitDateUtils.getDateFromTimestamp(
-            element.auditDetails!.createdTime);
-        dateVsAzmStockList.putIfAbsent(dateKey, () => []).add(element);
+        if (element.auditDetails!.createdTime >= cycleStartDate) {
+          var dateKey = DigitDateUtils.getDateFromTimestamp(
+              element.auditDetails!.createdTime);
+          dateVsAzmStockList.putIfAbsent(dateKey, () => []).add(element);
+        }
       }
 
       for (var element in householdList) {
-        var dateKey = DigitDateUtils.getDateFromTimestamp(
-            element.auditDetails!.createdTime);
-        dateVsHouseholdList.putIfAbsent(dateKey, () => []).add(element);
+        if (element.auditDetails!.createdTime >= cycleStartDate) {
+          var dateKey = DigitDateUtils.getDateFromTimestamp(
+              element.auditDetails!.createdTime);
+          dateVsHouseholdList.putIfAbsent(dateKey, () => []).add(element);
+        }
       }
 
       // get a set of unique dates
@@ -140,6 +169,16 @@ class SummaryReportBloc extends Bloc<SummaryReportEvent, SummaryReportState> {
         dateVsAzmList,
         uniqueDates,
       );
+
+      // If a cycle start date is provided, filter uniqueDates to include only
+      // dates greater than or equal to the cycle start date.
+      // uniqueDates are formatted as 'dd/MM/yyyy' or 'dd/MM/yy' .
+      if (cycleStartDate != null) {
+        uniqueDates = uniqueDates
+            .where((dateStr) =>
+                DigitDateUtils.dateToTimeStamp(dateStr) >= cycleStartDate)
+            .toSet();
+      }
 
       // populate the day vs count for that day map
       populateDateVsCountMap(
