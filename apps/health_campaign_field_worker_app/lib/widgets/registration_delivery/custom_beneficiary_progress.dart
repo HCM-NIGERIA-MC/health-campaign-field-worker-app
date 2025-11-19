@@ -113,7 +113,7 @@ class _CustomBeneficiaryProgressBarState
 
   @override
   Widget build(BuildContext context) {
-    const target = 70;
+    const target = 100;
 
     return DigitCard(
       child: CustomProgressIndicatorContainer(
