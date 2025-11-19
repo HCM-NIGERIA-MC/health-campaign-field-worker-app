@@ -4,14 +4,12 @@ import 'dart:async';
 import 'package:digit_data_model/data_model.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
-
-import 'package:inventory_management/utils/typedefs.dart';
 import 'package:inventory_management/models/entities/stock.dart';
 import 'package:inventory_management/models/entities/stock_reconciliation.dart';
 import 'package:inventory_management/models/entities/transaction_reason.dart';
 import 'package:inventory_management/models/entities/transaction_type.dart';
+import 'package:inventory_management/utils/typedefs.dart';
 import 'package:inventory_management/utils/utils.dart';
-import 'package:path/path.dart';
 
 // part 'custom_stock_reconciliation.freezed.dart';
 part 'custom_stock_reconciliation.freezed.dart';
@@ -266,9 +264,23 @@ class StockReconciliationState with _$StockReconciliationState {
       );
 
   // Getter for in-hand stock
-  num get stockInHand =>
-      (stockReceived + stockReturned) -
-      (stockIssued + stockDamaged + stockLost);
+  num get stockInHand {
+    final isCddUser = InventorySingleton().isDistributor ?? false;
+
+    num stockInHand = 0;
+    if (isCddUser) {
+      stockInHand = stockReceived -
+          (stockReturned + stockIssued + stockDamaged + stockLost);
+    } else {
+      stockInHand = (stockReceived + stockReturned) -
+          (stockIssued + stockDamaged + stockLost);
+    }
+
+    if (stockInHand < 0) {
+      stockInHand = 0;
+    }
+    return stockInHand;
+  }
 
   // Method for calculating quantity count
   num _getQuantityCount(Iterable<StockModel> stocks) {

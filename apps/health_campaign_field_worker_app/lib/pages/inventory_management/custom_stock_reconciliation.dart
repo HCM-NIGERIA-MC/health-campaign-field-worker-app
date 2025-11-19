@@ -12,24 +12,23 @@ import 'package:digit_ui_components/widgets/molecules/show_pop_up.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
+import 'package:inventory_management/blocs/product_variant.dart';
 import 'package:inventory_management/inventory_management.dart'
     hide CustomValidator;
 import 'package:inventory_management/router/inventory_router.gm.dart';
-import 'package:reactive_forms/reactive_forms.dart';
-
 import 'package:inventory_management/utils/i18_key_constants.dart' as i18;
-import '../../blocs/inventory_management/custom_stock_reconciliation.dart';
-import '../../utils/i18_key_constants.dart' as i18_local;
-import 'package:inventory_management/widgets/inventory/no_facilities_assigned_dialog.dart';
-import 'package:inventory_management/widgets/localized.dart';
-import 'package:inventory_management/blocs/product_variant.dart';
 // import 'package:inventory_management/blocs/stock_reconciliation.dart';
 import 'package:inventory_management/widgets/back_navigation_help_header.dart';
 import 'package:inventory_management/widgets/component_wrapper/facility_bloc_wrapper.dart';
 import 'package:inventory_management/widgets/component_wrapper/product_variant_bloc_wrapper.dart';
+import 'package:inventory_management/widgets/inventory/no_facilities_assigned_dialog.dart';
+import 'package:inventory_management/widgets/localized.dart';
+import 'package:reactive_forms/reactive_forms.dart';
 
+import '../../blocs/inventory_management/custom_stock_reconciliation.dart';
 import '../../utils/constants.dart';
 import '../../utils/extensions/extensions.dart';
+import '../../utils/i18_key_constants.dart' as i18_local;
 import '../../utils/utils.dart' show CustomValidator;
 
 @RoutePage()
@@ -629,8 +628,11 @@ class CustomStockReconciliationPageState
                                   InfoCard(
                                     type: InfoType.info,
                                     description: localizations.translate(
-                                      i18.stockReconciliationDetails
-                                          .infoCardContent,
+                                      InventorySingleton().isDistributor!
+                                          ? i18_local.stockReconciliationDetails
+                                              .infoCardContentForCdd
+                                          : i18.stockReconciliationDetails
+                                              .infoCardContent,
                                     ),
                                     title: localizations.translate(
                                       i18.stockReconciliationDetails

@@ -532,6 +532,9 @@ class StockDetails {
   String get quantityUnusedReturnedLabel =>
       'STOCK_DETAILS_UNUSED_QUANTITY_RETURNED';
 
+  String get quantityUsedReturnedLabel =>
+      'STOCK_DETAILS_USED_QUANTITY_RETURNED';
+
   String get quantityPartialReturnedLabel =>
       'STOCK_DETAILS_PARTIAL_QUANTITY_RETURNED';
 
@@ -555,6 +558,9 @@ class StockReconciliationDetails {
   const StockReconciliationDetails();
 
   String get commentRequiredError => 'RECONCILIATION_COMMENT_IS_REQUIRED';
+
+  String get infoCardContentForCdd =>
+      'STOCK_RECONCILIATION_INFO_CARD_CONTENT_CDD';
 }
 
 class InventoryReportDetails {
