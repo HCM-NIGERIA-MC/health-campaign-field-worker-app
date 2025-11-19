@@ -398,7 +398,7 @@ class CustomHouseholdLocationPageState
                                   .replaceAll('{}', maxLength.toString()),
                             },
                             builder: (field) => LabeledField(
-                              isRequired: true,
+                              isRequired: false,
                               label: localizations.translate(i18
                                   .householdLocation
                                   .householdAddressLine1LabelText),
@@ -482,7 +482,7 @@ class CustomHouseholdLocationPageState
                                       .replaceAll('{}', maxLength.toString()),
                                 },
                                 builder: (field) => LabeledField(
-                                    isRequired: true,
+                                    isRequired: false,
                                     label: localizations.translate(i18
                                         .householdLocation.postalCodeFormLabel),
                                     child: DigitTextFormInput(
