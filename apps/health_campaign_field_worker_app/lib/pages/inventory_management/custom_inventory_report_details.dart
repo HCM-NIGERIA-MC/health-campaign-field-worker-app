@@ -1,6 +1,5 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:collection/collection.dart';
-import 'package:digit_data_model/data/local_store/sql_store/tables/product_variant.dart';
 import 'package:digit_data_model/data_model.dart';
 import 'package:digit_ui_components/digit_components.dart';
 import 'package:digit_ui_components/theme/digit_extended_theme.dart';
@@ -18,7 +17,6 @@ import 'package:inventory_management/widgets/component_wrapper/product_variant_b
 import 'package:inventory_management/widgets/inventory/no_facilities_assigned_dialog.dart';
 import 'package:inventory_management/widgets/localized.dart';
 import 'package:inventory_management/widgets/reports/readonly_pluto_grid.dart';
-// import 'package:inventory_management/blocs/inventory_report.dart';
 import 'package:inventory_management/blocs/product_variant.dart';
 import 'package:inventory_management/blocs/stock_reconciliation.dart';
 import 'package:inventory_management/models/entities/stock.dart';
@@ -628,32 +626,32 @@ class CustomInventoryReportDetailsPageState
                                                           DigitGridCell(
                                                               key:
                                                                   transactingPartyKey,
-                                                              value:
-                                                                  // widget.reportType ==
-                                                                  //             InventoryReportType
-                                                                  //                 .receipt ||
-                                                                  widget.reportType ==
-                                                                          InventoryReportType
-                                                                              .dispatch
-                                                                      ? model.receiverId ==
-                                                                              null
-                                                                          ? localizations.translate(i18
-                                                                              .common
-                                                                              .noMatchFound)
-                                                                          : model.receiverType ==
-                                                                                  'STAFF'
-                                                                              ? (model.additionalFields?.fields.firstWhereOrNull((e) => e.key == 'distributorName')?.value ??
-                                                                                  'Delivery Team')
-                                                                              : localizations.translate(
-                                                                                  'FAC_${model.receiverId}')
-                                                                      : model.senderId ==
-                                                                              null
-                                                                          ? localizations.translate(i18
-                                                                              .common
-                                                                              .noMatchFound)
-                                                                          : model.senderType == 'STAFF'
-                                                                              ? (model.additionalFields?.fields.firstWhereOrNull((e) => e.key == 'distributorName')?.value ?? 'Delivery Team')
-                                                                              : localizations.translate('FAC_${model.senderId}')),
+                                                              value: widget
+                                                                          .reportType ==
+                                                                      InventoryReportType
+                                                                          .dispatch
+                                                                  ? model.receiverId ==
+                                                                          null
+                                                                      ? localizations.translate(i18
+                                                                          .common
+                                                                          .noMatchFound)
+                                                                      : model.receiverType ==
+                                                                              'STAFF'
+                                                                          ? (model.additionalFields?.fields.firstWhereOrNull((e) => e.key == 'distributorName')?.value ??
+                                                                              'Delivery Team')
+                                                                          : localizations.translate(
+                                                                              'FAC_${model.receiverId}')
+                                                                  : model.senderId ==
+                                                                          null
+                                                                      ? localizations.translate(i18
+                                                                          .common
+                                                                          .noMatchFound)
+                                                                      : model.senderType ==
+                                                                              'STAFF'
+                                                                          ? (model.additionalFields?.fields.firstWhereOrNull((e) => e.key == 'distributorName')?.value ??
+                                                                              'Delivery Team')
+                                                                          : localizations
+                                                                              .translate('FAC_${model.senderId}')),
                                                         ],
                                                       ),
                                                   ],

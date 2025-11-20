@@ -24,7 +24,7 @@ class LocalSecureStore {
   static const blueVasKey = 'blueVas';
   static const redVasKey = 'redVas';
 
-  List<String> keysToKeep = [spaq1Key, spaq2Key,blueVasKey,redVasKey];
+  List<String> keysToKeep = [spaq1Key, spaq2Key, blueVasKey, redVasKey];
 
   final storage = const FlutterSecureStorage();
 
@@ -206,6 +206,7 @@ class LocalSecureStore {
       return 0;
     }
   }
+
   Future<int> get redVas async {
     final userBody = await storage.read(key: userObjectKey);
     if (userBody == null) return 0;
@@ -224,7 +225,8 @@ class LocalSecureStore {
     }
   }
 
-  Future<void> setSpaqCounts(int spaq1, int spaq2, int blueVas,int redVas) async {
+  Future<void> setSpaqCounts(
+      int spaq1, int spaq2, int blueVas, int redVas) async {
     final userBody = await storage.read(key: userObjectKey);
     if (userBody == null) return;
 
@@ -371,9 +373,6 @@ class LocalSecureStore {
   }
 
   Future<void> deleteAll() async {
-
-   // await storage.deleteAll();
-
     Map<String, String> allValues = await storage.readAll();
     List<String> allKeys = allValues.keys.toList();
 

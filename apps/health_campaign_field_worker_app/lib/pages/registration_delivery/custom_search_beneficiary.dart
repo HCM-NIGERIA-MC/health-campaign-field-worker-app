@@ -1,5 +1,4 @@
 import 'package:auto_route/auto_route.dart';
-import 'package:digit_components/widgets/digit_dialog.dart';
 import 'package:digit_components/widgets/digit_info_card.dart';
 import 'package:digit_data_model/data_model.dart';
 import 'package:digit_data_model/models/entities/household_type.dart';
@@ -31,7 +30,6 @@ import '../../utils/i18_key_constants.dart' as i18_local;
 import 'package:registration_delivery/models/entities/status.dart';
 import 'package:registration_delivery/router/registration_delivery_router.gm.dart';
 import 'package:registration_delivery/utils/utils.dart';
-import 'package:registration_delivery/widgets/beneficiary/view_beneficiary_card.dart';
 import 'package:registration_delivery/widgets/localized.dart';
 import 'package:registration_delivery/widgets/status_filter/status_filter.dart';
 

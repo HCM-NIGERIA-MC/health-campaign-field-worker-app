@@ -6,7 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:health_campaign_field_worker_app/blocs/localization/app_localization.dart';
 import 'package:inventory_management/utils/constants.dart';
 import 'package:inventory_management/widgets/localized.dart';
-import 'package:path/path.dart';
 import 'package:reactive_forms/reactive_forms.dart';
 
 import '../../../utils/i18_key_constants.dart' as i18;

@@ -170,13 +170,9 @@ class CustomViewBeneficiaryCardState
         final isBeneficiaryReferred =
             checkBeneficiaryReferredSMC(taskData, context.selectedCycle);
         final isSMCDelivered =
-            // util_local.checkStatusSMC(taskData, currentCycle);
-             !assessmentSMCPending(taskData, context.selectedCycle);
+            !assessmentSMCPending(taskData, context.selectedCycle);
 
         final isVASDelivered = false;
-        print(
-            "The current status of SMC and VAS is $isSMCDelivered and $isVASDelivered $ageInMonths");
-
         final isHead = e.clientReferenceId ==
             householdMember.headOfHousehold?.clientReferenceId;
 
@@ -420,7 +416,6 @@ class CustomViewBeneficiaryCardState
       if (taskData.isEmpty) {
         return localizations.translate(Status.notVisited.toValue());
       } else if (statusKeys.isVASDelivered && statusKeys.isSMCDelivered) {
-        print("Is it even been called?");
         // You can concatenate both, or pick one as per your business logic
         return localizations.translate(
             i18_local.householdOverView.householdOverViewVASDeliveredIconLabel);

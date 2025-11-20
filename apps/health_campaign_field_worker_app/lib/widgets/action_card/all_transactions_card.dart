@@ -4,8 +4,6 @@ import 'package:digit_ui_components/theme/spacers.dart';
 import 'package:flutter/material.dart';
 import 'package:inventory_management/utils/utils.dart';
 
-import 'package:qr_flutter/qr_flutter.dart';
-
 class TransactionsCard extends StatelessWidget {
   final String minNumber;
   final String cddCode;
@@ -38,21 +36,20 @@ class TransactionsCard extends StatelessWidget {
           color: Colors.grey[400]!,
           width: 1,
         ),
-        borderRadius: BorderRadius.circular(8.0), // Replace spacer2 with 8.0
+        borderRadius: BorderRadius.circular(spacer2),
       ),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 8),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Replace spacer4 with 16.0
             Container(
               width: double.infinity,
               decoration: BoxDecoration(
                 color: Colors.white,
-                borderRadius: BorderRadius.circular(8.0), // Replace spacer2
+                borderRadius: BorderRadius.circular(spacer2),
               ),
-              padding: const EdgeInsets.all(8.0), // Replace spacer2
+              padding: const EdgeInsets.all(spacer2),
               child: Text(
                 minNumber,
                 style: const TextStyle(
@@ -62,52 +59,42 @@ class TransactionsCard extends StatelessWidget {
                 ),
               ),
             ),
-
             if (!InventorySingleton().isWareHouseMgr)
-              const SizedBox(height: 8.0), // Replace spacer2
+              const SizedBox(height: spacer2),
             Text(cddCode),
-            const SizedBox(height: 8.0), // Replace spacer2
-
-            const SizedBox(height: 8.0), // Replace spacer2
+            const SizedBox(height: spacer2),
+            const SizedBox(height: spacer2),
             ...items.map((item) {
               return Padding(
-                padding: const EdgeInsets.only(bottom: 8.0), // Replace spacer2
+                padding: const EdgeInsets.only(bottom: spacer2),
                 child: Row(
                   children: [
                     Text(
                       item['name']!,
                       style: textTheme.bodyL,
                     ),
-                    const SizedBox(width: 8.0), // Replace spacer2
+                    const SizedBox(width: spacer2),
                     Text(
                       "|",
                       style: textTheme.bodyL,
                     ),
-                    const SizedBox(width: 8.0),
+                    const SizedBox(width: spacer2),
                     Text(
                       "${item['quantity']!} Units",
                       style: textTheme.bodyL,
                     ),
-                    // const SizedBox(width: 8.0),
-                    // Text(
-                    //   "|",
-                    //   style: textTheme.bodyL,
-                    // ),
-                    // Replace spacer2
                   ],
                 ),
               );
             }).toList(),
-
             if (date.trim().isNotEmpty) ...[
-              const SizedBox(width: 8.0),
+              const SizedBox(width: spacer2),
               Text(
                 date,
                 style: textTheme.bodyL,
               ),
             ],
-
-            const SizedBox(height: 8.0), // Replace spacer2
+            const SizedBox(height: spacer2),
             Row(
               children: [
                 Text("Waybill",
@@ -116,7 +103,7 @@ class TransactionsCard extends StatelessWidget {
                     )),
                 const SizedBox(
                   width: spacer4,
-                ), // Replace spacer2
+                ),
                 Text(waybillNumber),
               ],
             ),

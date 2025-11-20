@@ -377,14 +377,6 @@ class _RecordRedosePageState extends LocalizedState<RecordRedosePage> {
                                                                       -1
                                                                   : 0;
                                                             }
-
-                                                            // spaq1 = quantity !=
-                                                            //         'null'
-                                                            //     ? int.parse(quantity
-                                                            //             .toString()) *
-                                                            //         -1
-                                                            //     : 0;
-
                                                             context
                                                                 .read<
                                                                     AuthBloc>()
@@ -962,7 +954,6 @@ class _RecordRedosePageState extends LocalizedState<RecordRedosePage> {
             ],
             value:
                 "${productVariants[0].quantity ?? 0} ${localizations.translate(i18_local.beneficiaryDetails.beneficiaryDoseUnit)}",
-            // value: productVariants[0].quantity ?? 0,
           ),
         ),
       ]),

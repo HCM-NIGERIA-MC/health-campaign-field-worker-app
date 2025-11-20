@@ -156,7 +156,6 @@ class Constants {
       ),
       LocationTrackerLocalBaseRepository(
           sql, LocationTrackerOpLogManager(isar)),
-      // StockLocalRepository(sql, StockOpLogManager(isar)),
       CustomStockLocalRepository(sql, StockOpLogManager(isar)),
       StockReconciliationLocalRepository(
         sql,
@@ -173,9 +172,7 @@ class Constants {
       TaskLocalRepository(sql, TaskOpLogManager(isar)),
       SideEffectLocalRepository(sql, SideEffectOpLogManager(isar)),
       ReferralLocalRepository(sql, ReferralOpLogManager(isar)),
-
       HFReferralLocalRepository(sql, HFReferralOpLogManager(isar)),
-
       AttendanceLocalRepository(
         sql,
         AttendanceOpLogManager(isar),
@@ -184,7 +181,6 @@ class Constants {
         sql,
         AttendanceLogOpLogManager(isar),
       ),
-
       ServiceLocalRepository(sql, ServiceOpLogManager(isar)),
     ];
   }

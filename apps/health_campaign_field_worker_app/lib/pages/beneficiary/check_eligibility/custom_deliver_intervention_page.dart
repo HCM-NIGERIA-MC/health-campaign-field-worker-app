@@ -1,7 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:collection/collection.dart';
 import 'package:digit_components/widgets/digit_dialog.dart' as dialog;
-// import 'package:digit_components/digit_components.dart';
 import 'package:digit_data_model/data_model.dart';
 import 'package:digit_ui_components/digit_components.dart';
 import 'package:digit_ui_components/services/location_bloc.dart';
@@ -15,7 +14,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:health_campaign_field_worker_app/blocs/auth/auth.dart';
-import 'package:health_campaign_field_worker_app/utils/constants.dart';
 import 'package:intl/intl.dart';
 import 'package:reactive_forms/reactive_forms.dart';
 import 'package:registration_delivery/models/entities/deliver_strategy_type.dart';
@@ -27,8 +25,6 @@ import 'package:registration_delivery/utils/utils.dart';
 import 'package:registration_delivery/models/entities/additional_fields_type.dart';
 import 'package:registration_delivery/models/entities/status.dart';
 import 'package:registration_delivery/utils/i18_key_constants.dart' as i18;
-import 'package:registration_delivery/widgets/back_navigation_help_header.dart';
-import 'package:registration_delivery/widgets/beneficiary/resource_beneficiary_card.dart';
 import 'package:registration_delivery/widgets/component_wrapper/product_variant_bloc_wrapper.dart';
 import 'package:registration_delivery/widgets/localized.dart';
 
@@ -632,11 +628,6 @@ class CustomDeliverInterventionPageState
                                                       LabeledField(
                                                     label:
                                                         localizations.translate(
-                                                      // widget.eligibilityAssessmentType ==
-                                                      //         EligibilityAssessmentType
-                                                      //             .smc
-                                                      // ? i18.householdDetails
-                                                      //     .dateOfRegistrationLabel:
                                                       i18_local.householdDetails
                                                           .dateOfAdministrationLabel,
                                                     ),
@@ -857,9 +848,6 @@ class CustomDeliverInterventionPageState
                 tenantId: RegistrationDeliverySingleton().tenantId,
                 rowVersion: oldTask?.rowVersion ?? 1,
                 quantity: productQuantity.toString(),
-                //  (((form.control(_quantityDistributedKey) as FormArray)
-                //         .value)?[productvariantList.indexOf(e)])
-                //     .toString(),
                 clientAuditDetails: ClientAuditDetails(
                   createdBy: RegistrationDeliverySingleton().loggedInUserUuid!,
                   createdTime: context.millisecondsSinceEpoch(),

@@ -462,27 +462,8 @@ class CustomSearchHouseholdsBloc
             ),
     );
 
-    // Search for individual results using the extracted IDs and search text in last name.
-    // final lastNameClientRefResults = await individual.search(
-    //   event.isProximityEnabled
-    //       ? IndividualSearchModel(
-    //           clientReferenceId: indIds,
-    //           name: NameSearchModel(
-    //             familyName: event.searchText.trim(),
-    //           ),
-    //         )
-    //       : IndividualSearchModel(
-    //           name: NameSearchModel(
-    //             familyName: event.searchText.trim(),
-    //           ),
-    //           offset: event.offset,
-    //           limit: event.limit,
-    //         ),
-    // );
-
     final individualClientReferenceIds = [
       ...firstNameClientRefResults,
-      // ...lastNameClientRefResults,
     ].map((e) => e.clientReferenceId).toList();
     // Search for individual results using the extracted IDs and search text.
     final List<HouseholdMemberModel> householdMembers =

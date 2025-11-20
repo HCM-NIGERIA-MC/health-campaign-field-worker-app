@@ -1,7 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:digit_data_model/data_model.dart';
 import 'package:digit_scanner/blocs/scanner.dart';
-import 'package:digit_scanner/router/digit_scanner_router.gm.dart';
 import 'package:digit_ui_components/enum/app_enums.dart';
 import 'package:digit_ui_components/theme/digit_extended_theme.dart';
 import 'package:digit_ui_components/widgets/atoms/digit_button.dart';
@@ -17,7 +16,6 @@ import 'package:survey_form/survey_form.dart';
 
 import 'package:referral_reconciliation/blocs/search_referral_reconciliations.dart';
 import 'package:referral_reconciliation/models/entities/hf_referral.dart';
-// import 'package:referral_reconciliation/router/referral_reconciliation_router.gm.dart';
 import 'package:health_campaign_field_worker_app/router/app_router.dart';
 import 'package:referral_reconciliation/utils/i18_key_constants.dart' as i18;
 import '../../utils/i18_key_constants.dart' as i18_local;
@@ -107,7 +105,8 @@ class _CustomSearchReferralReconciliationsPageState
                                           alignment: Alignment.topLeft,
                                           child: Text(
                                             localizations.translate(
-                                              i18_local.searchBeneficiary.searchBeneficiaryLabelText,
+                                              i18_local.searchBeneficiary
+                                                  .searchBeneficiaryLabelText,
                                             ),
                                             style: textTheme.headingXl.copyWith(
                                                 color: theme

@@ -112,10 +112,7 @@ class CustomMemberCard extends StatelessWidget {
       );
     }
     if ((isSMCDelivered ||
-        //isVASDelivered ||
         isBeneficiaryReferredSMC ||
-        // isBeneficiaryReferredVAS ||
-        // isBeneficiaryInEligibleVAS ||
         isBeneficiaryInEligibleSMC)) {
       return Column(
         children: [
@@ -167,27 +164,6 @@ class CustomMemberCard extends StatelessWidget {
                 iconColor: theme.colorScheme.error,
               ),
             ),
-          // if (isBeneficiaryReferredSMC || isBeneficiaryReferredVAS)
-          //   Align(
-          //     alignment: Alignment.centerLeft,
-          //     child: DigitIconButton(
-          //       icon: Icons.info_rounded,
-          //       iconSize: 20,
-          //       iconText: localizations.translate(
-          //         isBeneficiaryReferredSMC || isBeneficiaryReferredVAS
-          //             ? isBeneficiaryReferredSMC
-          //                 ? (i18_local.householdOverView
-          //                     .householdOverViewBeneficiaryReferredSMCLabel)
-          //                 : (i18_local.householdOverView
-          //                     .householdOverViewBeneficiaryReferredVACLabel)
-          //             : isBeneficiaryRefused
-          //                 ? Status.beneficiaryRefused.toValue()
-          //                 : Status.notVisited.toValue(),
-          //       ),
-          //       iconTextColor: theme.colorScheme.error,
-          //       iconColor: theme.colorScheme.error,
-          //     ),
-          //   ),
         ],
       );
     } else if (isBeneficiaryRefused) {

@@ -14,22 +14,13 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:health_campaign_field_worker_app/widgets/custom_back_navigation.dart';
 import 'package:reactive_forms/reactive_forms.dart';
 import 'package:registration_delivery/utils/extensions/extensions.dart';
-
-import 'package:registration_delivery/router/registration_delivery_router.gm.dart';
 import 'package:registration_delivery/utils/i18_key_constants.dart' as i18;
-import '../../utils/i18_key_constants.dart' as i18_local;
 import 'package:registration_delivery/utils/utils.dart';
-import 'package:registration_delivery/widgets/back_navigation_help_header.dart';
 import 'package:registration_delivery/widgets/localized.dart';
 import 'package:registration_delivery/widgets/showcase/config/showcase_constants.dart';
-import 'package:registration_delivery/widgets/showcase/showcase_button.dart';
-
 import '../../blocs/registration_delivery/custom_beneficairy_registration.dart';
-import '../../models/entities/identifier_types.dart';
 import '../../router/app_router.dart';
-import '../../utils/constants.dart';
 import '../../utils/utils.dart' as local_utils;
-import 'caregiver_consent.dart';
 
 @RoutePage()
 class CustomHouseholdLocationPage extends LocalizedStatefulWidget {

@@ -1,14 +1,9 @@
-import 'package:collection/collection.dart';
 import 'package:digit_components/digit_components.dart';
-import 'package:digit_components/utils/date_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:health_campaign_field_worker_app/widgets/localized.dart';
 import 'package:health_campaign_field_worker_app/widgets/reports/readonly_pluto_grid.dart';
-import 'package:intl/intl.dart';
 import 'package:reactive_forms/reactive_forms.dart';
-import 'package:registration_delivery/models/entities/household.dart';
-import 'package:registration_delivery/registration_delivery.dart';
 import 'package:registration_delivery/widgets/back_navigation_help_header.dart';
 
 import '../../../router/app_router.dart';
@@ -136,39 +131,33 @@ class _CustomSummaryReportState
                               width: 120,
                             ),
                             DigitGridColumn(
-                              // label: "Household registered",
                               label: localizations.translate(
                                   i18Local.homeShowcase.householdRegistered),
                               key: _householdRegisteredKey,
                               width: 180,
                             ),
                             DigitGridColumn(
-                              // label: "Children treated",
                               label: localizations.translate(
                                   i18Local.homeShowcase.childrenTreated),
                               key: _administeredChildrenKey,
                               width: 180,
                             ),
                             DigitGridColumn(
-                                // label: "Children treated (in %)",
                                 label: localizations.translate(i18Local
                                     .homeShowcase.childrenTreatedCoverage),
                                 key: _administeredChildrenPercentageKey,
                                 width: 180),
                             DigitGridColumn(
-                                // label: "Drugs received (in mL)",
                                 label: localizations.translate(
                                     i18Local.homeShowcase.drugsReceived),
                                 key: _azmStockReceivedKey,
                                 width: 180),
                             DigitGridColumn(
-                                // label: "Drugs used (in mL)",
                                 label: localizations.translate(
                                     i18Local.homeShowcase.drugsUtilized),
                                 key: _azmUtilizedKey,
                                 width: 180),
                             DigitGridColumn(
-                                // label: "Drugs balance (in mL)",
                                 label: localizations.translate(
                                     i18Local.homeShowcase.drugsBalance),
                                 key: _azmStockLeftKey,

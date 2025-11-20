@@ -381,8 +381,6 @@ bool assessmentSMCPending(List<TaskModel>? tasks, ProjectCycle? currentCycle) {
           successfulTaskCreatedTime <= currentCycle.endDate;
 
   return !isLastCycleRunning;
-
-  //return successfulTask == null;
 }
 
 bool assessmentVASPending(List<TaskModel>? tasks) {
@@ -554,27 +552,6 @@ DeliveryDoseCriteria? fetchProductVariant(ProjectCycleDelivery? currentDelivery,
         if (height != null) 'height': height,
       };
       if (condition != null) {
-        // if (condition.contains('and')) {
-        //   final conditions = condition.split('and');
-
-        //   List expressionParser = [];
-        //   for (var element in conditions) {
-        //     final expression = FormulaParser(
-        //       element,
-        //       {
-        //         ...variables,
-        //         // 'age': individualAgeInMonths,
-        //         if (gender != null) 'gender': gender,
-        //         if (memberCount != null) 'memberCount': memberCount,
-        //         if (roomCount != null) 'roomCount': roomCount
-        //       },
-        //     );
-        //     final error = expression.parse;
-        //     expressionParser.add(error["value"]);
-        //   }
-
-        //   return expressionParser.where((element) => element == true).length ==
-        //       conditions.length;
         final normalized = condition.replaceAll(' ', '');
 
         // Split by logical operators
@@ -608,8 +585,6 @@ DeliveryDoseCriteria? fetchProductVariant(ProjectCycleDelivery? currentDelivery,
           List expressionParser = [];
           for (var element in conditions) {
             final expression = CustomFormulaParser.parseCondition(element, {
-              // if (individualModel != null && individualAgeInMonths != 0)
-              //   'age': individualAgeInMonths,
               ...variables,
               if (gender != null) 'gender': gender,
               if (memberCount != null) 'memberCount': memberCount,
@@ -632,8 +607,6 @@ DeliveryDoseCriteria? fetchProductVariant(ProjectCycleDelivery? currentDelivery,
           List expressionParser = [];
           for (var element in conditions) {
             final expression = CustomFormulaParser.parseCondition(element, {
-              // if (individualModel != null && individualAgeInMonths != 0)
-              //   'age': individualAgeInMonths,
               ...variables,
               if (gender != null) 'gender': gender,
               if (memberCount != null) 'memberCount': memberCount,

@@ -1,6 +1,5 @@
 import 'package:digit_components/widgets/atoms/digit_toaster.dart';
 import 'package:digit_data_model/data_model.dart';
-import 'package:digit_data_model/models/entities/household_type.dart';
 import 'package:digit_ui_components/digit_components.dart';
 import 'package:digit_ui_components/models/RadioButtonModel.dart';
 import 'package:digit_ui_components/services/location_bloc.dart';
@@ -19,11 +18,9 @@ import 'package:registration_delivery/utils/utils.dart';
 import 'package:registration_delivery/widgets/localized.dart';
 
 import '../../blocs/registration_delivery/custom_beneficairy_registration.dart';
-import '../../models/entities/identifier_types.dart';
 import '../../router/app_router.dart';
 import '../../utils/extensions/extensions.dart';
 import '../../utils/i18_key_constants.dart' as i18_local;
-import '../../utils/registration_delivery/registration_delivery_utils.dart';
 import 'custom_beneficiary_acknowledgement.dart';
 
 enum CaregiverConsentEnum {
@@ -52,7 +49,6 @@ class CaregiverConsentPageState extends LocalizedState<CaregiverConsentPage> {
     final bloc = context.read<CustomBeneficiaryRegistrationBloc>();
     final router = context.router;
     var household = householdModel;
-    //final String householdid = await generateHouseholdId();
 
     household ??= HouseholdModel(
       tenantId: RegistrationDeliverySingleton().tenantId,
@@ -96,7 +92,6 @@ class CaregiverConsentPageState extends LocalizedState<CaregiverConsentPage> {
           lastModifiedTime: context.millisecondsSinceEpoch(),
         ),
         address: addressModel,
-        // id: householdid,
         additionalFields: HouseholdAdditionalFields(version: 1, fields: [
           const AdditionalField(
             "caregiver_consent_registration",
@@ -106,8 +101,6 @@ class CaregiverConsentPageState extends LocalizedState<CaregiverConsentPage> {
             "caregiver_consent_comment",
             consentComment.text,
           ),
-
-          // AdditionalField(IdentifierTypes.uniqueBeneficiaryID.toValue(), householdid),
         ]));
 
     bloc.add(
@@ -123,29 +116,6 @@ class CaregiverConsentPageState extends LocalizedState<CaregiverConsentPage> {
         enableViewHousehold: true,
         acknowledgementType: AcknowledgementType.addHousehold));
   }
-
-// TODO: commented code as householdId not required
-  // Future<String> generateHouseholdId() async {
-  //   final userId = RegistrationDeliverySingleton().loggedInUserUuid;
-
-  //   final boundaryBloc = context.read<BoundaryBloc>().state;
-  //   final code = boundaryBloc.boundaryList.first.code;
-  //   final bname = boundaryBloc.boundaryList.first.name;
-
-  //   final locality = (code == null || bname == null)
-  //       ? null
-  //       : LocalityModel(code: code, name: bname);
-
-  //   final localityCode = locality!.code;
-
-  //   final ids = await UniqueIdGeneration().generateUniqueId(
-  //     localityCode: localityCode,
-  //     loggedInUserId: userId!,
-  //     returnCombinedIds: false,
-  //   );
-
-  //   return ids.first;
-  // }
 
   @override
   Widget build(BuildContext context) {

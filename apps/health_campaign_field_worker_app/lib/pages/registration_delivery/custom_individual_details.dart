@@ -1,14 +1,11 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:collection/collection.dart';
-import 'package:dart_mappable/dart_mappable.dart';
 import 'package:digit_components/utils/date_utils.dart';
 import 'package:digit_components/widgets/atoms/digit_text_form_field.dart';
 import 'package:registration_delivery/models/entities/household.dart';
-// import 'package:digit_components/utils/date_utils.dart' as digits;
 import '../../utils/date_utils.dart' as digits;
 import 'package:digit_components/widgets/atoms/digit_toaster.dart';
 import 'package:digit_ui_components/theme/ComponentTheme/checkbox_theme.dart';
-import 'package:health_campaign_field_worker_app/utils/registration_delivery/utils_smc.dart';
 import '../../widgets/custom_back_navigation.dart';
 import 'package:digit_data_model/data_model.dart';
 import 'package:digit_data_model/models/entities/household_type.dart';
@@ -22,7 +19,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:digit_components/widgets/atoms/digit_dropdown.dart' as dropdown;
 import 'package:health_campaign_field_worker_app/widgets/date/custom_digit_dob_picker.dart';
-// import 'package:health_campaign_field_worker_app/widgets/header/custom_back_button.dart';
 import 'package:intl/intl.dart';
 import 'package:reactive_forms/reactive_forms.dart';
 import 'package:registration_delivery/utils/constants.dart';
@@ -32,7 +28,6 @@ import 'package:registration_delivery/router/registration_delivery_router.gm.dar
 import 'package:registration_delivery/utils/i18_key_constants.dart' as i18;
 import '../../utils/i18_key_constants.dart' as i18_local;
 import 'package:registration_delivery/utils/utils.dart';
-// import 'package:registration_delivery/widgets/back_navigation_help_header.dart';
 import 'package:registration_delivery/widgets/localized.dart';
 import 'package:registration_delivery/widgets/showcase/config/showcase_constants.dart';
 
@@ -88,9 +83,7 @@ class CustomIndividualDetailsPageState
       final cat = local_utils.getCategory(
         local_utils.getAgeMonths(age),
       );
-      final newValue = (cat == local_utils.Constants.height)
-          ? cat
-          : "";
+      final newValue = (cat == local_utils.Constants.height) ? cat : "";
 
       if (cat != local_utils.Constants.height) {
         form.control(_height).value = "";
@@ -429,7 +422,6 @@ class CustomIndividualDetailsPageState
                                             : null,
                                       ),
                                     );
-                                    // router.push(CustomSummaryRoute());
                                     await onSubmit(householdModel, true);
                                   }
                                 },
@@ -755,8 +747,7 @@ class CustomIndividualDetailsPageState
                                 isIndividual = true;
                               }
 
-                              if (isVisible ==
-                                  local_utils.Constants.height) {
+                              if (isVisible == local_utils.Constants.height) {
                                 formControlKey = _height;
                               } else if (isVisible == "" && isIndividual) {
                                 formControlKey = isVisible;
@@ -789,8 +780,8 @@ class CustomIndividualDetailsPageState
                                 ],
                                 formControlName: formControlKey,
                                 label: localizations.translate(
-                                  i18_local.individualDetails
-                                      .heightHeadLabelText,
+                                  i18_local
+                                      .individualDetails.heightHeadLabelText,
                                 ),
                                 isRequired:
                                     true, // If it's being rendered, it's required
@@ -974,13 +965,6 @@ class CustomIndividualDetailsPageState
               ),
             ],
     );
-
-    // final cycleIndex =
-    //     context.selectedCycle.id == 0 ? "" : "0${context.selectedCycle.id}";
-
-    // final projectTypeId = context.selectedProjectType == null
-    //     ? ""
-    //     : context.selectedProjectType!.id;
     individual = individual.copyWith(
       additionalFields: individual.additionalFields == null
           ? IndividualAdditionalFields(
@@ -990,16 +974,6 @@ class CustomIndividualDetailsPageState
                   "projectId",
                   context.projectId,
                 ),
-                // if (cycleIndex.isNotEmpty)
-                //   AdditionalField(
-                //     "cycleIndex",
-                //     cycleIndex,
-                //   ),
-                // if (projectTypeId.isNotEmpty)
-                //   AdditionalField(
-                //     "projectTypeId",
-                //     projectTypeId,
-                //   ),
                 if (local_utils.getCategory(
                       local_utils.getAgeMonths(
                         DigitDateUtils.calculateAge(
@@ -1022,8 +996,7 @@ class CustomIndividualDetailsPageState
               fields: [
                 // Filter out any existing `Constants.height` field
                 ...individual.additionalFields!.fields.where(
-                  (field) =>
-                      field.key != local_utils.Constants.height,
+                  (field) => field.key != local_utils.Constants.height,
                 ),
                 // Add new `Constants.height` field if the condition matches
                 if (local_utils.getCategory(
@@ -1120,7 +1093,6 @@ class CustomIndividualDetailsPageState
         Validators.minLength(11),
         Validators.maxLength(11),
         if (widget.isHeadOfHousehold) Validators.required,
-        // Validators.required,
       ]),
     });
   }

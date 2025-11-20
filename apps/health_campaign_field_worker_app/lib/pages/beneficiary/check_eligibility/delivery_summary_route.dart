@@ -16,7 +16,6 @@ import 'package:registration_delivery/router/registration_delivery_router.gm.dar
 import 'package:registration_delivery/utils/constants.dart';
 import 'package:registration_delivery/widgets/back_navigation_help_header.dart';
 import 'package:registration_delivery/widgets/component_wrapper/product_variant_bloc_wrapper.dart';
-import 'package:registration_delivery/widgets/showcase/showcase_button.dart';
 
 import 'package:registration_delivery/widgets/localized.dart';
 import 'package:registration_delivery/utils/i18_key_constants.dart' as i18;

@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'dart:io';
-
 import 'package:auto_route/auto_route.dart';
 import 'package:collection/collection.dart';
 import 'package:digit_data_model/data_model.dart';
@@ -17,7 +16,6 @@ import 'package:inventory_management/models/entities/stock.dart';
 import 'package:inventory_management/utils/i18_key_constants.dart' as i18;
 import 'package:inventory_management/utils/utils.dart';
 import 'package:inventory_management/widgets/localized.dart';
-import 'package:inventory_management/widgets/back_navigation_help_header.dart';
 import '../../router/app_router.dart';
 import 'package:logger/logger.dart';
 
@@ -70,7 +68,6 @@ class CustomMinNumberPageState extends LocalizedState<CustomMinNumberPage> {
     } else if (widget.type == StockRecordEntryType.dispatch) {
       transactionType = 'DISPATCHED';
     }
-    // || (widget.type == StockRecordEntryType.receipt)
     final filteredResult = result.where((stock) {
       if (transactionType == null) return false;
 

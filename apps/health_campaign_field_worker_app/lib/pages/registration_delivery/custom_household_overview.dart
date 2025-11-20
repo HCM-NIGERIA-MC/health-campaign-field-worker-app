@@ -1,6 +1,5 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:collection/collection.dart';
-import 'package:digit_components/widgets/digit_dialog.dart';
 import 'package:digit_data_model/data_model.dart';
 import 'package:digit_data_model/models/entities/household_type.dart';
 import 'package:digit_ui_components/enum/app_enums.dart';
@@ -8,7 +7,6 @@ import 'package:digit_ui_components/theme/digit_extended_theme.dart';
 import 'package:digit_ui_components/theme/digit_theme.dart';
 import 'package:digit_ui_components/theme/spacers.dart';
 import 'package:digit_ui_components/utils/date_utils.dart';
-import 'package:digit_ui_components/widgets/atoms/digit_action_card.dart';
 import 'package:digit_ui_components/widgets/atoms/digit_button.dart';
 import 'package:digit_ui_components/widgets/atoms/digit_chip.dart';
 import 'package:digit_ui_components/widgets/atoms/digit_search_bar.dart';
@@ -37,14 +35,12 @@ import 'package:registration_delivery/utils/utils.dart';
 import '../../utils/extensions/extensions.dart';
 import '../../widgets/custom_back_navigation.dart';
 import 'package:registration_delivery/widgets/localized.dart';
-import 'package:registration_delivery/widgets/member_card/member_card.dart';
 import 'package:registration_delivery/widgets/table_card/table_card.dart';
 
 import '../../router/app_router.dart';
 import '../../utils/app_enums.dart';
 import '../../utils/registration_delivery/utils_smc.dart';
 import '../../widgets/registration_delivery/custom_member_card.dart';
-import '../../utils/i18_key_constants.dart' as i18_local;
 import '../../utils/utils.dart' as local_utils;
 
 @RoutePage()
@@ -401,13 +397,6 @@ class _CustomHouseholdOverviewPageState
                                                           .locality
                                                           ?.code ??
                                                       i18.common.coreCommonNA),
-                                                  // localizations.translate(
-                                                  //   i18.deliverIntervention
-                                                  //       .memberCountText,
-                                                  // ): state
-                                                  // .householdMemberWrapper
-                                                  // .household
-                                                  // ?.memberCount,
                                                   if (shouldShowStatus)
                                                     localizations.translate(i18
                                                             .beneficiaryDetails
@@ -857,31 +846,6 @@ class _CustomHouseholdOverviewPageState
                                                                       .household,
                                                                 )
                                                               : false,
-                                                      // isNotEligibleVAS:
-                                                      //     RegistrationDeliverySingleton()
-                                                      //                 .projectType
-                                                      //                 ?.cycles !=
-                                                      //             null
-                                                      //         ? !checkEligibilityForAgeAndSideEffectAll(
-                                                      //             DigitDOBAgeConvertor(
-                                                      //               years:
-                                                      //                   ageInYears,
-                                                      //               months:
-                                                      //                   ageInMonths,
-                                                      //             ),
-                                                      //             RegistrationDeliverySingleton()
-                                                      //                 .selectedProject
-                                                      //                 ?.additionalDetails
-                                                      //                 ?.additionalProjectType,
-                                                      //             (taskData ??
-                                                      //                         [])
-                                                      //                     .isNotEmpty
-                                                      //                 ? taskData
-                                                      //                     ?.lastOrNull
-                                                      //                 : null,
-                                                      //             sideEffectData,
-                                                      //           )
-                                                      //         : false,
                                                       name: e.name?.givenName ??
                                                           ' - - ',
                                                       years:
@@ -918,16 +882,6 @@ class _CustomHouseholdOverviewPageState
                                                               taskData,
                                                               context
                                                                   .selectedCycle),
-                                                      // isVASDelivered: taskData ==
-                                                      //         null
-                                                      //     ? false
-                                                      //     : taskData.isNotEmpty &&
-                                                      //             !checkStatusVAS(
-                                                      //               taskData,
-                                                      //               currentCycle,
-                                                      //             )
-                                                      //         ? true
-                                                      //         : false,
                                                       localizations:
                                                           localizations,
                                                       projectBeneficiaryClientReferenceId:
@@ -986,7 +940,6 @@ class _CustomHouseholdOverviewPageState
                                                     popupContext,
                                                     rootNavigator: true,
                                                   ).pop();
-                                                  //
                                                 },
                                                 type: DigitButtonType.primary,
                                                 size: DigitButtonSize.large,
