@@ -335,8 +335,17 @@ class _RecordRedosePageState extends LocalizedState<RecordRedosePage> {
 
                                                             if (productVariant!
                                                                     ?.sku! ==
-                                                                'SPAQ 1') {
+                                                                'AZM') {
                                                               spaq1 = quantity !=
+                                                                      'null'
+                                                                  ? int.parse(quantity
+                                                                          .toString()) *
+                                                                      -1
+                                                                  : 0;
+                                                            } else if (productVariant
+                                                                    ?.sku! ==
+                                                                'SPAQ 1') {
+                                                              spaq2 = quantity !=
                                                                       'null'
                                                                   ? int.parse(quantity
                                                                           .toString()) *

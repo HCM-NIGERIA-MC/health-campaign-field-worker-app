@@ -299,8 +299,11 @@ class CustomMemberCard extends StatelessWidget {
                             successfulTask!.resources!.first.productVariantId,
                       )
                       .sku;
+                  final quantity = successfulTask?.resources?.first.quantity;
 
-                  if (successfulTask != null && value != null && spaq1 > 0) {
+                  if (successfulTask != null &&
+                      value != null &&
+                      (spaq1 - (int.tryParse(quantity ?? '0') as int)) > 0) {
                     final projectType = RegistrationDeliverySingleton()
                         .selectedProject
                         ?.additionalDetails
@@ -366,7 +369,7 @@ class CustomMemberCard extends StatelessWidget {
                           i18_local.beneficiaryDetails
                               .insufficientAZTStockMessageDelivery,
                         )} \n ${localizations.translate(
-                          i18_local.beneficiaryDetails.spaq1DoseUnit,
+                          i18_local.beneficiaryDetails.azmDoseUnit,
                         )}",
                         primaryAction: DigitDialogActions(
                           label: localizations.translate(i18_local

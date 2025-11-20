@@ -20,6 +20,7 @@ import 'package:inventory_management/models/entities/stock.dart';
 import 'package:inventory_management/models/entities/transaction_reason.dart';
 import 'package:inventory_management/models/entities/transaction_type.dart';
 import 'package:inventory_management/utils/i18_key_constants.dart' as i18;
+import 'package:inventory_management/utils/typedefs.dart';
 import 'package:inventory_management/utils/utils.dart';
 import 'package:inventory_management/widgets/localized.dart';
 import 'package:reactive_forms/reactive_forms.dart';
@@ -185,7 +186,7 @@ class _DynamicTabsPageState extends LocalizedState<DynamicTabsPage>
     ).state.primaryId;
 
     final filteredResult = result.where((stock) {
-      return stock.transactionType == 'DISPATCHED' &&
+      return stock.transactionType == TransactionType.dispatched.toString() &&
           stock.senderId == primaryId &&
           stock.receiverId == secondartParty;
       ;
@@ -485,7 +486,7 @@ class _DynamicTabsPageState extends LocalizedState<DynamicTabsPage>
         [
           Validators.number(),
           Validators.required,
-          Validators.min(0),
+          Validators.min(-1),
           Validators.max(Constants.stockMaxLimit),
         ],
       );
@@ -1071,11 +1072,30 @@ class _DynamicTabsPageState extends LocalizedState<DynamicTabsPage>
         final stockState = context.read<RecordStockBloc>().state;
         // Loop through all stocks and dispatch individual events
         for (final stockModel in _tabStocks.values) {
+          final totalQuantityReceived = await getReceivedQuantity(
+              context, stockState, stockModel, selectedProducts);
+
           int quantity = int.parse(stockModel.quantity.toString());
 
           int quantityWasted = int.parse(stockModel.additionalFields?.fields
                   .firstWhereOrNull(
                       (element) => element.key == 'wastedBlistersReturned')
+                  ?.value
+                  ?.toString() ??
+              '0');
+
+          int quantityEmptyBottles = int.parse(stockModel
+                  .additionalFields?.fields
+                  .firstWhereOrNull(
+                      (element) => element.key == 'emptyBottlesReturned')
+                  ?.value
+                  ?.toString() ??
+              '0');
+
+          int quantityPartialBottles = int.parse(stockModel
+                  .additionalFields?.fields
+                  .firstWhereOrNull(
+                      (element) => element.key == 'partialBlistersReturned')
                   ?.value
                   ?.toString() ??
               '0');
@@ -1118,10 +1138,28 @@ class _DynamicTabsPageState extends LocalizedState<DynamicTabsPage>
             return;
           }
 
-          if (entryType == StockRecordEntryType.returned) {
-            final issuedStock = await totalReturnableStock();
+          // if (entryType == StockRecordEntryType.returned) {
+          //   final issuedStock = await totalReturnableStock();
 
-            if (productName == Constants.azm && (totalQty > issuedStock)) {
+          //   if (productName == Constants.azm && (totalQty > issuedStock)) {
+          //     await DigitToast.show(
+          //       context,
+          //       options: DigitToastOptions(
+          //           localizations.translate(i18_local
+          //               .beneficiaryDetails.validationForExcessStockReturn),
+          //           true,
+          //           theme),
+          //     );
+          //     isSubmitClicked = false;
+          //     return;
+          //   }
+          // }
+
+          if (entryType == StockRecordEntryType.returned ||
+              (entryType == StockRecordEntryType.dispatch &&
+                  context.isDistributor)) {
+            if ((quantity + quantityEmptyBottles + quantityPartialBottles) >
+                totalQuantityReceived) {
               await DigitToast.show(
                 context,
                 options: DigitToastOptions(
@@ -1256,6 +1294,43 @@ class _DynamicTabsPageState extends LocalizedState<DynamicTabsPage>
                 ? totalExpectedPartialQuantityInMl
                 : 0))
         .toString();
+  }
+
+  Future<num> getReceivedQuantity(
+      BuildContext context,
+      RecordStockState stockState,
+      StockModel stockModel,
+      List<String> selectedProducts) async {
+    final StockDataRepository stockRepository =
+        context.repository<StockModel, StockSearchModel>();
+    final productVariantId = products.first.id;
+    final facilityId;
+    if (InventorySingleton().isDistributor) {
+      facilityId = InventorySingleton().loggedInUserUuid;
+    } else {
+      facilityId = stockState.facilityModel?.id;
+    }
+
+    if ((productVariantId == null) || facilityId == null) return 0;
+
+    // Fetching the stock reconciliation details
+    final receivedStocks = (await stockRepository.search(
+      StockSearchModel(
+          productVariantId: productVariantId,
+          receiverId: [facilityId!],
+          transactionType: [TransactionType.received.toValue()]),
+    ))
+        .where((element) =>
+            element.auditDetails != null &&
+            element.auditDetails?.createdBy ==
+                InventorySingleton().loggedInUserUuid)
+        .toList();
+
+    return _getQuantityCount(
+      receivedStocks.where((e) =>
+          e.transactionType == TransactionType.received.toValue() &&
+          e.transactionReason == TransactionReason.received.toValue()),
+    );
   }
 
   num _getQuantityCount(Iterable<StockModel> stocks) {

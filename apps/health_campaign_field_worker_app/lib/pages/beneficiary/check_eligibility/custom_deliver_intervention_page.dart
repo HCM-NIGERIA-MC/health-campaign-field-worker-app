@@ -138,20 +138,12 @@ class CustomDeliverInterventionPageState
               householdMemberWrapper: householdMember),
         );
 
-    final productvariantList =
-        ((form.control(_resourceDeliveredKey) as FormArray).value
-            as List<ProductVariantModel?>);
-
-    final qty =
-        (((form.control(_quantityDistributedKey) as FormArray).value)?[0])
-            .toString();
-
     int spaq1 = 0;
     int spaq2 = 0;
     int blueVas = 0;
     int redVas = 0;
 
-    spaq1 = int.parse(qty) * -1;
+    spaq1 = productQuantity * -1;
 
     context.read<AuthBloc>().add(
           AuthAddSpaqCountsEvent(
