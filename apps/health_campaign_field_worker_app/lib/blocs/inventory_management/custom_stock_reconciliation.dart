@@ -11,6 +11,8 @@ import 'package:inventory_management/models/entities/transaction_type.dart';
 import 'package:inventory_management/utils/typedefs.dart';
 import 'package:inventory_management/utils/utils.dart';
 
+import '../../data/repositories/local/inventory_management/custom_stock.dart';
+
 // part 'custom_stock_reconciliation.freezed.dart';
 part 'custom_stock_reconciliation.freezed.dart';
 
@@ -19,7 +21,7 @@ typedef StockReconciliationEmitter = Emitter<StockReconciliationState>;
 // Bloc for handling stock reconciliation related events and states
 class CustomStockReconciliationBloc
     extends Bloc<StockReconciliationEvent, StockReconciliationState> {
-  final StockDataRepository stockRepository;
+  final CustomStockLocalRepository stockRepository;
   final StockReconciliationDataRepository stockReconciliationRepository;
 
   CustomStockReconciliationBloc(
@@ -75,7 +77,7 @@ class CustomStockReconciliationBloc
         (!event.isDistributor && facilityId == null)) return;
 
     // Fetching the stock reconciliation details
-    final receivedStocks = (await stockRepository.search(
+    final receivedStocks = (await stockRepository.searchForReconciliation(
       StockSearchModel(
           productVariantId: productVariantId,
           receiverId: [facilityId!],
@@ -86,7 +88,7 @@ class CustomStockReconciliationBloc
             element.auditDetails?.createdBy ==
                 InventorySingleton().loggedInUserUuid)
         .toList();
-    final sentStocks = (await stockRepository.search(
+    final sentStocks = (await stockRepository.searchForReconciliation(
       StockSearchModel(
           productVariantId: productVariantId,
           senderId: facilityId,

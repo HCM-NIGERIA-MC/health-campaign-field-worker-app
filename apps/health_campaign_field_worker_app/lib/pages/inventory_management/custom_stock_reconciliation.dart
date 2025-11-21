@@ -18,6 +18,7 @@ import 'package:inventory_management/inventory_management.dart'
 import 'package:inventory_management/router/inventory_router.gm.dart';
 import 'package:inventory_management/utils/i18_key_constants.dart' as i18;
 import '../../blocs/inventory_management/custom_stock_reconciliation.dart';
+import '../../data/repositories/local/inventory_management/custom_stock.dart';
 import '../../utils/i18_key_constants.dart' as i18_local;
 import 'package:inventory_management/widgets/inventory/no_facilities_assigned_dialog.dart';
 import 'package:inventory_management/widgets/localized.dart';
@@ -98,8 +99,9 @@ class CustomStockReconciliationPageState
                     projectId: InventorySingleton().projectId,
                     dateOfReconciliation: DateTime.now(),
                   ),
-                  stockRepository:
-                      context.repository<StockModel, StockSearchModel>(),
+                  stockRepository: context
+                          .read<LocalRepository<StockModel, StockSearchModel>>()
+                      as CustomStockLocalRepository,
                   stockReconciliationRepository: context.repository<
                       StockReconciliationModel,
                       StockReconciliationSearchModel>(),
