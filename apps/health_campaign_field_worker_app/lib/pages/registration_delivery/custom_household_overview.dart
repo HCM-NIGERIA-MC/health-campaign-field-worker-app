@@ -882,8 +882,8 @@ class _CustomHouseholdOverviewPageState
                                                       //             sideEffectData,
                                                       //           )
                                                       //         : false,
-                                                      name: e.name?.givenName ??
-                                                          ' - - ',
+                                                      name:
+                                                          '${e.name?.givenName ?? ' - - '} ${e.name?.familyName ?? ''}',
                                                       years:
                                                           (e.dateOfBirth == null
                                                               ? null
