@@ -81,17 +81,9 @@ class CustomMemberCard extends StatelessWidget {
   });
 
   List<TaskModel>? _getSMCStatusData() {
-    return tasks
-        ?.where((e) =>
-            e.additionalFields?.fields.firstWhereOrNull(
-              (element) =>
-                  element.key ==
-                      additional_fields_local.AdditionalFieldsType.deliveryType
-                          .toValue() &&
-                  element.value == EligibilityAssessmentStatus.smcDone.name,
-            ) !=
-            null)
-        .toList();
+    // removed check of deliveryType as it is not required now ,
+    //here all are smc tasks (no vas flow)
+    return tasks;
   }
 
   Widget statusWidget(BuildContext context) {

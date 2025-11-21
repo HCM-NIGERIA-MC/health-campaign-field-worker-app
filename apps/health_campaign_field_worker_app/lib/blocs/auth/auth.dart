@@ -161,6 +161,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       } else {
         message = data.toString();
       }
+      emit(AuthErrorState(message));
+      emit(const AuthUnauthenticatedState());
 
       AppLogger.instance.error(
         title: 'Login error',
