@@ -496,6 +496,15 @@ class _HomePageState extends LocalizedState<HomePage> {
                   "includeInSummary": true
                 };
 
+                // Navigate the beneficiaryDetails page to household-acknowledgement page
+                if (context.isRegistrar && !context.isDistributor) {
+                  registrationSchemaData['pages']["beneficiaryDetails"]
+                      ["navigateTo"] = {
+                    "name": "household-acknowledgement",
+                    "type": "template"
+                  };
+                }
+
                 deliverySchemaData['pages']['DeliveryDetails']['properties']
                     ['scanner'] = {
                   "type": "string",
