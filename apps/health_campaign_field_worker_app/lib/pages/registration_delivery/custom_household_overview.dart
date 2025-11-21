@@ -125,9 +125,10 @@ class _CustomHouseholdOverviewPageState
                         margin: const EdgeInsets.only(top: spacer2),
                         children: [
                           Offstage(
-                            offstage:
-                                beneficiaryType == BeneficiaryType.individual ||
-                                    isOutsideProjectDateRange(),
+                            offstage: (beneficiaryType ==
+                                        BeneficiaryType.individual ||
+                                    isOutsideProjectDateRange()) &&
+                                !context.isDistributor,
                             child: BlocBuilder<ServiceDefinitionBloc,
                                 ServiceDefinitionState>(
                               builder: (context, serviceDefinitionState) =>
