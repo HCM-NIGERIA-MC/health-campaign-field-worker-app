@@ -59,7 +59,7 @@ dependencies:
   disk_space_update: ^0.0.2
   sync_service: ^1.0.4
   attendance_management: ^1.0.4+1
-  digit_scanner: 0.0.1-console
+  digit_scanner: 0.0.2-console
   digit_data_model: ^1.2.0-dev.1-console
   disable_battery_optimization: ^1.1.1
   digit_dss: ^1.0.4
