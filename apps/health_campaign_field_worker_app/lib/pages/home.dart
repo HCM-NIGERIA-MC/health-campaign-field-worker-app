@@ -369,20 +369,27 @@ class _HomePageState extends LocalizedState<HomePage> {
                 Map<String, dynamic> delTemplatesRaw =
                     deliverySchemaData?['templates'];
 
-                Map<String, dynamic> beneficiaryChecklist =
-                    deliverySchemaData['pages']["beneficiaryChecklist"]
-                        ["properties"];
+                Map<String, dynamic>? beneficiaryChecklist =
+                    deliverySchemaData['pages']["beneficiaryChecklist"];
 
-                // Fix the beneficiary checklist keys
-                Map<String, dynamic> newBeneficiaryChecklist = {};
-                for (int i = 0; i < beneficiaryChecklist.keys.length; i++) {
-                  newBeneficiaryChecklist[
-                          "beneficiary_checklist_health_talk_$i"] =
-                      beneficiaryChecklist[
-                          beneficiaryChecklist.keys.elementAt(i)];
+                if (beneficiaryChecklist != null) {
+                  Map<String, dynamic> beneficiaryChecklistProperties =
+                      deliverySchemaData['pages']["beneficiaryChecklist"]
+                          ["properties"];
+
+                  // Fix the beneficiary checklist keys
+                  Map<String, dynamic> newBeneficiaryChecklist = {};
+                  for (int i = 0;
+                      i < beneficiaryChecklistProperties.keys.length;
+                      i++) {
+                    newBeneficiaryChecklist[
+                            "beneficiary_checklist_health_talk_$i"] =
+                        beneficiaryChecklistProperties[
+                            beneficiaryChecklistProperties.keys.elementAt(i)];
+                  }
+                  deliverySchemaData['pages']["beneficiaryChecklist"]
+                      ["properties"] = newBeneficiaryChecklist;
                 }
-                deliverySchemaData['pages']["beneficiaryChecklist"]
-                    ["properties"] = newBeneficiaryChecklist;
 
                 // Make the head of household field true
                 registrationSchemaData['pages']["beneficiaryDetails"]
