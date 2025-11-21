@@ -1,5 +1,5 @@
 import 'dart:async';
-import 'package:auto_route/auto_route.dart';
+
 import 'package:collection/collection.dart';
 import 'package:digit_components/widgets/atoms/digit_text_form_field.dart';
 import 'package:digit_components/widgets/atoms/digit_toaster.dart';
@@ -150,6 +150,7 @@ class _DynamicTabsPageState extends LocalizedState<DynamicTabsPage>
             Validators.min(1),
             Validators.max(Constants.stockMaxLimit),
           ]),
+          _transactionQuantityEmptyKey: FormControl<int>(validators: []),
           _transactionQuantityPartialKey: FormControl<int>(validators: []),
           _transactionQuantityWastedKey: FormControl<int>(validators: []),
           _batchNumberKey: FormControl<String>(),
@@ -464,6 +465,14 @@ class _DynamicTabsPageState extends LocalizedState<DynamicTabsPage>
         Validators.min(0),
         Validators.max(Constants.stockMaxLimit),
       ], autoValidate: true);
+      form.control(_transactionQuantityEmptyKey).setValidators(
+        [
+          Validators.number(),
+          Validators.required,
+          Validators.min(-1),
+          Validators.max(Constants.stockMaxLimit),
+        ],
+      );
     }
 
     return _KeepAliveTabContent(
@@ -667,9 +676,12 @@ class _DynamicTabsPageState extends LocalizedState<DynamicTabsPage>
                                           StockRecordEntryType.dispatch,
                                         ].contains(entryType) &&
                                         context.isDistributor) {
+                                      String? wastage =
+                                          wastageQuantity(form, context);
                                       int wastageValQuantity = int.parse(
-                                          wastageQuantity(form, context)
-                                              .toString());
+                                          (wastage != null)
+                                              ? wastage.toString()
+                                              : '0');
                                       form
                                           .control(
                                               _transactionQuantityWastedKey)
@@ -997,10 +1009,11 @@ class _DynamicTabsPageState extends LocalizedState<DynamicTabsPage>
             return;
           }
 
-          if (entryType == StockRecordEntryType.returned) {
-            final issuedStock = await totalReturnableStock();
-
-            if (productName == Constants.azm && (totalQty > issuedStock)) {
+          if (entryType == StockRecordEntryType.returned ||
+              (entryType == StockRecordEntryType.dispatch &&
+                  context.isDistributor)) {
+            if ((quantity + quantityEmptyBottles + quantityPartialBottles) >
+                totalQuantityReceived) {
               await DigitToast.show(
                 context,
                 options: DigitToastOptions(
@@ -1015,7 +1028,7 @@ class _DynamicTabsPageState extends LocalizedState<DynamicTabsPage>
           }
 
           spaq1Count =
-              totalQty * Constants.mlPerBottle + partialQantityReturnedinMl;
+              totalQty * Constants.mlPerBottle - partialQantityReturnedinMl;
 
           final bloc = RecordStockBloc(
             stockRepository: context.repository<StockModel, StockSearchModel>(),
