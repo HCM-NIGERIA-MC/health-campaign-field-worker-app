@@ -154,15 +154,16 @@ class CustomViewBeneficiaryCardState
               : DateTime.now(),
         ).months;
 
-        final isNotEligible = !checkEligibilityForAgeAndSideEffect(
-          DigitDOBAgeConvertor(
-            years: ageInYears,
-            months: ageInMonths,
-          ),
-          RegistrationDeliverySingleton().projectType,
-          (taskData ?? []).isNotEmpty ? taskData?.last : null,
-          sideEffects,
-        );
+        final isNotEligible = !checkEligibilityForAgeAndSideEffectAll(
+            DigitDOBAgeConvertor(
+              years: ageInYears,
+              months: ageInMonths,
+            ),
+            RegistrationDeliverySingleton().projectType,
+            (taskData ?? []).isNotEmpty ? taskData?.last : null,
+            sideEffects,
+            e,
+            householdMember.household);
 
         final isBeneficiaryRefused = checkIfBeneficiaryRefused(taskData);
         final isBeneficiaryIneligible =
@@ -171,7 +172,7 @@ class CustomViewBeneficiaryCardState
             checkBeneficiaryReferredSMC(taskData, context.selectedCycle);
         final isSMCDelivered =
             // util_local.checkStatusSMC(taskData, currentCycle);
-             !assessmentSMCPending(taskData, context.selectedCycle);
+            !assessmentSMCPending(taskData, context.selectedCycle);
 
         final isVASDelivered = false;
         print(
