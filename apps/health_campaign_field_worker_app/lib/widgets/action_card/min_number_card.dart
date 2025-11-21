@@ -121,7 +121,9 @@ class MinNumberCard extends StatelessWidget {
                       style: textTheme.bodyL.copyWith(
                         fontWeight: FontWeight.bold,
                       )),
-                  const SizedBox(),
+                  const SizedBox(
+                    width: spacer4,
+                  ),
                   Text(waybillNumber!),
                 ],
               ),
