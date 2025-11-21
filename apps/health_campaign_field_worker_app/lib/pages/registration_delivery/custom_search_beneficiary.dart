@@ -40,6 +40,8 @@ import 'package:registration_delivery/widgets/beneficiary/view_beneficiary_card.
 import 'package:registration_delivery/widgets/localized.dart';
 import 'package:registration_delivery/widgets/status_filter/status_filter.dart';
 
+import '../../utils/extensions/extensions.dart';
+
 @RoutePage()
 class CustomSearchBeneficiaryPage extends LocalizedStatefulWidget {
   const CustomSearchBeneficiaryPage({
@@ -1055,7 +1057,7 @@ class _CustomSearchBeneficiaryPageState
     final entries = <MapEntry<int, DigitButton>>[];
 
     // — Primary button — (respect hidden + enableViewHousehold logic if any)
-    if (primaryProp?.hidden != true) {
+    if (primaryProp?.hidden != true && context.isRegistrar) {
       final order = primaryProp?.order ?? 0;
       entries.add(MapEntry(
         order,
