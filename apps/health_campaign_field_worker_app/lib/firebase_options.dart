@@ -51,7 +51,7 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyDkT1V6wknoUsh8CFDXiA8OwElZnK9sF9w',
-    appId: '1:630326133351:android:924793c91df1eeab954ac2',
+    appId: '1:630326133351:android:5c043092e0cd437c954ac2',
     messagingSenderId: '630326133351',
     projectId: 'digit-hcm-nigeria',
     storageBucket: 'digit-hcm-nigeria.firebasestorage.app',
