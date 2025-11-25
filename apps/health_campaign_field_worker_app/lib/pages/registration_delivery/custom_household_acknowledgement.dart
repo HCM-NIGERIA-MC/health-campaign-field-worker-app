@@ -37,20 +37,20 @@ class CustomHouseholdAcknowledgementPageState
     extends LocalizedState<CustomHouseholdAcknowledgementPage> {
   late RegistrationWrapperState wrapper;
 
-  updateStock(List<HouseholdWrapper> householdMembers) async {
-    List<TaskModel>? tasks = householdMembers.first.tasks;
+  // updateStock(List<HouseholdWrapper> householdMembers) async {
+  //   List<TaskModel>? tasks = householdMembers.first.tasks;
 
-    context.read<AuthBloc>().add(
-          AuthDeliveryProductCountsEvent(
-            clientReferenceId: tasks?.first.clientReferenceId ?? "",
-          ),
-        );
-  }
+  //   context.read<AuthBloc>().add(
+  //         AuthDeliveryProductCountsEvent(
+  //           clientReferenceId: tasks?.first.clientReferenceId ?? "",
+  //         ),
+  //       );
+  // }
 
   @override
   void initState() {
     wrapper = context.read<RegistrationWrapperBloc>().state;
-    updateStock(wrapper.householdMembers);
+    // updateStock(wrapper.householdMembers);
     super.initState();
   }
 
