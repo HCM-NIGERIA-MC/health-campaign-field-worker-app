@@ -476,6 +476,36 @@ class _HomePageState extends LocalizedState<HomePage> {
                 };
 
                 registrationSchemaData['pages']["beneficiaryDetails"]
+                    ["properties"]["gender"] = {
+                  "type": "string",
+                  "label":
+                      "APPONE_REGISTRATION_BENEFICIARYDETAILS_label_gender",
+                  "order": 5,
+                  "value": "",
+                  "format": "select",
+                  "hidden": false,
+                  "tooltip": "",
+                  "helpText": "",
+                  "infoText": "",
+                  "readOnly": false,
+                  "fieldName": "gender",
+                  "deleteFlag": false,
+                  "innerLabel": "",
+                  "schemaCode": "common-masters.GenderType",
+                  "systemDate": false,
+                  "validations": [],
+                  "errorMessage": "",
+                  "includeInForm": true,
+                  "isMultiSelect": false,
+                  "includeInSummary": true,
+                  "visibilityCondition": {},
+                  "enums": [
+                    {"code": "FEMALE", "name": "feminine"},
+                    {"code": "MALE", "name": "masculine"}
+                  ]
+                };
+
+                registrationSchemaData['pages']["beneficiaryDetails"]
                         ["properties"]
                     .remove("scanner");
 
