@@ -1,7 +1,7 @@
 name: health_campaign_field_worker_app
 description: A new Flutter project.
 publish_to: "none"
-version: 1.8.8+8
+version: 1.8.9+9
 
 environment:
   sdk: ">=3.3.0 <=4.0.0"
@@ -18,7 +18,7 @@ dependencies:
   sqlite3_flutter_libs: ^0.5.11+1
   path_provider: ^2.1.3
   path: ^1.9.0
-  digit_ui_components: 0.2.3+1
+  digit_ui_components: 0.2.3+3
   digit_components: 1.0.3
   auto_route: ^8.3.0
   flutter_bloc: ^8.1.5
