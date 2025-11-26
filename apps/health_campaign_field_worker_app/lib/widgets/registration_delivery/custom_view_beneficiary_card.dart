@@ -70,11 +70,11 @@ class CustomViewBeneficiaryCardState
         cellValue: 'beneficiary',
         isFrozen: true,
       ),
-      DigitTableColumn(
-        header:
-            localizations.translate(i18.beneficiaryDetails.beneficiaryIdHeader),
-        cellValue: 'beneficiaryId',
-      ),
+      // DigitTableColumn(
+      //   header:
+      //       localizations.translate(i18.beneficiaryDetails.beneficiaryIdHeader),
+      //   cellValue: 'beneficiaryId',
+      // ),
       DigitTableColumn(
         header: localizations.translate(i18.beneficiaryDetails.deliveryHeader),
         cellValue: 'delivery',
@@ -207,17 +207,17 @@ class CustomViewBeneficiaryCardState
             ].whereNotNull().join(' '),
             cellKey: 'beneficiary',
           ),
-          DigitTableData(
-            e.identifiers!
-                    .lastWhereOrNull(
-                      (ind) =>
-                          ind.identifierType ==
-                          IdentifierTypes.uniqueBeneficiaryID.toValue(),
-                    )
-                    ?.identifierId ??
-                '--',
-            cellKey: 'beneficiaryId',
-          ),
+          // DigitTableData(
+          //   e.identifiers!
+          //           .lastWhereOrNull(
+          //             (ind) =>
+          //                 ind.identifierType ==
+          //                 IdentifierTypes.uniqueBeneficiaryID.toValue(),
+          //           )
+          //           ?.identifierId ??
+          //       '--',
+          //   cellKey: 'beneficiaryId',
+          // ),
           DigitTableData(
             getTableCellText(
               StatusKeys(
@@ -408,8 +408,8 @@ class CustomViewBeneficiaryCardState
                                   .householdType ==
                               HouseholdType.family)
                           ? widget.distance != null
-                              ? '${householdMember.household?.memberCount ?? 1} ${householdMember.household?.memberCount == 1 ? localizations.translate(i18.beneficiaryDetails.householdMemberSingular) : localizations.translate(i18.beneficiaryDetails.householdMemberPlural)}\n${((widget.distance!) * 1000).round() > 999 ? '(${((widget.distance!).round())} km)' : '(${((widget.distance!) * 1000).round()} mts) ${localizations.translate(i18.beneficiaryDetails.fromCurrentLocation)}'}'
-                              : '${householdMember.household?.memberCount ?? 1} ${householdMember.household?.memberCount == 1 ? localizations.translate(i18.beneficiaryDetails.householdMemberSingular) : localizations.translate(i18.beneficiaryDetails.householdMemberPlural)}'
+                              ? '${householdMember.members?.length ?? 1} ${householdMember.members?.length == 1 ? localizations.translate(i18.beneficiaryDetails.householdMemberSingular) : localizations.translate(i18.beneficiaryDetails.householdMemberPlural)}\n${((widget.distance!) * 1000).round() > 999 ? '(${((widget.distance!).round())} km)' : '(${((widget.distance!) * 1000).round()} mts) ${localizations.translate(i18.beneficiaryDetails.fromCurrentLocation)}'}'
+                              : '${householdMember.members?.length ?? 1} ${householdMember.members?.length == 1 ? localizations.translate(i18.beneficiaryDetails.householdMemberSingular) : localizations.translate(i18.beneficiaryDetails.householdMemberPlural)}'
                           : (widget.distance != null)
                               ? ((widget.distance!) * 1000).round() > 999
                                   ? '(${((widget.distance!).round())} km)'
