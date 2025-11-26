@@ -509,6 +509,8 @@ class CustomInventoryReportDetailsPageState
                                             const dateKey = 'date';
                                             const waybillKey = 'waybillNumber';
                                             const quantityKey = 'quantity';
+                                            const emptyQuantityKey =
+                                                'emptyBottlesReturned';
                                             const partialQuantityKey =
                                                 'partialBlistersReturned';
                                             const wastedQuantityKey =
@@ -548,6 +550,22 @@ class CustomInventoryReportDetailsPageState
                                                               .stockDetails
                                                               .quantityPartialReturnedLabel),
                                                       key: partialQuantityKey,
+                                                      width: 200,
+                                                    ),
+                                                  if (widget.reportType ==
+                                                          InventoryReportType
+                                                              .returned ||
+                                                      (widget.reportType ==
+                                                              InventoryReportType
+                                                                  .dispatch &&
+                                                          context
+                                                              .isCommunityDistributor))
+                                                    DigitGridColumn(
+                                                      label: localizations
+                                                          .translate(i18_local
+                                                              .stockDetails
+                                                              .quantityUsedReturnedLabel),
+                                                      key: emptyQuantityKey,
                                                       width: 200,
                                                     ),
                                                   if (widget.reportType ==
@@ -604,6 +622,27 @@ class CustomInventoryReportDetailsPageState
                                                                   : (model.additionalFields!
                                                                               .fields
                                                                               .firstWhereOrNull((e) => e.key == partialQuantityKey)
+                                                                              ?.value ??
+                                                                          '')
+                                                                      .toString(),
+                                                            ),
+                                                          if (widget.reportType ==
+                                                                  InventoryReportType
+                                                                      .returned ||
+                                                              (widget.reportType ==
+                                                                      InventoryReportType
+                                                                          .dispatch &&
+                                                                  context
+                                                                      .isCommunityDistributor))
+                                                            DigitGridCell(
+                                                              key:
+                                                                  emptyQuantityKey,
+                                                              value: model.additionalFields ==
+                                                                      null
+                                                                  ? "0"
+                                                                  : (model.additionalFields!
+                                                                              .fields
+                                                                              .firstWhereOrNull((e) => e.key == emptyQuantityKey)
                                                                               ?.value ??
                                                                           '')
                                                                       .toString(),

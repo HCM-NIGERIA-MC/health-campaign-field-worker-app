@@ -275,7 +275,8 @@ class CustomMemberCard extends StatelessWidget {
                             successfulTask!.resources!.first.productVariantId,
                       )
                       .sku;
-                  final quantity = successfulTask?.resources?.first.quantity;
+                  final quantity =
+                      successfulTask?.resources?.first.quantity ?? '0';
 
                   if (successfulTask != null &&
                       value != null &&

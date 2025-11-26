@@ -563,7 +563,7 @@ class CustomStockDetailsPageState
                                             Constants.stateBoundaryLevel) {
                                           filteredFacilities = entryType ==
                                                   StockRecordEntryType.receipt
-                                              ? allFacilities
+                                              ? facilities
                                                   .where((element) =>
                                                       element.usage ==
                                                       Constants.centralFacility)
