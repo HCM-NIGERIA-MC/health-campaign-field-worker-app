@@ -481,7 +481,8 @@ class _BoundarySelectionPageState
                                             onPressed: () async {
                                               if (!form.valid ||
                                                   validateAllBoundarySelection(
-                                                    context.isDistributor,
+                                                    context.isDistributor ||
+                                                        context.isRegistrar,
                                                   )) {
                                                 clickedStatus.value = false;
                                                 Toast.showToast(
@@ -626,9 +627,10 @@ class _BoundarySelectionPageState
                                             builder: (field) => LabeledField(
                                               label: localizations
                                                   .translate(label),
-                                              isRequired:
-                                                  context.isDistributor ||
-                                                      labelIndex == 0,
+                                              isRequired: (context
+                                                          .isDistributor ||
+                                                      context.isRegistrar) ||
+                                                  labelIndex == 0,
                                               child:
                                                   DigitDropdown<BoundaryModel>(
                                                 onTap: () {
