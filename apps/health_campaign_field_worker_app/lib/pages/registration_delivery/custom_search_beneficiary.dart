@@ -1,5 +1,4 @@
 import 'package:auto_route/auto_route.dart';
-import 'package:digit_components/widgets/digit_dialog.dart';
 import 'package:digit_components/widgets/digit_info_card.dart';
 import 'package:digit_data_model/data_model.dart';
 import 'package:digit_data_model/models/entities/household_type.dart';
@@ -718,28 +717,9 @@ class _CustomSearchBeneficiaryPageState
                             i18_local
                                 .beneficiaryDetails.insufficientStockMessage);
 
-                        if (spaq1 == 0) {
+                        if (spaq1 <= 0) {
                           descriptionText +=
                               "\n ${localizations.translate(i18_local.beneficiaryDetails.azmDoseUnit)}";
-                        }
-
-                        if ((spaq1 > 0)) {
-                          FocusManager.instance.primaryFocus?.unfocus();
-                          context.read<DigitScannerBloc>().add(
-                                const DigitScannerEvent.handleScanner(),
-                              );
-                          context.router
-                              .push(CustomBeneficiaryRegistrationWrapperRoute(
-                            initialState: BeneficiaryRegistrationCreateState(
-                              searchQuery: searchHouseholdsState.searchQuery,
-                            ),
-                          ));
-                          searchController.clear();
-                          selectedFilters = [];
-                          customSearchHouseholdsBloc.add(
-                            const SearchHouseholdsClearEvent(),
-                          );
-                        } else {
                           showCustomPopup(
                             context: context,
                             builder: (popupContext) => Popup(
@@ -771,7 +751,23 @@ class _CustomSearchBeneficiaryPageState
                               ],
                             ),
                           );
+                          return;
                         }
+                        FocusManager.instance.primaryFocus?.unfocus();
+                        context.read<DigitScannerBloc>().add(
+                              const DigitScannerEvent.handleScanner(),
+                            );
+                        context.router
+                            .push(CustomBeneficiaryRegistrationWrapperRoute(
+                          initialState: BeneficiaryRegistrationCreateState(
+                            searchQuery: searchHouseholdsState.searchQuery,
+                          ),
+                        ));
+                        searchController.clear();
+                        selectedFilters = [];
+                        customSearchHouseholdsBloc.add(
+                          const SearchHouseholdsClearEvent(),
+                        );
                       },
                     );
                   },

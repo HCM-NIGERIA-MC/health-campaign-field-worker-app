@@ -954,15 +954,6 @@ class _CustomHouseholdOverviewPageState
                                       if (spaq1 <= 0) {
                                         descriptionText +=
                                             "\n ${localizations.translate(i18_local.beneficiaryDetails.spaq1DoseUnit)}";
-                                      }
-
-                                      if (context.spaq1 > 0) {
-                                        addIndividual(
-                                          context,
-                                          state
-                                              .householdMemberWrapper.household,
-                                        );
-                                      } else {
                                         showCustomPopup(
                                           context: context,
                                           builder: (popupContext) => Popup(
@@ -979,14 +970,13 @@ class _CustomHouseholdOverviewPageState
                                               DigitButton(
                                                 label: localizations.translate(
                                                   i18_local.beneficiaryDetails
-                                                      .goToHome,
+                                                      .backToHouseholdDetails,
                                                 ),
                                                 onPressed: () {
                                                   Navigator.of(
                                                     popupContext,
                                                     rootNavigator: true,
                                                   ).pop();
-                                                  //
                                                 },
                                                 type: DigitButtonType.primary,
                                                 size: DigitButtonSize.large,
@@ -994,7 +984,12 @@ class _CustomHouseholdOverviewPageState
                                             ],
                                           ),
                                         );
+                                        return;
                                       }
+                                      addIndividual(
+                                        context,
+                                        state.householdMemberWrapper.household,
+                                      );
                                     },
                                     label: localizations.translate(i18_local
                                         .householdDetails.addBeneficiartText),
