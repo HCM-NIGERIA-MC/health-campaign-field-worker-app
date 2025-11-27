@@ -104,7 +104,7 @@ class SyncServiceMapper extends SyncEntityMapperListener {
           case DataModelType.stock:
           case DataModelType.stockReconciliation:
           case DataModelType.sideEffect:
-          case DataModelType.service:
+          // case DataModelType.service:
           case DataModelType.referral:
           case DataModelType.hFReferral:
           case DataModelType.attendance:
@@ -151,7 +151,7 @@ class SyncServiceMapper extends SyncEntityMapperListener {
     const individualIdentifierIdKey = 'individualIdentifierId';
     const householdAddressIdKey = 'householdAddressId';
     const individualAddressIdKey = 'individualAddressId';
-    const serviceAttributesIdKey = 'serviceAttributesId';
+    // const serviceAttributesIdKey = 'serviceAttributesId';
 
     switch (typeGroupedEntity.key) {
       case DataModelType.individual:
@@ -720,63 +720,63 @@ class SyncServiceMapper extends SyncEntityMapperListener {
 
         break;
 
-      case DataModelType.service:
-        responseEntities = await remote.search(ServiceSearchModel(
-          referenceIds: entities
-              .whereType<ServiceModel>()
-              .map((e) => e.referenceId)
-              .whereNotNull()
-              .toList(),
-        ));
+      // case DataModelType.service:
+      //   responseEntities = await remote.search(ServiceSearchModel(
+      //     referenceIds: entities
+      //         .whereType<ServiceModel>()
+      //         .map((e) => e.referenceId)
+      //         .whereNotNull()
+      //         .toList(),
+      //   ));
 
-        for (var element in operationGroupedEntity.value) {
-          if (element.id == null) continue;
-          final entity = element.entity as ServiceModel;
-          final responseEntity =
-              responseEntities.whereType<ServiceModel>().firstWhereOrNull(
-                    (e) => e.referenceId == entity.referenceId,
-                  );
+      //   for (var element in operationGroupedEntity.value) {
+      //     if (element.id == null) continue;
+      //     final entity = element.entity as ServiceModel;
+      //     final responseEntity =
+      //         responseEntities.whereType<ServiceModel>().firstWhereOrNull(
+      //               (e) => e.referenceId == entity.referenceId,
+      //             );
 
-          final serverGeneratedId = responseEntity?.id;
-          final rowVersion = responseEntity?.rowVersion;
+      //     final serverGeneratedId = responseEntity?.id;
+      //     final rowVersion = responseEntity?.rowVersion;
 
-          if (serverGeneratedId != null) {
-            await local.opLogManager.updateServerGeneratedIds(
-              model: UpdateServerGeneratedIdModel(
-                clientReferenceId: entity.clientId,
-                serverGeneratedId: serverGeneratedId,
-                additionalIds: responseEntity?.attributes
-                    ?.map((e) {
-                      final id = e.id;
-                      if (id == null) return null;
+      //     if (serverGeneratedId != null) {
+      //       await local.opLogManager.updateServerGeneratedIds(
+      //         model: UpdateServerGeneratedIdModel(
+      //           clientReferenceId: entity.clientId,
+      //           serverGeneratedId: serverGeneratedId,
+      //           additionalIds: responseEntity?.attributes
+      //               ?.map((e) {
+      //                 final id = e.id;
+      //                 if (id == null) return null;
 
-                      return AdditionalId(
-                        idType: serviceAttributesIdKey,
-                        id: id,
-                      );
-                    })
-                    .whereNotNull()
-                    .toList(),
-                dataOperation: element.operation,
-                rowVersion: rowVersion,
-              ),
-            );
-          } else {
-            final bool markAsNonRecoverable =
-                await local.opLogManager.updateSyncDownRetry(entity.clientId);
+      //                 return AdditionalId(
+      //                   idType: serviceAttributesIdKey,
+      //                   id: id,
+      //                 );
+      //               })
+      //               .whereNotNull()
+      //               .toList(),
+      //           dataOperation: element.operation,
+      //           rowVersion: rowVersion,
+      //         ),
+      //       );
+      //     } else {
+      //       final bool markAsNonRecoverable =
+      //           await local.opLogManager.updateSyncDownRetry(entity.clientId);
 
-            if (markAsNonRecoverable) {
-              await local.update(
-                entity.copyWith(
-                  nonRecoverableError: true,
-                ),
-                createOpLog: false,
-              );
-            }
-          }
-        }
+      //       if (markAsNonRecoverable) {
+      //         await local.update(
+      //           entity.copyWith(
+      //             nonRecoverableError: true,
+      //           ),
+      //           createOpLog: false,
+      //         );
+      //       }
+      //     }
+      //   }
 
-        break;
+      //   break;
 
       // Note: Uncomment the following code block to enable complaints sync down
 
