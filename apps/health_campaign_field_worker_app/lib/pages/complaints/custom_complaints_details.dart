@@ -404,7 +404,7 @@ class CustomComplaintsDetailsPageState
                                   keyboardType: TextInputType.number,
                                   inputFormatters: [
                                     FilteringTextInputFormatter.digitsOnly,
-                                    LengthLimitingTextInputFormatter(11),
+                                    LengthLimitingTextInputFormatter(8),
                                   ],
                                   errorMessage: field.errorText,
                                   onChange: (value) => form
@@ -459,7 +459,7 @@ class CustomComplaintsDetailsPageState
                                     initialValue: field.value,
                                     inputFormatters: [
                                       FilteringTextInputFormatter.digitsOnly,
-                                      LengthLimitingTextInputFormatter(11),
+                                      LengthLimitingTextInputFormatter(8),
                                     ],
                                     errorMessage: field.errorText,
                                     onChange: (value) {
@@ -473,8 +473,8 @@ class CustomComplaintsDetailsPageState
                                           Validators.delegate((validator) =>
                                               CustomValidator.validMobileNumber(
                                                   validator)),
-                                          Validators.maxLength(11),
-                                          Validators.minLength(11),
+                                          Validators.maxLength(8),
+                                          Validators.minLength(8),
                                         ], autoValidate: true);
                                       } else {
                                         form
@@ -563,8 +563,8 @@ class CustomComplaintsDetailsPageState
           Validators.required,
           Validators.delegate(
               (validator) => CustomValidator.validMobileNumber(validator)),
-          Validators.minLength(11),
-          Validators.maxLength(11)
+          Validators.minLength(8),
+          Validators.maxLength(8)
         ],
       ),
       _supervisorName: FormControl<String>(
