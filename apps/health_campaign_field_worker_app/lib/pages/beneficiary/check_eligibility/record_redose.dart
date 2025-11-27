@@ -344,46 +344,14 @@ class _RecordRedosePageState extends LocalizedState<RecordRedosePage> {
 
                                                             if (productVariant!
                                                                     ?.sku! ==
-                                                                'SPAQ 1') {
+                                                                Constants.azm) {
                                                               spaq1 = quantity !=
                                                                       'null'
                                                                   ? int.parse(quantity
                                                                           .toString()) *
                                                                       -1
                                                                   : 0;
-                                                            } else if (productVariant
-                                                                    ?.sku! ==
-                                                                'SPAQ 2') {
-                                                              spaq2 = quantity !=
-                                                                      'null'
-                                                                  ? int.parse(quantity
-                                                                          .toString()) *
-                                                                      -1
-                                                                  : 0;
-                                                            } else if (productVariant
-                                                                    ?.sku! ==
-                                                                'Blue VAS') {
-                                                              blueVas = quantity !=
-                                                                      'null'
-                                                                  ? int.parse(quantity
-                                                                          .toString()) *
-                                                                      -1
-                                                                  : 0;
-                                                            } else {
-                                                              redVas = quantity !=
-                                                                      'null'
-                                                                  ? int.parse(quantity
-                                                                          .toString()) *
-                                                                      -1
-                                                                  : 0;
                                                             }
-
-                                                            // spaq1 = quantity !=
-                                                            //         'null'
-                                                            //     ? int.parse(quantity
-                                                            //             .toString()) *
-                                                            //         -1
-                                                            //     : 0;
 
                                                             context
                                                                 .read<
