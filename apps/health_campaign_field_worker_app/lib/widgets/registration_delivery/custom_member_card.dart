@@ -388,6 +388,24 @@ class CustomMemberCard extends StatelessWidget {
     );
   }
 
+  bool isCurrentCycleData(BuildContext context, List<TaskModel> task) {
+    if (task.isEmpty) return true;
+    final currentCycle = context.selectedCycle;
+    final taskCycleIndex = task.first.additionalFields?.fields
+        .firstWhereOrNull(
+          (e) =>
+              e.key ==
+              additional_fields_local.AdditionalFieldsType.cycleIndex.toValue(),
+        )
+        ?.value;
+    if (taskCycleIndex != null && currentCycle != null) {
+      if (int.tryParse(taskCycleIndex) == currentCycle.id) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -474,14 +492,15 @@ class CustomMemberCard extends StatelessWidget {
                   ),
                 ],
               ),
-              ((tasks ?? [])
-                              .where(
-                                (element) =>
-                                    element.status ==
-                                    Status.administeredSuccess.toValue(),
-                              )
-                              .lastOrNull ==
-                          null &&
+              ((!isCurrentCycleData(context, tasks ?? []) ||
+                          (tasks ?? [])
+                                  .where(
+                                    (element) =>
+                                        element.status ==
+                                        Status.administeredSuccess.toValue(),
+                                  )
+                                  .lastOrNull ==
+                              null) &&
                       !isSMCDelivered &&
                       !isBeneficiaryIneligible &&
                       !isBeneficiaryReferred)
