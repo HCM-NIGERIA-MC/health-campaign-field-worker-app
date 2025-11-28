@@ -2,30 +2,24 @@ import 'dart:math';
 
 import 'package:digit_components/digit_components.dart';
 import 'package:digit_components/utils/date_utils.dart';
-import 'package:digit_components/widgets/digit_sync_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:group_radio_button/group_radio_button.dart';
-import 'package:health_campaign_field_worker_app/widgets/custom_back_navigation.dart';
+import '../../../widgets/custom_back_navigation.dart';
 import 'package:registration_delivery/blocs/household_overview/household_overview.dart';
 import 'package:intl/intl.dart';
-import 'package:registration_delivery/models/entities/status.dart';
 import 'package:survey_form/survey_form.dart';
 import 'package:registration_delivery/blocs/delivery_intervention/deliver_intervention.dart';
 import 'package:registration_delivery/blocs/search_households/search_households.dart';
 import 'package:digit_data_model/data_model.dart';
-// import 'package:registration_delivery/models/entities/status.dart';
 import 'package:registration_delivery/models/entities/task.dart';
-import 'package:registration_delivery/router/registration_delivery_router.gm.dart';
-// import '../../../blocs/service/service.dart' as service;
 import '../../../models/entities/roles_type.dart';
 import '../../../router/app_router.dart';
 import '../../../utils/app_enums.dart';
 import '../../../utils/environment_config.dart';
 import '../../../utils/i18_key_constants.dart' as i18_local;
 import '../../../utils/utils.dart';
-import '../../../widgets/header/back_navigation_help_header.dart';
 import '../../../widgets/localized.dart';
 import '../../../models/entities/assessment_checklist/status.dart'
     as status_local;
@@ -201,7 +195,6 @@ class _EligibilityChecklistViewPage
                                 responses[attributeCode] = value;
                               }
                               triggerLocalization = true;
-                              // final router = context.router;
 
                               List<String>? referralReasons = [];
                               List<String?> ineligibilityReasons = [];
@@ -333,7 +326,6 @@ class _EligibilityChecklistViewPage
                                           additionalFields:
                                               ServiceAttributesAdditionalFields(
                                             version: 1,
-                                            // TODO: This needs to be done after adding locationbloc
                                             fields: [
                                               AdditionalField(
                                                 'latitude',
@@ -488,12 +480,6 @@ class _EligibilityChecklistViewPage
                                                     TaskAdditionalFields(
                                                   version: 1,
                                                   fields: [
-                                                    // AdditionalField(
-                                                    //   'taskStatus',
-                                                    //   status_local.Status
-                                                    //       .beneficiaryInEligible
-                                                    //       .toValue(),
-                                                    // ),
                                                     AdditionalField(
                                                       'ineligibleReasons',
                                                       ineligibilityReasons
@@ -514,6 +500,8 @@ class _EligibilityChecklistViewPage
                                                     ),
                                                     ...getIndividualAdditionalFields(
                                                       widget.individual,
+                                                      householdOverviewState
+                                                          .householdMemberWrapper,
                                                     ),
                                                   ],
                                                 ),
@@ -620,11 +608,6 @@ class _EligibilityChecklistViewPage
                                                 .onUserInteraction,
                                             isRequired: true,
                                             controller: controller[index],
-                                            // inputFormatter: [
-                                            //   FilteringTextInputFormatter.allow(RegExp(
-                                            //     "[a-zA-Z0-9]",
-                                            //   )),
-                                            // ],
                                             validator: (value) {
                                               if (((value == null ||
                                                       value == '') &&
@@ -814,7 +797,7 @@ class _EligibilityChecklistViewPage
           Align(
             alignment: Alignment.topLeft,
             child: Padding(
-              padding: const EdgeInsets.all(4.0), // Add padding here
+              padding: const EdgeInsets.all(4.0),
               child: Text(
                 '${localizations.translate(
                   '${selectedServiceDefinition?.code}.${item.code}',
@@ -839,16 +822,12 @@ class _EligibilityChecklistViewPage
                                 .removeWhere((v) => v == childIndex);
                           }
                         }
-
-                        // Update the current controller's value
                         controller[index].value =
                             TextEditingController.fromValue(
                           TextEditingValue(
                             text: value!,
                           ),
                         ).value;
-
-                        // Remove corresponding controllers based on the removed attributes
                       });
                     },
                     items: item.values != null
@@ -1093,10 +1072,6 @@ class _EligibilityChecklistViewPage
           (responses.containsKey(q5Key) && responses[q5Key]!.isNotEmpty)) {
         isIneligible = responses[q5Key] == yes ? true : false;
       }
-      //       if (!isIneligible &&
-      //     (responses.containsKey(q6Key) && responses[q6Key]!.isNotEmpty)) {
-      //   isIneligible = responses[q6Key] == yes ? true : false;
-      // }
       if (!isIneligible &&
           (responses.containsKey(q7Key) && responses[q7Key]!.isNotEmpty)) {
         isIneligible = responses[q7Key] == yes ? true : false;
@@ -1125,19 +1100,11 @@ class _EligibilityChecklistViewPage
     var q2Key = "A2";
     var q3Key = "A3";
     var q4Key = "A4";
-    // var q6Key = "KBEA5";
-    // var q7Key = "KBEA6";
-    // var q8Key = "KBEA7";
-    // var q3Key = "KBEA3";
     Map<String, String> referralKeysVsCode = {
       q1Key: "ALLERGIES",
       q2Key: "LIVER_DISEASE",
       q3Key: "TAKEN_ANTIBIOTICS",
       q4Key: "CHRONIC_ILLNESS",
-      // q6Key: "RESPIRATORY_INFECTION",
-      // q7Key: "TAKEN_VITAMIN_A",
-      // q8Key: "SIDE_EFFECTS_TO_VITAMIN_A",
-      // q7Key: "DRUG_SE_PC",
     };
     // TODO Configure the reasons ,verify hardcoded strings
 
@@ -1157,19 +1124,6 @@ class _EligibilityChecklistViewPage
           (responses.containsKey(q4Key) && responses[q4Key]!.isNotEmpty)) {
         isReferral = responses[q4Key] == yes ? true : false;
       }
-      // if (!isReferral &&
-      //         (responses.containsKey(q6Key) && responses[q6Key]!.isNotEmpty)
-      //     // && (responses.containsKey(q7Key) && responses[q7Key]!.isNotEmpty)
-      //     ) {
-      //   isReferral = (responses[q6Key] == yes)
-      //       // && (responses[q7Key] == yes)
-      //       ? true
-      //       : false;
-      // }
-      // if (!isReferral &&
-      //     (responses.containsKey(q7Key) && responses[q7Key]!.isNotEmpty)) {
-      //   isReferral = responses[q7Key] == yes ? true : false;
-      // }
     }
     if (isReferral) {
       for (var entry in referralKeysVsCode.entries) {
@@ -1192,13 +1146,9 @@ class _EligibilityChecklistViewPage
     var isReferral = false;
     var q1Key = "KBEA5";
     var q2Key = "KBEA6";
-    // var q3Key = "KBEA3";
-    // var q4Key = "KBEA7";
     Map<String, String> referralKeysVsCode = {
       q1Key: "RESPIRATORY_INFECTION",
-      // q2Key: "TAKEN_VITAMIN_A",
       q2Key: "DRUG_SE_PC",
-      // qKey: "SIDE_EFFECTS_TO_VITAMIN_A",
     };
     // TODO Configure the reasons ,verify hardcoded strings
 

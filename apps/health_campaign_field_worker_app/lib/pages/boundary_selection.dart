@@ -41,7 +41,8 @@ class _BoundarySelectionPageState
   int i = 0;
   int pendingSyncCount = 0;
   final clickedStatus = ValueNotifier<bool>(false);
-  StreamController<double> downloadProgress = StreamController<double>.broadcast();
+  StreamController<double> downloadProgress =
+      StreamController<double>.broadcast();
 
   Map<String, TextEditingController> dropdownControllers = {};
   late StreamSubscription syncSubscription;
@@ -54,7 +55,6 @@ class _BoundarySelectionPageState
     context.syncRefresh();
     LocalizationParams()
         .setModule(['hcm-common', 'hcm-beneficiary', 'hcm-home'], false);
-    // LocalizationParams().setModule('common', false);
     context.read<SyncBloc>().add(SyncRefreshEvent(context.loggedInUserUuid));
     context.read<BeneficiaryDownSyncBloc>().add(
           const DownSyncResetStateEvent(),
@@ -337,7 +337,9 @@ class _BoundarySelectionPageState
                                         descriptionTableData: {
                                           localizations.translate(
                                             i18.beneficiaryDetails.boundary,
-                                          ): localizations.translate(result.locality ?? result.boundaryName!),
+                                          ): localizations.translate(
+                                              result.locality ??
+                                                  result.boundaryName!),
                                           localizations.translate(
                                             i18.beneficiaryDetails.status,
                                           ): localizations.translate(

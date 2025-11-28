@@ -6,9 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:inventory_management/models/entities/transaction_reason.dart';
 import 'package:inventory_management/models/entities/transaction_type.dart';
-import 'package:logger/logger.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
-import 'package:inventory_management/blocs/record_stock.dart';
 import 'package:inventory_management/models/entities/stock.dart';
 import 'package:inventory_management/widgets/localized.dart';
 import '../../data/repositories/local/inventory_management/custom_stock.dart';
@@ -45,8 +43,6 @@ class _QRScannerPageState extends LocalizedState<QRScannerPage> {
 
     setState(() => _isScanning = false);
 
-    Logger().d('📦 Scanned: $code');
-
     final repository =
         context.read<LocalRepository<StockModel, StockSearchModel>>()
             as CustomStockLocalRepository;
@@ -55,14 +51,10 @@ class _QRScannerPageState extends LocalizedState<QRScannerPage> {
     List<StockModel> result = [];
 
     try {
-      // if (!Platform.isAndroid && !Platform.isIOS && code == 'test') {
-      //   code = _generateTestQRData();
-      // }
       final compressed = base64Url.decode(code);
 
       final decompressed = utf8.decode(zlib.decode(compressed));
       final decodedJson = jsonDecode(decompressed);
-      Logger().d('📦 Decompressed: $decodedJson');
       List<StockModel> stockList = [];
 
       for (String item in decodedJson) {
@@ -132,7 +124,6 @@ class _QRScannerPageState extends LocalizedState<QRScannerPage> {
           ),
         );
         if (shouldSubmit ?? false) {
-          Logger().d("This is the list $stockList");
           context.router.push(
             ViewStockRecordsCDDRoute(
               mrnNumber: stockList.first.additionalFields?.fields
@@ -186,7 +177,6 @@ class _QRScannerPageState extends LocalizedState<QRScannerPage> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          // title: Text(localizations.translate('qr_scanner_title')),
           actions: [
             IconButton(
               icon: const Icon(Icons.flash_on),

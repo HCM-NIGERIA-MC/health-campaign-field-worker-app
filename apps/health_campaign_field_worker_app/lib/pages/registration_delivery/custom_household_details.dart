@@ -6,14 +6,12 @@ import 'package:digit_ui_components/theme/digit_extended_theme.dart';
 import 'package:digit_ui_components/widgets/atoms/text_block.dart';
 import 'package:digit_ui_components/widgets/molecules/digit_card.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:health_campaign_field_worker_app/widgets/custom_back_navigation.dart';
 import 'package:intl/intl.dart';
 import 'package:reactive_forms/reactive_forms.dart';
 import 'package:registration_delivery/blocs/household_overview/household_overview.dart';
 import 'package:registration_delivery/blocs/search_households/search_households.dart';
-import 'package:registration_delivery/models/entities/additional_fields_type.dart';
 import 'package:registration_delivery/utils/extensions/extensions.dart';
 
 import 'package:registration_delivery/models/entities/household.dart';
@@ -23,15 +21,11 @@ import 'package:registration_delivery/utils/i18_key_constants.dart' as i18;
 import 'package:health_campaign_field_worker_app/utils/i18_key_constants.dart'
     as i18_local;
 import 'package:registration_delivery/utils/utils.dart';
-import 'package:registration_delivery/widgets/back_navigation_help_header.dart';
 import 'package:registration_delivery/widgets/localized.dart';
 import 'package:registration_delivery/widgets/showcase/config/showcase_constants.dart';
-import 'package:registration_delivery/widgets/showcase/showcase_button.dart';
 
 import '../../blocs/registration_delivery/custom_beneficairy_registration.dart';
-import '../../models/entities/identifier_types.dart';
 import '../../router/app_router.dart';
-import '../../utils/registration_delivery/registration_delivery_utils.dart';
 
 @RoutePage()
 class CustomHouseHoldDetailsPage extends LocalizedStatefulWidget {
@@ -69,29 +63,6 @@ class CustomHouseHoldDetailsPageState
     final textTheme = theme.digitTextTheme(context);
     final bool isCommunity = RegistrationDeliverySingleton().householdType ==
         HouseholdType.community;
-
-// TODO: commented code as householdId not required
-    // Future<String> generateHouseholdId() async {
-    //   final userId = RegistrationDeliverySingleton().loggedInUserUuid;
-
-    //   final boundaryBloc = context.read<BoundaryBloc>().state;
-    //   final code = boundaryBloc.boundaryList.first.code;
-    //   final bname = boundaryBloc.boundaryList.first.name;
-
-    //   final locality = (code == null || bname == null)
-    //       ? null
-    //       : LocalityModel(code: code, name: bname);
-
-    //   final localityCode = locality!.code;
-
-    //   final ids = await UniqueIdGeneration().generateUniqueId(
-    //     localityCode: localityCode,
-    //     loggedInUserId: userId!,
-    //     returnCombinedIds: false,
-    //   );
-
-    //   return ids.first;
-    // }
 
     return Scaffold(
       body: ReactiveFormBuilder(
@@ -166,8 +137,6 @@ class CustomHouseHoldDetailsPageState
                               loading,
                               isHeadOfHousehold,
                             ) async {
-                              // final String householdid =
-                              //     await generateHouseholdId();
                               var household = householdModel;
 
                               household ??= HouseholdModel(
@@ -235,7 +204,6 @@ class CustomHouseHoldDetailsPageState
                                         context.millisecondsSinceEpoch(),
                                   ),
                                   address: addressModel,
-                                  // id: householdid,
                                   additionalFields: HouseholdAdditionalFields(
                                       version: 1, fields: []));
 

@@ -18,8 +18,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:survey_form/survey_form.dart';
 import 'package:survey_form/utils/extensions/context_utility.dart';
-
-import 'package:survey_form/router/survey_form_router.gm.dart';
 import 'package:survey_form/utils/constants.dart';
 import 'package:survey_form/utils/i18_key_constants.dart' as i18;
 import '../../utils/i18_key_constants.dart' as i18_local;
@@ -413,8 +411,6 @@ class CustomSurveyFormViewPageState
                                           onChange: (value) {
                                             field.didChange(value);
                                             controller[index].text = value;
-                                            // surveyFormKey.currentState
-                                            //     ?.validate();
                                           },
                                           errorMessage: field.errorText,
                                           controller: controller[index],
@@ -468,8 +464,6 @@ class CustomSurveyFormViewPageState
                                         onChange: (value) {
                                           field.didChange(value);
                                           controller[index].text = value;
-                                          // surveyFormKey.currentState
-                                          //     ?.validate();
                                         },
                                         errorMessage: field.errorText,
                                         keyboardType: TextInputType.number,
@@ -854,7 +848,6 @@ class CustomSurveyFormViewPageState
                                       final childIndex = initialAttributes
                                           ?.indexOf(matchingChildItem);
                                       if (childIndex != null) {
-                                        // controller[childIndex].clear();
                                         visibleSurveyFormIndexes.removeWhere(
                                             (v) => v == childIndex);
                                       }
@@ -874,14 +867,7 @@ class CustomSurveyFormViewPageState
                                           i++) {
                                         // Clear excluded child controllers
                                         if (item.dataType !=
-                                            'SingleValueList') {
-                                          // controller[excludedIndexes[i]].value =
-                                          //     TextEditingController.fromValue(
-                                          //   const TextEditingValue(
-                                          //     text: '',
-                                          //   ),
-                                          // ).value;
-                                        }
+                                            'SingleValueList') {}
                                       }
                                     }
 

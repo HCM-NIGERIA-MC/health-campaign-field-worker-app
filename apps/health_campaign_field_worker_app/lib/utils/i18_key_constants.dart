@@ -504,8 +504,6 @@ class StockDetails {
   String get viewCreatedTransactionLabel => 'VIEW_CREATED_TRANSACTION';
 
   String get createNewTransactionLabel => 'CREATE_NEW_TRANSACTION';
-
-//TODO:
   String get quantityCapsulePartialReturnedLabel =>
       "QTY_PARTIAL_RETURNED_LABEL_STOCK";
   String get quantityCapsulePartialWastedLabel =>
@@ -532,6 +530,9 @@ class StockDetails {
   String get quantityUnusedReturnedLabel =>
       'STOCK_DETAILS_UNUSED_QUANTITY_RETURNED';
 
+  String get quantityUsedReturnedLabel =>
+      'STOCK_DETAILS_USED_QUANTITY_RETURNED';
+
   String get quantityPartialReturnedLabel =>
       'STOCK_DETAILS_PARTIAL_QUANTITY_RETURNED';
 
@@ -555,6 +556,9 @@ class StockReconciliationDetails {
   const StockReconciliationDetails();
 
   String get commentRequiredError => 'RECONCILIATION_COMMENT_IS_REQUIRED';
+
+  String get infoCardContentForCdd =>
+      'STOCK_RECONCILIATION_INFO_CARD_CONTENT_CDD';
 }
 
 class InventoryReportDetails {
@@ -915,18 +919,6 @@ class ComplaintsInboxShowcase {
     return 'COMPLAINT_INBOX_SHOWCASE_CREATE';
   }
 }
-
-// class ForgotPassword {
-//   const ForgotPassword();
-
-//   String get labelText => 'FORGOT_PASSWORD_LABEL_TEXT';
-
-//   String get contentText => 'FORGOT_PASSWORD_CONTENT_TEXT';
-
-//   String get primaryActionLabel => 'PRIMARY_ACTION_LABEL';
-
-//   String get actionLabel => 'FORGOT_PASSWORD_ACTION_LABEL';
-// }
 
 class Home {
   const Home();
@@ -1354,10 +1346,6 @@ class IndividualDetails {
       'INDIVIDUAL_DETAILS_ONLY_ALPHABETS_VALIDATION_MESSAGE';
   String get mobileNumberLengthValidationMessageSMC =>
       'INDIVIDUAL_DETAILS_MOBILE_NUMBER_LENGTH_SMC';
-
-  // String get onlyAlphabetsValidationMessage =>
-  //     'INDIVIDUAL_DETAILS_ONLY_ALPHABETS_VALIDATION_MESSAGE';
-  // String get headAgeValidError => "HEAD_AGE_VALID_ERROR";
 
   String get individualsDetailsLabelText => 'INDIVIDUAL_LABEL_TEXT';
 

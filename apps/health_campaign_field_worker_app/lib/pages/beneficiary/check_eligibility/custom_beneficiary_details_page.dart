@@ -423,12 +423,6 @@ class CustomBeneficiaryDetailsPageState
                                   localizations.translate(i18_local
                                       .deliverIntervention
                                       .deliverAZMIntervention),
-                                  // widget.eligibilityAssessmentType ==
-                                  //         EligibilityAssessmentType.smc
-                                  //     ? i18_local.deliverIntervention
-                                  //         .deliversmcintervention
-                                  //     : i18_local.deliverIntervention
-                                  //         .deliverVASIntervention),
                                   style: textTheme.headingXl.copyWith(
                                       color: theme.colorTheme.text.primary),
                                 ),

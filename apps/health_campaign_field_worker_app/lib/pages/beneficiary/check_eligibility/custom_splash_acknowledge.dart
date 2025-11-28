@@ -5,8 +5,6 @@ import 'package:digit_ui_components/enum/app_enums.dart';
 import 'package:digit_ui_components/widgets/atoms/digit_button.dart';
 import 'package:digit_ui_components/widgets/molecules/panel_cards.dart';
 import 'package:flutter/material.dart';
-
-import 'package:registration_delivery/router/registration_delivery_router.gm.dart';
 import 'package:registration_delivery/utils/i18_key_constants.dart' as i18;
 import 'package:registration_delivery/widgets/localized.dart';
 

@@ -16,7 +16,6 @@ import 'package:registration_delivery/utils/i18_key_constants.dart' as i18_reg;
 import 'package:inventory_management/utils/utils.dart';
 import 'package:registration_delivery/widgets/localized.dart';
 import 'package:reactive_forms/reactive_forms.dart';
-import 'package:collection/collection.dart';
 
 import '../../blocs/auth/auth.dart';
 import '../../router/app_router.dart';

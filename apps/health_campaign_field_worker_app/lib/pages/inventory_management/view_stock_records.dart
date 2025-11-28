@@ -5,15 +5,11 @@ import 'package:digit_ui_components/digit_components.dart';
 import 'package:digit_ui_components/widgets/atoms/input_wrapper.dart';
 import 'package:digit_ui_components/widgets/molecules/digit_card.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:inventory_management/blocs/record_stock.dart';
 import 'package:inventory_management/models/entities/stock.dart';
 import 'package:inventory_management/models/entities/transaction_type.dart';
 import 'package:inventory_management/utils/i18_key_constants.dart' as i18;
 import 'package:inventory_management/utils/utils.dart';
 import 'package:registration_delivery/widgets/localized.dart';
-
-import '../../utils/extensions/extensions.dart';
 import '../../utils/utils.dart';
 
 @RoutePage()

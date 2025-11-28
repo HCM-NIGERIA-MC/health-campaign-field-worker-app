@@ -33,6 +33,18 @@ enum AdditionalFieldsType {
   gender,
   @MappableValue("age")
   age,
+  @MappableValue("memberCount")
+  memberCount,
+  @MappableValue("householdHeadName")
+  householdHeadName,
+  @MappableValue("householdHeadMobileNumber")
+  householdHeadMobileNumber,
+  @MappableValue("householdHeadGender")
+  householdHeadGender,
+  @MappableValue("householdHeadAge")
+  householdHeadAge,
+  @MappableValue("childName")
+  childName,
   @MappableValue("deliveryComment")
   deliveryComment,
   @MappableValue("deliveryType")

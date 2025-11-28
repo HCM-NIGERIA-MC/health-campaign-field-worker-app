@@ -5,18 +5,14 @@ import 'package:digit_components/widgets/digit_card.dart';
 import 'package:digit_data_model/data/data_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:registration_delivery/data/repositories/local/task.dart';
 import 'package:registration_delivery/models/entities/status.dart';
 import 'package:registration_delivery/models/entities/task.dart';
 import 'package:registration_delivery/registration_delivery.dart';
 
 import '../../data/repositories/custom_task.dart';
-// import '../../progress_indicator/progress_indicator.dart';
-import '../progress_indicator/progress_indicator.dart';
 
 import 'package:digit_ui_components/digit_components.dart';
 import 'package:digit_ui_components/theme/digit_extended_theme.dart';
-import 'package:flutter/material.dart';
 
 class CustomBeneficiaryProgressBar extends StatefulWidget {
   final String label;
@@ -113,7 +109,7 @@ class _CustomBeneficiaryProgressBarState
 
   @override
   Widget build(BuildContext context) {
-    const target = 70;
+    const target = 100;
 
     return DigitCard(
       child: CustomProgressIndicatorContainer(
@@ -125,7 +121,6 @@ class _CustomBeneficiaryProgressBarState
     );
   }
 }
-
 
 class CustomProgressIndicatorContainer extends StatelessWidget {
   final String label;
@@ -177,7 +172,8 @@ class CustomProgressIndicatorContainer extends StatelessWidget {
                   children: [
                     Text(
                       prefixLabel,
-                      style: theme.textTheme.bodyMedium!.copyWith(color: theme.colorTheme.alert.success),
+                      style: theme.textTheme.bodyMedium!
+                          .copyWith(color: theme.colorTheme.alert.success),
                       textAlign: TextAlign.center,
                     ),
                     Text(

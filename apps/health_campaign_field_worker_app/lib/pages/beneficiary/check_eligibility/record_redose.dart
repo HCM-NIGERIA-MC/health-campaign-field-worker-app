@@ -1,13 +1,9 @@
 import 'package:collection/collection.dart';
 import 'package:digit_components/widgets/atoms/digit_reactive_dropdown.dart';
-// import 'package:digit_components/digit_components.dart';
 import 'package:digit_components/widgets/atoms/digit_toaster.dart';
-import 'package:digit_components/widgets/digit_dialog.dart' as digit_dialog;
 import 'package:digit_components/widgets/digit_elevated_button.dart';
-import 'package:digit_components/widgets/digit_text_field.dart';
 import 'package:digit_data_model/data_model.dart';
 import 'package:digit_ui_components/enum/app_enums.dart';
-import 'package:digit_ui_components/utils/component_utils.dart';
 import 'package:digit_ui_components/widgets/atoms/digit_numeric_form_input.dart';
 import 'package:digit_ui_components/widgets/atoms/digit_text_form_input.dart';
 import 'package:digit_ui_components/widgets/atoms/labelled_fields.dart';
@@ -22,14 +18,11 @@ import 'package:registration_delivery/blocs/household_overview/household_overvie
 import 'package:registration_delivery/models/entities/status.dart';
 import 'package:registration_delivery/models/entities/task.dart';
 import 'package:registration_delivery/models/entities/task_resource.dart';
-import 'package:registration_delivery/router/registration_delivery_router.gm.dart';
-import 'package:registration_delivery/utils/utils.dart';
-import 'package:registration_delivery/widgets/beneficiary/resource_beneficiary_card.dart';
-import 'package:registration_delivery/widgets/component_wrapper/product_variant_bloc_wrapper.dart';
-
 import 'package:registration_delivery/utils/i18_key_constants.dart' as i18;
+import 'package:registration_delivery/widgets/component_wrapper/product_variant_bloc_wrapper.dart';
 import 'package:registration_delivery/widgets/showcase/showcase_wrappers.dart';
 
+import '/utils/registration_delivery/utils_smc.dart' as utils_smc;
 import '../../../blocs/app_initialization/app_initialization.dart';
 import '../../../blocs/auth/auth.dart';
 import '../../../blocs/project/project.dart';
@@ -41,8 +34,6 @@ import '../../../utils/i18_key_constants.dart' as i18_local;
 import '../../../utils/utils.dart';
 import '../../../widgets/header/back_navigation_help_header.dart';
 import '../../../widgets/localized.dart';
-import '../../../widgets/registration_delivery/custom_resourse_beneficiary_card.dart';
-import '/utils/registration_delivery/utils_smc.dart' as utils_smc;
 
 @RoutePage()
 class RecordRedosePage extends LocalizedStatefulWidget {
@@ -344,8 +335,17 @@ class _RecordRedosePageState extends LocalizedState<RecordRedosePage> {
 
                                                             if (productVariant!
                                                                     ?.sku! ==
-                                                                'SPAQ 1') {
+                                                                'AZM') {
                                                               spaq1 = quantity !=
+                                                                      'null'
+                                                                  ? int.parse(quantity
+                                                                          .toString()) *
+                                                                      -1
+                                                                  : 0;
+                                                            } else if (productVariant
+                                                                    ?.sku! ==
+                                                                'SPAQ 1') {
+                                                              spaq2 = quantity !=
                                                                       'null'
                                                                   ? int.parse(quantity
                                                                           .toString()) *
@@ -377,14 +377,6 @@ class _RecordRedosePageState extends LocalizedState<RecordRedosePage> {
                                                                       -1
                                                                   : 0;
                                                             }
-
-                                                            // spaq1 = quantity !=
-                                                            //         'null'
-                                                            //     ? int.parse(quantity
-                                                            //             .toString()) *
-                                                            //         -1
-                                                            //     : 0;
-
                                                             context
                                                                 .read<
                                                                     AuthBloc>()
@@ -535,6 +527,11 @@ class _RecordRedosePageState extends LocalizedState<RecordRedosePage> {
                                                 ..._controllers
                                                     .map((e) =>
                                                         CustomResourceBeneficiaryCard(
+                                                          productQuantity:
+                                                              productVariants
+                                                                      ?.first
+                                                                      .quantity ??
+                                                                  0,
                                                           form: form,
                                                           cardIndex:
                                                               _controllers
@@ -591,44 +588,6 @@ class _RecordRedosePageState extends LocalizedState<RecordRedosePage> {
                                                             .appConfiguration
                                                             .deliveryCommentOptions ??
                                                         <DeliveryCommentOptions>[];
-
-                                                    // return DigitReactiveDropdown<
-                                                    //     String>(
-                                                    //   label: localizations
-                                                    //       .translate(
-                                                    //     i18_local
-                                                    //         .deliverIntervention
-                                                    //         .reasonForRedoseLabel,
-                                                    //   ),
-                                                    //   isDisabled: false,
-                                                    //   isRequired: true,
-                                                    //   validationMessages: {
-                                                    //     'required': (object) =>
-                                                    //         localizations
-                                                    //             .translate(
-                                                    //           i18_local
-                                                    //               .deliverIntervention
-                                                    //               .selectReasonForRedoseLabel,
-                                                    //         ),
-                                                    //   },
-                                                    //   valueMapper: (value) =>
-                                                    //       localizations
-                                                    //           .translate(
-                                                    //     value,
-                                                    //   ),
-                                                    //   initialValue:
-                                                    //       deliveryCommentOptions
-                                                    //           .firstOrNull
-                                                    //           ?.name,
-                                                    //   menuItems:
-                                                    //       deliveryCommentOptions
-                                                    //           .map((e) {
-                                                    //     return e.code;
-                                                    //   }).toList(),
-                                                    //   formControlName:
-                                                    //       _deliveryCommentKey,
-                                                    // );
-
                                                     return Column(
                                                       crossAxisAlignment:
                                                           CrossAxisAlignment
@@ -995,7 +954,6 @@ class _RecordRedosePageState extends LocalizedState<RecordRedosePage> {
             ],
             value:
                 "${productVariants[0].quantity ?? 0} ${localizations.translate(i18_local.beneficiaryDetails.beneficiaryDoseUnit)}",
-            // value: productVariants[0].quantity ?? 0,
           ),
         ),
       ]),
@@ -1028,6 +986,7 @@ class CustomResourceBeneficiaryCard extends LocalizedStatefulWidget {
   final int totalItems;
   final bool isAdministered;
   final EligibilityAssessmentType eligibilityAssessmentType;
+  final int productQuantity;
 
   const CustomResourceBeneficiaryCard({
     super.key,
@@ -1038,6 +997,7 @@ class CustomResourceBeneficiaryCard extends LocalizedStatefulWidget {
     required this.totalItems,
     required this.isAdministered,
     this.eligibilityAssessmentType = EligibilityAssessmentType.smc,
+    required this.productQuantity,
   });
 
   @override
@@ -1088,7 +1048,7 @@ class CustomResourceBeneficiaryCardState
             child: DigitNumericFormInput(
               minValue: 1,
               step: 1,
-              initialValue: "1",
+              initialValue: '${widget.productQuantity}',
               onChange: (value) {
                 widget.form
                     .control('quantityDistributed.${widget.cardIndex}')

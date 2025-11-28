@@ -5,12 +5,9 @@ import 'package:digit_ui_components/widgets/atoms/digit_loader.dart';
 import 'package:digit_ui_components/widgets/atoms/pop_up_card.dart';
 import 'package:digit_ui_components/widgets/molecules/digit_card.dart';
 import 'package:digit_ui_components/widgets/molecules/show_pop_up.dart';
-import 'package:digit_ui_components/widgets/privacy_notice/privacy_component.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:reactive_forms/reactive_forms.dart';
-
-import '../blocs/app_initialization/app_initialization.dart';
 import '../blocs/auth/auth.dart';
 import '../data/local_store/no_sql/schema/app_configuration.dart';
 import '../router/app_router.dart';
@@ -133,35 +130,6 @@ class _LoginPageState extends LocalizedState<LoginPage> {
                           ),
                         ),
                       ),
-                      // ToDo: Need to update after privacy policy is implemented
-                      // BlocBuilder<AppInitializationBloc,
-                      //         AppInitializationState>(
-                      //     builder: (context, initState) {
-                      //   final privacyPolicyJson = initState.maybeWhen(
-                      //       initialized:
-                      //           (AppConfiguration appConfiguration, _, __) =>
-                      //               appConfiguration.privacyPolicyConfig,
-                      //       orElse: () => null);
-                      //   if (privacyPolicyJson?.active == false) {
-                      //     return const SizedBox.shrink();
-                      //   }
-
-                      //   form
-                      //       .control(_privacyCheck)
-                      //       .setValidators([Validators.requiredTrue]);
-                      //   form.control(_privacyCheck).updateValueAndValidity();
-                      //   return PrivacyComponent(
-                      //     privacyPolicy:
-                      //         convertToPrivacyPolicyModel(privacyPolicyJson),
-                      //     formControlName: _privacyCheck,
-                      //     text: localizations
-                      //         .translate(i18.privacyPolicy.privacyNoticeText),
-                      //     linkText: localizations.translate(
-                      //         i18.privacyPolicy.privacyPolicyLinkText),
-                      //     validationMessage: localizations.translate(
-                      //         i18.privacyPolicy.privacyPolicyValidationText),
-                      //   );
-                      // }),
                       DigitButton(
                         label: localizations.translate(i18.login.actionLabel),
                         type: DigitButtonType.primary,

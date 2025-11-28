@@ -8,7 +8,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:health_campaign_field_worker_app/widgets/custom_back_navigation.dart';
 import 'package:reactive_forms/reactive_forms.dart';
 import 'package:referral_reconciliation/models/entities/referral_recon_enums.dart';
-// import 'package:referral_reconciliation/router/referral_reconciliation_router.gm.dart';
 import 'package:referral_reconciliation/utils/constants.dart';
 
 import 'package:referral_reconciliation/utils/date_utils.dart';
@@ -17,9 +16,7 @@ import '../../utils/constants.dart';
 import '../../utils/i18_key_constants.dart' as i18_local;
 import 'package:referral_reconciliation/blocs/referral_recon_record.dart';
 import 'package:referral_reconciliation/utils/utils.dart';
-import 'package:referral_reconciliation/widgets/back_navigation_help_header.dart';
 import 'package:referral_reconciliation/widgets/localized.dart';
-import '../referral_reconcillation/custom_referral_facility_selection_page.dart';
 import 'package:health_campaign_field_worker_app/router/app_router.dart';
 
 @RoutePage()
@@ -66,8 +63,6 @@ class _CustomReferralFacilityPageState
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final textTheme = theme.digitTextTheme(context);
-    // final router = context.router;
-
     return BlocBuilder<FacilityBloc, FacilityState>(
         builder: (context, facilityState) {
       return facilityState.maybeWhen(
@@ -134,7 +129,6 @@ class _CustomReferralFacilityPageState
                                                   i18.common.coreCommonNext,
                                                 ),
                                                 onPressed: () {
-                                                  orElse:
                                                   () => const SizedBox.shrink();
                                                   form.markAllAsTouched();
                                                   if (!form.valid) {

@@ -1,4 +1,3 @@
-import 'package:auto_route/auto_route.dart';
 import 'package:collection/collection.dart';
 import 'package:digit_components/digit_components.dart';
 import 'package:digit_data_model/data_model.dart';
@@ -6,28 +5,26 @@ import 'package:digit_ui_components/theme/digit_extended_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:registration_delivery/blocs/app_localization.dart';
+import 'package:registration_delivery/blocs/delivery_intervention/deliver_intervention.dart';
 import 'package:registration_delivery/blocs/household_overview/household_overview.dart';
 import 'package:registration_delivery/models/entities/project_beneficiary.dart';
 import 'package:registration_delivery/models/entities/side_effect.dart';
 import 'package:registration_delivery/models/entities/status.dart';
 import 'package:registration_delivery/models/entities/task.dart';
-import 'package:registration_delivery/router/registration_delivery_router.gm.dart';
 import 'package:registration_delivery/utils/i18_key_constants.dart' as i18;
-import '../../blocs/localization/app_localization.dart';
-import '../../models/entities/identifier_types.dart';
-// import '../../utils/registration_delivery/utils_smc.dart';
-//import 'package:registration_delivery/utils/utils.dart';
-import '../../router/app_router.dart';
-import '../../utils/app_enums.dart';
-import '../../utils/registration_delivery/utils_smc.dart';
-import '../../utils/utils.dart';
-import '../action_card/action_card.dart';
-
-import '../../utils/i18_key_constants.dart' as i18_local;
+import 'package:registration_delivery/utils/utils.dart';
 
 import '../../models/entities/additional_fields_type.dart'
     as additional_fields_local;
+import '../../models/entities/additional_fields_type.dart';
+import '../../models/entities/identifier_types.dart';
+import '../../router/app_router.dart';
+import '../../utils/app_enums.dart';
 import '../../utils/extensions/extensions.dart';
+import '../../utils/i18_key_constants.dart' as i18_local;
+import '../../utils/registration_delivery/utils_smc.dart';
+import '../../utils/utils.dart';
+import '../action_card/action_card.dart';
 
 class CustomMemberCard extends StatelessWidget {
   final List<ProductVariantModel> variant;
@@ -115,10 +112,7 @@ class CustomMemberCard extends StatelessWidget {
       );
     }
     if ((isSMCDelivered ||
-        //isVASDelivered ||
         isBeneficiaryReferredSMC ||
-        // isBeneficiaryReferredVAS ||
-        // isBeneficiaryInEligibleVAS ||
         isBeneficiaryInEligibleSMC)) {
       return Column(
         children: [
@@ -170,27 +164,6 @@ class CustomMemberCard extends StatelessWidget {
                 iconColor: theme.colorScheme.error,
               ),
             ),
-          // if (isBeneficiaryReferredSMC || isBeneficiaryReferredVAS)
-          //   Align(
-          //     alignment: Alignment.centerLeft,
-          //     child: DigitIconButton(
-          //       icon: Icons.info_rounded,
-          //       iconSize: 20,
-          //       iconText: localizations.translate(
-          //         isBeneficiaryReferredSMC || isBeneficiaryReferredVAS
-          //             ? isBeneficiaryReferredSMC
-          //                 ? (i18_local.householdOverView
-          //                     .householdOverViewBeneficiaryReferredSMCLabel)
-          //                 : (i18_local.householdOverView
-          //                     .householdOverViewBeneficiaryReferredVACLabel)
-          //             : isBeneficiaryRefused
-          //                 ? Status.beneficiaryRefused.toValue()
-          //                 : Status.notVisited.toValue(),
-          //       ),
-          //       iconTextColor: theme.colorScheme.error,
-          //       iconColor: theme.colorScheme.error,
-          //     ),
-          //   ),
         ],
       );
     } else if (isBeneficiaryRefused) {
@@ -302,8 +275,56 @@ class CustomMemberCard extends StatelessWidget {
                             successfulTask!.resources!.first.productVariantId,
                       )
                       .sku;
+                  final quantity = successfulTask?.resources?.first.quantity;
 
-                  if (successfulTask != null && value != null && spaq1 > 0) {
+                  if (successfulTask != null &&
+                      value != null &&
+                      (spaq1 - (int.tryParse(quantity ?? '0') as int)) > 0) {
+                    final projectType = RegistrationDeliverySingleton()
+                        .selectedProject
+                        ?.additionalDetails
+                        ?.projectType;
+                    final lastDose = successfulTask != null
+                        ? successfulTask.additionalFields?.fields
+                                .firstWhereOrNull(
+                                  (e) =>
+                                      e.key ==
+                                      AdditionalFieldsType.doseIndex.toValue(),
+                                )
+                                ?.value ??
+                            '1'
+                        : '0';
+                    final lastCycle = successfulTask != null
+                        ? successfulTask.additionalFields?.fields
+                                .firstWhereOrNull(
+                                  (e) =>
+                                      e.key ==
+                                      AdditionalFieldsType.cycleIndex.toValue(),
+                                )
+                                ?.value ??
+                            '1'
+                        : '1';
+                    final deliverBloc = context.read<DeliverInterventionBloc>();
+                    if (projectType != null) {
+                      deliverBloc.add(
+                        DeliverInterventionEvent.setActiveCycleDose(
+                          lastDose: successfulTask != null
+                              ? int.tryParse(
+                                    lastDose,
+                                  ) ??
+                                  1
+                              : 0,
+                          lastCycle: successfulTask != null
+                              ? int.tryParse(
+                                    lastCycle,
+                                  ) ??
+                                  1
+                              : 1,
+                          individualModel: individual,
+                          projectType: projectType,
+                        ),
+                      );
+                    }
                     context.router.push(
                       RecordRedoseRoute(
                         tasks: [successfulTask],
@@ -324,7 +345,7 @@ class CustomMemberCard extends StatelessWidget {
                           i18_local.beneficiaryDetails
                               .insufficientAZTStockMessageDelivery,
                         )} \n ${localizations.translate(
-                          i18_local.beneficiaryDetails.spaq1DoseUnit,
+                          i18_local.beneficiaryDetails.azmDoseUnit,
                         )}",
                         primaryAction: DigitDialogActions(
                           label: localizations.translate(i18_local

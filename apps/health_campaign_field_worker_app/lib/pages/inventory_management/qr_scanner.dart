@@ -166,47 +166,7 @@ class _DigitScannerPageState extends LocalizedState<DigitScannerPage> {
                             ),
                           ),
                         ),
-                        // if (widget.isGS1code)
                         const SizedBox.shrink(),
-                        // else
-                        //   Align(
-                        //     alignment: Alignment.center,
-                        //     widthFactor: 2,
-                        //     child: Padding(
-                        //       padding: const EdgeInsets.only(top: spacer8),
-                        //       child: Column(
-                        //         crossAxisAlignment: CrossAxisAlignment.center,
-                        //         mainAxisAlignment: MainAxisAlignment.center,
-                        //         children: [
-                        //           Padding(
-                        //             padding: const EdgeInsets.only(top: spacer1),
-                        //             child: Text(
-                        //               localizations.translate(
-                        //                 i18.scanner.manualScan,
-                        //               ),
-                        //               style: textTheme.bodyL.copyWith(
-                        //                 color: theme.colorTheme.paper.primary
-                        //               )
-                        //             ),
-                        //           ),
-                        //           DigitButton(label: localizations.translate(
-                        //             i18.scanner.enterManualCode,
-                        //           ), onPressed: () {
-                        //             context.read<DigitScannerBloc>().add(
-                        //               const DigitScannerEvent.handleScanner(
-                        //                 barCode: [],
-                        //                 qrCode: [],
-                        //               ),
-                        //             );
-                        //             setState(() {
-                        //               manualCode = true;
-                        //             });
-                        //           }, type: DigitButtonType.link, size: DigitButtonSize.large)
-                        //         ],
-                        //       ),
-                        //     ),
-                        //   ),
-
                         Positioned(
                           bottom: 0,
                           width: MediaQuery.of(context).size.width,

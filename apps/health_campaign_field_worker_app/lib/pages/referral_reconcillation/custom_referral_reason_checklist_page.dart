@@ -13,13 +13,11 @@ import 'package:digit_ui_components/widgets/molecules/digit_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-// import 'package:referral_reconciliation/router/referral_reconciliation_router.gm.dart';
 import 'package:health_campaign_field_worker_app/router/app_router.dart';
 import 'package:referral_reconciliation/router/referral_reconciliation_router.gm.dart';
 import 'package:referral_reconciliation/utils/constants.dart';
 import 'package:referral_reconciliation/utils/extensions/extensions.dart';
 import 'package:survey_form/survey_form.dart';
-
 import 'package:referral_reconciliation/blocs/referral_recon_service_definition.dart';
 import 'package:referral_reconciliation/utils/date_utils.dart';
 import 'package:referral_reconciliation/utils/i18_key_constants.dart' as i18;
@@ -710,7 +708,6 @@ class _CustomReferralReasonChecklistPageState
                               final childIndex =
                                   initialAttributes?.indexOf(matchingChildItem);
                               if (childIndex != null) {
-                                // controller[childIndex].clear();
                                 visibleChecklistIndexes
                                     .removeWhere((v) => v == childIndex);
                               }

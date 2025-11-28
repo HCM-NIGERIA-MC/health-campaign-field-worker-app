@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:registration_delivery/blocs/search_households/search_households.dart'
     as registration_delivery;
-import 'package:registration_delivery/models/entities/household.dart';
 
 import 'package:registration_delivery/utils/i18_key_constants.dart' as i18;
 import 'package:registration_delivery/widgets/localized.dart';
@@ -52,15 +51,6 @@ class CustomBeneficiaryAcknowledgementPageState
         ?.identifierId;
     String? beneficiaryName =
         householdMember?.members?.lastOrNull?.name?.givenName;
-    // if (widget.acknowledgementType == AcknowledgementType.addHousehold) {
-    //   return beneficiaryId == null || beneficiaryName == null
-    //       ? null
-    //       : {
-    //           'id': localizations
-    //               .translate(i18_local.beneficiaryDetails.householdId),
-    //           'value': '$beneficiaryName - $beneficiaryId'
-    //         };
-    // }
     return beneficiaryId == null || beneficiaryName == null
         ? null
         : {

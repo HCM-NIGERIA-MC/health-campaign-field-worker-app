@@ -1,16 +1,9 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:digit_ui_components/digit_components.dart';
-import 'package:digit_ui_components/theme/digit_extended_theme.dart';
-import 'package:digit_ui_components/widgets/molecules/panel_cards.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:inventory_management/blocs/record_stock.dart';
 import 'package:inventory_management/models/entities/stock.dart';
-import 'package:registration_delivery/registration_delivery.dart';
-import 'package:registration_delivery/router/registration_delivery_router.gm.dart';
-import 'package:registration_delivery/utils/i18_key_constants.dart' as i18;
 import 'package:registration_delivery/widgets/localized.dart';
-import '../../../utils/app_enums.dart';
 import '../../router/app_router.dart';
 import '../../utils/i18_key_constants.dart' as i18_local;
 import '../../widgets/digit_ui_component/custom_panel_card.dart';
@@ -85,7 +78,6 @@ class CustomAcknowledgementPageState
                     ViewStockRecordsRoute(
                       mrnNumber: widget.mrnNumber,
                       stockRecords: widget.stockRecords,
-                      // entryType: widget.entryType,
                     ),
                   );
                 },

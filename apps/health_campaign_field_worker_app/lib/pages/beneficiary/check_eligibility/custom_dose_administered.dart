@@ -2,16 +2,13 @@ import 'package:auto_route/auto_route.dart';
 import 'package:collection/collection.dart';
 import 'package:digit_data_model/data_model.dart';
 import 'package:digit_ui_components/digit_components.dart';
-import 'package:digit_ui_components/models/RadioButtonModel.dart';
 import 'package:digit_ui_components/services/location_bloc.dart';
 import 'package:digit_ui_components/theme/digit_extended_theme.dart';
 import 'package:digit_ui_components/widgets/atoms/table_cell.dart';
 import 'package:digit_ui_components/widgets/molecules/digit_card.dart';
-import 'package:digit_ui_components/widgets/molecules/digit_table.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:reactive_forms/reactive_forms.dart';
 import 'package:registration_delivery/blocs/app_localization.dart';
 import 'package:registration_delivery/utils/extensions/extensions.dart';
 
@@ -24,13 +21,10 @@ import 'package:registration_delivery/models/entities/additional_fields_type.dar
 import 'package:registration_delivery/models/entities/status.dart';
 import 'package:registration_delivery/models/entities/task.dart';
 import 'package:registration_delivery/models/entities/task_resource.dart';
-import 'package:registration_delivery/router/registration_delivery_router.gm.dart';
-import 'package:registration_delivery/utils/constants.dart';
 import 'package:registration_delivery/utils/utils.dart';
 import 'package:registration_delivery/widgets/back_navigation_help_header.dart';
 import 'package:registration_delivery/widgets/component_wrapper/product_variant_bloc_wrapper.dart';
 import 'package:registration_delivery/widgets/localized.dart';
-import 'package:registration_delivery/widgets/table_card/table_card.dart';
 import '../../../models/entities/additional_fields_type.dart'
     as additional_fields_local;
 import '../../../models/entities/identifier_types.dart';
@@ -283,6 +277,8 @@ class CustomDoseAdministeredPageState
                                             ),
                                             ...getIndividualAdditionalFields(
                                               overViewBloc.selectedIndividual,
+                                              overViewBloc
+                                                  .householdMemberWrapper,
                                             ),
                                           ],
                                         ),

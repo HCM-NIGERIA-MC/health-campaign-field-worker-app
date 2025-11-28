@@ -1,5 +1,4 @@
 import 'package:auto_route/auto_route.dart';
-import 'package:digit_data_model/data/local_store/sql_store/tables/package_tables/referral.dart';
 import 'package:digit_data_model/data_model.dart';
 import 'package:digit_ui_components/digit_components.dart';
 import 'package:digit_ui_components/models/RadioButtonModel.dart';
@@ -12,7 +11,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:health_campaign_field_worker_app/widgets/custom_back_navigation.dart';
 import 'package:reactive_forms/reactive_forms.dart';
 import 'package:referral_reconciliation/models/entities/referral_recon_enums.dart';
-import 'package:referral_reconciliation/router/referral_reconciliation_router.gm.dart';
 import 'package:referral_reconciliation/utils/extensions/extensions.dart';
 import 'package:survey_form/survey_form.dart';
 
@@ -1094,8 +1092,6 @@ class _CustomRecordReferralDetailsPageState
                                           }),
                                     ]),
                                 StatefulBuilder(builder: (context, set) {
-                                  print(
-                                      "Current referral reason: ${ReferralReconSingleton().referralReasons}");
                                   form.control(_referralReason).value =
                                       recordState.mapOrNull(
                                     create: (value) => value.viewOnly
@@ -1310,7 +1306,7 @@ class _CustomRecordReferralDetailsPageState
                     0 &&
                 ReferralReconSingleton()
                         .validIndividualAgeForCampaign
-                        .validMinAge !=
+                        .validMinAge >=
                     0)
             ? [
                 Validators.required,

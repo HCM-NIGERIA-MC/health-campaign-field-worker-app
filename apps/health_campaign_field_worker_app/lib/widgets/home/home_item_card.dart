@@ -1,4 +1,3 @@
-import 'package:digit_ui_components/enum/app_enums.dart';
 import 'package:digit_ui_components/theme/digit_extended_theme.dart';
 import 'package:digit_ui_components/theme/spacers.dart';
 import 'package:digit_ui_components/widgets/molecules/digit_card.dart';
@@ -74,7 +73,6 @@ class HomeItemCard extends StatelessWidget {
                   ),
                   style: textTheme.bodyS,
                   textAlign: TextAlign.center,
-                  // overflow: TextOverflow.ellipsis,
                 ),
               ],
             ),

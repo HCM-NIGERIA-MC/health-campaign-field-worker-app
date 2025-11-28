@@ -8,10 +8,8 @@ import 'package:digit_ui_components/widgets/molecules/digit_card.dart';
 import 'package:digit_ui_components/widgets/molecules/label_value_summary.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:registration_delivery/models/entities/additional_fields_type.dart';
 import 'package:registration_delivery/router/registration_delivery_router.gm.dart';
 import 'package:registration_delivery/widgets/back_navigation_help_header.dart';
-import 'package:registration_delivery/widgets/showcase/showcase_button.dart';
 
 import 'package:registration_delivery/widgets/localized.dart';
 import 'package:registration_delivery/utils/i18_key_constants.dart' as i18;
@@ -269,97 +267,8 @@ class CustomSummaryPageState extends LocalizedState<CustomSummaryPage> {
                                       labelFlex: 5,
                                       padding: const EdgeInsets.only(
                                           bottom: spacer2)),
-                                  // LabelValueItem(
-                                  //   label: localizations.translate(i18
-                                  //       .householdDetails
-                                  //       .noOfPregnantWomenCountLabel),
-                                  //   value: householdState.householdModel
-                                  //           ?.additionalFields?.fields
-                                  //           .where((h) =>
-                                  //               h.key ==
-                                  //               AdditionalFieldsType
-                                  //                   .pregnantWomen
-                                  //                   .toValue())
-                                  //           .firstOrNull
-                                  //           ?.value
-                                  //           .toString() ??
-                                  //       '0',
-                                  //   isInline: true,
-                                  //   labelFlex: 5,
-                                  // ),
-                                  // LabelValueItem(
-                                  //     label: localizations.translate(i18
-                                  //         .householdDetails
-                                  //         .noOfChildrenBelow5YearsLabel),
-                                  //     value: householdState.householdModel
-                                  //             ?.additionalFields?.fields
-                                  //             .where((h) =>
-                                  //                 h.key ==
-                                  //                 AdditionalFieldsType.children
-                                  //                     .toValue())
-                                  //             .firstOrNull
-                                  //             ?.value
-                                  //             .toString() ??
-                                  //         '0',
-                                  //     isInline: true,
-                                  //     labelFlex: 5,
-                                  //     padding:
-                                  //         const EdgeInsets.only(top: spacer2)),
                                 ]),
                           ]),
-                      // DigitCard(
-                      //     margin: const EdgeInsets.all(spacer2),
-                      //     children: [
-                      //       LabelValueSummary(
-                      //           padding: EdgeInsets.zero,
-                      //           heading: localizations.translate(
-                      //               i18.householdDetails.houseDetailsLabel),
-                      //           headingStyle: textTheme.headingL.copyWith(
-                      //             color: theme.colorTheme.primary.primary2,
-                      //           ),
-                      //           items: [
-                      //             LabelValueItem(
-                      //                 label: localizations.translate(
-                      //                     i18.householdDetails.noOfRoomsLabel),
-                      //                 value: householdState.householdModel
-                      //                         ?.additionalFields?.fields
-                      //                         .where((h) =>
-                      //                             h.key ==
-                      //                             AdditionalFieldsType.noOfRooms
-                      //                                 .toValue())
-                      //                         .firstOrNull
-                      //                         ?.value
-                      //                         .toString() ??
-                      //                     '0',
-                      //                 isInline: true,
-                      //                 labelFlex: 5,
-                      //                 padding: const EdgeInsets.only(
-                      //                     bottom: spacer2)),
-                      //             LabelValueItem(
-                      //                 label: localizations.translate(
-                      //                     i18.householdDetails.typeOfStructure),
-                      //                 value: (householdState.householdModel
-                      //                             ?.additionalFields?.fields
-                      //                             .where((h) =>
-                      //                                 h.key ==
-                      //                                 AdditionalFieldsType
-                      //                                     .houseStructureTypes
-                      //                                     .toValue())
-                      //                             .firstOrNull
-                      //                             ?.value ??
-                      //                         [])
-                      //                     .toString()
-                      //                     .split('|')
-                      //                     .map((item) =>
-                      //                         getLocalizedMessage(item))
-                      //                     .toList()
-                      //                     .join(', '),
-                      //                 isInline: true,
-                      //                 labelFlex: 5,
-                      //                 padding:
-                      //                     const EdgeInsets.only(top: spacer2)),
-                      //           ]),
-                      //     ]),
                       DigitCard(
                           margin: const EdgeInsets.all(spacer2),
                           children: [

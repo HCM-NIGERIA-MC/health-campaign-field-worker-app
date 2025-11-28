@@ -1,10 +1,5 @@
 import 'package:recase/recase.dart';
 import 'package:referral_reconciliation/referral_reconciliation.dart';
-import 'package:referral_reconciliation/router/referral_reconciliation_router.gm.dart';
-
-import 'package:referral_reconciliation/blocs/search_referral_reconciliations.dart';
-import 'package:referral_reconciliation/referral_reconciliation.dart';
-import 'package:referral_reconciliation/router/referral_reconciliation_router.gm.dart';
 
 import 'package:attendance_management/attendance_management.dart';
 import 'package:attendance_management/router/attendance_router.gm.dart';
@@ -15,7 +10,6 @@ import 'package:complaints/router/complaints_router.gm.dart';
 
 import 'package:digit_data_model/models/entities/household_type.dart';
 import 'package:registration_delivery/registration_delivery.dart';
-import 'package:registration_delivery/router/registration_delivery_router.gm.dart';
 
 import 'package:inventory_management/inventory_management.dart';
 
@@ -23,7 +17,6 @@ import 'dart:async';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:digit_data_model/data_model.dart';
-import 'package:digit_data_model/models/entities/user_action.dart';
 import 'package:digit_dss/data/local_store/no_sql/schema/dashboard_config_schema.dart';
 import 'package:digit_dss/models/entities/dashboard_response_model.dart';
 import 'package:digit_dss/router/dashboard_router.gm.dart';
@@ -32,13 +25,11 @@ import 'package:digit_location_tracker/utils/utils.dart';
 import 'package:digit_ui_components/digit_components.dart';
 import 'package:digit_ui_components/utils/component_utils.dart';
 import 'package:drift_db_viewer/drift_db_viewer.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:survey_form/models/entities/service.dart';
-import 'package:survey_form/router/survey_form_router.gm.dart';
 import 'package:survey_form/utils/utils.dart';
 import 'package:sync_service/blocs/sync/sync.dart';
 
@@ -61,10 +52,6 @@ import '../widgets/home/home_item_card.dart';
 import '../widgets/localized.dart';
 import '../widgets/registration_delivery/custom_beneficiary_progress.dart';
 import '../widgets/showcase/config/showcase_constants.dart';
-import '../widgets/showcase/showcase_button.dart';
-// import 'package:referral_reconciliation/blocs/search_referral_reconciliations.dart';
-// import 'package:referral_reconciliation/router/referral_reconciliation_router.gm.dart';
-// import 'package:referral_reconciliation/pages/search_referral_reconciliations.dart';
 
 @RoutePage()
 class HomePage extends LocalizedStatefulWidget {
@@ -581,7 +568,6 @@ class _HomePageState extends LocalizedState<HomePage> {
             .toList()
             .contains(element))
         .toList();
-    // filteredLabels.add(i18.home.db);
     if (context.isCommunityDistributor) {
       filteredLabels.add(i18.home.summaryLabel);
     }
@@ -641,8 +627,6 @@ class _HomePageState extends LocalizedState<HomePage> {
 
                 context.read<
                     LocalRepository<IndividualModel, IndividualSearchModel>>(),
-                // context.read<
-                //     LocalRepository<UserActionModel, UserActionSearchModel>>(),
                 context.read<LocalRepository<StockModel, StockSearchModel>>(),
               ],
               remoteRepositories: [
@@ -679,8 +663,6 @@ class _HomePageState extends LocalizedState<HomePage> {
                     RemoteRepository<PgrServiceModel, PgrServiceSearchModel>>(),
                 context
                     .read<RemoteRepository<ServiceModel, ServiceSearchModel>>()
-                // context.read<
-                //     RemoteRepository<UserActionModel, UserActionSearchModel>>(),
               ],
             ),
           );
@@ -697,8 +679,7 @@ class _HomePageState extends LocalizedState<HomePage> {
           ) {
             final appConfig = appConfiguration;
             final localizationModulesList = appConfiguration.backendInterface;
-            final selectedLocale =
-                "en_NG"; //AppSharedPreferences().getSelectedLocale;
+            final selectedLocale = "en_NG";
             LocalizationParams()
                 .setCode(LeastLevelBoundarySingleton().boundary);
             context
@@ -830,29 +811,6 @@ void setPackagesSingleton(BuildContext context) {
           projectId: context.projectId,
           loggedInUserUuid: context.loggedInUserUuid,
         );
-        // InventorySingleton().setInitialData(
-        //   isWareHouseMgr: context.loggedInUserRoles
-        //       .where(
-        //           (role) => role.code == RolesType.warehouseManager.toValue())
-        //       .toList()
-        //       .isNotEmpty,
-        //   isDistributor: context.loggedInUserRoles
-        //       .where(
-        //         (role) =>
-        //             role.code == RolesType.distributor.toValue() ||
-        //             role.code == RolesType.communityDistributor.toValue(),
-        //       )
-        //       .toList()
-        //       .isNotEmpty,
-        //   loggedInUser: context.loggedInUserModel,
-        //   projectId: context.projectId,
-        //   loggedInUserUuid: context.loggedInUserUuid,
-        //   transportTypes: appConfiguration.transportTypes
-        //       ?.map((e) => InventoryTransportTypes()
-        //         ..name = e.code
-        //         ..code = e.code)
-        //       .toList(),
-        // );
         InventorySingleton().setBoundary(boundary: context.boundary);
         ComplaintsSingleton().setInitialData(
           tenantId: envConfig.variables.tenantId,
@@ -889,7 +847,7 @@ void loadLocalization(
       .add(LocalizationEvent.onUpdateLocalizationIndex(
         index: appConfiguration.languages!.indexWhere((element) =>
             element.value == AppSharedPreferences().getSelectedLocale),
-        code: "en_NG", //AppSharedPreferences().getSelectedLocale!
+        code: "en_NG",
       ));
 }
 

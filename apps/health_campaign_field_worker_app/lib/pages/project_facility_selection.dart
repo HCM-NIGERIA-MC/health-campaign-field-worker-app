@@ -134,7 +134,6 @@ class ProjectFacilitySelectionPage extends StatelessWidget {
                                       const DigitColors().light.paperSecondary,
                                   border: Border(
                                     bottom: BorderSide(
-                                      //                   <--- left side
                                       color: theme.colorScheme.outline,
                                       width: 1.0,
                                     ),
