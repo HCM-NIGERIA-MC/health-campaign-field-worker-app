@@ -139,9 +139,6 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
             redVasCount: redVas),
       );
     } on DioException catch (error) {
-      emit(const AuthErrorState());
-      emit(const AuthUnauthenticatedState());
-
       final response = error.response;
       final data = response?.data;
       String message;
