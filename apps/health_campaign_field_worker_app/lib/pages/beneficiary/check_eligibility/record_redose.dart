@@ -8,11 +8,14 @@ import 'package:digit_components/widgets/digit_text_field.dart';
 import 'package:digit_data_model/data_model.dart';
 import 'package:digit_ui_components/enum/app_enums.dart';
 import 'package:digit_ui_components/utils/component_utils.dart';
+import 'package:digit_ui_components/widgets/atoms/digit_button.dart';
 import 'package:digit_ui_components/widgets/atoms/digit_numeric_form_input.dart';
 import 'package:digit_ui_components/widgets/atoms/digit_text_form_input.dart';
 import 'package:digit_ui_components/widgets/atoms/labelled_fields.dart';
+import 'package:digit_ui_components/widgets/atoms/pop_up_card.dart';
 import 'package:digit_ui_components/widgets/atoms/reactive_fields.dart';
 import 'package:digit_ui_components/widgets/molecules/digit_card.dart';
+import 'package:digit_ui_components/widgets/molecules/show_pop_up.dart';
 import 'package:digit_ui_components/widgets/scrollable_content.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -353,6 +356,74 @@ class _RecordRedosePageState extends LocalizedState<RecordRedosePage> {
                                                                   : 0;
                                                             }
 
+                                                            int currentSKUCount =
+                                                                context.spaq1;
+
+                                                            String
+                                                                descriptionText =
+                                                                localizations.translate(
+                                                                    i18_local
+                                                                        .beneficiaryDetails
+                                                                        .insufficientStockMessage);
+
+                                                            if (currentSKUCount <
+                                                                spaq1 * -1) {
+                                                              descriptionText +=
+                                                                  "\n ${localizations.translate(i18_local.beneficiaryDetails.azmDoseUnit)}";
+                                                              showCustomPopup(
+                                                                context:
+                                                                    context,
+                                                                builder:
+                                                                    (popupContext) =>
+                                                                        Popup(
+                                                                  title: localizations
+                                                                      .translate(i18_local
+                                                                          .beneficiaryDetails
+                                                                          .insufficientStockHeading),
+                                                                  onOutsideTap:
+                                                                      () {
+                                                                    Navigator.of(
+                                                                            popupContext)
+                                                                        .pop(
+                                                                            false);
+                                                                  },
+                                                                  description:
+                                                                      descriptionText,
+                                                                  type: PopUpType
+                                                                      .simple,
+                                                                  actions: [
+                                                                    DigitButton(
+                                                                      label: localizations
+                                                                          .translate(
+                                                                        i18_local
+                                                                            .beneficiaryDetails
+                                                                            .goToHome,
+                                                                      ),
+                                                                      onPressed:
+                                                                          () {
+                                                                        Navigator
+                                                                            .of(
+                                                                          popupContext,
+                                                                          rootNavigator:
+                                                                              true,
+                                                                        ).pop();
+                                                                        final parent = context
+                                                                            .router
+                                                                            .parent() as StackRouter;
+                                                                        parent.popUntilRouteWithName(
+                                                                            HomeRoute.name);
+                                                                      },
+                                                                      type: DigitButtonType
+                                                                          .primary,
+                                                                      size: DigitButtonSize
+                                                                          .large,
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                              );
+                                                              return;
+                                                            }
+
                                                             context
                                                                 .read<
                                                                     AuthBloc>()
@@ -362,7 +433,6 @@ class _RecordRedosePageState extends LocalizedState<RecordRedosePage> {
                                                                         spaq1,
                                                                     spaq2Count:
                                                                         spaq2,
-                                                                    // TODO: need to work here [pitabash]
                                                                     blueVasCount:
                                                                         blueVas,
                                                                     redVasCount:
