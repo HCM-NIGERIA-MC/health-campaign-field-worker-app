@@ -1007,10 +1007,10 @@ class _DynamicTabsPageState extends LocalizedState<DynamicTabsPage>
                   ?.toString() ??
               '0');
 
-          final totalQty = (((entryType == StockRecordEntryType.dispatch)
-                  ? quantity * -1
-                  : quantity) -
-              quantityWasted ~/ Constants.mlPerBottle);
+          final totalQty = (((entryType == StockRecordEntryType.dispatch ||
+                  (entryType == StockRecordEntryType.returned && context.isCDD))
+              ? quantity * -1
+              : quantity));
 
           String? productName = stockModel.additionalFields?.fields
               .firstWhereOrNull((element) => element.key == 'productName')
@@ -1019,7 +1019,7 @@ class _DynamicTabsPageState extends LocalizedState<DynamicTabsPage>
           // Custom logic based on productName
 
           if (entryType == StockRecordEntryType.dispatch &&
-              (currentSpaq1Count + totalQty * Constants.mlPerBottle < 0 ||
+              (currentSpaq1Count + (totalQty * Constants.mlPerBottle) < 0 ||
                   quantityWasted < 0)) {
             await DigitToast.show(
               context,
