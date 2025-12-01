@@ -88,7 +88,7 @@ class SummaryReportBloc extends Bloc<SummaryReportEvent, SummaryReportState> {
         }
       }
 
-      for (var task in administeredChildrenList) {
+      for (var task in taskList) {
         if (task.resources != null) {
           for (var resource in task.resources!) {
             for (var productVariant in productVariantList) {
