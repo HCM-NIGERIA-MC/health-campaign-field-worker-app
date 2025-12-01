@@ -396,8 +396,8 @@ class _RecordRedosePageState extends LocalizedState<RecordRedosePage> {
                                                                       label: localizations
                                                                           .translate(
                                                                         i18_local
-                                                                            .beneficiaryDetails
-                                                                            .goToHome,
+                                                                            .common
+                                                                            .coreCommonBack,
                                                                       ),
                                                                       onPressed:
                                                                           () {
@@ -407,11 +407,6 @@ class _RecordRedosePageState extends LocalizedState<RecordRedosePage> {
                                                                           rootNavigator:
                                                                               true,
                                                                         ).pop();
-                                                                        final parent = context
-                                                                            .router
-                                                                            .parent() as StackRouter;
-                                                                        parent.popUntilRouteWithName(
-                                                                            HomeRoute.name);
                                                                       },
                                                                       type: DigitButtonType
                                                                           .primary,
