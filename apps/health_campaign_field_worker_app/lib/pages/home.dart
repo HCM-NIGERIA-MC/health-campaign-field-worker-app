@@ -393,35 +393,10 @@ class _HomePageState extends LocalizedState<HomePage> {
 
                 // Make the head of household field true
                 registrationSchemaData['pages']["beneficiaryDetails"]
-                    ["properties"]['isHeadOfFamily'] = {
-                  "type": "boolean",
-                  "label":
-                      "APPONE_REGISTRATION_BENEFICIARYDETAILS_label_isHeadOfFamily",
-                  "order": 2,
-                  "value": true,
-                  "format": "checkbox",
-                  "hidden": false,
-                  "tooltip": "",
-                  "helpText": "",
-                  "infoText": "",
-                  "readOnly": true,
-                  "fieldName": "isHeadOfFamily",
-                  "deleteFlag": false,
-                  "innerLabel": "",
-                  "systemDate": false,
-                  "validations": [
-                    {
-                      "type": "required",
-                      "value": true,
-                      "message":
-                          "APPONE_REGISTRATION_BENEFICIARYDETAILS_label_isHeadOfFamily_mandatory_message"
-                    }
-                  ],
-                  "errorMessage": "",
-                  "includeInForm": true,
-                  "isMultiSelect": false,
-                  "includeInSummary": true
-                };
+                    ["properties"]['isHeadOfFamily']["value"] = true;
+
+                registrationSchemaData['pages']["beneficiaryDetails"]
+                    ["properties"]['isHeadOfFamily']["readOnly"] = true;
 
                 // Added phone number validation
                 List<dynamic> phoneValidation = registrationSchemaData['pages']
@@ -433,105 +408,40 @@ class _HomePageState extends LocalizedState<HomePage> {
                     )?["value"] ??
                     "11";
                 registrationSchemaData['pages']["beneficiaryDetails"]
-                    ["properties"]["phone"] = {
-                  "type": "string",
-                  "label": "APPONE_REGISTRATION_BENEFICIARYDETAILS_label_phone",
-                  "order": 6,
-                  "value": "",
-                  "format": "text",
-                  "hidden": false,
-                  "tooltip":
-                      "APPONE_REGISTRATION_BENEFICIARYDETAILS_label_phone_tooltip",
-                  "helpText":
-                      "APPONE_REGISTRATION_BENEFICIARYDETAILS_label_phone_helpText",
-                  "infoText": "",
-                  "readOnly": false,
-                  "fieldName": "phone",
-                  "deleteFlag": false,
-                  "innerLabel": "",
-                  "systemDate": false,
-                  "validations": [
-                    {
-                      "type": "maxLength",
-                      "value": int.parse(maxLength),
-                      "message": "Should have 11 digits"
-                    },
-                    {
-                      "type": "minLength",
-                      "value": int.parse(maxLength),
-                      "message": "Should have 11 digits"
-                    },
-                    {
-                      "type": "pattern",
-                      "value": r"^[0-9]*$",
-                      "message":
-                          "APPONE_REGISTRATION_BENEFICIARYDETAILS_label_phone_regex"
-                    }
-                  ],
-                  "errorMessage":
-                      "CMP-2025-08-18-000034_REGISTRATIONFLOW_beneficiaryDetails_errorMessage_phone",
-                  "includeInForm": true,
-                  "isMultiSelect": false,
-                  "includeInSummary": true
-                };
+                    ["properties"]["phone"]["validations"] = [
+                  {
+                    "type": "maxLength",
+                    "value": int.parse(maxLength),
+                    "message": "Should have 11 digits"
+                  },
+                  {
+                    "type": "minLength",
+                    "value": int.parse(maxLength),
+                    "message": "Should have 11 digits"
+                  },
+                  {
+                    "type": "pattern",
+                    "value": r"^[0-9]*$",
+                    "message":
+                        "APPONE_REGISTRATION_BENEFICIARYDETAILS_label_phone_regex"
+                  }
+                ];
 
                 registrationSchemaData['pages']["beneficiaryDetails"]
-                    ["properties"]["gender"] = {
-                  "type": "string",
-                  "label":
-                      "APPONE_REGISTRATION_BENEFICIARYDETAILS_label_gender",
-                  "order": 5,
-                  "value": "",
-                  "format": "select",
-                  "hidden": false,
-                  "tooltip": "",
-                  "helpText": "",
-                  "infoText": "",
-                  "readOnly": false,
-                  "fieldName": "gender",
-                  "deleteFlag": false,
-                  "innerLabel": "",
-                  "schemaCode": "common-masters.GenderType",
-                  "systemDate": false,
-                  "validations": [],
-                  "errorMessage": "",
-                  "includeInForm": true,
-                  "isMultiSelect": false,
-                  "includeInSummary": true,
-                  "visibilityCondition": {},
-                  "enums": [
-                    {"code": "FEMALE", "name": "feminine"},
-                    {"code": "MALE", "name": "masculine"}
-                  ]
-                };
+                    ["properties"]["gender"]["enums"] = [
+                  {"code": "FEMALE", "name": "feminine"},
+                  {"code": "MALE", "name": "masculine"}
+                ];
 
+                var scanner = registrationSchemaData['pages']
+                    ["beneficiaryDetails"]["properties"]['scanner'];
+                registrationSchemaData['pages']["beneficiaryDetails"]
+                    ["properties"]['tag'] = scanner;
+                registrationSchemaData['pages']["beneficiaryDetails"]
+                    ["properties"]['tag']['fieldName'] = 'tag';
                 registrationSchemaData['pages']["beneficiaryDetails"]
                         ["properties"]
                     .remove("scanner");
-
-                registrationSchemaData['pages']["beneficiaryDetails"]
-                    ["properties"]['tag'] = {
-                  "type": "string",
-                  "label":
-                      "APPONE_REGISTRATION_BENEFICIARYDETAILS_label_scanner",
-                  "order": 7,
-                  "value": null,
-                  "format": "scanner",
-                  "hidden": false,
-                  "tooltip": null,
-                  "helpText": null,
-                  "infoText": null,
-                  "readOnly": false,
-                  "fieldName": "tag",
-                  "deleteFlag": false,
-                  "innerLabel": null,
-                  "systemDate": false,
-                  "validations": [],
-                  "errorMessage": null,
-                  "includeInForm": true,
-                  "isMultiSelect": false,
-                  "includeInSummary": true
-                };
 
                 // Navigate the beneficiaryDetails page to household-acknowledgement page
                 if (context.isRegistrar && !context.isDistributor) {
@@ -543,39 +453,18 @@ class _HomePageState extends LocalizedState<HomePage> {
                 }
 
                 deliverySchemaData['pages']['DeliveryDetails']['properties']
-                    ['scanner'] = {
-                  "type": "string",
-                  "label": "APPONE_DELIVERY_DELIVERYDETAILS_label_scanner",
-                  "order": 4,
-                  "value": "",
-                  "format": "scanner",
-                  "hidden": false,
-                  "tooltip": "",
-                  "helpText": "",
-                  "infoText": "",
-                  "readOnly": false,
-                  "fieldName": "scanner",
-                  "deleteFlag": false,
-                  "innerLabel": "",
-                  "systemDate": false,
-                  "validations": [
-                    {
-                      "type": "scanLimit",
-                      "value": "{{resourceCard.first.quantityDistributed}}",
-                      "message": "quantity exceeded"
-                    },
-                    {
-                      "type": "isGS1",
-                      "value": true,
-                      "message": "quantity exceeded"
-                    }
-                  ],
-                  "errorMessage": "",
-                  "includeInForm": true,
-                  "isMultiSelect": false,
-                  "includeInSummary": true,
-                  "visibilityCondition": {}
-                };
+                    ['scanner']['validations'] = [
+                  {
+                    "type": "scanLimit",
+                    "value": "{{resourceCard.first.quantityDistributed}}",
+                    "message": "quantity exceeded"
+                  },
+                  {
+                    "type": "isGS1",
+                    "value": true,
+                    "message": "quantity exceeded"
+                  }
+                ];
 
                 // Navigate into the DeliveryDetails page properties map
                 final deliveryDetails = (deliverySchemaData['pages']
@@ -665,6 +554,7 @@ class _HomePageState extends LocalizedState<HomePage> {
                 RegistrationDeliverySingleton()
                     .setDeliveryConfig(deliveryConfig);
               }
+              var te = context.selectedProject.referenceID;
               if (isTriggerLocalization) {
                 final moduleName =
                     'hcm-registration-${context.selectedProject.referenceID},hcm-delivery-${context.selectedProject.referenceID}';
