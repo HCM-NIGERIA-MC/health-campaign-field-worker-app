@@ -82,6 +82,10 @@ class _RecordRedosePageState extends LocalizedState<RecordRedosePage> {
 
   bool isSubmitClicked = false;
 
+  TaskModel? successfulTask;
+
+  int spaq1 = 1;
+
   // List of controllers for form elements
   final List _controllers = [];
 
@@ -142,6 +146,17 @@ class _RecordRedosePageState extends LocalizedState<RecordRedosePage> {
   }
 
   @override
+  void initState() {
+    // get the latest successful task
+    successfulTask = widget.tasks
+        .where(
+            (element) => element.status == Status.administeredSuccess.toValue())
+        .lastOrNull;
+
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
@@ -183,6 +198,45 @@ class _RecordRedosePageState extends LocalizedState<RecordRedosePage> {
                                   variant,
                                 ),
                                 builder: (context, form, child) {
+                                  // Extract productvariantList from the form
+                                  final productVariantList =
+                                      ((form.control(_resourceDeliveredKey)
+                                              as FormArray)
+                                          .value as List<ProductVariantModel?>);
+                                  var quantityDistributedFormArray =
+                                      form.control(
+                                    _quantityDistributedKey,
+                                  ) as FormArray?;
+
+                                  if (successfulTask == null ||
+                                      quantityDistributedFormArray == null) {
+                                    return const Offstage();
+                                  }
+
+                                  var productVariantId = successfulTask!
+                                      .resources!.first.productVariantId;
+                                  final productVariant = productVariantList
+                                      .where((element) =>
+                                          element?.id == productVariantId)
+                                      .firstOrNull;
+
+                                  var quantityIndex =
+                                      productVariantList.indexOf(
+                                    productVariant,
+                                  );
+
+                                  final quantity = quantityIndex < 0
+                                      ? 0
+                                      : quantityDistributedFormArray
+                                          .value![quantityIndex]
+                                          .toString()
+                                          .split(" ")[0];
+
+                                  if (productVariant!.sku! == Constants.azm) {
+                                    spaq1 = quantity != 'null'
+                                        ? int.parse(quantity.toString())
+                                        : 0;
+                                  }
                                   return ScrollableContent(
                                     // enableFixedButton: true,
                                     footer: BlocBuilder<DeliverInterventionBloc,
@@ -270,36 +324,80 @@ class _RecordRedosePageState extends LocalizedState<RecordRedosePage> {
                                                   } else {
                                                     if (!isSubmitClicked) {
                                                       isSubmitClicked = true;
-                                                      // get the latest successful task
-                                                      var successfulTask = widget
-                                                          .tasks
-                                                          .where((element) =>
-                                                              element.status ==
-                                                              Status
-                                                                  .administeredSuccess
-                                                                  .toValue())
-                                                          .lastOrNull;
-                                                      // Extract productvariantList from the form
-                                                      final productvariantList =
-                                                          ((form.control(_resourceDeliveredKey)
-                                                                      as FormArray)
-                                                                  .value
-                                                              as List<
-                                                                  ProductVariantModel?>);
-
-                                                      var quantityDistributedFormArray =
-                                                          form.control(
-                                                        _quantityDistributedKey,
-                                                      ) as FormArray?;
 
                                                       if (successfulTask !=
                                                               null &&
                                                           quantityDistributedFormArray !=
                                                               null) {
+                                                        int currentSKUCount =
+                                                            context.spaq1;
+
+                                                        String descriptionText =
+                                                            localizations.translate(
+                                                                i18_local
+                                                                    .beneficiaryDetails
+                                                                    .insufficientStockMessage);
+
+                                                        if (currentSKUCount <
+                                                            spaq1) {
+                                                          descriptionText +=
+                                                              "\n ${localizations.translate(i18_local.beneficiaryDetails.azmDoseUnit)}";
+                                                          showCustomPopup(
+                                                            context: context,
+                                                            builder:
+                                                                (popupContext) =>
+                                                                    Popup(
+                                                              title: localizations
+                                                                  .translate(i18_local
+                                                                      .beneficiaryDetails
+                                                                      .insufficientStockHeading),
+                                                              // onOutsideTap: () {
+                                                              //   Navigator.of(
+                                                              //           popupContext)
+                                                              //       .pop(false);
+                                                              // },
+                                                              description: descriptionText
+                                                                  .replaceAll(
+                                                                      "0",
+                                                                      currentSKUCount
+                                                                          .toString()),
+                                                              type: PopUpType
+                                                                  .simple,
+                                                              actions: [
+                                                                DigitButton(
+                                                                  label: localizations
+                                                                      .translate(
+                                                                    i18_local
+                                                                        .beneficiaryDetails
+                                                                        .backToHouseholdDetails,
+                                                                  ),
+                                                                  onPressed:
+                                                                      () {
+                                                                    Navigator
+                                                                        .of(
+                                                                      popupContext,
+                                                                      rootNavigator:
+                                                                          true,
+                                                                    ).pop();
+                                                                    context
+                                                                        .router
+                                                                        .maybePop();
+                                                                  },
+                                                                  type: DigitButtonType
+                                                                      .primary,
+                                                                  size:
+                                                                      DigitButtonSize
+                                                                          .large,
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          );
+                                                          return;
+                                                        }
                                                         var updatedTask =
                                                             updateTask(
-                                                          successfulTask,
-                                                          productvariantList,
+                                                          successfulTask!,
+                                                          productVariantList,
                                                           quantityDistributedFormArray,
                                                           form,
                                                         );
@@ -309,196 +407,82 @@ class _RecordRedosePageState extends LocalizedState<RecordRedosePage> {
                                                           updatedTask,
                                                         );
 
-                                                        if (true) {
-                                                          if (context.mounted) {
-                                                            int spaq1 = 0;
-                                                            int spaq2 = 0;
-                                                            int blueVas = 0;
-                                                            int redVas = 0;
-
-                                                            var productVariantId =
-                                                                updatedTask
-                                                                    .resources!
-                                                                    .first
-                                                                    .productVariantId;
-                                                            final productVariant =
-                                                                productvariantList
-                                                                    .where((element) =>
-                                                                        element
-                                                                            ?.id ==
-                                                                        productVariantId)
-                                                                    .firstOrNull;
-
-                                                            var quantityIndex =
-                                                                productvariantList
-                                                                    .indexOf(
-                                                              productVariant,
-                                                            );
-
-                                                            final quantity = quantityIndex <
-                                                                    0
-                                                                ? 0
-                                                                : quantityDistributedFormArray
-                                                                    .value![
-                                                                        quantityIndex]
-                                                                    .toString()
-                                                                    .split(
-                                                                        " ")[0];
-
-                                                            if (productVariant!
-                                                                    ?.sku! ==
-                                                                Constants.azm) {
-                                                              spaq1 = quantity !=
-                                                                      'null'
-                                                                  ? int.parse(quantity
-                                                                          .toString()) *
-                                                                      -1
-                                                                  : 0;
-                                                            }
-
-                                                            int currentSKUCount =
-                                                                context.spaq1;
-
-                                                            String
-                                                                descriptionText =
-                                                                localizations.translate(
-                                                                    i18_local
-                                                                        .beneficiaryDetails
-                                                                        .insufficientStockMessage);
-
-                                                            if (currentSKUCount <
-                                                                spaq1 * -1) {
-                                                              descriptionText +=
-                                                                  "\n ${localizations.translate(i18_local.beneficiaryDetails.azmDoseUnit)}";
-                                                              showCustomPopup(
-                                                                context:
-                                                                    context,
-                                                                builder:
-                                                                    (popupContext) =>
-                                                                        Popup(
-                                                                  title: localizations
-                                                                      .translate(i18_local
-                                                                          .beneficiaryDetails
-                                                                          .insufficientStockHeading),
-                                                                  onOutsideTap:
-                                                                      () {
-                                                                    Navigator.of(
-                                                                            popupContext)
-                                                                        .pop(
-                                                                            false);
-                                                                  },
-                                                                  description:
-                                                                      descriptionText,
-                                                                  type: PopUpType
-                                                                      .simple,
-                                                                  actions: [
-                                                                    DigitButton(
-                                                                      label: localizations
-                                                                          .translate(
-                                                                        i18_local
-                                                                            .common
-                                                                            .coreCommonBack,
-                                                                      ),
-                                                                      onPressed:
-                                                                          () {
-                                                                        Navigator
-                                                                            .of(
-                                                                          popupContext,
-                                                                          rootNavigator:
-                                                                              true,
-                                                                        ).pop();
-                                                                      },
-                                                                      type: DigitButtonType
-                                                                          .primary,
-                                                                      size: DigitButtonSize
-                                                                          .large,
-                                                                    ),
-                                                                  ],
+                                                        if (context.mounted) {
+                                                          context
+                                                              .read<AuthBloc>()
+                                                              .add(
+                                                                AuthAddSpaqCountsEvent(
+                                                                  spaq1Count:
+                                                                      spaq1 *
+                                                                          -1,
+                                                                  spaq2Count: 0,
+                                                                  blueVasCount:
+                                                                      0,
+                                                                  redVasCount:
+                                                                      0,
                                                                 ),
                                                               );
-                                                              return;
-                                                            }
+                                                          final reloadState =
+                                                              context.read<
+                                                                  HouseholdOverviewBloc>();
+                                                          // submit the updated task
 
-                                                            context
-                                                                .read<
-                                                                    AuthBloc>()
-                                                                .add(
-                                                                  AuthAddSpaqCountsEvent(
-                                                                    spaq1Count:
-                                                                        spaq1,
-                                                                    spaq2Count:
-                                                                        spaq2,
-                                                                    blueVasCount:
-                                                                        blueVas,
-                                                                    redVasCount:
-                                                                        redVas,
-                                                                  ),
-                                                                );
-                                                            final reloadState =
-                                                                context.read<
-                                                                    HouseholdOverviewBloc>();
-                                                            // submit the updated task
+                                                          context
+                                                              .read<
+                                                                  DeliverInterventionBloc>()
+                                                              .add(
+                                                                DeliverInterventionSubmitEvent(
+                                                                  task:
+                                                                      updatedTask,
+                                                                  isEditing:
+                                                                      true,
+                                                                  boundaryModel:
+                                                                      context
+                                                                          .boundary,
+                                                                ),
+                                                              );
+                                                          // submit the newly created task
+                                                          context
+                                                              .read<
+                                                                  DeliverInterventionBloc>()
+                                                              .add(
+                                                                DeliverInterventionSubmitEvent(
+                                                                  task: newTask,
+                                                                  isEditing:
+                                                                      false,
+                                                                  boundaryModel:
+                                                                      context
+                                                                          .boundary,
+                                                                ),
+                                                              );
 
-                                                            context
-                                                                .read<
-                                                                    DeliverInterventionBloc>()
-                                                                .add(
-                                                                  DeliverInterventionSubmitEvent(
-                                                                    task:
-                                                                        updatedTask,
-                                                                    isEditing:
+                                                          Future.delayed(
+                                                            const Duration(
+                                                              milliseconds: 300,
+                                                            ),
+                                                            () {
+                                                              reloadState.add(
+                                                                HouseholdOverviewReloadEvent(
+                                                                  projectId: context
+                                                                      .projectId,
+                                                                  projectBeneficiaryType:
+                                                                      context
+                                                                          .beneficiaryType,
+                                                                ),
+                                                              );
+                                                            },
+                                                          ).then((value) => {
+                                                                context.router
+                                                                    .push(
+                                                                  CustomHouseholdAcknowledgementRoute(
+                                                                    enableViewHousehold:
                                                                         true,
-                                                                    boundaryModel:
-                                                                        context
-                                                                            .boundary,
+                                                                    eligibilityAssessmentType:
+                                                                        EligibilityAssessmentType
+                                                                            .smc,
                                                                   ),
-                                                                );
-                                                            // submit the newly created task
-                                                            context
-                                                                .read<
-                                                                    DeliverInterventionBloc>()
-                                                                .add(
-                                                                  DeliverInterventionSubmitEvent(
-                                                                    task:
-                                                                        newTask,
-                                                                    isEditing:
-                                                                        false,
-                                                                    boundaryModel:
-                                                                        context
-                                                                            .boundary,
-                                                                  ),
-                                                                );
-
-                                                            Future.delayed(
-                                                              const Duration(
-                                                                milliseconds:
-                                                                    300,
-                                                              ),
-                                                              () {
-                                                                reloadState.add(
-                                                                  HouseholdOverviewReloadEvent(
-                                                                    projectId:
-                                                                        context
-                                                                            .projectId,
-                                                                    projectBeneficiaryType:
-                                                                        context
-                                                                            .beneficiaryType,
-                                                                  ),
-                                                                );
-                                                              },
-                                                            ).then((value) => {
-                                                                  context.router
-                                                                      .push(
-                                                                    CustomHouseholdAcknowledgementRoute(
-                                                                      enableViewHousehold:
-                                                                          true,
-                                                                      eligibilityAssessmentType:
-                                                                          EligibilityAssessmentType
-                                                                              .smc,
-                                                                    ),
-                                                                  ),
-                                                                });
-                                                          }
+                                                                ),
+                                                              });
                                                         }
                                                       }
                                                     }
@@ -574,6 +558,7 @@ class _RecordRedosePageState extends LocalizedState<RecordRedosePage> {
                                                                   .indexOf(
                                                             e,
                                                           ),
+                                                          initialValue: spaq1,
                                                           totalItems:
                                                               _controllers
                                                                   .length,
@@ -1060,6 +1045,7 @@ class CustomResourceBeneficiaryCard extends LocalizedStatefulWidget {
   final FormGroup form;
   final int totalItems;
   final bool isAdministered;
+  final int initialValue;
   final EligibilityAssessmentType eligibilityAssessmentType;
 
   const CustomResourceBeneficiaryCard({
@@ -1070,6 +1056,7 @@ class CustomResourceBeneficiaryCard extends LocalizedStatefulWidget {
     required this.form,
     required this.totalItems,
     required this.isAdministered,
+    required this.initialValue,
     this.eligibilityAssessmentType = EligibilityAssessmentType.smc,
   });
 
@@ -1121,7 +1108,7 @@ class CustomResourceBeneficiaryCardState
             child: DigitNumericFormInput(
               minValue: 1,
               step: 1,
-              initialValue: "1",
+              initialValue: widget.initialValue.toString(),
               onChange: (value) {
                 widget.form
                     .control('quantityDistributed.${widget.cardIndex}')
