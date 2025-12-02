@@ -407,17 +407,27 @@ class _HomePageState extends LocalizedState<HomePage> {
                       (element) => element["type"] == "maxLength",
                     )?["value"] ??
                     "11";
+                List numberValidations = registrationSchemaData['pages']
+                        ["beneficiaryDetails"]["properties"]["phone"]
+                    ["validations"];
+                List filterNumberValidations =
+                    numberValidations.whereNot((validation) {
+                  return validation["type"] == "maxLength" &&
+                      validation["type"] == "minLength" &&
+                      validation["type"] == "pattern";
+                }).toList();
                 registrationSchemaData['pages']["beneficiaryDetails"]
                     ["properties"]["phone"]["validations"] = [
+                  ...filterNumberValidations,
                   {
                     "type": "maxLength",
                     "value": int.parse(maxLength),
-                    "message": "Should have 11 digits"
+                    "message": "Should have $maxLength digits"
                   },
                   {
                     "type": "minLength",
                     "value": int.parse(maxLength),
-                    "message": "Should have 11 digits"
+                    "message": "Should have $maxLength digits"
                   },
                   {
                     "type": "pattern",
