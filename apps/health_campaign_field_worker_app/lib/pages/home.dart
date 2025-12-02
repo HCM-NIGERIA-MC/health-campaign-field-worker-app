@@ -427,12 +427,7 @@ class _HomePageState extends LocalizedState<HomePage> {
                   }
                 ];
 
-                registrationSchemaData['pages']["beneficiaryDetails"]
-                    ["properties"]["gender"]["enums"] = [
-                  {"code": "FEMALE", "name": "feminine"},
-                  {"code": "MALE", "name": "masculine"}
-                ];
-
+                // Rename scanner to tag in beneficiaryDetails page
                 var scanner = registrationSchemaData['pages']
                     ["beneficiaryDetails"]["properties"]['scanner'];
                 registrationSchemaData['pages']["beneficiaryDetails"]
@@ -452,6 +447,7 @@ class _HomePageState extends LocalizedState<HomePage> {
                   };
                 }
 
+                // Added scanner validations in delivery details page
                 deliverySchemaData['pages']['DeliveryDetails']['properties']
                     ['scanner']['validations'] = [
                   {
