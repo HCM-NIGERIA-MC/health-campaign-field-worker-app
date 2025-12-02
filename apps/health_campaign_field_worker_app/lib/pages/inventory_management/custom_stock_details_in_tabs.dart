@@ -64,17 +64,12 @@ class _DynamicTabsPageState extends LocalizedState<DynamicTabsPage>
   String? transactionType;
   String? transactionReason;
 
-  static const _productVariantKey = 'productVariant';
-  static const _secondaryPartyKey = 'secondaryParty';
+  static const _materialNoteNumberKey = 'materialNoteNumber';
   static const _transactionReasonKey = 'transactionReason';
   static const _transactionQuantityKey = 'quantity';
   static const _waybillNumberKey = 'waybillNumber';
-  // static const _waybillQuantityKey = 'waybillQuantity';
   static const _batchNumberKey = 'batchNumberKey';
-  static const _vehicleNumberKey = 'vehicleNumber';
-  static const _typeOfTransportKey = 'typeOfTransport';
   static const _commentsKey = 'comments';
-  static const _deliveryTeamKey = 'deliveryTeam';
   List<InventoryTransportTypes> transportTypes = [];
 
   static const _transactionQuantityPartialKey = 'quantityPartial';
@@ -139,7 +134,7 @@ class _DynamicTabsPageState extends LocalizedState<DynamicTabsPage>
     _forms.addAll({
       for (final product in selectedProducts)
         product: FormGroup({
-          'materialNoteNumber': FormControl<String>(value: _sharedMRN),
+          _materialNoteNumberKey: FormControl<String>(value: _sharedMRN),
           _transactionReasonKey: FormControl<String>(),
           _waybillNumberKey: FormControl<String>(
             validators: InventorySingleton().isWareHouseMgr
@@ -319,7 +314,7 @@ class _DynamicTabsPageState extends LocalizedState<DynamicTabsPage>
         fields: [
           AdditionalField('productName', product.sku),
           AdditionalField('variation', product.variation),
-          AdditionalField('materialNoteNumber', _sharedMRN),
+          AdditionalField(_materialNoteNumberKey, _sharedMRN),
           if (distributorName != null)
             AdditionalField('distributorName', distributorName),
         ],
