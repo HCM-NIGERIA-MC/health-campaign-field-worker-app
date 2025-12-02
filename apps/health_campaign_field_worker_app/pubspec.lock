@@ -541,10 +541,10 @@ packages:
     dependency: "direct main"
     description:
       name: digit_crud_bloc
-      sha256: bb490186c910064cc242f4dfa9d7423d86f6368db638703f9fc807de6e876ca3
+      sha256: "194a3f455aa1e6448b52ef66352a83b086a0bb444d374501b1290e6bab2bab62"
       url: "https://pub.dev"
     source: hosted
-    version: "0.0.2-dev"
+    version: "0.0.3-dev"
   digit_data_converter:
     dependency: "direct main"
     description:
@@ -581,18 +581,18 @@ packages:
     dependency: "direct main"
     description:
       name: digit_forms_engine
-      sha256: efbe2b82837cecdb4db1ca6556b1fa6eebe8d3fc1ddbb12f0f261cc17e45bf4c
+      sha256: ac524909357a4df3fc62f68161193e7e7109320c76570fb1634e7903e115af83
       url: "https://pub.dev"
     source: hosted
-    version: "0.0.2-dev"
+    version: "0.0.12-dev"
   digit_formula_parser:
     dependency: transitive
     description:
       name: digit_formula_parser
-      sha256: "2d17f51516f62d100facc4a85e0501a4cf6cf52b245486a6f2c7be6cbeca2564"
+      sha256: d8b49e8855ebb1fc81ea9a7ff85b1779c0238c5648ca8ac6d927b1ba1742f072
       url: "https://pub.dev"
     source: hosted
-    version: "1.0.0"
+    version: "1.1.0"
   digit_location_tracker:
     dependency: "direct main"
     description:
@@ -605,10 +605,10 @@ packages:
     dependency: "direct main"
     description:
       name: digit_scanner
-      sha256: "1bf24bdaf71f99de0f1281136478bb141f058a984752176ffa63ad580b467e18"
+      sha256: ae005932c884f0557c2fb9623b2a31712cc621169f0cb98bb75c09f317fe84c6
       url: "https://pub.dev"
     source: hosted
-    version: "1.0.6+2"
+    version: "0.0.2-console"
   digit_showcase:
     dependency: "direct main"
     description:
@@ -621,10 +621,10 @@ packages:
     dependency: "direct main"
     description:
       name: digit_ui_components
-      sha256: "37c5c974bbc60567588f71bf6cddf49dc69d3248d0b4bca4525af837cf67a8f2"
+      sha256: "52c9497802306ddd8bcd1f0df28b406d86c1cef04ee882cb299f8cfd1bd950d1"
       url: "https://pub.dev"
     source: hosted
-    version: "0.2.2+8"
+    version: "0.2.3+3"
   dio:
     dependency: "direct main"
     description:
@@ -1936,10 +1936,10 @@ packages:
     dependency: "direct main"
     description:
       name: registration_delivery
-      sha256: "23c195a3fcea382c41e24fc10702c2f889b15092f3b978821190aef69827b2c5"
+      sha256: e0594d5ec0b3feaacbfc10d7c6447cf4d6ca0ffd7bb7a12502f5fc8ba81721de
       url: "https://pub.dev"
     source: hosted
-    version: "1.1.0-dev.6-console"
+    version: "1.1.1-dev.8-console"
   remove_emoji_input_formatter:
     dependency: transitive
     description:
@@ -2173,10 +2173,10 @@ packages:
     dependency: "direct main"
     description:
       name: sync_service
-      sha256: "992cd5889a192716c9e77fe29bd10b9f3dc771797d6a91a7a94bc34193b21444"
+      sha256: "3d2ea69d48ca024077ffb7b3f086dbab9459ffcfabb204463f7bc347b874fdfe"
       url: "https://pub.dev"
     source: hosted
-    version: "1.0.1"
+    version: "1.0.4"
   synchronized:
     dependency: transitive
     description:

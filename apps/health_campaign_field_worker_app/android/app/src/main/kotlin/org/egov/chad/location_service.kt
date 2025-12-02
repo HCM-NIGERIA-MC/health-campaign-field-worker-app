@@ -1,4 +1,4 @@
-package org.egov.qa.chad
+package org.egov.chad
 
 import android.annotation.TargetApi
 import android.app.NotificationChannel
