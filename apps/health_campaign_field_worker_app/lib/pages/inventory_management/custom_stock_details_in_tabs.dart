@@ -153,7 +153,11 @@ class _DynamicTabsPageState extends LocalizedState<DynamicTabsPage>
           _transactionQuantityKey: FormControl<int>(validators: [
             Validators.number(),
             Validators.required,
-            Validators.min(entryType == StockRecordEntryType.returned ? 0 : 1),
+            Validators.min((entryType == StockRecordEntryType.returned ||
+                    (entryType == StockRecordEntryType.dispatch &&
+                        context.isCDD))
+                ? 0
+                : 1),
             Validators.max(Constants.stockMaxLimit),
           ]),
           // _waybillQuantityKey:
