@@ -125,6 +125,8 @@ class _DynamicTabsPageState extends LocalizedState<DynamicTabsPage>
   }
 
   void _initializeForms() {
+    final state = context.read<RecordStockBloc>().state;
+    StockRecordEntryType entryType = state.entryType;
     final selectedProducts =
         products.map((variant) => variant.sku).whereType<String>().toList();
 
@@ -145,7 +147,11 @@ class _DynamicTabsPageState extends LocalizedState<DynamicTabsPage>
           _transactionQuantityKey: FormControl<int>(validators: [
             Validators.number(),
             Validators.required,
-            Validators.min(1),
+            Validators.min((entryType == StockRecordEntryType.returned ||
+                    (entryType == StockRecordEntryType.dispatch &&
+                        context.isCDD))
+                ? 0
+                : 1),
             Validators.max(Constants.stockMaxLimit),
           ]),
           // _waybillQuantityKey:
@@ -630,10 +636,10 @@ class _DynamicTabsPageState extends LocalizedState<DynamicTabsPage>
                                       int wastageValQuantity = int.parse(
                                           wastageQuantity(form, context)
                                               .toString());
-                                        form
-                                            .control(
-                                                _transactionQuantityWastedKey)
-                                            .updateValue(wastageValQuantity);
+                                      form
+                                          .control(
+                                              _transactionQuantityWastedKey)
+                                          .updateValue(wastageValQuantity);
                                     }
                                   } else {
                                     field.control.value = null;
@@ -707,10 +713,10 @@ class _DynamicTabsPageState extends LocalizedState<DynamicTabsPage>
                                         int wastageValQuantity = int.parse(
                                             wastageQuantity(form, context)
                                                 .toString());
-                                          form
-                                              .control(
-                                                  _transactionQuantityWastedKey)
-                                              .updateValue(wastageValQuantity);
+                                        form
+                                            .control(
+                                                _transactionQuantityWastedKey)
+                                            .updateValue(wastageValQuantity);
                                       }
                                     } else {
                                       field.control.value = null;
@@ -1031,22 +1037,21 @@ class _DynamicTabsPageState extends LocalizedState<DynamicTabsPage>
           }
 
           if (entryType == StockRecordEntryType.returned) {
-          final issuedStock = await totalReturnableStock();
+            final issuedStock = await totalReturnableStock();
 
-          if (productName == Constants.azm &&
-              (totalQty > issuedStock)) {
-            await DigitToast.show(
-              context,
-              options: DigitToastOptions(
-                  localizations.translate(i18_local
-                      .beneficiaryDetails.validationForExcessStockReturn),
-                  true,
-                  theme),
-            );
-            isSubmitClicked = false;
-            return;
+            if (productName == Constants.azm && (totalQty > issuedStock)) {
+              await DigitToast.show(
+                context,
+                options: DigitToastOptions(
+                    localizations.translate(i18_local
+                        .beneficiaryDetails.validationForExcessStockReturn),
+                    true,
+                    theme),
+              );
+              isSubmitClicked = false;
+              return;
+            }
           }
-        }
 
           spaq1Count = totalQty * Constants.mlPerBottle;
 
