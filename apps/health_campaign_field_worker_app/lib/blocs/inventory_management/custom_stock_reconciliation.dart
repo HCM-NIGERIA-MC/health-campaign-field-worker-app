@@ -196,20 +196,6 @@ class StockReconciliationState with _$StockReconciliationState {
             e.transactionReason == TransactionReason.received.toValue()),
       );
 
-  // // Getter for issued stock
-  // num get stockIssued => _getQuantityCount(
-  //       stockModels.where((e) =>
-  //           e.transactionType == TransactionType.dispatched.toValue() &&
-  //           e.transactionReason == null),
-  //     );
-
-  // // Getter for returned stock
-  // num get stockReturned => _getQuantityCount(
-  //       stockModels.where((e) =>
-  //           e.transactionType == TransactionType.received.toValue() &&
-  //           e.transactionReason == TransactionReason.returned.toValue()),
-  //     );
-
   // Getter for issued stock
   num get stockIssued {
     final isCddUser = InventorySingleton().isDistributor ?? false;

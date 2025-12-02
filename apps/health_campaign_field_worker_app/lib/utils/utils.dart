@@ -234,25 +234,6 @@ bool validateStockSubmission({
   return total <= availableBalance;
 }
 
-// String customFormatAgeRange(String condition) {
-//   final regex =
-//       RegExp(r'(\d+)\s*<\s*ageandage\s*<\s*(\d+)', caseSensitive: false);
-//   final match = regex.firstMatch(condition);
-//   if (match != null && match.groupCount == 2) {
-//     // final min = match.group(1);
-//     // final max = match.group(2);
-//     int min = int.parse(match.group(1)!);
-//     int max = int.parse(match.group(2)!);
-
-//     max -= 1;
-//     min += 1;
-
-//     print('min: $min, max: $max');
-//     return '$min - $max months';
-//   }
-//   return condition;
-// }
-
 String customFormatAgeRange(String condition) {
   if (condition.trim().isEmpty) return condition;
 

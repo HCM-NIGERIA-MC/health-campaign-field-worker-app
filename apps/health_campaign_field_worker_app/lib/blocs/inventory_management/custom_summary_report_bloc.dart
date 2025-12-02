@@ -66,8 +66,8 @@ class SummaryReportBloc extends Bloc<SummaryReportEvent, SummaryReportState> {
       List<TaskModel> taskList = [];
       List<TaskModel> administeredChildrenList = [];
       List<ProductVariantModel> productVariantList = [];
-      List<TaskResourceModel> AzmList = [];
-      List<StockModel> AzmStockList = [];
+      List<TaskResourceModel> azmList = [];
+      List<StockModel> azmStockList = [];
       householdList =
           await (householdRepository).search(HouseholdSearchModel());
       householdMemberList = await (householdMemberRepository)
@@ -94,14 +94,14 @@ class SummaryReportBloc extends Bloc<SummaryReportEvent, SummaryReportState> {
             for (var productVariant in productVariantList) {
               if (productVariant.id == resource.productVariantId &&
                   productVariant.sku == Constants.azm) {
-                AzmList.add(resource);
+                azmList.add(resource);
               }
             }
           }
         }
       }
 
-      AzmStockList = await (customStockLocalRepository).search(StockSearchModel(
+      azmStockList = await (customStockLocalRepository).search(StockSearchModel(
         receiverId: [InventorySingleton().loggedInUserUuid],
         transactionType: [TransactionType.received.toValue()],
       ));
@@ -119,43 +119,88 @@ class SummaryReportBloc extends Bloc<SummaryReportEvent, SummaryReportState> {
       Map<String, int> dateVsAzmStockCount = {};
       Map<String, Map<String, int>> dateVsEntityVsCountMap = {};
       for (var element in householdMemberList) {
-        if (element.clientAuditDetails!.createdTime >= cycleStartDate) {
+        if (element.clientAuditDetails?.createdTime == null &&
+            element.auditDetails?.createdTime == null) {
+          continue;
+        }
+        if ((element.clientAuditDetails?.createdTime ??
+                element.auditDetails?.createdTime ??
+                0) >=
+            cycleStartDate) {
           var dateKey = DigitDateUtils.getDateFromTimestamp(
-              element.clientAuditDetails!.createdTime);
+              element.clientAuditDetails?.createdTime ??
+                  element.auditDetails?.createdTime ??
+                  0);
           dateVsHouseholdMembersList
               .putIfAbsent(dateKey, () => [])
               .add(element);
         }
       }
       for (var element in administeredChildrenList) {
-        if (element.clientAuditDetails!.createdTime >= cycleStartDate) {
+        if (element.clientAuditDetails?.createdTime == null &&
+            element.auditDetails?.createdTime == null) {
+          continue;
+        }
+        if ((element.clientAuditDetails?.createdTime ??
+                element.auditDetails?.createdTime ??
+                0) >=
+            cycleStartDate) {
           var dateKey = DigitDateUtils.getDateFromTimestamp(
-              element.clientAuditDetails!.createdTime);
+              element.clientAuditDetails?.createdTime ??
+                  element.auditDetails?.createdTime ??
+                  0);
           dateVsAdministeredChilderenList
               .putIfAbsent(dateKey, () => [])
               .add(element);
         }
       }
-      for (var element in AzmList) {
-        if (element.auditDetails!.createdTime >= cycleStartDate) {
+      for (var element in azmList) {
+        if (element.auditDetails?.createdTime == null &&
+            element.clientAuditDetails?.createdTime == null) {
+          continue;
+        }
+        if ((element.auditDetails?.createdTime ??
+                element.clientAuditDetails?.createdTime ??
+                0) >=
+            cycleStartDate) {
           var dateKey = DigitDateUtils.getDateFromTimestamp(
-              element.auditDetails!.createdTime);
+              element.auditDetails?.createdTime ??
+                  element.clientAuditDetails?.createdTime ??
+                  0);
           dateVsAzmList.putIfAbsent(dateKey, () => []).add(element);
         }
       }
 
-      for (var element in AzmStockList) {
-        if (element.auditDetails!.createdTime >= cycleStartDate) {
+      for (var element in azmStockList) {
+        if (element.auditDetails?.createdTime == null &&
+            element.clientAuditDetails?.createdTime == null) {
+          continue;
+        }
+        if ((element.auditDetails?.createdTime ??
+                element.clientAuditDetails?.createdTime ??
+                0) >=
+            cycleStartDate) {
           var dateKey = DigitDateUtils.getDateFromTimestamp(
-              element.auditDetails!.createdTime);
+              element.auditDetails?.createdTime ??
+                  element.clientAuditDetails?.createdTime ??
+                  0);
           dateVsAzmStockList.putIfAbsent(dateKey, () => []).add(element);
         }
       }
 
       for (var element in householdList) {
-        if (element.auditDetails!.createdTime >= cycleStartDate) {
+        if (element.auditDetails?.createdTime == null &&
+            element.clientAuditDetails?.createdTime == null) {
+          continue;
+        }
+        if ((element.auditDetails?.createdTime ??
+                element.clientAuditDetails?.createdTime ??
+                0) >=
+            cycleStartDate) {
           var dateKey = DigitDateUtils.getDateFromTimestamp(
-              element.auditDetails!.createdTime);
+              element.auditDetails?.createdTime ??
+                  element.clientAuditDetails?.createdTime ??
+                  0);
           dateVsHouseholdList.putIfAbsent(dateKey, () => []).add(element);
         }
       }

@@ -124,8 +124,8 @@ class _ViewStockRecordsPageState extends LocalizedState<ViewStockRecordsPage>
                         child: Text(
                           stock.transactionType ==
                                   TransactionType.dispatched.toValue()
-                              ? 'MIN Number'
-                              : 'MRN Number',
+                              ? Constants.minNumberLabel
+                              : Constants.mrnNumberLabel,
                         ),
                       ),
                       Expanded(child: Text(widget.mrnNumber)),
