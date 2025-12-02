@@ -554,10 +554,10 @@ class _HomePageState extends LocalizedState<HomePage> {
                 RegistrationDeliverySingleton()
                     .setDeliveryConfig(deliveryConfig);
               }
-              var te = context.selectedProject.referenceID;
+              String? referenceID = context.selectedProject.referenceID;
               if (isTriggerLocalization) {
                 final moduleName =
-                    'hcm-registration-${context.selectedProject.referenceID},hcm-delivery-${context.selectedProject.referenceID}';
+                    'hcm-registration-${referenceID},hcm-delivery-${referenceID}';
                 triggerLocalization(module: moduleName, loadOnline: true);
                 isTriggerLocalization = false;
               }
