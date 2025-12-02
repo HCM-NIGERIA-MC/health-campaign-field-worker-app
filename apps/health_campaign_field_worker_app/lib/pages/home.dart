@@ -458,8 +458,16 @@ class _HomePageState extends LocalizedState<HomePage> {
                 }
 
                 // Added scanner validations in delivery details page
+                List scannerValidations = deliverySchemaData['pages']
+                    ['DeliveryDetails']['properties']['scanner']['validations'];
+                List filterScannerValidations =
+                    scannerValidations.whereNot((validation) {
+                  return validation["type"] == "scanLimit" &&
+                      validation["type"] == "isGS1";
+                }).toList();
                 deliverySchemaData['pages']['DeliveryDetails']['properties']
                     ['scanner']['validations'] = [
+                  ...filterScannerValidations,
                   {
                     "type": "scanLimit",
                     "value": "{{resourceCard.first.quantityDistributed}}",
