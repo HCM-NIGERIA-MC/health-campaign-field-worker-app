@@ -363,6 +363,22 @@ int getUnderFiveChildCount(HouseholdModel? householdCaptured) {
   }
 }
 
+String getStockRecordLabel(StockModel? stock) {
+  String label = i18_local.stockDetails.stockReceiptDetails;
+
+  if (stock != null) {
+    if (stock.transactionReason == "RETURNED") {
+      label = i18_local.stockDetails.stockReturnDetails;
+    } else if (stock.transactionType == "RECEIVED") {
+      label = i18_local.stockDetails.stockReceiptDetails;
+    } else if (stock.transactionType == "DISPATCHED") {
+      label = i18_local.stockDetails.stockIssueDetails;
+    }
+  }
+
+  return label;
+}
+
 int getPregnantWomenCount(HouseholdModel? householdCaptured) {
   final additionalFields = householdCaptured?.additionalFields?.fields;
 
