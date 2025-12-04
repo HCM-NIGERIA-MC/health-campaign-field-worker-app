@@ -121,9 +121,47 @@
     },
     {
       "client_info": {
+        "mobilesdk_app_id": "1:397617237644:android:ee355f8a1e6415bcf6b5a9",
+        "android_client_info": {
+          "package_name": "org.egov.chad"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBzE5f156_ia7HumLb1fDg8A-88uhmQ68Y"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
         "mobilesdk_app_id": "1:397617237644:android:0b5afbe541140b18f6b5a9",
         "android_client_info": {
           "package_name": "org.egov.congo"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBzE5f156_ia7HumLb1fDg8A-88uhmQ68Y"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:397617237644:android:13e7cb9d81856654f6b5a9",
+        "android_client_info": {
+          "package_name": "org.egov.congo.zd"
         }
       },
       "oauth_client": [],
@@ -406,9 +444,9 @@
     },
     {
       "client_info": {
-        "mobilesdk_app_id": "1:397617237644:android:720258df0d912107f6b5a9",
+        "mobilesdk_app_id": "1:397617237644:android:816d126813b37b48f6b5a9",
         "android_client_info": {
-          "package_name": "org.egov.salama.pidom"
+          "package_name": "org.egov.salama.smc"
         }
       },
       "oauth_client": [],
@@ -425,9 +463,9 @@
     },
     {
       "client_info": {
-        "mobilesdk_app_id": "1:397617237644:android:816d126813b37b48f6b5a9",
+        "mobilesdk_app_id": "1:397617237644:android:5037a1a21face331f6b5a9",
         "android_client_info": {
-          "package_name": "org.egov.salama.smc"
+          "package_name": "org.egov.sn"
         }
       },
       "oauth_client": [],
@@ -485,44 +523,6 @@
         "mobilesdk_app_id": "1:397617237644:android:c89ef72bdd5dc4fff6b5a9",
         "android_client_info": {
           "package_name": "org.egov.togo"
-        }
-      },
-      "oauth_client": [],
-      "api_key": [
-        {
-          "current_key": "AIzaSyBzE5f156_ia7HumLb1fDg8A-88uhmQ68Y"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": []
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:397617237644:android:0f05e3b6489b6f98f6b5a9",
-        "android_client_info": {
-          "package_name": "org.egov.training.congo"
-        }
-      },
-      "oauth_client": [],
-      "api_key": [
-        {
-          "current_key": "AIzaSyBzE5f156_ia7HumLb1fDg8A-88uhmQ68Y"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": []
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:397617237644:android:0eed182f5d966127f6b5a9",
-        "android_client_info": {
-          "package_name": "org.egov.training.ng"
         }
       },
       "oauth_client": [],
