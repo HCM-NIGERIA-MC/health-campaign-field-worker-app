@@ -1,5 +1,4 @@
 import 'package:auto_route/auto_route.dart';
-import 'package:digit_components/widgets/atoms/digit_integer_form_picker.dart';
 import 'package:digit_data_model/data_model.dart';
 import 'package:digit_data_model/models/entities/household_type.dart';
 import 'package:digit_ui_components/digit_components.dart';
@@ -49,10 +48,8 @@ class CustomHouseHoldDetailsPage extends LocalizedStatefulWidget {
 class CustomHouseHoldDetailsPageState
     extends LocalizedState<CustomHouseHoldDetailsPage> {
   static const _dateOfRegistrationKey = 'dateOfRegistration';
-  static const _memberCountKey = 'memberCount';
 
   // Define controllers
-  final TextEditingController _memberController = TextEditingController();
   final TextEditingController _pregnantWomenController =
       TextEditingController();
   final TextEditingController _childrenController = TextEditingController();
@@ -61,7 +58,6 @@ class CustomHouseHoldDetailsPageState
   void dispose() {
     _pregnantWomenController.dispose();
     _childrenController.dispose();
-    _memberController.dispose();
     super.dispose();
   }
 
@@ -101,10 +97,6 @@ class CustomHouseHoldDetailsPageState
       body: ReactiveFormBuilder(
         form: () => buildForm(bloc.state),
         builder: (context, form, child) {
-          if (isCommunity) {
-            _memberController.text =
-                form.control(_memberCountKey).value.toString();
-          }
           return BlocConsumer<CustomBeneficiaryRegistrationBloc,
               BeneficiaryRegistrationState>(
             listener: (context, state) {
@@ -155,8 +147,6 @@ class CustomHouseHoldDetailsPageState
                         onPressed: () {
                           form.markAllAsTouched();
                           if (!form.valid) return;
-                          final memberCount =
-                              form.control(_memberCountKey).value as int;
 
                           final dateOfRegistration = form
                               .control(_dateOfRegistrationKey)
@@ -181,6 +171,7 @@ class CustomHouseHoldDetailsPageState
                               var household = householdModel;
 
                               household ??= HouseholdModel(
+                                memberCount: 1,
                                 tenantId:
                                     RegistrationDeliverySingleton().tenantId,
                                 clientReferenceId:
@@ -210,8 +201,8 @@ class CustomHouseHoldDetailsPageState
                               );
 
                               household = household.copyWith(
+                                  memberCount: 1,
                                   rowVersion: 1,
-                                  memberCount: memberCount,
                                   tenantId:
                                       RegistrationDeliverySingleton().tenantId,
                                   clientReferenceId:
@@ -269,7 +260,6 @@ class CustomHouseHoldDetailsPageState
                               isHeadOfHousehold,
                             ) {
                               var household = householdModel.copyWith(
-                                  memberCount: memberCount,
                                   address: addressModel,
                                   clientAuditDetails: (householdModel
                                                   .clientAuditDetails
@@ -399,23 +389,6 @@ class CustomHouseHoldDetailsPageState
                               ),
                             ),
                           ),
-                          householdDetailsShowcaseData
-                              .numberOfMembersLivingInHousehold
-                              .buildWith(
-                                  child: DigitIntegerFormPicker(
-                            minimum: 1,
-                            maximum: 20,
-                            onChange: () {
-                              int memberCount =
-                                  form.control(_memberCountKey).value;
-                            },
-                            form: form,
-                            formControlName: _memberCountKey,
-                            label: localizations.translate(
-                              i18.householdDetails.noOfMembersCountLabel,
-                            ),
-                            incrementer: true,
-                          )),
                           //[TODO: Use pregnant women form value based on project config
                         ]),
                   ),
@@ -445,9 +418,6 @@ class CustomHouseHoldDetailsPageState
     return fb.group(<String, Object>{
       _dateOfRegistrationKey:
           FormControl<DateTime>(value: registrationDate, validators: []),
-      _memberCountKey: FormControl<int>(
-        value: household?.memberCount ?? 1,
-      ),
     });
   }
 }

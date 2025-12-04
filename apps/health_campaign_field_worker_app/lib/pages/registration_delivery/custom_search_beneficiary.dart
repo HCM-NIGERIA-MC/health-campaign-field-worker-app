@@ -709,7 +709,8 @@ class _CustomSearchBeneficiaryPageState
                       mainAxisSize: MainAxisSize.max,
                       type: DigitButtonType.primary,
                       size: DigitButtonSize.large,
-                      isDisabled: false,
+                      isDisabled: !(searchHouseholdsState.searchQuery != null &&
+                          searchHouseholdsState.searchQuery!.isNotEmpty),
                       onPressed: () {
                         int spaq1 = context.spaq1;
 

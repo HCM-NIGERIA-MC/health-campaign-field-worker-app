@@ -472,7 +472,8 @@ class _BoundarySelectionPageState
                                             onPressed: () async {
                                               if (!form.valid ||
                                                   validateAllBoundarySelection(
-                                                    false,
+                                                    context.isCommunityDistributor ||
+                                                        context.isDistributor,
                                                   )) {
                                                 clickedStatus.value = false;
                                                 Toast.showToast(
