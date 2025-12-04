@@ -19,7 +19,6 @@ import 'package:digit_ui_components/widgets/atoms/digit_search_bar.dart';
 import 'package:digit_ui_components/widgets/atoms/pop_up_card.dart';
 import 'package:digit_ui_components/widgets/atoms/switch.dart';
 import 'package:digit_ui_components/widgets/molecules/digit_card.dart';
-import 'package:digit_ui_components/widgets/molecules/show_pop_up.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -29,14 +28,12 @@ import 'package:registration_delivery/registration_delivery.dart';
 import 'package:registration_delivery/widgets/beneficiary/resource_card.dart';
 
 import 'package:registration_delivery/utils/i18_key_constants.dart' as i18;
-import 'package:registration_delivery/blocs/app_localization.dart';
-import 'package:registration_delivery/blocs/unique_id/unique_id.dart';
+import '../../../utils/i18_key_constants.dart' as i18_local;
 import 'package:registration_delivery/models/entities/status.dart';
 import 'package:registration_delivery/router/registration_delivery_router.gm.dart';
 import 'package:registration_delivery/utils/utils.dart';
 import 'package:registration_delivery/widgets/back_navigation_help_header.dart';
 import 'package:registration_delivery/widgets/beneficiary/id_count_alert.dart';
-import 'package:registration_delivery/widgets/beneficiary/view_beneficiary_card.dart';
 import 'package:registration_delivery/widgets/localized.dart';
 import 'package:registration_delivery/widgets/status_filter/status_filter.dart';
 
@@ -787,6 +784,18 @@ class _CustomSearchBeneficiaryPageState
                   BlocBuilder<RegistrationWrapperBloc,
                       RegistrationWrapperState>(builder: (context, blocState) {
                     final items = blocState.householdMembers;
+                    if (selectedTag != "" && items.isEmpty) {
+                      Future.microtask(() {
+                        Toast.showToast(
+                          context,
+                          message: localizations.translate(
+                            i18_local.searchBeneficiary
+                                .noBeneficiaryFoundForScannedTag,
+                          ),
+                          type: ToastType.error,
+                        );
+                      });
+                    }
                     return BlocListener<DigitScannerBloc, DigitScannerState>(
                       listenWhen: (previous, current) {
                         // Only listen when SearchBeneficiaryPage is the active route

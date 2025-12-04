@@ -1287,6 +1287,9 @@ class HouseholdLocation {
 class SearchBeneficiary {
   const SearchBeneficiary();
 
+  String get noBeneficiaryFoundForScannedTag =>
+      'NO_BENEFICIARY_FOUND_FOR_SCANNED_TAG';
+
   String get statisticsLabelText => 'BENEFICIARY_STATISTICS_LABEL_TEXT';
 
   String get searchBeneficiaryReferralHintText =>
