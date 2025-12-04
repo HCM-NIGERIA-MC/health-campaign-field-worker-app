@@ -554,6 +554,42 @@ class _HomePageState extends LocalizedState<HomePage> {
                   'isMultiSelect': false,
                   'includeInSummary': true,
                 };
+
+                // Add latitude and longitude field in delivery
+                var latlng = {
+                  "type": "string",
+                  "label":
+                      "APPONE_REGISTRATION_BENEFICIARYLOCATION_label_latlong",
+                  "order": 2,
+                  "value": "",
+                  "format": "latLng",
+                  "hidden": false,
+                  "tooltip": "",
+                  "helpText":
+                      "APPONE_REGISTRATION_BENEFICIARYLOCATION_label_latlong_helpText",
+                  "infoText": "",
+                  "readOnly": true,
+                  "fieldName": "latLng",
+                  "deleteFlag": false,
+                  "innerLabel": "",
+                  "systemDate": false,
+                  "validations": [
+                    {
+                      "type": "required",
+                      "value": true,
+                      "message":
+                          "APPONE_REGISTRATION_BENEFICIARYLOCATION_label_latlong_mandatory_message"
+                    }
+                  ],
+                  "errorMessage": "",
+                  "includeInForm": true,
+                  "isMultiSelect": false,
+                  "includeInSummary": true,
+                  "visibilityCondition": {}
+                };
+                deliverySchemaData['pages']['DeliveryDetails']['properties']
+                    ['latLng'] = latlng;
+
                 final templates = {
                   for (final entry
                       in {...regTemplateMap, ...delTemplateMap}.entries)
