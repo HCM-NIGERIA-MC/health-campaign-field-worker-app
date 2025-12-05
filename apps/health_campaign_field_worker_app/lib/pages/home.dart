@@ -571,6 +571,7 @@ class _HomePageState extends LocalizedState<HomePage> {
       i18.home.viewReportsLabel,
       i18.home.syncDataLabel,
       i18.home.fileComplaint,
+      i18.home.summaryLabel,
       i18.home.db,
       i18.home.dashboard,
     ];
@@ -584,9 +585,7 @@ class _HomePageState extends LocalizedState<HomePage> {
             element == i18.home.db)
         .toList();
     // filteredLabels.add(i18.home.db);
-    if (context.isCommunityDistributor) {
-      filteredLabels.add(i18.home.summaryLabel);
-    }
+
     final showcaseKeys = filteredLabels
         .where((f) => f != i18.home.db)
         .map((label) => homeItemsShowcaseMap[label]!)
