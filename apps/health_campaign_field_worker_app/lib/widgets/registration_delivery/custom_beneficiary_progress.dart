@@ -113,7 +113,7 @@ class _CustomBeneficiaryProgressBarState
 
   @override
   Widget build(BuildContext context) {
-    const target = 70;
+    const target = 100;
 
     return DigitCard(
       child: CustomProgressIndicatorContainer(
@@ -125,7 +125,6 @@ class _CustomBeneficiaryProgressBarState
     );
   }
 }
-
 
 class CustomProgressIndicatorContainer extends StatelessWidget {
   final String label;
@@ -177,7 +176,8 @@ class CustomProgressIndicatorContainer extends StatelessWidget {
                   children: [
                     Text(
                       prefixLabel,
-                      style: theme.textTheme.bodyMedium!.copyWith(color: theme.colorTheme.alert.success),
+                      style: theme.textTheme.bodyMedium!
+                          .copyWith(color: theme.colorTheme.alert.success),
                       textAlign: TextAlign.center,
                     ),
                     Text(

@@ -97,7 +97,8 @@ class _ViewStockRecordsCDDPageState
             (quantityReceived is int && quantityReceived > stockQuantity)) {
           await DigitToast.show(context,
               options: DigitToastOptions(
-                  'Received quantity can not be more than issued quantity',
+                  localizations.translate(
+                      i18_local.stockDetails.stockReceivedIssuedQuantityLabel),
                   true,
                   theme));
           return;
