@@ -618,58 +618,6 @@ class _HomePageState extends LocalizedState<HomePage> {
           },
         ),
       ),
-      // i18.home.beneficiaryReferralLabel:
-      //     homeShowcaseData.hfBeneficiaryReferral.buildWith(
-      //   child: HomeItemCard(
-      //     icon: Icons.supervised_user_circle_rounded,
-      //     label: i18.home.beneficiaryReferralLabel,
-      //     onPressed: () async {
-      //       if (isTriggerLocalization) {
-      //         triggerLocalization();
-      //         isTriggerLocalization = false;
-      //       }
-      //       context.router.push(CustomSearchReferralReconciliationsRoute());
-      //     },
-      //   ),
-      // ),
-      // i18.home.manageStockLabel:
-      //     homeShowcaseData.warehouseManagerManageStock.buildWith(
-      //   child: HomeItemCard(
-      //     icon: Icons.store_mall_directory,
-      //     label: i18.home.manageStockLabel,
-      //     onPressed: () {
-      //       context.read<AppInitializationBloc>().state.maybeWhen(
-      //             orElse: () {},
-      //             initialized: (
-      //               AppConfiguration appConfiguration,
-      //               _,
-      //               __,
-      //             ) {
-      //               context.router.push(CustomManageStocksRoute());
-      //             },
-      //           );
-      //     },
-      //   ),
-      // ),
-      // i18.home.stockReconciliationLabel:
-      //     homeShowcaseData.wareHouseManagerStockReconciliation.buildWith(
-      //   child: HomeItemCard(
-      //     icon: Icons.menu_book,
-      //     label: i18.home.stockReconciliationLabel,
-      //     onPressed: () {
-      //       context.router.push(CustomStockReconciliationRoute());
-      //     },
-      //   ),
-      // ),
-      // i18.home.viewReportsLabel: homeShowcaseData.inventoryReport.buildWith(
-      //   child: HomeItemCard(
-      //     icon: Icons.announcement,
-      //     label: i18.home.viewReportsLabel,
-      //     onPressed: () {
-      //       context.router.push(CustomInventoryReportSelectionRoute());
-      //     },
-      //   ),
-      // ),
       i18.home.viewSummaryReportsLabel:
           homeShowcaseData.summaryReport.buildWith(
         child: HomeItemCard(
@@ -682,13 +630,6 @@ class _HomePageState extends LocalizedState<HomePage> {
           },
         ),
       ),
-      // i18.home.beneficiaryReferralLabel: HomeItemCard(
-      //   icon: Icons.supervised_user_circle_rounded,
-      //   label: i18.home.beneficiaryReferralLabel,
-      //   onPressed: () async {
-      //     await context.router.push(CustomSearchReferralReconciliationsRoute());
-      //   },
-      // ),
       i18.home.syncDataLabel: homeShowcaseData.distributorSyncData.buildWith(
         child: StreamBuilder<Map<String, dynamic>?>(
           stream: FlutterBackgroundService().on('serviceRunning'),
@@ -799,9 +740,6 @@ class _HomePageState extends LocalizedState<HomePage> {
       i18.home.manageAttendanceLabel:
           homeShowcaseData.manageAttendance.showcaseKey,
 
-      // i18.home.beneficiaryReferralLabel:
-      //     homeShowcaseData.hfBeneficiaryReferral.showcaseKey,
-
       i18.home.beneficiaryLabel:
           homeShowcaseData.distributorBeneficiaries.showcaseKey,
 
@@ -823,19 +761,13 @@ class _HomePageState extends LocalizedState<HomePage> {
     };
 
     final homeItemsLabel = <String>[
-      // i18.home.beneficiaryReferralLabel,
       i18.home.beneficiaryLabel,
-      // INFO: Need to add items label of package Here
       i18.home.manageAttendanceLabel,
-      // i18.home.manageStockLabel,
-      // i18.home.stockReconciliationLabel,
-      // i18.home.viewReportsLabel,
       i18.home.viewSummaryReportsLabel,
-      i18.home.syncDataLabel, // INFO: Need to add items label of package Here
+      i18.home.syncDataLabel,
       i18.home.manageAttendanceLabel,
       i18.home.fileComplaint,
       i18.home.mySurveyForm,
-
       i18.home.db,
       i18.home.dashboard,
     ];
@@ -905,8 +837,6 @@ class _HomePageState extends LocalizedState<HomePage> {
 
                 context.read<
                     LocalRepository<IndividualModel, IndividualSearchModel>>(),
-                // context.read<
-                //     LocalRepository<UserActionModel, UserActionSearchModel>>(),
                 context.read<LocalRepository<StockModel, StockSearchModel>>(),
               ],
               remoteRepositories: [
@@ -943,8 +873,6 @@ class _HomePageState extends LocalizedState<HomePage> {
                     RemoteRepository<PgrServiceModel, PgrServiceSearchModel>>(),
                 context
                     .read<RemoteRepository<ServiceModel, ServiceSearchModel>>()
-                // context.read<
-                //     RemoteRepository<UserActionModel, UserActionSearchModel>>(),
               ],
             ),
           );
@@ -1046,7 +974,6 @@ void setPackagesSingleton(BuildContext context) {
               appConfiguration.checklistTypes?.map((e) => e.code).toList() ??
                   [],
         );
-        // RegistrationDeliverySingleton().setStockCount(context.bednet);  TODO: uncommet it to add stock validation
         RegistrationDeliverySingleton().setInitialData(
           beneficiaryIdMinCount:
               appConfiguration.beneficiaryIdConfig?.first.minCount.toInt(),
@@ -1063,9 +990,6 @@ void setPackagesSingleton(BuildContext context) {
               appConfiguration.genderOptions!.map((e) => e.code).toList(),
           idTypeOptions:
               appConfiguration.idTypeOptions!.map((e) => e.code).toList(),
-          // memberRelationTypeOptions: appConfiguration.relationShipTypeOptions!
-          //     .map((e) => e.code)
-          //     .toList(),
           householdDeletionReasonOptions: appConfiguration
               .householdDeletionReasonOptions!
               .map((e) => e.code)
@@ -1147,29 +1071,6 @@ void setPackagesSingleton(BuildContext context) {
           projectId: context.projectId,
           loggedInUserUuid: context.loggedInUserUuid,
         );
-        // InventorySingleton().setInitialData(
-        //   isWareHouseMgr: context.loggedInUserRoles
-        //       .where(
-        //           (role) => role.code == RolesType.warehouseManager.toValue())
-        //       .toList()
-        //       .isNotEmpty,
-        //   isDistributor: context.loggedInUserRoles
-        //       .where(
-        //         (role) =>
-        //             role.code == RolesType.distributor.toValue() ||
-        //             role.code == RolesType.communityDistributor.toValue(),
-        //       )
-        //       .toList()
-        //       .isNotEmpty,
-        //   loggedInUser: context.loggedInUserModel,
-        //   projectId: context.projectId,
-        //   loggedInUserUuid: context.loggedInUserUuid,
-        //   transportTypes: appConfiguration.transportTypes
-        //       ?.map((e) => InventoryTransportTypes()
-        //         ..name = e.code
-        //         ..code = e.code)
-        //       .toList(),
-        // );
         InventorySingleton().setBoundary(boundary: context.boundary);
         ComplaintsSingleton().setInitialData(
           tenantId: envConfig.variables.tenantId,

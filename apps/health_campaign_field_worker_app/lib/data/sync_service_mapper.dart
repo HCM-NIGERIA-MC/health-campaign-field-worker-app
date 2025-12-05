@@ -12,7 +12,6 @@ import 'package:digit_data_model/models/entities/pgr_application_status.dart';
 import 'package:inventory_management/inventory_management.dart';
 import 'package:referral_reconciliation/referral_reconciliation.dart';
 import 'package:registration_delivery/registration_delivery.dart';
-import 'package:survey_form/models/entities/service.dart';
 import 'package:sync_service/data/repositories/sync/remote_type.dart';
 import 'package:sync_service/data/sync_entity_mapper_listener.dart';
 
@@ -104,7 +103,6 @@ class SyncServiceMapper extends SyncEntityMapperListener {
           case DataModelType.stock:
           case DataModelType.stockReconciliation:
           case DataModelType.sideEffect:
-          // case DataModelType.service:
           case DataModelType.referral:
           case DataModelType.hFReferral:
           case DataModelType.attendance:
@@ -719,64 +717,6 @@ class SyncServiceMapper extends SyncEntityMapperListener {
         }
 
         break;
-
-      // case DataModelType.service:
-      //   responseEntities = await remote.search(ServiceSearchModel(
-      //     referenceIds: entities
-      //         .whereType<ServiceModel>()
-      //         .map((e) => e.referenceId)
-      //         .whereNotNull()
-      //         .toList(),
-      //   ));
-
-      //   for (var element in operationGroupedEntity.value) {
-      //     if (element.id == null) continue;
-      //     final entity = element.entity as ServiceModel;
-      //     final responseEntity =
-      //         responseEntities.whereType<ServiceModel>().firstWhereOrNull(
-      //               (e) => e.referenceId == entity.referenceId,
-      //             );
-
-      //     final serverGeneratedId = responseEntity?.id;
-      //     final rowVersion = responseEntity?.rowVersion;
-
-      //     if (serverGeneratedId != null) {
-      //       await local.opLogManager.updateServerGeneratedIds(
-      //         model: UpdateServerGeneratedIdModel(
-      //           clientReferenceId: entity.clientId,
-      //           serverGeneratedId: serverGeneratedId,
-      //           additionalIds: responseEntity?.attributes
-      //               ?.map((e) {
-      //                 final id = e.id;
-      //                 if (id == null) return null;
-
-      //                 return AdditionalId(
-      //                   idType: serviceAttributesIdKey,
-      //                   id: id,
-      //                 );
-      //               })
-      //               .whereNotNull()
-      //               .toList(),
-      //           dataOperation: element.operation,
-      //           rowVersion: rowVersion,
-      //         ),
-      //       );
-      //     } else {
-      //       final bool markAsNonRecoverable =
-      //           await local.opLogManager.updateSyncDownRetry(entity.clientId);
-
-      //       if (markAsNonRecoverable) {
-      //         await local.update(
-      //           entity.copyWith(
-      //             nonRecoverableError: true,
-      //           ),
-      //           createOpLog: false,
-      //         );
-      //       }
-      //     }
-      //   }
-
-      //   break;
 
       // Note: Uncomment the following code block to enable complaints sync down
 

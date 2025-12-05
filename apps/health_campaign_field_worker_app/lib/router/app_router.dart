@@ -4,7 +4,6 @@ import 'package:complaints/blocs/localization/app_localization.dart';
 import 'package:complaints/router/complaints_router.dart';
 import 'package:complaints/router/complaints_router.gm.dart';
 import 'package:digit_forms_engine/router/forms_router.dart';
-import 'package:digit_scanner/blocs/app_localization.dart';
 import 'package:digit_scanner/router/digit_scanner_router.dart';
 import 'package:digit_scanner/router/digit_scanner_router.gm.dart';
 import 'package:referral_reconciliation/router/referral_reconciliation_router.gm.dart';
@@ -15,12 +14,9 @@ import 'package:registration_delivery/router/registration_delivery_router.gm.dar
 import 'package:auto_route/auto_route.dart';
 import 'package:digit_data_model/data_model.dart';
 import 'package:flutter/material.dart';
-import 'package:inventory_management/blocs/app_localization.dart';
-// import 'package:inventory_management/blocs/inventory_report.dart';
 import 'package:inventory_management/router/inventory_router.dart';
 import 'package:inventory_management/router/inventory_router.gm.dart';
 
-import '../blocs/inventory_management/custom_inventory_report.dart';
 import '../blocs/localization/app_localization.dart';
 import '../pages/acknowledgement.dart';
 import '../pages/authenticated.dart';
@@ -51,7 +47,6 @@ import '../pages/referral_reconcillation/custom_referral_reason_checklist_previe
 import '../pages/referral_reconcillation/custom_referral_facility_selection_page.dart';
 import 'package:referral_reconciliation/models/entities/hf_referral.dart';
 import 'package:survey_form/router/survey_form_router.dart';
-import 'package:inventory_management/blocs/record_stock.dart';
 import 'package:survey_form/blocs/app_localization.dart';
 import '../pages/checklist/custom_survey_form_view.dart';
 import '../pages/checklist/custom_survey_form.dart';
@@ -85,11 +80,6 @@ class AppRouter extends _$AppRouter {
       page: UnauthenticatedRouteWrapper.page,
       path: '/',
       children: [
-        // AutoRoute(
-        //   page: LanguageSelectionRoute.page,
-        //   path: 'language_selection',
-        //   initial: true,
-        // ),
         AutoRoute(
           page: LoginRoute.page,
           path: 'login',
@@ -113,38 +103,6 @@ class AppRouter extends _$AppRouter {
           page: DigitScannerRoute.page,
           path: 'digit-scanner',
         ),
-        // AutoRoute(page: DigitScannerRoute.page, path: 'scanner'),
-        // AutoRoute(
-        //   page: CustomManageStocksRoute.page,
-        //   path: 'custom-manage-stocks',
-        // ),
-        // AutoRoute(
-        //   page: QRScannerRoute.page,
-        //   path: 'qr-scanner',
-        // ),
-        // AutoRoute(
-        //   page: ReceiveStockRoute.page,
-        //   path: 'custom-stock-view-lga',
-        // ),
-        // AutoRoute(
-        //   page: ScannedReceivedStockRoute.page,
-        //   path: 'custom-stock-view-lga',
-        // ),
-
-        // AutoRoute(
-        //   page: CustomMinNumberRoute.page,
-        //   path: 'custom-min-number',
-        // ),
-        // AutoRoute(
-        //   page: BeneficiariesReportRoute.page,
-        //   path: 'beneficiary-downsync-report',
-        // ),
-        // AutoRoute(
-        //   page: ViewTransactionsRoute.page,
-        //   path: 'beneficiary-downsync-report',
-        // ),
-        // INFO : Need to add Router of package Here
-        // Attendance Route
         AutoRoute(
           page: ManageAttendanceRoute.page,
           path: 'manage-attendance',
@@ -164,11 +122,6 @@ class AppRouter extends _$AppRouter {
         AutoRoute(
             page: CustomSearchReferralReconciliationsRoute.page,
             path: 'custom-search-referrals'),
-
-        // AutoRoute(
-        //   page: CustomMinNumberRoute.page,
-        //   path: 'custom-min-number',
-        // ),
 
         // Referral Reconciliation Route
         AutoRoute(
@@ -282,86 +235,27 @@ class AppRouter extends _$AppRouter {
             ]),
 
         // Inventory Route
-        // AutoRoute(
-        //   page: StockReconciliationRoute.page,
-        //   path: 'stock-reconciliation',
-        // ),
         AutoRoute(
           page: CustomDistributionSummaryReportDetailsRoute.page,
           path: 'custom-distribution-report',
         ),
-        // AutoRoute(
-        //   page: CustomStockReconciliationRoute.page,
-        //   path: 'custom-stock-reconciliation',
-        // ),
-        // AutoRoute(
-        //   page: InventoryReportSelectionRoute.page,
-        //   path: 'inventory-report-selection',
-        // ),
-        // AutoRoute(
-        //   page: CustomInventoryReportSelectionRoute.page,
-        //   path: 'custom-inventory-report-selection',
-        // ),
-        // AutoRoute(
-        //   page: InventoryReportDetailsRoute.page,
-        //   path: 'inventory-report-details',
-        // ),
-        // AutoRoute(
-        //   page: CustomInventoryReportDetailsRoute.page,
-        //   path: 'custom-inventory-report-details',
-        // ),
         AutoRoute(
           page: InventoryAcknowledgementRoute.page,
           path: 'inventory-acknowledgement',
         ),
 
-        // AutoRoute(
-        //   page: ManageStocksRoute.page,
-        //   path: 'manage-stocks',
-        // ),
-
-        // AutoRoute(
-        //     page: CustomAcknowledgementRoute.page,
-        //     path: 'custom-acknowledgement-stock'),
-        // AutoRoute(
-        //   page: ViewStockRecordsRoute.page,
-        //   path: 'custom-stock-record-view',
-        // ),
-
         AutoRoute(
           page: RecordStockWrapperRoute.page,
           path: 'record-stock',
           children: [
-            // AutoRoute(
-            //   page: WarehouseDetailsRoute.page,
-            //   path: 'warehouse-details',
-            //   initial: true,
-            // ),
-            // AutoRoute(
-            //   page: CustomWarehouseDetailsRoute.page,
-            //   path: 'custom-warehouse-details',
-            //   initial: true,
-            // ),
             AutoRoute(
               page: StockDetailsRoute.page,
               path: 'details',
             ),
-            // AutoRoute(
-            //   page: CustomStockDetailsRoute.page,
-            //   path: 'custom-details',
-            // ),
             RedirectRoute(
               path: 'details',
               redirectTo: 'custom-details',
             ),
-            // AutoRoute(
-            //   page: CustomTransactionalDetailsRoute.page,
-            //   path: 'custom-transaction-details',
-            // ),
-            // AutoRoute(
-            //   page: ViewAllTransactionsRoute.page,
-            //   path: 'custom-all-transactions',
-            // ),
           ],
         ),
 
@@ -455,20 +349,11 @@ class AppRouter extends _$AppRouter {
           page: ComplaintsRegistrationWrapperRoute.page,
           path: 'complaints-registration',
           children: [
-            // AutoRoute(
-            //   page: ComplaintTypeRoute.page,
-            //   path: 'complaints-type',
-            //   initial: true,
-            // ),
             AutoRoute(
               page: ComplaintTypeRoute.page,
               path: 'custom-complaints-type',
               initial: true,
             ),
-            // RedirectRoute(
-            //   path: 'complaints-type',
-            //   redirectTo: 'custom-complaints-type',
-            // ),
             AutoRoute(
               page: ComplaintsLocationRoute.page,
               path: 'complaints-location',

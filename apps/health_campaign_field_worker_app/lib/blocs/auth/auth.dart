@@ -8,10 +8,8 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:registration_delivery/models/entities/task.dart';
 import 'package:registration_delivery/models/entities/task_resource.dart';
 import 'package:registration_delivery/utils/typedefs.dart';
-import 'package:registration_delivery/utils/utils.dart';
 
 import '../../data/local_store/secure_store/secure_store.dart';
-import '../../data/repositories/custom_task.dart';
 import '../../data/repositories/remote/auth.dart';
 import '../../data/repositories/remote/mdms.dart';
 import '../../models/auth/auth_model.dart';
@@ -202,7 +200,6 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       blueVas = blueVas + additionBlueVasCount;
       redVas = redVas + additionRedVasCount;
 
-      // RegistrationDeliverySingleton().setStockCount(bednet); TODO: uncommet it to add stock validation
       localSecureStore.setSpaqCounts(bednet, spaq1, spaq2, blueVas, redVas);
 
       final accessToken = await localSecureStore.accessToken;
@@ -241,8 +238,6 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     AuthDeliveryProductCountsEvent event,
     AuthEmitter emit,
   ) async {
-    // emit(const AuthLoadingState());
-
     List<TaskModel> taskList = await taskRepository
         .search(TaskSearchModel(clientReferenceId: [event.clientReferenceId]));
     int bednetCount = _resourceDistributed(taskList.first.resources);
@@ -261,7 +256,6 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       redVas = redVas - 0;
 
       localSecureStore.setSpaqCounts(bednet, spaq1, spaq2, blueVas, redVas);
-      // RegistrationDeliverySingleton().setStockCount(bednet); TODO: uncommet it to add stock validation
 
       final accessToken = await localSecureStore.accessToken;
       final refreshToken = await localSecureStore.refreshToken;
