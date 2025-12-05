@@ -171,8 +171,8 @@ class AuthenticatedPageWrapper extends StatelessWidget {
                           if (!bloc.isClosed) {
                             bloc.add(SyncRefreshEvent(userId));
                           }
-/* Every time when the user changes the screen
- this will refresh the data of sync count */
+                          /* Every time when the user changes the screen
+                                     this will refresh the data of sync count */
                           isar.opLogs
                               .filter()
                               .createdByEqualTo(userId)

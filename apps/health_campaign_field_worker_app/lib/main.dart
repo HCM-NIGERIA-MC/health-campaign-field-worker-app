@@ -17,6 +17,7 @@ import 'router/app_router.dart';
 import 'utils/background_service.dart';
 import 'utils/environment_config.dart';
 import 'utils/utils.dart';
+import 'widgets/tablet_to_phone_view_wrapper.dart';
 
 final LocalSqlDataStore _sql = LocalSqlDataStore();
 late Dio _dio;
@@ -46,11 +47,13 @@ void main() async {
   _isar = await Constants().isar;
   await initializeService(_dio, _isar);
 
-  runApp(MainApplication(
-    appRouter: AppRouter(),
-    isar: _isar,
-    client: _dio,
-    sql: _sql,
+  runApp(TabletToPhoneViewWrapper(
+    child: MainApplication(
+      appRouter: AppRouter(),
+      isar: _isar,
+      client: _dio,
+      sql: _sql,
+    ),
   ));
 }
 
