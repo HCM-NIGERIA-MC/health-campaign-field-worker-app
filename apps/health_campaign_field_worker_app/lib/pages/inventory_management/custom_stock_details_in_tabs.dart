@@ -130,6 +130,9 @@ class _DynamicTabsPageState extends LocalizedState<DynamicTabsPage>
     final selectedProducts =
         products.map((variant) => variant.sku).whereType<String>().toList();
 
+    final stockState = context.read<RecordStockBloc>().state;
+    StockRecordEntryType entryType = stockState.entryType;
+
     _forms.addAll({
       for (final product in selectedProducts)
         product: FormGroup({
@@ -154,10 +157,7 @@ class _DynamicTabsPageState extends LocalizedState<DynamicTabsPage>
                 : 1),
             Validators.max(Constants.stockMaxLimit),
           ]),
-          // _waybillQuantityKey:
-          //     FormControl<String>(validators: [Validators.required]),
           _transactionQuantityPartialKey: FormControl<int>(validators: []),
-
           _transactionQuantityWastedKey: FormControl<int>(validators: []),
           _batchNumberKey: FormControl<String>(),
           _commentsKey: FormControl<String>(),
@@ -219,14 +219,6 @@ class _DynamicTabsPageState extends LocalizedState<DynamicTabsPage>
     final state = context.read<RecordStockBloc>().state;
     StockRecordEntryType entryType = state.entryType;
 
-    // info setting the transaction related info here for the stock the model
-
-    // setTransactionTypeAndReason(
-    //   entryType,
-    //   transactionType,
-    //   transactionReason,
-    // );
-
     switch (entryType) {
       case StockRecordEntryType.receipt:
         transactionType = TransactionType.received.toValue();
@@ -251,8 +243,6 @@ class _DynamicTabsPageState extends LocalizedState<DynamicTabsPage>
         break;
     }
 
-    // setSenderReceiverIdAndType(
-    //     entryType, senderId, senderType, receiverId, receiverType);
     final secondartParty = receivedFrom.contains(("FAC_"))
         ? receivedFrom.replaceFirst("FAC_", "")
         : receivedFrom;
@@ -344,8 +334,6 @@ class _DynamicTabsPageState extends LocalizedState<DynamicTabsPage>
 
   void setTransactionTypeAndReason(StockRecordEntryType entryType,
       String? transactionType, String? transactionReason) {
-    // todo set the reasons , for othe entryType (can capture from field once added)
-
     switch (entryType) {
       case StockRecordEntryType.receipt:
         transactionType = TransactionType.received.toValue();
@@ -378,9 +366,6 @@ class _DynamicTabsPageState extends LocalizedState<DynamicTabsPage>
     String? receiverId,
     String? receiverType,
   ) {
-    // info captured on the transaction details , secondaryParty
-    // additionalCheck to correct this ,(TODO :correct this at stock detail page )
-
     final secondartParty = receivedFrom.contains(("FAC_"))
         ? receivedFrom.replaceFirst("FAC_", "")
         : receivedFrom;
@@ -415,10 +400,6 @@ class _DynamicTabsPageState extends LocalizedState<DynamicTabsPage>
 
   Widget _buildTabContent(BuildContext context, String productName,
       String receivedFrom, List<String> selectedProducts) {
-    // final theme = Theme.of(context);
-    // final textTheme = theme.digitTextTheme(context);
-    // final isDistributor = context.isDistributor;
-
     final stockState = context.read<RecordStockBloc>().state;
     bool isWareHouseMgr = InventorySingleton().isWareHouseMgr;
     final form = _forms[productName]!;
@@ -478,16 +459,6 @@ class _DynamicTabsPageState extends LocalizedState<DynamicTabsPage>
       ], autoValidate: true);
     }
 
-    // if (entryType == StockRecordEntryType.dispatch &&
-    //     context.isCommunityDistributor) {
-    //   form.control(_transactionQuantityWastedKey).setValidators([
-    //     Validators.number(),
-    //     Validators.required,
-    //     Validators.min(0),
-    //     Validators.max(Constants.stockMaxLimit),
-    //   ], autoValidate: true);
-    // }
-
     return _KeepAliveTabContent(
       child: ReactiveForm(
         formGroup: form,
@@ -542,8 +513,9 @@ class _DynamicTabsPageState extends LocalizedState<DynamicTabsPage>
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
-                      'Stock Details',
+                    Text(
+                      localizations
+                          .translate(i18_local.stockDetails.stockDetailsLabel),
                       style:
                           TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                     ),
@@ -680,17 +652,6 @@ class _DynamicTabsPageState extends LocalizedState<DynamicTabsPage>
                                     const TextInputType.numberWithOptions(
                                   decimal: true,
                                 ),
-                                // inputFormatters: [
-                                //   FilteringTextInputFormatter.allow(
-                                //     // Community distributor returns need full numbers, only regular distributors use 0-1
-                                //     (context.isDistributor && !context.isCommunityDistributor)
-                                //         ? RegExp("[0-1]")
-                                //         : RegExp("[0-9]"),
-                                //   ),
-                                //   LengthLimitingTextInputFormatter(
-                                //     (context.isDistributor && !context.isCommunityDistributor) ? 1 : 9,
-                                //   ),
-                                // ],
                                 onChange: (val) {
                                   field.control.markAsTouched();
 
@@ -727,64 +688,6 @@ class _DynamicTabsPageState extends LocalizedState<DynamicTabsPage>
                             );
                           }),
 
-                    // if (entryType == StockRecordEntryType.dispatch &&
-                    //     context.isCommunityDistributor)
-                    //   ReactiveWrapperField(
-                    //       formControlName: _transactionQuantityWastedKey,
-                    //       validationMessages: {
-                    //         "number": (object) => localizations.translate(
-                    //               '${quantityCountLabel}_ERROR',
-                    //             ),
-                    //         "max": (object) => localizations.translate(
-                    //               i18_local.stockDetails.stockMaxError,
-                    //             ),
-                    //         "min": (object) => localizations.translate(
-                    //               '${quantityCountLabel}_MIN_ERROR',
-                    //             ),
-                    //       },
-                    //       showErrors: (control) =>
-                    //           control.invalid && control.touched,
-                    //       builder: (field) {
-                    //         return LabeledField(
-                    //           label: localizations.translate(
-                    //             quantityWastedCountLabel,
-                    //           ),
-                    //           isRequired: true,
-                    //           child: BaseDigitFormInput(
-                    //             errorMessage: field.errorText,
-                    //             keyboardType:
-                    //                 const TextInputType.numberWithOptions(
-                    //               decimal: true,
-                    //             ),
-                    //             inputFormatters: [
-                    //               FilteringTextInputFormatter.allow(
-                    //                 RegExp(r'[0-9]'),
-                    //               ),
-                    //               LengthLimitingTextInputFormatter(9),
-                    //             ],
-                    //             onChange: (val) {
-                    //               field.control.markAsTouched();
-
-                    //               if (val == "") {
-                    //                 field.control.value = null;
-
-                    //                 return;
-                    //               }
-
-                    //               if (int.parse(val) > 10000000000) {
-                    //                 field.control.value =
-                    //                     Constants.stockMaxLimit;
-                    //               } else {
-                    //                 if (val != '') {
-                    //                   field.control.value = int.parse(val);
-                    //                 } else {
-                    //                   field.control.value = null;
-                    //                 }
-                    //               }
-                    //             },
-                    //           ),
-                    //         );
-                    //       }),
                     if ([
                           StockRecordEntryType.dispatch,
                         ].contains(entryType) &&
@@ -798,24 +701,7 @@ class _DynamicTabsPageState extends LocalizedState<DynamicTabsPage>
                           quantityWastedCountLabel,
                         ),
                       ),
-                    // ReactiveWrapperField(
-                    //   formControlName: _waybillQuantityKey,
-                    //   builder: (field) {
-                    //     return InputField(
-                    //       type: InputType.text,
-                    //       label: 'Quantity of Blisters' + ,
-                    //       errorMessage: field.errorText,
-                    //       onChange: (val) {
-                    //         if (val == '') {
-                    //           field.control.value = '0';
-                    //         } else {
-                    //           field.control.value = val;
-                    //         }
-                    //       },
-                    //       isRequired: true,
-                    //     );
-                    //   },
-                    // ),
+
                     const SizedBox(height: 16),
                     ReactiveWrapperField(
                       formControlName: _commentsKey,
@@ -843,13 +729,6 @@ class _DynamicTabsPageState extends LocalizedState<DynamicTabsPage>
                   type: DigitButtonType.primary,
                   onPressed: () async {
                     if (form.valid) {
-                      //TODO:
-                      // bool isValid =
-                      //     await _saveCurrentTabData(productName, entryType);
-                      // if (!isValid) {
-                      //   return;
-                      // }
-
                       if (_tabController.index < products.length - 1) {
                         if (form.valid) {
                           _tabController.animateTo(_tabController.index + 1);
@@ -876,16 +755,6 @@ class _DynamicTabsPageState extends LocalizedState<DynamicTabsPage>
                       : localizations.translate(i18.common.coreCommonNext),
                 ),
                 const SizedBox(height: 12),
-                // DigitButton(
-                //   type: DigitButtonType.secondary,
-                //   size: DigitButtonSize.large,
-                //   onPressed: () {
-                //     // Secondary action if needed
-                //   },
-                //   label: localizations.translate(
-                //     i18.common.coreCommonCancel,
-                //   ),
-                // ),
               ],
             )
           ],

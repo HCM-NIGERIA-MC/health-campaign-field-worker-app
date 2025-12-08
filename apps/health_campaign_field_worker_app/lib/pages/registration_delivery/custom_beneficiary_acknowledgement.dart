@@ -54,15 +54,7 @@ class CustomBeneficiaryAcknowledgementPageState
         ?.identifierId;
     String? beneficiaryName =
         householdMember?.members?.lastOrNull?.name?.givenName;
-    // if (widget.acknowledgementType == AcknowledgementType.addHousehold) {
-    //   return beneficiaryId == null || beneficiaryName == null
-    //       ? null
-    //       : {
-    //           'id': localizations
-    //               .translate(i18_local.beneficiaryDetails.householdId),
-    //           'value': '$beneficiaryName - $beneficiaryId'
-    //         };
-    // }
+
     return beneficiaryId == null || beneficiaryName == null
         ? null
         : {

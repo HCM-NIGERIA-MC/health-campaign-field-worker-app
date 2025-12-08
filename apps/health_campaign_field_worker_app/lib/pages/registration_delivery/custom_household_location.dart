@@ -398,7 +398,7 @@ class CustomHouseholdLocationPageState
                                   .replaceAll('{}', maxLength.toString()),
                             },
                             builder: (field) => LabeledField(
-                              isRequired: true,
+                              isRequired: false,
                               label: localizations.translate(i18
                                   .householdLocation
                                   .householdAddressLine1LabelText),
@@ -482,7 +482,7 @@ class CustomHouseholdLocationPageState
                                       .replaceAll('{}', 6.toString()),
                                 },
                                 builder: (field) => LabeledField(
-                                    isRequired: true,
+                                    isRequired: false,
                                     label: localizations.translate(i18
                                         .householdLocation.postalCodeFormLabel),
                                     child: DigitTextFormInput(
@@ -558,7 +558,6 @@ class CustomHouseholdLocationPageState
       ),
       _addressLine1Key:
           FormControl<String>(value: addressModel?.addressLine1, validators: [
-        Validators.required,
         Validators.delegate(
             (validator) => CustomValidator.requiredMin(validator)),
         Validators.maxLength(64),
@@ -581,7 +580,6 @@ class CustomHouseholdLocationPageState
       ]),
       _postalCodeKey:
           FormControl<String>(value: addressModel?.pincode, validators: [
-        Validators.required,
         Validators.delegate(
             (validator) => CustomValidator.requiredMin(validator)),
         Validators.maxLength(6),

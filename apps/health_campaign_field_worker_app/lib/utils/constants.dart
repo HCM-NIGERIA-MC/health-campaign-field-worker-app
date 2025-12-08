@@ -124,6 +124,8 @@ class Constants {
   static const String administered = "administered";
   static const String household = "household";
   static const String azmStock = "AZM Stock";
+  static const String mrnNumberLabel = "MRN Number";
+  static const String minNumberLabel = "MIN Number";
 
   // todo enable before cycle2
   static const bool isDownSyncEnabled = true;
