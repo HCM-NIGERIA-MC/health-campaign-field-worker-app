@@ -1,4 +1,4 @@
-package org.egov.azm.adamawa
+package org.egov.azm.kano
 
 import android.content.BroadcastReceiver
 import android.content.Context

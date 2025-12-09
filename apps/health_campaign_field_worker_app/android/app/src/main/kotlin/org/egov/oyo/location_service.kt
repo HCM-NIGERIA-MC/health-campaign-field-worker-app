@@ -1,4 +1,4 @@
-package org.egov.azm.adamawa
+package org.egov.azm.kano
 
 import android.annotation.TargetApi
 import android.app.NotificationChannel

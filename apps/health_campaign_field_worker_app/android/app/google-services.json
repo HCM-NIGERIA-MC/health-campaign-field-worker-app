@@ -5,44 +5,7 @@
     "storage_bucket": "digit-hcm-nigeria.firebasestorage.app"
   },
   "client": [
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:630326133351:android:5c043092e0cd437c954ac2",
-        "android_client_info": {
-          "package_name": "org.egov.azm.adamawa"
-        }
-      },
-      "oauth_client": [],
-      "api_key": [
-        {
-          "current_key": "AIzaSyDkT1V6wknoUsh8CFDXiA8OwElZnK9sF9w"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": []
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:630326133351:android:924793c91df1eeab954ac2",
-        "android_client_info": {
-          "package_name": "org.egov.azm.gombe"
-        }
-      },
-      "oauth_client": [],
-      "api_key": [
-        {
-          "current_key": "AIzaSyDkT1V6wknoUsh8CFDXiA8OwElZnK9sF9w"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": []
-        }
-      }
-    }
+    
   ],
   "configuration_version": "1"
 }
