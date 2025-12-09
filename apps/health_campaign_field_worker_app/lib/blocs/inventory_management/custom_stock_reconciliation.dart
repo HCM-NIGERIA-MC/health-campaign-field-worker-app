@@ -80,7 +80,7 @@ class CustomStockReconciliationBloc
     final receivedStocks = (await stockRepository.searchForReconciliation(
       StockSearchModel(
           productVariantId: productVariantId,
-          receiverId: [facilityId!],
+          receiverId: facilityId,
           transactionType: [TransactionType.received.toValue()]),
     ))
         .where((element) =>

@@ -96,7 +96,7 @@ class CustomInventoryReportBloc
                   StockSearchModel(
                     transactionType: transactionType,
                     tenantId: InventorySingleton().tenantId,
-                    receiverId: [receiverId],
+                    receiverId: receiverId,
                     productVariantId: productVariantId,
                     transactionReason: transactionReason,
                   ),

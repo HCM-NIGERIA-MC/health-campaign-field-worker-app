@@ -27,7 +27,6 @@ import 'package:registration_delivery/widgets/component_wrapper/product_variant_
 import 'package:registration_delivery/widgets/localized.dart';
 import '../../../models/entities/additional_fields_type.dart'
     as additional_fields_local;
-import '../../../models/entities/identifier_types.dart';
 import '../../../router/app_router.dart';
 import '../../../utils/app_enums.dart';
 import '../../../utils/utils.dart' show getIndividualAdditionalFields;

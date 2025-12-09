@@ -33,7 +33,6 @@ import 'package:registration_delivery/widgets/showcase/config/showcase_constants
 
 import '../../blocs/registration_delivery/custom_beneficairy_registration.dart';
 import '../../blocs/registration_delivery/custom_search_household.dart';
-import '../../models/entities/identifier_types.dart';
 import '../../router/app_router.dart';
 import '../../utils/utils.dart' as local_utils;
 import '../../utils/registration_delivery/registration_delivery_utils.dart';

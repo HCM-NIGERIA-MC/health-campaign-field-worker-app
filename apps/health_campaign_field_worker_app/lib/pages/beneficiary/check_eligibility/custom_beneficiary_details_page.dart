@@ -23,7 +23,6 @@ import 'package:registration_delivery/models/entities/task.dart';
 import 'package:registration_delivery/utils/i18_key_constants.dart' as i18;
 import 'package:registration_delivery/utils/utils.dart';
 import '../../../blocs/project/project.dart';
-import '../../../models/entities/identifier_types.dart';
 import '../../../router/app_router.dart';
 import '../../../utils/constants.dart';
 import '../../../utils/utils.dart' as local_utils;
@@ -86,16 +85,10 @@ class CustomBeneficiaryDetailsPageState
     return ProductVariantBlocWrapper(
       child: BlocBuilder<HouseholdOverviewBloc, HouseholdOverviewState>(
         builder: (context, state) {
-          ProjectTypeModel? projectType =
-              widget.eligibilityAssessmentType == EligibilityAssessmentType.smc
-                  ? RegistrationDeliverySingleton()
-                      .selectedProject
-                      ?.additionalDetails
-                      ?.projectType
-                  : RegistrationDeliverySingleton()
-                      .selectedProject
-                      ?.additionalDetails
-                      ?.additionalProjectType;
+          ProjectTypeModel? projectType = RegistrationDeliverySingleton()
+              .selectedProject
+              ?.additionalDetails
+              ?.projectType;
           final householdMemberWrapper = state.householdMemberWrapper;
           // Filtering project beneficiaries based on the selected individual
           final projectBeneficiary =
@@ -231,27 +224,15 @@ class CustomBeneficiaryDetailsPageState
                                                         contentPadding:
                                                             EdgeInsets.zero,
                                                         additionalWidgets: [
-                                                          widget.eligibilityAssessmentType ==
-                                                                  EligibilityAssessmentType
-                                                                      .smc
-                                                              ? buildTableContentSMC(
-                                                                  deliverState,
-                                                                  context,
-                                                                  variant,
-                                                                  state
-                                                                      .selectedIndividual,
-                                                                  state
-                                                                      .householdMemberWrapper
-                                                                      .household)
-                                                              : buildTableContentVAS(
-                                                                  deliverState,
-                                                                  context,
-                                                                  variant,
-                                                                  state
-                                                                      .selectedIndividual,
-                                                                  state
-                                                                      .householdMemberWrapper
-                                                                      .household),
+                                                          buildTableContentSMC(
+                                                              deliverState,
+                                                              context,
+                                                              variant,
+                                                              state
+                                                                  .selectedIndividual,
+                                                              state
+                                                                  .householdMemberWrapper
+                                                                  .household),
                                                         ],
                                                         actions: [
                                                           DigitButton(

@@ -82,7 +82,7 @@ class SummaryReportBloc extends Bloc<SummaryReportEvent, SummaryReportState> {
       }
 
       AzmStockList = await (customStockLocalRepository).search(StockSearchModel(
-        receiverId: [InventorySingleton().loggedInUserUuid],
+        receiverId: InventorySingleton().loggedInUserUuid,
         transactionType: [TransactionType.received.toValue()],
       ));
 

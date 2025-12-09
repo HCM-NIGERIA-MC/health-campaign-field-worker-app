@@ -22,6 +22,7 @@ import 'package:registration_delivery/models/entities/referral.dart';
 import 'package:registration_delivery/models/entities/side_effect.dart';
 import 'package:registration_delivery/models/entities/task.dart';
 import 'package:registration_delivery/utils/utils.dart';
+import 'package:survey_form/models/entities/service.dart';
 
 import '../../blocs/registration_delivery/custom_search_household.dart';
 import '../../data/repositories/local/registration_delivery/custom_registration_delivery.dart';
@@ -90,7 +91,8 @@ class CustomRegistrationDeliveryWrapperPage extends StatelessWidget {
                       .repository<SideEffectModel, SideEffectSearchModel>(context),
                   referralDataRepository: context.repository<ReferralModel, ReferralSearchModel>(context),
                   individualGlobalSearchRepository: context.read<IndividualGlobalSearchRepository>(),
-                  houseHoldGlobalSearchRepository: context.read<HouseHoldGlobalSearchRepository>());
+                  houseHoldGlobalSearchRepository: context.read<HouseHoldGlobalSearchRepository>(),
+                  serviceDataRepository: context.repository<ServiceModel, ServiceSearchModel>(context));
             },
           ),
           BlocProvider(
@@ -119,7 +121,8 @@ class CustomRegistrationDeliveryWrapperPage extends StatelessWidget {
                       .repository<SideEffectModel, SideEffectSearchModel>(context),
                   referralDataRepository: context.repository<ReferralModel, ReferralSearchModel>(context),
                   individualGlobalSearchRepository: context.read<IndividualGlobalSearchRepository>(),
-                  houseHoldGlobalSearchRepository: context.read<HouseHoldGlobalSearchRepository>());
+                  houseHoldGlobalSearchRepository: context.read<HouseHoldGlobalSearchRepository>(),
+                  serviceDataRepository: context.repository<ServiceModel, ServiceSearchModel>(context));
             },
           ),
           BlocProvider(
@@ -148,7 +151,8 @@ class CustomRegistrationDeliveryWrapperPage extends StatelessWidget {
                       .repository<SideEffectModel, SideEffectSearchModel>(context),
                   referralDataRepository: context.repository<ReferralModel, ReferralSearchModel>(context),
                   individualGlobalSearchRepository: context.read<IndividualGlobalSearchRepository>(),
-                  houseHoldGlobalSearchRepository: context.read<HouseHoldGlobalSearchRepository>());
+                  houseHoldGlobalSearchRepository: context.read<HouseHoldGlobalSearchRepository>(),
+                  serviceDataRepository: context.repository<ServiceModel, ServiceSearchModel>(context));
             },
           ),
           BlocProvider(
@@ -177,7 +181,8 @@ class CustomRegistrationDeliveryWrapperPage extends StatelessWidget {
                       .repository<SideEffectModel, SideEffectSearchModel>(context),
                   referralDataRepository: context.repository<ReferralModel, ReferralSearchModel>(context),
                   individualGlobalSearchRepository: context.read<IndividualGlobalSearchRepository>(),
-                  houseHoldGlobalSearchRepository: context.read<HouseHoldGlobalSearchRepository>());
+                  houseHoldGlobalSearchRepository: context.read<HouseHoldGlobalSearchRepository>(),
+                  serviceDataRepository: context.repository<ServiceModel, ServiceSearchModel>(context));
             },
           ),
           BlocProvider(

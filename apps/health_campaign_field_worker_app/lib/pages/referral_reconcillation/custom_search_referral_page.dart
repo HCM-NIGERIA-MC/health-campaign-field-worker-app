@@ -179,9 +179,9 @@ class _CustomSearchReferralReconciliationsPageState
                                                 ServiceSearchEvent(
                                                   serviceSearchModel:
                                                       ServiceSearchModel(
-                                                    relatedClientReferenceId:
-                                                        i.clientReferenceId,
-                                                  ),
+                                                          // relatedClientReferenceId:
+                                                          //     i.clientReferenceId,
+                                                          ),
                                                 ),
                                               );
                                           context.router.push(

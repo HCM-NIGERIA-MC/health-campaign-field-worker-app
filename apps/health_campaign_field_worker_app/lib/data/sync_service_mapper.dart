@@ -12,6 +12,7 @@ import 'package:digit_data_model/models/entities/pgr_application_status.dart';
 import 'package:inventory_management/inventory_management.dart';
 import 'package:referral_reconciliation/referral_reconciliation.dart';
 import 'package:registration_delivery/registration_delivery.dart';
+import 'package:survey_form/survey_form.dart';
 import 'package:sync_service/data/repositories/sync/remote_type.dart';
 import 'package:sync_service/data/sync_entity_mapper_listener.dart';
 
@@ -75,6 +76,11 @@ class SyncServiceMapper extends SyncEntityMapperListener {
             case "Referrals":
               final entity = entityList
                   .map((e) => ReferralModelMapper.fromJson(jsonEncode(e)))
+                  .toList();
+              await local.bulkCreate(entity);
+            case "Services":
+              final entity = entityList
+                  .map((e) => ServiceModelMapper.fromJson(jsonEncode(e)))
                   .toList();
               await local.bulkCreate(entity);
             default:

@@ -11,6 +11,7 @@ import 'package:registration_delivery/models/entities/project_beneficiary.dart';
 import 'package:registration_delivery/models/entities/referral.dart';
 import 'package:registration_delivery/models/entities/side_effect.dart';
 import 'package:registration_delivery/models/entities/task.dart';
+import 'package:survey_form/survey_form.dart';
 import 'package:sync_service/sync_service_lib.dart';
 
 import '../../data/local_store/no_sql/schema/app_configuration.dart';
@@ -44,6 +45,8 @@ class BeneficiaryDownSyncBloc
       sideEffectLocalRepository;
   final LocalRepository<ReferralModel, ReferralSearchModel>
       referralLocalRepository;
+  final LocalRepository<ServiceModel, ServiceSearchModel>
+      serviceLocalRepository;
 
   BeneficiaryDownSyncBloc({
     required this.individualLocalRepository,
@@ -56,6 +59,7 @@ class BeneficiaryDownSyncBloc
     required this.taskLocalRepository,
     required this.sideEffectLocalRepository,
     required this.referralLocalRepository,
+    required this.serviceLocalRepository,
   }) : super(const BeneficiaryDownSyncState._()) {
     on(_handleDownSyncOfBeneficiaries);
     on(_handleCheckTotalCount);
@@ -217,6 +221,7 @@ class BeneficiaryDownSyncBloc
                 taskLocalRepository,
                 sideEffectLocalRepository,
                 referralLocalRepository,
+                serviceLocalRepository,
               ]);
               // Update the local downSync data for the boundary with the new values
               totalCount = downSyncResults["DownsyncCriteria"]["totalCount"];

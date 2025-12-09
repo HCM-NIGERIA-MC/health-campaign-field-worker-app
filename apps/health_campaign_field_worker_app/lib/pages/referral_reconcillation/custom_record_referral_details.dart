@@ -190,19 +190,18 @@ class _CustomRecordReferralDetailsPageState
                                                         .read<ServiceBloc>()
                                                         .add(
                                                           ServiceSearchEvent(
-                                                            serviceSearchModel:
-                                                                ServiceSearchModel(
-                                                              relatedClientReferenceId:
-                                                                  recordState
-                                                                      .mapOrNull(
-                                                                create: (value) => value
-                                                                        .viewOnly
-                                                                    ? value
-                                                                        .hfReferralModel
-                                                                        ?.clientReferenceId
-                                                                    : null,
-                                                              ),
-                                                            ),
+                                                            serviceSearchModel: ServiceSearchModel(
+                                                                // relatedClientReferenceId:
+                                                                //     recordState
+                                                                //         .mapOrNull(
+                                                                //   create: (value) => value
+                                                                //           .viewOnly
+                                                                //       ? value
+                                                                //           .hfReferralModel
+                                                                //           ?.clientReferenceId
+                                                                //       : null,
+                                                                // ),
+                                                                ),
                                                           ),
                                                         );
                                                     context.router.push(
@@ -512,19 +511,18 @@ class _CustomRecordReferralDetailsPageState
                                                             .read<ServiceBloc>()
                                                             .add(
                                                               ServiceSearchEvent(
-                                                                serviceSearchModel:
-                                                                    ServiceSearchModel(
-                                                                  relatedClientReferenceId:
-                                                                      recordState
-                                                                          .mapOrNull(
-                                                                    create: (value) => value
-                                                                            .viewOnly
-                                                                        ? value
-                                                                            .hfReferralModel
-                                                                            ?.clientReferenceId
-                                                                        : null,
-                                                                  ),
-                                                                ),
+                                                                serviceSearchModel: ServiceSearchModel(
+                                                                    // relatedClientReferenceId:
+                                                                    //     recordState
+                                                                    //         .mapOrNull(
+                                                                    //   create: (value) => value
+                                                                    //           .viewOnly
+                                                                    //       ? value
+                                                                    //           .hfReferralModel
+                                                                    //           ?.clientReferenceId
+                                                                    //       : null,
+                                                                    // ),
+                                                                    ),
                                                               ),
                                                             );
                                                         context.router.push(
@@ -839,7 +837,7 @@ class _CustomRecordReferralDetailsPageState
                                                       .selectCycle,
                                                 ),
                                                 child: Dropdown(
-                                                  readOnly: viewOnly,
+                                                  readOnly: true,
                                                   onSelect: (val) => {
                                                     form
                                                         .control(_cycleKey)
@@ -1202,7 +1200,7 @@ class _CustomRecordReferralDetailsPageState
                   .firstOrNull
                   ?.value
                   .toString()
-              : null,
+              : "02",
         ),
         disabled: referralState.mapOrNull(
               create: (value) => value.viewOnly,

@@ -55,7 +55,7 @@ class _ViewAllTransactionsScreenState extends State<ViewAllTransactionsScreen> {
       result = await repository.search(StockSearchModel(
           transactionType: [TransactionType.dispatched.toValue()],
           transactionReason: [],
-          receiverId: warehouseId == null ? [] : [warehouseId]));
+          receiverId: warehouseId));
       if (isHFUser(context)) {
         result = result.where((stock) {
           return stock.senderType == 'WAREHOUSE';
@@ -64,7 +64,7 @@ class _ViewAllTransactionsScreenState extends State<ViewAllTransactionsScreen> {
       receivedResult = await repository.search(StockSearchModel(
           transactionType: [TransactionType.received.toValue()],
           transactionReason: [TransactionReason.received.toValue()],
-          receiverId: [warehouseId ?? '']));
+          receiverId: warehouseId));
       result = result.where((stock) {
         String minStock = stock.additionalFields?.fields
                 .firstWhere(

@@ -13,6 +13,7 @@ import 'package:registration_delivery/models/entities/side_effect.dart';
 import 'package:registration_delivery/models/entities/task.dart';
 import 'package:registration_delivery/utils/extensions/extensions.dart';
 import 'package:registration_delivery/utils/utils.dart';
+import 'package:survey_form/survey_form.dart';
 
 import '../../blocs/registration_delivery/custom_beneficairy_registration.dart';
 
@@ -50,6 +51,9 @@ class CustomBeneficiaryRegistrationWrapperPage extends StatelessWidget
         context.repository<SideEffectModel, SideEffectSearchModel>(context);
     final referral =
         context.repository<ReferralModel, ReferralSearchModel>(context);
+
+    final service =
+        context.repository<ServiceModel, ServiceSearchModel>(context);
 
     final individualGlobalSearch =
         context.read<IndividualGlobalSearchRepository>();
@@ -103,7 +107,8 @@ class CustomBeneficiaryRegistrationWrapperPage extends StatelessWidget
           taskDataRepository: task,
           sideEffectDataRepository: sideEffect,
           individualGlobalSearchRepository: individualGlobalSearch,
-          referralDataRepository: referral)
+          referralDataRepository: referral,
+          serviceDataRepository: service)
         ..add(HouseholdOverviewReloadEvent(
             projectId: RegistrationDeliverySingleton().selectedProject!.id,
             projectBeneficiaryType:

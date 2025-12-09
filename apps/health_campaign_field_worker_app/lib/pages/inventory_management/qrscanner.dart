@@ -78,7 +78,7 @@ class _QRScannerPageState extends LocalizedState<QRScannerPage> {
       receivedResult = await repository.search(StockSearchModel(
           transactionType: [TransactionType.received.toValue()],
           transactionReason: [TransactionReason.received.toValue()],
-          receiverId: [context.loggedInUserUuid]));
+          receiverId: context.loggedInUserUuid));
 
       for (StockModel stockModel in receivedResult) {
         String minStock = stockModel.additionalFields?.fields

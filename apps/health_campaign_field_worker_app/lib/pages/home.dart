@@ -769,6 +769,8 @@ void setPackagesSingleton(BuildContext context) {
           houseStructureTypes: [],
           refusalReasons: [],
           loggedInUser: context.loggedInUserModel,
+          beneficiaryIdMinCount: null,
+          beneficiaryIdBatchSize: null,
         );
 
         InventorySingleton().setInitialData(
