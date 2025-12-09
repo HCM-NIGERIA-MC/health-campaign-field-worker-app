@@ -401,13 +401,6 @@ class _CustomHouseholdOverviewPageState
                                                           .locality
                                                           ?.code ??
                                                       i18.common.coreCommonNA),
-                                                  localizations.translate(
-                                                    i18.deliverIntervention
-                                                        .memberCountText,
-                                                  ): state
-                                                      .householdMemberWrapper
-                                                      .household
-                                                      ?.memberCount,
                                                   if (shouldShowStatus)
                                                     localizations.translate(i18
                                                             .beneficiaryDetails
@@ -882,8 +875,8 @@ class _CustomHouseholdOverviewPageState
                                                       //             sideEffectData,
                                                       //           )
                                                       //         : false,
-                                                      name: e.name?.givenName ??
-                                                          ' - - ',
+                                                      name:
+                                                          '${e.name?.givenName ?? ' - - '} ${e.name?.familyName ?? ''}',
                                                       years:
                                                           (e.dateOfBirth == null
                                                               ? null
@@ -954,15 +947,6 @@ class _CustomHouseholdOverviewPageState
                                       if (spaq1 <= 0) {
                                         descriptionText +=
                                             "\n ${localizations.translate(i18_local.beneficiaryDetails.spaq1DoseUnit)}";
-                                      }
-
-                                      if (context.spaq1 > 0) {
-                                        addIndividual(
-                                          context,
-                                          state
-                                              .householdMemberWrapper.household,
-                                        );
-                                      } else {
                                         showCustomPopup(
                                           context: context,
                                           builder: (popupContext) => Popup(
@@ -979,14 +963,13 @@ class _CustomHouseholdOverviewPageState
                                               DigitButton(
                                                 label: localizations.translate(
                                                   i18_local.beneficiaryDetails
-                                                      .goToHome,
+                                                      .backToHouseholdDetails,
                                                 ),
                                                 onPressed: () {
                                                   Navigator.of(
                                                     popupContext,
                                                     rootNavigator: true,
                                                   ).pop();
-                                                  //
                                                 },
                                                 type: DigitButtonType.primary,
                                                 size: DigitButtonSize.large,
@@ -994,7 +977,12 @@ class _CustomHouseholdOverviewPageState
                                             ],
                                           ),
                                         );
+                                        return;
                                       }
+                                      addIndividual(
+                                        context,
+                                        state.householdMemberWrapper.household,
+                                      );
                                     },
                                     label: localizations.translate(i18_local
                                         .householdDetails.addBeneficiartText),

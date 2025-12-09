@@ -275,6 +275,10 @@ class CustomReferBeneficiarySMCPageState
                                           false,
                                         ));
 
+                                        final householdOverviewState = context
+                                            .read<HouseholdOverviewBloc>()
+                                            .state;
+
                                         final clientReferenceId =
                                             IdGen.i.identifier;
                                         context
@@ -357,7 +361,9 @@ class CustomReferBeneficiarySMCPageState
                                                             .smcDone.name,
                                                       ),
                                                       ...getIndividualAdditionalFields(
-                                                          widget.individual)
+                                                          widget.individual,
+                                                          householdOverviewState
+                                                              .householdMemberWrapper),
                                                     ],
                                                   ),
                                                   address: widget

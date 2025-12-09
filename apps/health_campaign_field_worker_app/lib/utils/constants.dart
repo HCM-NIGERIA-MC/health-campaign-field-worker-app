@@ -107,6 +107,7 @@ class Constants {
   static const int apiCallLimit = 1000;
   static const String pipeSeparator = '||';
   static const int stockMaxLimit = 100000000;
+  static const String uniqueBeneficiaryIdKey = 'uniqueBeneficiaryID';
 
   // for stock validation
 
@@ -123,6 +124,8 @@ class Constants {
   static const String administered = "administered";
   static const String household = "household";
   static const String azmStock = "AZM Stock";
+  static const String mrnNumberLabel = "MRN Number";
+  static const String minNumberLabel = "MIN Number";
 
   // todo enable before cycle2
   static const bool isDownSyncEnabled = true;

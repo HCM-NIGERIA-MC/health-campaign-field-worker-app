@@ -496,6 +496,24 @@ class HomeShowcase {
 
 class StockDetails {
   const StockDetails();
+  String get stockScanResourcesLabel => 'STOCK_SCAN_RESOURCE_LABEL';
+  String get selectMINNumber => 'STOCK_DETAILS_SELECT_MIN_NUMBER';
+  String get selectMRNNumber => 'STOCK_DETAILS_SELECT_MRN_NUMBER';
+  String get noTransactionsFound => 'STOCK_DETAILS_NO_TRANSACTIONS_FOUND';
+  String get resource => 'STOCK_DETAILS_RESOURCE';
+  String get qrCodeAccountError => 'STOCK_DETAILS_QR_CODE_ACCOUNT_ERROR';
+  String get stockAlreadyReceivedLabel => 'STOCK_ALREADY_RECEIVED_LABEL';
+
+  String get stockReceivedIssuedQuantityLabel =>
+      'STOCK_DETAILS_RECEIVED_ISSUES_QUANTITY_LABEL';
+
+  String get stockQuantityLabel => 'STOCK_DETAILS_QUANTITY_LABEL';
+  String get stockCommentsLabel => 'STOCK_DETAILS_COMMENTS_LABEL';
+  String get stockWastedQuantityLabel => 'STOCK_DETAILS_WASTED_QUANTITY_LABEL';
+  String get stockPartialQuantityLabel =>
+      'STOCK_DETAILS_PARTIAL_QUANTITY_LABEL';
+
+  String get stockDetailsLabel => 'STOCK_DETAILS_LABEL';
   String get selectTransactingPartyReturnedFrom =>
       'STOCK_DETAILS_RETURNED_FROM';
 
@@ -504,6 +522,11 @@ class StockDetails {
   String get viewCreatedTransactionLabel => 'VIEW_CREATED_TRANSACTION';
 
   String get createNewTransactionLabel => 'CREATE_NEW_TRANSACTION';
+
+  String get stockIssueDetails => 'STOCK_DETAILS_STOCK_ISSUE_DETAILS';
+  String get stockReceiptDetails => 'STOCK_DETAILS_STOCK_RECEIPT_DETAILS';
+
+  String get stockReturnDetails => 'STOCK_DETAILS_STOCK_RETURN_DETAILS';
 
 //TODO:
   String get quantityCapsulePartialReturnedLabel =>

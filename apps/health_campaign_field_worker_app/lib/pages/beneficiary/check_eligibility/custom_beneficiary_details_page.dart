@@ -297,6 +297,12 @@ class CustomBeneficiaryDetailsPageState
                                                                         null)
                                                                     ?.productVariants;
 
+                                                                final productQuantity =
+                                                                    productVariants
+                                                                            ?.firstOrNull
+                                                                            ?.quantity ??
+                                                                        0;
+
                                                                 final value =
                                                                     variant!
                                                                         .firstWhere(
@@ -318,8 +324,8 @@ class CustomBeneficiaryDetailsPageState
                                                                             0) ||
                                                                     (value.contains(Constants
                                                                             .azm) &&
-                                                                        spaq1 >
-                                                                            0)) {
+                                                                        spaq1 >=
+                                                                            productQuantity)) {
                                                                   router.push(
                                                                     CustomDeliverInterventionRoute(
                                                                         eligibilityAssessmentType:
@@ -353,10 +359,8 @@ class CustomBeneficiaryDetailsPageState
                                                                             .beneficiaryDetails
                                                                             .insufficientAZTStockMessageDelivery,
                                                                       )} \n ${localizations.translate(
-                                                                        (i18_local
-                                                                            .beneficiaryDetails
-                                                                            .spaq1DoseUnit),
-                                                                      )}",
+                                                                                (i18_local.beneficiaryDetails.spaq1DoseUnit),
+                                                                              ).replaceAll("0", "${context.spaq1}")}",
                                                                       primaryAction:
                                                                           DigitDialogActions(
                                                                         label: localizations.translate(i18_local

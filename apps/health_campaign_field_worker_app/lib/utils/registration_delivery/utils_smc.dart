@@ -28,19 +28,6 @@ bool checkStatusSMC(List<TaskModel>? tasks, ProjectCycle? currentCycle) {
     return true;
   }
 
-  if (tasks.firstWhereOrNull((e) =>
-          e.additionalFields?.fields.firstWhereOrNull(
-            (element) =>
-                element.key ==
-                    additional_fields_local.AdditionalFieldsType.deliveryType
-                        .toValue() &&
-                element.value == EligibilityAssessmentStatus.smcDone.name,
-          ) !=
-          null) ==
-      null) {
-    return true;
-  }
-
   final lastTask = tasks.last;
   final lastTaskCreatedTime = lastTask.clientAuditDetails?.createdTime;
 
@@ -165,18 +152,7 @@ bool checkBeneficiaryReferredSMC(
   }
   var successfulTask = tasks!
       .where(
-        (element) =>
-            element.status == Status.beneficiaryReferred.toValue() &&
-            element.additionalFields?.fields.firstWhereOrNull(
-                  (e) =>
-                      e.key ==
-                          additional_fields_local
-                              .AdditionalFieldsType.deliveryType
-                              .toValue() &&
-                      e.value == EligibilityAssessmentStatus.smcDone.name,
-                ) !=
-                null,
-      )
+          (element) => element.status == Status.beneficiaryReferred.toValue())
       .lastOrNull;
 
   final successfulTaskCreatedTime =
@@ -201,20 +177,8 @@ bool checkBeneficiaryInEligibleSMC(
     return false;
   }
   var successfulTask = tasks!
-      .where(
-        (element) =>
-            element.status ==
-                status_local.Status.beneficiaryInEligible.toValue() &&
-            element.additionalFields?.fields.firstWhereOrNull(
-                  (e) =>
-                      e.key ==
-                          additional_fields_local
-                              .AdditionalFieldsType.deliveryType
-                              .toValue() &&
-                      e.value == EligibilityAssessmentStatus.smcDone.name,
-                ) !=
-                null,
-      )
+      .where((element) =>
+          element.status == status_local.Status.beneficiaryInEligible.toValue())
       .lastOrNull;
 
   final successfulTaskCreatedTime =
@@ -353,18 +317,7 @@ bool assessmentSMCPending(List<TaskModel>? tasks, ProjectCycle? currentCycle) {
   }
   var successfulTask = tasks!
       .where(
-        (element) =>
-            element.status == Status.administeredSuccess.toValue() &&
-            element.additionalFields?.fields.firstWhereOrNull(
-                  (e) =>
-                      e.key ==
-                          additional_fields_local
-                              .AdditionalFieldsType.deliveryType
-                              .toValue() &&
-                      e.value == EligibilityAssessmentStatus.smcDone.name,
-                ) !=
-                null,
-      )
+          (element) => element.status == Status.administeredSuccess.toValue())
       .lastOrNull;
 
   final successfulTaskCreatedTime =
@@ -554,27 +507,6 @@ DeliveryDoseCriteria? fetchProductVariant(ProjectCycleDelivery? currentDelivery,
         if (height != null) 'height': height,
       };
       if (condition != null) {
-        // if (condition.contains('and')) {
-        //   final conditions = condition.split('and');
-
-        //   List expressionParser = [];
-        //   for (var element in conditions) {
-        //     final expression = FormulaParser(
-        //       element,
-        //       {
-        //         ...variables,
-        //         // 'age': individualAgeInMonths,
-        //         if (gender != null) 'gender': gender,
-        //         if (memberCount != null) 'memberCount': memberCount,
-        //         if (roomCount != null) 'roomCount': roomCount
-        //       },
-        //     );
-        //     final error = expression.parse;
-        //     expressionParser.add(error["value"]);
-        //   }
-
-        //   return expressionParser.where((element) => element == true).length ==
-        //       conditions.length;
         final normalized = condition.replaceAll(' ', '');
 
         // Split by logical operators
@@ -632,8 +564,6 @@ DeliveryDoseCriteria? fetchProductVariant(ProjectCycleDelivery? currentDelivery,
           List expressionParser = [];
           for (var element in conditions) {
             final expression = CustomFormulaParser.parseCondition(element, {
-              // if (individualModel != null && individualAgeInMonths != 0)
-              //   'age': individualAgeInMonths,
               ...variables,
               if (gender != null) 'gender': gender,
               if (memberCount != null) 'memberCount': memberCount,

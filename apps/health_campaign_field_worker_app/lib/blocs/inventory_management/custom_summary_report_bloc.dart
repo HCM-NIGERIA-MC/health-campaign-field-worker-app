@@ -9,8 +9,10 @@ import 'package:registration_delivery/models/entities/household.dart';
 import 'package:registration_delivery/models/entities/household_member.dart';
 import 'package:registration_delivery/models/entities/task.dart';
 import 'package:registration_delivery/models/entities/task_resource.dart';
+import 'package:registration_delivery/registration_delivery.dart';
 import 'package:registration_delivery/utils/typedefs.dart';
 
+import '../../data/repositories/custom_task.dart';
 import '../../data/repositories/local/inventory_management/custom_stock.dart';
 import '../../models/entities/assessment_checklist/status.dart';
 import '../../utils/app_enums.dart';
@@ -44,123 +46,208 @@ class SummaryReportBloc extends Bloc<SummaryReportEvent, SummaryReportState> {
     SummaryReportEmitter emit,
   ) async {
     emit(const SummaryReportLoadingState());
-    
+
     try {
+      final selectedCycle = RegistrationDeliverySingleton()
+          .selectedProject
+          ?.additionalDetails
+          ?.projectType
+          ?.cycles
+          ?.where(
+            (e) =>
+                (e.startDate) < DateTime.now().millisecondsSinceEpoch &&
+                (e.endDate) > DateTime.now().millisecondsSinceEpoch,
+          )
+          .firstOrNull;
+      // date to start from
+      final cycleStartDate = selectedCycle?.startDate ?? 0;
+      List<HouseholdModel> householdList = [];
+      List<HouseholdMemberModel> householdMemberList = [];
+      List<TaskModel> taskList = [];
+      List<TaskModel> administeredChildrenList = [];
+      List<ProductVariantModel> productVariantList = [];
+      List<TaskResourceModel> azmList = [];
+      List<StockModel> azmStockList = [];
+      householdList =
+          await (householdRepository).search(HouseholdSearchModel());
+      householdMemberList = await (householdMemberRepository)
+          .search(HouseholdMemberSearchModel(isHeadOfHousehold: false));
+      taskList = await (taskDataRepository as CustomTaskLocalRepository)
+          .conditionalSearch(TaskSearchModel(),
+              RegistrationDeliverySingleton().loggedInUserUuid, cycleStartDate);
+      productVariantList = await (productVariantDataRepository)
+          .search(ProductVariantSearchModel());
+      for (var element in taskList) {
+        if (element.status == null) {
+          continue;
+        }
+        final status = StatusMapper.fromValue(element.status);
 
-    List<HouseholdModel> householdList = [];
-    List<HouseholdMemberModel> householdMemberList = [];
-    List<TaskModel> taskList = [];
-    List<TaskModel> administeredChildrenList = [];
-    List<ProductVariantModel> productVariantList = [];
-    List<TaskResourceModel> AzmList = [];
-    List<StockModel> AzmStockList = [];
-    householdList = await (householdRepository).search(HouseholdSearchModel());
-    householdMemberList = await (householdMemberRepository)
-        .search(HouseholdMemberSearchModel(isHeadOfHousehold: false));
-    taskList = await (taskDataRepository).search(TaskSearchModel());
-    productVariantList = await (productVariantDataRepository)
-        .search(ProductVariantSearchModel());
-    for (var element in taskList) {
-      final status = StatusMapper.fromValue(element.status);
-
-      if (status == Status.administeredSuccess) {
-        administeredChildrenList.add(element);
+        if (status == Status.administeredSuccess) {
+          administeredChildrenList.add(element);
+        }
       }
-    }
 
-    for (var task in administeredChildrenList) {
-      if (task.resources != null) {
-        for (var resource in task.resources!) {
-          for (var productVariant in productVariantList) {
-            if (productVariant.id == resource.productVariantId &&
-                productVariant.sku == Constants.azm) {
-              AzmList.add(resource);
+      for (var task in taskList) {
+        if (task.resources != null) {
+          for (var resource in task.resources!) {
+            for (var productVariant in productVariantList) {
+              if (productVariant.id == resource.productVariantId &&
+                  productVariant.sku == Constants.azm) {
+                azmList.add(resource);
+              }
             }
           }
         }
       }
-    }
 
-    AzmStockList = await (customStockLocalRepository).search(StockSearchModel(
-      receiverId: [InventorySingleton().loggedInUserUuid],
-      transactionType: [TransactionType.received.toValue()],
-    ));
+      azmStockList = await (customStockLocalRepository).search(StockSearchModel(
+        receiverId: [InventorySingleton().loggedInUserUuid],
+        transactionType: [TransactionType.received.toValue()],
+      ));
 
-    Map<String, List<HouseholdModel>> dateVsHouseholdList = {};
-    Map<String, List<HouseholdMemberModel>> dateVsHouseholdMembersList = {};
-    Map<String, List<TaskModel>> dateVsAdministeredChilderenList = {};
-    Map<String, List<TaskResourceModel>> dateVsAzmList = {};
-    Map<String, List<StockModel>> dateVsAzmStockList = {};
-    Set<String> uniqueDates = {};
-    Map<String, int> dateVsHouseholdCount = {};
-    Map<String, int> dateVsHouseholdMembersCount = {};
-    Map<String, int> dateVsAdministeredChilderenCount = {};
-    Map<String, int> dateVsAzmCount = {};
-    Map<String, int> dateVsAzmStockCount = {};
-    Map<String, Map<String, int>> dateVsEntityVsCountMap = {};
-    for (var element in householdMemberList) {
-      var dateKey = DigitDateUtils.getDateFromTimestamp(
-          element.clientAuditDetails!.createdTime);
-      dateVsHouseholdMembersList.putIfAbsent(dateKey, () => []).add(element);
-    }
-    for (var element in administeredChildrenList) {
-      var dateKey = DigitDateUtils.getDateFromTimestamp(
-          element.clientAuditDetails!.createdTime);
-      dateVsAdministeredChilderenList
-          .putIfAbsent(dateKey, () => [])
-          .add(element);
-    }
-    for (var element in AzmList) {
-      var dateKey = DigitDateUtils.getDateFromTimestamp(
-          element.auditDetails!.createdTime);
-      dateVsAzmList.putIfAbsent(dateKey, () => []).add(element);
-    }
+      Map<String, List<HouseholdModel>> dateVsHouseholdList = {};
+      Map<String, List<HouseholdMemberModel>> dateVsHouseholdMembersList = {};
+      Map<String, List<TaskModel>> dateVsAdministeredChilderenList = {};
+      Map<String, List<TaskResourceModel>> dateVsAzmList = {};
+      Map<String, List<StockModel>> dateVsAzmStockList = {};
+      Set<String> uniqueDates = {};
+      Map<String, int> dateVsHouseholdCount = {};
+      Map<String, int> dateVsHouseholdMembersCount = {};
+      Map<String, int> dateVsAdministeredChilderenCount = {};
+      Map<String, int> dateVsAzmCount = {};
+      Map<String, int> dateVsAzmStockCount = {};
+      Map<String, Map<String, int>> dateVsEntityVsCountMap = {};
+      for (var element in householdMemberList) {
+        if (element.clientAuditDetails?.createdTime == null &&
+            element.auditDetails?.createdTime == null) {
+          continue;
+        }
+        if ((element.clientAuditDetails?.createdTime ??
+                element.auditDetails?.createdTime ??
+                0) >=
+            cycleStartDate) {
+          var dateKey = DigitDateUtils.getDateFromTimestamp(
+              element.clientAuditDetails?.createdTime ??
+                  element.auditDetails?.createdTime ??
+                  0);
+          dateVsHouseholdMembersList
+              .putIfAbsent(dateKey, () => [])
+              .add(element);
+        }
+      }
+      for (var element in administeredChildrenList) {
+        if (element.clientAuditDetails?.createdTime == null &&
+            element.auditDetails?.createdTime == null) {
+          continue;
+        }
+        if ((element.clientAuditDetails?.createdTime ??
+                element.auditDetails?.createdTime ??
+                0) >=
+            cycleStartDate) {
+          var dateKey = DigitDateUtils.getDateFromTimestamp(
+              element.clientAuditDetails?.createdTime ??
+                  element.auditDetails?.createdTime ??
+                  0);
+          dateVsAdministeredChilderenList
+              .putIfAbsent(dateKey, () => [])
+              .add(element);
+        }
+      }
+      for (var element in azmList) {
+        if (element.auditDetails?.createdTime == null &&
+            element.clientAuditDetails?.createdTime == null) {
+          continue;
+        }
+        if ((element.auditDetails?.createdTime ??
+                element.clientAuditDetails?.createdTime ??
+                0) >=
+            cycleStartDate) {
+          var dateKey = DigitDateUtils.getDateFromTimestamp(
+              element.auditDetails?.createdTime ??
+                  element.clientAuditDetails?.createdTime ??
+                  0);
+          dateVsAzmList.putIfAbsent(dateKey, () => []).add(element);
+        }
+      }
 
-    for (var element in AzmStockList) {
-      var dateKey = DigitDateUtils.getDateFromTimestamp(
-          element.auditDetails!.createdTime);
-      dateVsAzmStockList.putIfAbsent(dateKey, () => []).add(element);
-    }
+      for (var element in azmStockList) {
+        if (element.auditDetails?.createdTime == null &&
+            element.clientAuditDetails?.createdTime == null) {
+          continue;
+        }
+        if ((element.auditDetails?.createdTime ??
+                element.clientAuditDetails?.createdTime ??
+                0) >=
+            cycleStartDate) {
+          var dateKey = DigitDateUtils.getDateFromTimestamp(
+              element.auditDetails?.createdTime ??
+                  element.clientAuditDetails?.createdTime ??
+                  0);
+          dateVsAzmStockList.putIfAbsent(dateKey, () => []).add(element);
+        }
+      }
 
-    for (var element in householdList) {
-      var dateKey = DigitDateUtils.getDateFromTimestamp(
-          element.auditDetails!.createdTime);
-      dateVsHouseholdList.putIfAbsent(dateKey, () => []).add(element);
-    }
+      for (var element in householdList) {
+        if (element.auditDetails?.createdTime == null &&
+            element.clientAuditDetails?.createdTime == null) {
+          continue;
+        }
+        if ((element.auditDetails?.createdTime ??
+                element.clientAuditDetails?.createdTime ??
+                0) >=
+            cycleStartDate) {
+          var dateKey = DigitDateUtils.getDateFromTimestamp(
+              element.auditDetails?.createdTime ??
+                  element.clientAuditDetails?.createdTime ??
+                  0);
+          dateVsHouseholdList.putIfAbsent(dateKey, () => []).add(element);
+        }
+      }
 
-    // get a set of unique dates
-    getUniqueSetOfDates(
-      dateVsHouseholdList,
-      dateVsAzmStockList,
-      dateVsHouseholdMembersList,
-      dateVsAdministeredChilderenList,
-      dateVsAzmList,
-      uniqueDates,
-    );
+      // get a set of unique dates
+      getUniqueSetOfDates(
+        dateVsHouseholdList,
+        dateVsAzmStockList,
+        dateVsHouseholdMembersList,
+        dateVsAdministeredChilderenList,
+        dateVsAzmList,
+        uniqueDates,
+      );
 
-    // populate the day vs count for that day map
-    populateDateVsCountMap(
-        dateVsHouseholdMembersList, dateVsHouseholdMembersCount);
-    populateDateVsCountMap(
-        dateVsAdministeredChilderenList, dateVsAdministeredChilderenCount);
-    populateDateVsResourceCountMap(dateVsAzmList, dateVsAzmCount);
-    populateDateVsStockCountMap(dateVsAzmStockList, dateVsAzmStockCount);
-    populateDateVsCountMap(dateVsHouseholdList, dateVsHouseholdCount);
+      // If a cycle start date is provided, filter uniqueDates to include only
+      // dates greater than or equal to the cycle start date.
+      // uniqueDates are formatted as 'dd/MM/yyyy' or 'dd/MM/yy' .
+      if (cycleStartDate != null) {
+        uniqueDates = uniqueDates
+            .where((dateStr) =>
+                DigitDateUtils.dateToTimeStamp(dateStr) >= cycleStartDate)
+            .toSet();
+      }
 
-    popoulateDateVsEntityCountMap(
-      dateVsHouseholdCount,
-      dateVsAzmStockCount,
-      dateVsEntityVsCountMap,
-      dateVsHouseholdMembersCount,
-      dateVsAdministeredChilderenCount,
-      dateVsAzmCount,
-      uniqueDates,
-    );
-    dateVsEntityVsCountMap =
-        sortMapByDateKeyAndRenameDate(dateVsEntityVsCountMap);
-    dateVsEntityVsCountMap = addTotalEntryToMap(dateVsEntityVsCountMap);
+      // populate the day vs count for that day map
+      populateDateVsCountMap(
+          dateVsHouseholdMembersList, dateVsHouseholdMembersCount);
+      populateDateVsCountMap(
+          dateVsAdministeredChilderenList, dateVsAdministeredChilderenCount);
+      populateDateVsResourceCountMap(dateVsAzmList, dateVsAzmCount);
+      populateDateVsStockCountMap(dateVsAzmStockList, dateVsAzmStockCount);
+      populateDateVsCountMap(dateVsHouseholdList, dateVsHouseholdCount);
 
-    emit(SummaryReportDataState(data: dateVsEntityVsCountMap));
+      popoulateDateVsEntityCountMap(
+        dateVsHouseholdCount,
+        dateVsAzmStockCount,
+        dateVsEntityVsCountMap,
+        dateVsHouseholdMembersCount,
+        dateVsAdministeredChilderenCount,
+        dateVsAzmCount,
+        uniqueDates,
+      );
+      dateVsEntityVsCountMap =
+          sortMapByDateKeyAndRenameDate(dateVsEntityVsCountMap);
+      dateVsEntityVsCountMap = addTotalEntryToMap(dateVsEntityVsCountMap);
+
+      emit(SummaryReportDataState(data: dateVsEntityVsCountMap));
     } catch (e) {
       // Log the error and emit empty state to prevent infinite loading
       emit(const SummaryReportEmptyState());

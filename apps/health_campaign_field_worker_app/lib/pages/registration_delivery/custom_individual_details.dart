@@ -88,9 +88,7 @@ class CustomIndividualDetailsPageState
       final cat = local_utils.getCategory(
         local_utils.getAgeMonths(age),
       );
-      final newValue = (cat == local_utils.Constants.height)
-          ? cat
-          : "";
+      final newValue = (cat == local_utils.Constants.height) ? cat : "";
 
       if (cat != local_utils.Constants.height) {
         form.control(_height).value = "";
@@ -232,7 +230,8 @@ class CustomIndividualDetailsPageState
                             switch (checkCategory) {
                               case local_utils.Constants.height:
                                 final value = form.control(_height).value;
-                                if (value == null || value == "") {
+                                if (!widget.isHeadOfHousehold &&
+                                    (value == null || value == "")) {
                                   await DigitToast.show(
                                     context,
                                     options: DigitToastOptions(
@@ -755,8 +754,7 @@ class CustomIndividualDetailsPageState
                                 isIndividual = true;
                               }
 
-                              if (isVisible ==
-                                  local_utils.Constants.height) {
+                              if (isVisible == local_utils.Constants.height) {
                                 formControlKey = _height;
                               } else if (isVisible == "" && isIndividual) {
                                 formControlKey = isVisible;
@@ -789,8 +787,8 @@ class CustomIndividualDetailsPageState
                                 ],
                                 formControlName: formControlKey,
                                 label: localizations.translate(
-                                  i18_local.individualDetails
-                                      .heightHeadLabelText,
+                                  i18_local
+                                      .individualDetails.heightHeadLabelText,
                                 ),
                                 isRequired:
                                     true, // If it's being rendered, it's required
@@ -975,12 +973,6 @@ class CustomIndividualDetailsPageState
             ],
     );
 
-    // final cycleIndex =
-    //     context.selectedCycle.id == 0 ? "" : "0${context.selectedCycle.id}";
-
-    // final projectTypeId = context.selectedProjectType == null
-    //     ? ""
-    //     : context.selectedProjectType!.id;
     individual = individual.copyWith(
       additionalFields: individual.additionalFields == null
           ? IndividualAdditionalFields(
@@ -990,16 +982,6 @@ class CustomIndividualDetailsPageState
                   "projectId",
                   context.projectId,
                 ),
-                // if (cycleIndex.isNotEmpty)
-                //   AdditionalField(
-                //     "cycleIndex",
-                //     cycleIndex,
-                //   ),
-                // if (projectTypeId.isNotEmpty)
-                //   AdditionalField(
-                //     "projectTypeId",
-                //     projectTypeId,
-                //   ),
                 if (local_utils.getCategory(
                       local_utils.getAgeMonths(
                         DigitDateUtils.calculateAge(
@@ -1022,8 +1004,7 @@ class CustomIndividualDetailsPageState
               fields: [
                 // Filter out any existing `Constants.height` field
                 ...individual.additionalFields!.fields.where(
-                  (field) =>
-                      field.key != local_utils.Constants.height,
+                  (field) => field.key != local_utils.Constants.height,
                 ),
                 // Add new `Constants.height` field if the condition matches
                 if (local_utils.getCategory(
