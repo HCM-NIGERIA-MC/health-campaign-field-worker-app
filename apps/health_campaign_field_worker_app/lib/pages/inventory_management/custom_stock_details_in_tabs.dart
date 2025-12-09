@@ -130,9 +130,6 @@ class _DynamicTabsPageState extends LocalizedState<DynamicTabsPage>
     final selectedProducts =
         products.map((variant) => variant.sku).whereType<String>().toList();
 
-    final stockState = context.read<RecordStockBloc>().state;
-    StockRecordEntryType entryType = stockState.entryType;
-
     _forms.addAll({
       for (final product in selectedProducts)
         product: FormGroup({
