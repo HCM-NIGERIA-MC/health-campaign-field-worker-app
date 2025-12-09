@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:registration_delivery/blocs/search_households/search_households.dart'
     as registration_delivery;
+import 'package:registration_delivery/models/entities/household.dart';
 
 import 'package:registration_delivery/utils/i18_key_constants.dart' as i18;
 import 'package:registration_delivery/widgets/localized.dart';
@@ -22,12 +23,16 @@ enum AcknowledgementType { addHousehold, addMember }
 class CustomBeneficiaryAcknowledgementPage extends LocalizedStatefulWidget {
   final bool? enableViewHousehold;
   final AcknowledgementType acknowledgementType;
+  final bool? consentGiven;
+  final HouseholdModel? household;
 
   const CustomBeneficiaryAcknowledgementPage({
     super.key,
     super.appLocalizations,
     required this.acknowledgementType,
     this.enableViewHousehold,
+    this.consentGiven = true,
+    this.household,
   });
 
   @override
@@ -45,6 +50,20 @@ class CustomBeneficiaryAcknowledgementPageState
   Map<String, String>? subtitleMap(
       registration_delivery.HouseholdMemberWrapper? householdMember,
       String? householdId) {
+    if (householdId == null &&
+        householdMember == null &&
+        widget.consentGiven != true) {
+      return widget.household == null
+          ? null
+          : {
+              'id': localizations
+                  .translate(i18_local.beneficiaryDetails.householdId),
+              'value': widget.household!.additionalFields!.fields
+                      .firstWhereOrNull((e) => e.key == 'householdId')
+                      ?.value ??
+                  '',
+            };
+    }
     String? beneficiaryId = householdMember?.members?.lastOrNull?.identifiers
         ?.lastWhereOrNull((e) =>
             e.identifierType == IdentifierTypes.uniqueBeneficiaryID.toValue())

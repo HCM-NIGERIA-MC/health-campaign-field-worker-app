@@ -53,7 +53,7 @@ class _ViewStockRecordsPageState extends LocalizedState<ViewStockRecordsPage>
       appBar: AppBar(
         bottom: TabBar(
           labelColor: Colors.white,
-          indicator: BoxDecoration(
+          indicator: const BoxDecoration(
             border: Border(
               left: BorderSide(color: Colors.orange),
               right: BorderSide(color: Colors.orange),
@@ -61,7 +61,7 @@ class _ViewStockRecordsPageState extends LocalizedState<ViewStockRecordsPage>
               top: BorderSide(color: Colors.orange),
             ),
           ),
-          indicatorPadding: EdgeInsets.fromLTRB(0.1, 0, 0.1, 0.1),
+          indicatorPadding: const EdgeInsets.fromLTRB(0.1, 0, 0.1, 0.1),
           controller: _tabController,
           isScrollable: true,
           tabs: widget.stockRecords
@@ -69,7 +69,8 @@ class _ViewStockRecordsPageState extends LocalizedState<ViewStockRecordsPage>
                     text: stock.additionalFields?.fields
                             .firstWhere(
                               (field) => field.key == 'productName',
-                              orElse: () => AdditionalField('productName', ''),
+                              orElse: () =>
+                                  const AdditionalField('productName', ''),
                             )
                             .value
                             ?.toString() ??
@@ -97,6 +98,10 @@ class _ViewStockRecordsPageState extends LocalizedState<ViewStockRecordsPage>
         .firstWhereOrNull((e) => e.key == "wastedBlistersReturned")
         ?.value
         .toString();
+    String? usedQuantity = stock.additionalFields?.fields
+        .firstWhereOrNull((e) => e.key == "emptyBottlesReturned")
+        ?.value
+        .toString();
 
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
@@ -119,7 +124,8 @@ class _ViewStockRecordsPageState extends LocalizedState<ViewStockRecordsPage>
                       Expanded(
                         child: Text(
                           stock.transactionType ==
-                                  TransactionType.dispatched.toValue()
+                                      TransactionType.dispatched.toValue() &&
+                                  InventorySingleton().isDistributor == false
                               ? 'MIN Number'
                               : 'MRN Number',
                         ),
@@ -136,8 +142,8 @@ class _ViewStockRecordsPageState extends LocalizedState<ViewStockRecordsPage>
                           stock.additionalFields?.fields
                                   .firstWhere(
                                     (field) => field.key == 'productName',
-                                    orElse: () =>
-                                        AdditionalField('productName', ''),
+                                    orElse: () => const AdditionalField(
+                                        'productName', ''),
                                   )
                                   .value
                                   ?.toString() ??
@@ -216,6 +222,17 @@ class _ViewStockRecordsPageState extends LocalizedState<ViewStockRecordsPage>
                   ),
                   const SizedBox(height: 12),
 
+                  // Used/Empty Quantity
+                  if (usedQuantity != null)
+                    InputField(
+                      type: InputType.text,
+                      label: 'Used (Empty) Quantity *',
+                      initialValue: usedQuantity,
+                      isDisabled: true,
+                      readOnly: true,
+                    ),
+                  if (usedQuantity != null) const SizedBox(height: 12),
+
                   // Partial Quantity
                   if (partialQuantity != null)
                     InputField(
@@ -243,7 +260,8 @@ class _ViewStockRecordsPageState extends LocalizedState<ViewStockRecordsPage>
                     initialValue: stock.additionalFields?.fields
                             .firstWhere(
                               (field) => field.key == 'comments',
-                              orElse: () => AdditionalField('comments', ''),
+                              orElse: () =>
+                                  const AdditionalField('comments', ''),
                             )
                             .value
                             ?.toString() ??

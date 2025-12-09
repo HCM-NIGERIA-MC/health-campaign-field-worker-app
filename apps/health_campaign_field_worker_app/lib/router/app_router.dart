@@ -71,6 +71,8 @@ import '../pages/registration_delivery/custom_search_beneficiary.dart';
 import '../pages/registration_delivery/custom_summary.dart';
 import '../pages/registration_delivery/custom_complaint_type.dart';
 import '../pages/beneficiary/check_eligibility/record_redose.dart';
+import '../pages/beneficiary/check_eligibility/record_adr.dart';
+import '../pages/beneficiary/check_eligibility/health_talk.dart';
 import '../pages/reports/beneficiary/beneficaries_report.dart';
 import '../pages/unauthenticated.dart';
 export 'package:auto_route/auto_route.dart';
@@ -101,6 +103,7 @@ import '../pages/checklist/custom_survey_form_wrapper.dart';
 import 'package:digit_scanner/blocs/app_localization.dart';
 import '../pages/inventory_management/qr_scanner.dart';
 import '../pages/inventory_management/custom_summary_report_page.dart';
+import 'package:registration_delivery/models/entities/household.dart';
 
 part 'app_router.gr.dart';
 
@@ -354,6 +357,10 @@ class AppRouter extends _$AppRouter {
                     page: CustomDeliverInterventionRoute.page,
                     path: 'custom-deliver-intervention',
                   ),
+                  AutoRoute(
+                    page: HealthTalkRoute.page,
+                    path: 'health-talk',
+                  ),
                   // AutoRoute(
                   //   page: DeliverInterventionRoute.page,
                   //   path: 'deliver-intervention',
@@ -401,6 +408,10 @@ class AppRouter extends _$AppRouter {
                   AutoRoute(
                     page: RecordRedoseRoute.page,
                     path: 'record-redose',
+                  ),
+                  AutoRoute(
+                    page: RecordADRRoute.page,
+                    path: 'record-adr',
                   ),
                   // AutoRoute(
                   //   page: SplashAcknowledgementRoute.page,

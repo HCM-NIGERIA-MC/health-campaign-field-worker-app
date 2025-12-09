@@ -189,6 +189,9 @@ class HouseholdOverView {
 
   String get householdOverViewBeneficiaryReferredVASLabel =>
       'HOUSEHOLD_OVER_VIEW_BENEFICIARY_REFERRED_VAS_LABEL';
+
+  String get householdOverViewRecordADRActionText =>
+      'HOUSEHOLD_OVER_VIEW_RECORD_ADR_ACTION_TEXT';
 }
 
 class DeliverIntervention {
@@ -241,6 +244,18 @@ class DeliverIntervention {
   String get doseadministeredby => 'DOSE_ADMINISTERED_BY_LABEL';
   String get proceedToVASLabel => 'PROCEED_TO_VAS_LABEL';
   String get proceedToVASDescription => 'PROCEED_TO_VAS_DESCRIPTION';
+
+  String get healthTalkTitle => 'HEALTH_TALK_TITLE';
+  String get healthTalkItem1Part1 => 'HEALTH_TALK_ITEM_1_PART_1';
+  String get healthTalkItem1Part2 => 'HEALTH_TALK_ITEM_1_PART_2';
+  String get healthTalkItem1Part3 => 'HEALTH_TALK_ITEM_1_PART_3';
+  String get healthTalkItem2 => 'HEALTH_TALK_ITEM_2';
+  String get healthTalkItem3 => 'HEALTH_TALK_ITEM_3';
+  String get healthTalkItem3Checkpoint1 => 'HEALTH_TALK_ITEM_3_CHECKPOINT_1';
+  String get healthTalkItem3Checkpoint2 => 'HEALTH_TALK_ITEM_3_CHECKPOINT_2';
+  String get healthTalkItem3Checkpoint3 => 'HEALTH_TALK_ITEM_3_CHECKPOINT_3';
+  String get healthTalkItem3Checkpoint4 => 'HEALTH_TALK_ITEM_3_CHECKPOINT_4';
+  String get healthTalkItem3Checkpoint5 => 'HEALTH_TALK_ITEM_3_CHECKPOINT_5';
 }
 
 class Checklist {
@@ -794,6 +809,18 @@ class CaregiverConsent {
   String get caregiverConsentReason => 'CARE_GIVER_CONSENT_REASON_FOR_NO';
 
   String get caregiveroption => 'CARECARE_GIVER_CONSENT_REASON_NOT_SELECTED';
+
+  String get childAbsent => 'CARE_GIVER_CHILD_ABSENT';
+  String get childSick => 'CARE_GIVER_CHILD_SICK';
+  String get fearOfSideEffects => 'CARE_GIVER_FEAR_OF_SIDE_EFFECTS';
+  String get noFeltNeed => 'CARE_GIVER_NO_FELT_NEED';
+  String get religiousBelief => 'CARE_GIVER_RELIGIOUS_BELIEF';
+  String get lackOfGovtServices => 'CARE_GIVER_LACK_OF_GOVT_SERVICES';
+  String get politicalDifference => 'CARE_GIVER_POLITICAL_DIFFERENCE';
+  String get unavailabilityOfPulses => 'CARE_GIVER_UNAVAILABILITY_OF_PULSES';
+  String get noConcern => 'CARE_GIVER_NO_CONCERN';
+  String get noReason => 'CARE_GIVER_NO_REASON';
+  String get otherReason => 'CARE_GIVER_OTHER_REASON';
 }
 
 class ComplaintsDetailsShowcase {
@@ -1286,6 +1313,15 @@ class HouseholdLocation {
   String get postalCodeFormLabel => 'POSTAL_CODE_FORM_LABEL';
 
   String get actionLabel => 'HOUSEHOLD_LOCATION_ACTION_LABEL';
+
+  String get geoLocationRequiredValidation =>
+      'HOUSEHOLD_LOCATION_GEO_LOCATION_REQUIRED_VALIDATION';
+
+  String get householdAddressLabelText => 'HOUSEHOLD_ADDRESS_LABEL_TEXT';
+
+  String get locationInfoCardTitle => 'HOUSEHOLD_LOCATION_INFO_CARD_TITLE';
+
+  String get locationInfoCardContent => 'HOUSEHOLD_LOCATION_INFO_CARD_CONTENT';
 }
 
 class SearchBeneficiary {

@@ -56,6 +56,7 @@ class _CustomSearchBeneficiaryPageState
   final TextEditingController searchController = TextEditingController();
   bool isProximityEnabled = false;
   bool isSearchByBeneficaryIdEnabled = false;
+  bool beneficiaryIdSearchResultsNotFound = false;
 
   int offset = 0;
   int limit = 10;
@@ -264,6 +265,8 @@ class _CustomSearchBeneficiaryPageState
                                                           value;
                                                       isSearchByBeneficaryIdEnabled =
                                                           false;
+                                                      beneficiaryIdSearchResultsNotFound =
+                                                          false;
                                                       lat = locationState
                                                           .latitude!;
                                                       long = locationState
@@ -313,6 +316,8 @@ class _CustomSearchBeneficiaryPageState
                                                       setState(() {
                                                         isSearchByBeneficaryIdEnabled =
                                                             value;
+                                                        beneficiaryIdSearchResultsNotFound =
+                                                            false;
                                                         isProximityEnabled =
                                                             false;
                                                         searchController
@@ -402,8 +407,10 @@ class _CustomSearchBeneficiaryPageState
                             ),
                           if (isSearchByBeneficaryIdEnabled &&
                               searchController.text.trim().isNotEmpty &&
-                              !isBeneficiaryIdValidPattern(
-                                  searchController.text.trim()))
+                              (!isBeneficiaryIdValid(
+                                      searchController.text.trim()) ||
+                                  !isBeneficiaryIdValidPattern(
+                                      searchController.text.trim())))
                             DigitInfoCard(
                               description: localizations.translate(
                                 i18_local.searchBeneficiary
@@ -560,7 +567,20 @@ class _CustomSearchBeneficiaryPageState
                   if (isSearchByBeneficaryIdEnabled)
                     BlocConsumer<IndividualGlobalSearchSMCBloc,
                         searchHouseholdSMCBloc.SearchHouseholdsSMCState>(
-                      listener: (context, searchSMCstate) {},
+                      listener: (context, searchSMCstate) {
+                        if (!searchSMCstate.loading &&
+                            isSearchByBeneficaryIdEnabled &&
+                            searchController.text.trim().isNotEmpty &&
+                            isBeneficiaryIdValid(
+                                searchController.text.trim()) &&
+                            isBeneficiaryIdValidPattern(
+                                searchController.text.trim())) {
+                          setState(() {
+                            beneficiaryIdSearchResultsNotFound =
+                                searchSMCstate.householdMembers.isEmpty;
+                          });
+                        }
+                      },
                       builder: (context, searchSMCstate) {
                         if (searchSMCstate.loading) {
                           return const Center(
@@ -631,6 +651,8 @@ class _CustomSearchBeneficiaryPageState
                                       setState(() {
                                         isProximityEnabled = false;
                                         isSearchByBeneficaryIdEnabled = false;
+                                        beneficiaryIdSearchResultsNotFound =
+                                            false;
                                       });
                                       searchController.clear();
                                       selectedFilters.clear();
@@ -646,21 +668,21 @@ class _CustomSearchBeneficiaryPageState
                         }
                       },
                     ),
-                  if (isSearchByBeneficaryIdEnabled &&
-                      searchController.text.trim().isNotEmpty &&
-                      !isBeneficiaryIdValid(searchController.text.trim()))
-                    SliverList(
-                        delegate: SliverChildBuilderDelegate((ctx, index) {
-                      return DigitInfoCard(
-                        description: localizations.translate(
-                          i18_local.searchBeneficiary
-                              .beneficiaryIdValidInfoDescription,
-                        ),
-                        title: localizations.translate(
-                          i18.searchBeneficiary.beneficiaryInfoTitle,
-                        ),
-                      );
-                    }, childCount: 1))
+                  // if (isSearchByBeneficaryIdEnabled &&
+                  //     searchController.text.trim().isNotEmpty &&
+                  //     !isBeneficiaryIdValid(searchController.text.trim()))
+                  //   SliverList(
+                  //       delegate: SliverChildBuilderDelegate((ctx, index) {
+                  //     return DigitInfoCard(
+                  //       description: localizations.translate(
+                  //         i18_local.searchBeneficiary
+                  //             .beneficiaryIdValidInfoDescription,
+                  //       ),
+                  //       title: localizations.translate(
+                  //         i18.searchBeneficiary.beneficiaryInfoTitle,
+                  //       ),
+                  //     );
+                  //   }, childCount: 1))
                 ],
               );
             },
@@ -689,7 +711,8 @@ class _CustomSearchBeneficiaryPageState
                       mainAxisSize: MainAxisSize.max,
                       type: DigitButtonType.primary,
                       size: DigitButtonSize.large,
-                      isDisabled: false,
+                      isDisabled: !(isSearchByBeneficaryIdEnabled &&
+                          beneficiaryIdSearchResultsNotFound),
                       onPressed: () {
                         int spaq1 = context.spaq1;
 
@@ -759,6 +782,21 @@ class _CustomSearchBeneficiaryPageState
         ),
       ),
     );
+  }
+
+  checkIfDisabled() {
+    if (isSearchByBeneficaryIdEnabled) {
+      if (searchController.text.trim().isNotEmpty &&
+          isBeneficiaryIdValid(searchController.text.trim()) &&
+          isBeneficiaryIdValidPattern(searchController.text.trim()) &&
+          beneficiaryIdSearchResultsNotFound) {
+        return false;
+      } else {
+        return true;
+      }
+    } else {
+      return true;
+    }
   }
 
   getFilterIconNLabel() {

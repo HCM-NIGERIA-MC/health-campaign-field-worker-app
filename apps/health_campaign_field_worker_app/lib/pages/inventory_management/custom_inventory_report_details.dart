@@ -742,7 +742,7 @@ class CustomInventoryReportDetailsPageState
                                                           .receivedCountLabel,
                                                     ),
                                                     key: receivedKey,
-                                                    width: 110,
+                                                    width: 120,
                                                   ),
                                                   DigitGridColumn(
                                                     label:

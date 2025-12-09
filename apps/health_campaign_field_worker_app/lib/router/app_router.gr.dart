@@ -89,6 +89,8 @@ abstract class _$AppRouter extends RootStackRouter {
           appLocalizations: args.appLocalizations,
           acknowledgementType: args.acknowledgementType,
           enableViewHousehold: args.enableViewHousehold,
+          consentGiven: args.consentGiven,
+          household: args.household,
         ),
       );
     },
@@ -624,6 +626,18 @@ abstract class _$AppRouter extends RootStackRouter {
         ),
       );
     },
+    HealthTalkRoute.name: (routeData) {
+      final args = routeData.argsAs<HealthTalkRouteArgs>();
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: HealthTalkPage(
+          key: args.key,
+          appLocalizations: args.appLocalizations,
+          eligibilityAssessmentType: args.eligibilityAssessmentType,
+          individual: args.individual,
+        ),
+      );
+    },
     HomeRoute.name: (routeData) {
       final args =
           routeData.argsAs<HomeRouteArgs>(orElse: () => const HomeRouteArgs());
@@ -692,6 +706,20 @@ abstract class _$AppRouter extends RootStackRouter {
         child: QRScannerPage(
           key: args.key,
           appLocalizations: args.appLocalizations,
+        ),
+      );
+    },
+    RecordADRRoute.name: (routeData) {
+      final args = routeData.argsAs<RecordADRRouteArgs>();
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: RecordADRPage(
+          key: args.key,
+          appLocalizations: args.appLocalizations,
+          individual: args.individual,
+          projectBeneficiaryClientReferenceId:
+              args.projectBeneficiaryClientReferenceId,
+          tasks: args.tasks,
         ),
       );
     },
@@ -1026,6 +1054,8 @@ class CustomBeneficiaryAcknowledgementRoute
     RegistrationDeliveryLocalization? appLocalizations,
     required AcknowledgementType acknowledgementType,
     bool? enableViewHousehold,
+    bool? consentGiven = true,
+    HouseholdModel? household,
     List<PageRouteInfo>? children,
   }) : super(
           CustomBeneficiaryAcknowledgementRoute.name,
@@ -1034,6 +1064,8 @@ class CustomBeneficiaryAcknowledgementRoute
             appLocalizations: appLocalizations,
             acknowledgementType: acknowledgementType,
             enableViewHousehold: enableViewHousehold,
+            consentGiven: consentGiven,
+            household: household,
           ),
           initialChildren: children,
         );
@@ -1050,6 +1082,8 @@ class CustomBeneficiaryAcknowledgementRouteArgs {
     this.appLocalizations,
     required this.acknowledgementType,
     this.enableViewHousehold,
+    this.consentGiven = true,
+    this.household,
   });
 
   final Key? key;
@@ -1060,9 +1094,13 @@ class CustomBeneficiaryAcknowledgementRouteArgs {
 
   final bool? enableViewHousehold;
 
+  final bool? consentGiven;
+
+  final HouseholdModel? household;
+
   @override
   String toString() {
-    return 'CustomBeneficiaryAcknowledgementRouteArgs{key: $key, appLocalizations: $appLocalizations, acknowledgementType: $acknowledgementType, enableViewHousehold: $enableViewHousehold}';
+    return 'CustomBeneficiaryAcknowledgementRouteArgs{key: $key, appLocalizations: $appLocalizations, acknowledgementType: $acknowledgementType, enableViewHousehold: $enableViewHousehold, consentGiven: $consentGiven, household: $household}';
   }
 }
 
@@ -3045,6 +3083,54 @@ class EligibilityChecklistViewRouteArgs {
 }
 
 /// generated route for
+/// [HealthTalkPage]
+class HealthTalkRoute extends PageRouteInfo<HealthTalkRouteArgs> {
+  HealthTalkRoute({
+    Key? key,
+    AppLocalizations? appLocalizations,
+    required EligibilityAssessmentType eligibilityAssessmentType,
+    required IndividualModel? individual,
+    List<PageRouteInfo>? children,
+  }) : super(
+          HealthTalkRoute.name,
+          args: HealthTalkRouteArgs(
+            key: key,
+            appLocalizations: appLocalizations,
+            eligibilityAssessmentType: eligibilityAssessmentType,
+            individual: individual,
+          ),
+          initialChildren: children,
+        );
+
+  static const String name = 'HealthTalkRoute';
+
+  static const PageInfo<HealthTalkRouteArgs> page =
+      PageInfo<HealthTalkRouteArgs>(name);
+}
+
+class HealthTalkRouteArgs {
+  const HealthTalkRouteArgs({
+    this.key,
+    this.appLocalizations,
+    required this.eligibilityAssessmentType,
+    required this.individual,
+  });
+
+  final Key? key;
+
+  final AppLocalizations? appLocalizations;
+
+  final EligibilityAssessmentType eligibilityAssessmentType;
+
+  final IndividualModel? individual;
+
+  @override
+  String toString() {
+    return 'HealthTalkRouteArgs{key: $key, appLocalizations: $appLocalizations, eligibilityAssessmentType: $eligibilityAssessmentType, individual: $individual}';
+  }
+}
+
+/// generated route for
 /// [HomePage]
 class HomeRoute extends PageRouteInfo<HomeRouteArgs> {
   HomeRoute({
@@ -3282,6 +3368,60 @@ class QRScannerRouteArgs {
   @override
   String toString() {
     return 'QRScannerRouteArgs{key: $key, appLocalizations: $appLocalizations}';
+  }
+}
+
+/// generated route for
+/// [RecordADRPage]
+class RecordADRRoute extends PageRouteInfo<RecordADRRouteArgs> {
+  RecordADRRoute({
+    Key? key,
+    AppLocalizations? appLocalizations,
+    required IndividualModel individual,
+    String? projectBeneficiaryClientReferenceId,
+    required List<TaskModel> tasks,
+    List<PageRouteInfo>? children,
+  }) : super(
+          RecordADRRoute.name,
+          args: RecordADRRouteArgs(
+            key: key,
+            appLocalizations: appLocalizations,
+            individual: individual,
+            projectBeneficiaryClientReferenceId:
+                projectBeneficiaryClientReferenceId,
+            tasks: tasks,
+          ),
+          initialChildren: children,
+        );
+
+  static const String name = 'RecordADRRoute';
+
+  static const PageInfo<RecordADRRouteArgs> page =
+      PageInfo<RecordADRRouteArgs>(name);
+}
+
+class RecordADRRouteArgs {
+  const RecordADRRouteArgs({
+    this.key,
+    this.appLocalizations,
+    required this.individual,
+    this.projectBeneficiaryClientReferenceId,
+    required this.tasks,
+  });
+
+  final Key? key;
+
+  final AppLocalizations? appLocalizations;
+
+  final IndividualModel individual;
+
+  final String? projectBeneficiaryClientReferenceId;
+
+  final List<TaskModel> tasks;
+
+  @override
+  String toString() {
+    return 'RecordADRRouteArgs{key: $key, appLocalizations: $appLocalizations, individual: $individual, projectBeneficiaryClientReferenceId: $projectBeneficiaryClientReferenceId, tasks: $tasks}';
   }
 }
 

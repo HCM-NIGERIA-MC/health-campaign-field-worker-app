@@ -152,7 +152,44 @@ bool redosePending(List<TaskModel>? tasks, ProjectCycle? selectedCycle) {
               [])
           .isEmpty;
 
-  return redosePending && (diff <= 30 * 60 * 1000);
+  return redosePending && (diff <= 5 * 60 * 1000);
+}
+
+bool adrPending(List<TaskModel>? tasks, List<SideEffectModel>? sideEffects,
+    ProjectCycle? selectedCycle) {
+  var adrPending = true;
+  if ((tasks ?? []).isEmpty) {
+    return true;
+  }
+
+  if ((sideEffects ?? []).isEmpty) {
+    return true;
+  }
+
+  if (selectedCycle == null) {
+    return false;
+  }
+
+  // get the fist side effect which was created in the current cycle
+  SideEffectModel? sideEffect = sideEffects!
+      .where(
+        (element) =>
+            element.clientAuditDetails != null &&
+            element.clientAuditDetails!.createdTime >=
+                selectedCycle.startDate &&
+            element.clientAuditDetails!.createdTime <= selectedCycle.endDate,
+      )
+      .lastOrNull;
+
+  final sideEffectCreatedTime = sideEffect?.clientAuditDetails?.createdTime;
+
+  final isSideEffectDoneInCurrentCycle = sideEffectCreatedTime != null &&
+      sideEffectCreatedTime >= selectedCycle.startDate &&
+      sideEffectCreatedTime <= selectedCycle.endDate;
+
+  adrPending = (sideEffect == null) ? true : !isSideEffectDoneInCurrentCycle;
+
+  return adrPending;
 }
 
 bool checkBeneficiaryReferredSMC(

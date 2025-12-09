@@ -147,7 +147,7 @@ class _DynamicTabsPageState extends LocalizedState<DynamicTabsPage>
           _transactionQuantityKey: FormControl<int>(validators: [
             Validators.number(),
             Validators.required,
-            Validators.min(1),
+            Validators.min(0),
             Validators.max(Constants.stockMaxLimit),
           ]),
           _transactionQuantityEmptyKey: FormControl<int>(validators: []),
@@ -465,14 +465,12 @@ class _DynamicTabsPageState extends LocalizedState<DynamicTabsPage>
         Validators.min(0),
         Validators.max(Constants.stockMaxLimit),
       ], autoValidate: true);
-      form.control(_transactionQuantityEmptyKey).setValidators(
-        [
-          Validators.number(),
-          Validators.required,
-          Validators.min(-1),
-          Validators.max(Constants.stockMaxLimit),
-        ],
-      );
+      form.control(_transactionQuantityEmptyKey).setValidators([
+        Validators.number(),
+        Validators.required,
+        Validators.min(0),
+        Validators.max(Constants.stockMaxLimit),
+      ], autoValidate: true);
     }
 
     return _KeepAliveTabContent(
@@ -978,7 +976,8 @@ class _DynamicTabsPageState extends LocalizedState<DynamicTabsPage>
 
           int partialQantityReturnedinMl = 0;
           if (entryType == StockRecordEntryType.dispatch &&
-              context.isCommunityDistributor) {
+              context.isCommunityDistributor &&
+              currentSpaq1Count > 0) {
             partialQantityReturnedinMl =
                 currentSpaq1Count % Constants.mlPerBottle;
           }
@@ -1170,7 +1169,7 @@ class _DynamicTabsPageState extends LocalizedState<DynamicTabsPage>
     final receivedStocks = (await stockRepository.search(
       StockSearchModel(
           productVariantId: productVariantId,
-          receiverId: [facilityId!],
+          receiverId: facilityId,
           transactionType: [TransactionType.received.toValue()]),
     ))
         .where((element) =>

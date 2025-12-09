@@ -17,7 +17,6 @@ import 'package:registration_delivery/utils/utils.dart';
 import '../../models/entities/additional_fields_type.dart'
     as additional_fields_local;
 import '../../models/entities/additional_fields_type.dart';
-import '../../models/entities/identifier_types.dart';
 import '../../router/app_router.dart';
 import '../../utils/app_enums.dart';
 import '../../utils/extensions/extensions.dart';
@@ -200,10 +199,18 @@ class CustomMemberCard extends StatelessWidget {
     final redosePendingStatus = smcAssessmentPendingStatus
         ? true
         : redosePending(smcTasks, context.selectedCycle);
+
+    final adrPendingStatus = smcAssessmentPendingStatus
+        ? true
+        : adrPending(
+            smcTasks,
+            sideEffects,
+            context.selectedCycle,
+          );
     if ((isNotEligibleSMC || isBeneficiaryIneligible) && !doseStatus) {
       return const Offstage();
     }
-    if (isNotEligibleSMC || (!redosePendingStatus)) {
+    if (isNotEligibleSMC || (!redosePendingStatus && !adrPendingStatus)) {
       return const Offstage();
     }
     return Column(
@@ -363,6 +370,35 @@ class CustomMemberCard extends StatelessWidget {
                   }
                 }
               }
+            },
+          ),
+        if ((!smcAssessmentPendingStatus) && adrPendingStatus)
+          DigitElevatedButton(
+            child: Center(
+              child: Text(
+                localizations.translate(
+                  i18_local
+                      .householdOverView.householdOverViewRecordADRActionText,
+                ),
+                style: textTheme.headingM.copyWith(color: Colors.white),
+              ),
+            ),
+            onPressed: () async {
+              final bloc = context.read<HouseholdOverviewBloc>();
+              bloc.add(
+                HouseholdOverviewEvent.selectedIndividual(
+                  individualModel: individual,
+                ),
+              );
+
+              context.router.push(
+                RecordADRRoute(
+                  individual: individual,
+                  projectBeneficiaryClientReferenceId:
+                      projectBeneficiaryClientReferenceId,
+                  tasks: smcTasks ?? [],
+                ),
+              );
             },
           ),
       ],

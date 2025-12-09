@@ -1,6 +1,7 @@
 import 'package:digit_components/widgets/atoms/digit_toaster.dart';
 import 'package:digit_data_model/data_model.dart';
 import 'package:digit_ui_components/digit_components.dart';
+import 'package:digit_ui_components/widgets/atoms/dropdown_wrapper.dart';
 import 'package:digit_ui_components/models/RadioButtonModel.dart';
 import 'package:digit_ui_components/services/location_bloc.dart';
 import 'package:digit_ui_components/theme/digit_extended_theme.dart';
@@ -9,6 +10,7 @@ import 'package:digit_ui_components/widgets/atoms/text_block.dart';
 import 'package:digit_ui_components/widgets/molecules/digit_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../utils/registration_delivery/registration_delivery_utils.dart';
 import '../../widgets/custom_back_navigation.dart';
 
 import 'package:registration_delivery/models/entities/household.dart';
@@ -44,11 +46,32 @@ class CaregiverConsentPageState extends LocalizedState<CaregiverConsentPage> {
   final clickedStatus = ValueNotifier<bool>(false);
   TextEditingController consentComment = TextEditingController();
   String? commentErrorText;
+  DropdownItem? _selectedReason;
+
+  Set<String>? householdId;
 
   onSubmit(HouseholdModel? householdModel, AddressModel? addressModel) async {
     final bloc = context.read<CustomBeneficiaryRegistrationBloc>();
     final router = context.router;
     var household = householdModel;
+
+    final boundaryBloc = context.read<BoundaryBloc>().state;
+    final code = boundaryBloc.boundaryList.first.code;
+    final bname = boundaryBloc.boundaryList.first.name;
+
+    final locality = code == null || bname == null
+        ? null
+        : LocalityModel(code: code, name: bname);
+
+    String localityCode = locality!.code;
+
+    final userId = RegistrationDeliverySingleton().loggedInUserUuid;
+
+    householdId = await UniqueIdGeneration().generateUniqueId(
+      localityCode: localityCode,
+      loggedInUserId: userId!,
+      returnCombinedIds: false,
+    );
 
     household ??= HouseholdModel(
       tenantId: RegistrationDeliverySingleton().tenantId,
@@ -101,6 +124,7 @@ class CaregiverConsentPageState extends LocalizedState<CaregiverConsentPage> {
             "caregiver_consent_comment",
             consentComment.text,
           ),
+          AdditionalField("householdId", householdId!.first),
         ]));
 
     bloc.add(
@@ -112,9 +136,14 @@ class CaregiverConsentPageState extends LocalizedState<CaregiverConsentPage> {
     );
     router.popUntil(
         (route) => route.settings.name == SearchBeneficiaryRoute.name);
-    context.router.push(CustomBeneficiaryAcknowledgementRoute(
+    context.router.push(
+      CustomBeneficiaryAcknowledgementRoute(
         enableViewHousehold: true,
-        acknowledgementType: AcknowledgementType.addHousehold));
+        acknowledgementType: AcknowledgementType.addHousehold,
+        consentGiven: false,
+        household: household,
+      ),
+    );
   }
 
   @override
@@ -274,21 +303,118 @@ class CaregiverConsentPageState extends LocalizedState<CaregiverConsentPage> {
                           setState(() {
                             if (value.code == CaregiverConsentEnum.yes.name) {
                               consentComment.clear();
+                              _selectedReason = null;
                               selectedConsent = CaregiverConsentEnum.yes;
                             } else {
+                              consentComment.clear();
+                              _selectedReason = null;
                               selectedConsent = CaregiverConsentEnum.no;
                             }
                           });
                         },
                       );
                     }),
-                if (selectedConsent == CaregiverConsentEnum.no)
+                if (selectedConsent == CaregiverConsentEnum.no) ...[
                   LabeledField(
                     isRequired: true,
                     label: localizations.translate(
-                        i18_local.caregiverConsent.caregiverConsentReason),
-                    child: DigitTextFormInput(controller: consentComment),
-                  )
+                      i18_local.caregiverConsent.caregiverConsentReason,
+                    ),
+                    child: Dropdown(
+                      onSelect: (val) {
+                        setState(() {
+                          _selectedReason = val;
+                          if (val.code == 'OTHER') {
+                            consentComment.clear();
+                          } else {
+                            consentComment.text = val.name;
+                          }
+                        });
+                      },
+                      selectedOption: _selectedReason ??
+                          const DropdownItem(name: '', code: ''),
+                      items: [
+                        DropdownItem(
+                          name: localizations.translate(
+                            i18_local.caregiverConsent.childAbsent,
+                          ),
+                          code: 'CHILD_ABSENT',
+                        ),
+                        DropdownItem(
+                          name: localizations.translate(
+                            i18_local.caregiverConsent.childSick,
+                          ),
+                          code: 'CHILD_SICK',
+                        ),
+                        DropdownItem(
+                          name: localizations.translate(
+                            i18_local.caregiverConsent.fearOfSideEffects,
+                          ),
+                          code: 'FEAR_OF_SIDE_EFFECTS',
+                        ),
+                        DropdownItem(
+                          name: localizations.translate(
+                            i18_local.caregiverConsent.noFeltNeed,
+                          ),
+                          code: 'NO_FELT_NEED',
+                        ),
+                        DropdownItem(
+                          name: localizations.translate(
+                            i18_local.caregiverConsent.religiousBelief,
+                          ),
+                          code: 'RELIGIOUS_BELIEF',
+                        ),
+                        DropdownItem(
+                          name: localizations.translate(
+                            i18_local.caregiverConsent.lackOfGovtServices,
+                          ),
+                          code: 'LACK_GOVT_SERVICES',
+                        ),
+                        DropdownItem(
+                          name: localizations.translate(
+                            i18_local.caregiverConsent.politicalDifference,
+                          ),
+                          code: 'POLITICAL_DIFFERENCE',
+                        ),
+                        DropdownItem(
+                          name: localizations.translate(
+                            i18_local.caregiverConsent.unavailabilityOfPulses,
+                          ),
+                          code: 'UNAVAILABILITY_OF_PULSES',
+                        ),
+                        DropdownItem(
+                          name: localizations.translate(
+                            i18_local.caregiverConsent.noConcern,
+                          ),
+                          code: 'NO_CONCERN_FROM_FAMILY',
+                        ),
+                        DropdownItem(
+                          name: localizations.translate(
+                            i18_local.caregiverConsent.noReason,
+                          ),
+                          code: 'NO_REASON_GIVEN',
+                        ),
+                        DropdownItem(
+                          name: localizations.translate(
+                            i18_local.caregiverConsent.otherReason,
+                          ),
+                          code: 'OTHER',
+                        ),
+                      ],
+                    ),
+                  ),
+                  if (_selectedReason?.code == 'OTHER')
+                    Padding(
+                      padding: const EdgeInsets.only(top: spacer2),
+                      child: LabeledField(
+                        isRequired: true,
+                        label: localizations.translate(
+                          i18_local.caregiverConsent.caregiverConsentReason,
+                        ),
+                        child: DigitTextFormInput(controller: consentComment),
+                      ),
+                    ),
+                ]
               ]),
             ),
           ],

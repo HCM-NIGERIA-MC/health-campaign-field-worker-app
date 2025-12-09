@@ -168,7 +168,27 @@ class CustomWarehouseDetailsPageState
                                             i18.householdDetails.actionLabel,
                                           ),
                                           onPressed: !form.valid
-                                              ? () {}
+                                              ? () {
+                                                  final warehouse = form
+                                                      .control(_warehouseKey)
+                                                      .value as String?;
+
+                                                  if (warehouse == null ||
+                                                      warehouse
+                                                          .trim()
+                                                          .isEmpty) {
+                                                    Toast.showToast(
+                                                      type: ToastType.error,
+                                                      context,
+                                                      message: localizations
+                                                          .translate(
+                                                        i18.stockDetails
+                                                            .facilityRequired,
+                                                      ),
+                                                    );
+                                                    return;
+                                                  }
+                                                }
                                               : () {
                                                   form.markAllAsTouched();
                                                   if (!form.valid) {
