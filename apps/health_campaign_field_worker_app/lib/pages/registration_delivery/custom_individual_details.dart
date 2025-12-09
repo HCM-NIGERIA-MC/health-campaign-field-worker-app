@@ -230,7 +230,8 @@ class CustomIndividualDetailsPageState
                             switch (checkCategory) {
                               case local_utils.Constants.height:
                                 final value = form.control(_height).value;
-                                if (value == null || value == "") {
+                                if (!widget.isHeadOfHousehold &&
+                                    (value == null || value == "")) {
                                   await DigitToast.show(
                                     context,
                                     options: DigitToastOptions(
