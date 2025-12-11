@@ -323,6 +323,13 @@ class _EligibilityChecklistViewPage
                                                       .checklist.notSelectedKey,
                                           rowVersion: 1,
                                           tenantId: attribute?[i].tenantId,
+                                          serviceClientReferenceId:
+                                              isHealthFacilityWorker &&
+                                                      widget.referralClientRefId !=
+                                                          null
+                                                  ? widget.referralClientRefId
+                                                      .toString()
+                                                  : referenceId,
                                           additionalFields:
                                               ServiceAttributesAdditionalFields(
                                             version: 1,

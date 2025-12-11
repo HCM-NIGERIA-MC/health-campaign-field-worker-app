@@ -251,6 +251,8 @@ class _CustomReferralReasonChecklistPageState
                                                             ])
                                                       : null,
                                               tenantId: attribute?[i].tenantId,
+                                              serviceClientReferenceId:
+                                                  referenceId,
                                             ));
                                           }
 
@@ -269,9 +271,8 @@ class _CustomReferralReasonChecklistPageState
                                                           .selectedServiceDefinition!
                                                           .tenantId,
                                                       clientId: referenceId,
-                                                      // relatedClientReferenceId:
-                                                      //     widget
-                                                      //         .referralClientRefId,
+                                                      referenceId: widget
+                                                          .referralClientRefId,
                                                       serviceDefId: value
                                                           .selectedServiceDefinition
                                                           ?.id,

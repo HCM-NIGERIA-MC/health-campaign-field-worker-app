@@ -206,6 +206,8 @@ class CustomSurveyFormViewPageState
                                               clientReferenceId:
                                                   IdGen.i.identifier,
                                               referenceId: referenceId,
+                                              serviceClientReferenceId:
+                                                  referenceId,
                                               value: attribute?[i].dataType ==
                                                       'MultiValueList'
                                                   ? controller[i]

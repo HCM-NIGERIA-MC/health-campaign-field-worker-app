@@ -235,7 +235,9 @@ class _CustomReferralReasonChecklistPreviewPageState
                                                       e.additionalDetails !=
                                                                   '' &&
                                                               e.additionalDetails !=
-                                                                  null
+                                                                  null &&
+                                                              e.additionalDetails !=
+                                                                  "null"
                                                           ? Container(
                                                               margin:
                                                                   const EdgeInsets
