@@ -155,13 +155,21 @@ class _RecordADRPageState extends LocalizedState<RecordADRPage> {
                               for (int i = 0; i < controller.length; i++) {
                                 var attributeCode =
                                     '${initialAttributes?[i].code}';
-                                var value = controller[i]
-                                        .text
-                                        .toString()
-                                        .trim()
-                                        .isNotEmpty
-                                    ? controller[i].text.toString()
-                                    : '';
+                                var value = initialAttributes?[i].dataType !=
+                                        'SingleValueList'
+                                    ? controller[i]
+                                            .text
+                                            .toString()
+                                            .trim()
+                                            .isNotEmpty
+                                        ? controller[i].text.toString()
+                                        : (initialAttributes?[i].dataType !=
+                                                'Number'
+                                            ? ''
+                                            : '0')
+                                    : visibleChecklistIndexes.contains(i)
+                                        ? controller[i].text.toString()
+                                        : i18_local.checklist.notSelectedKey;
                                 responses[attributeCode] = value;
                               }
 
@@ -207,6 +215,8 @@ class _RecordADRPageState extends LocalizedState<RecordADRPage> {
                                             clientReferenceId:
                                                 IdGen.i.identifier,
                                             referenceId: referenceId,
+                                            serviceClientReferenceId:
+                                                referenceId,
                                             value: controller[i]
                                                     .text
                                                     .toString()
@@ -317,7 +327,13 @@ class _RecordADRPageState extends LocalizedState<RecordADRPage> {
                                             .toString()
                                             .trim();
                                         if (q1Value.isNotEmpty) {
-                                          symptoms.add(q1Value);
+                                          final parts = q1Value.split('.');
+                                          for (final part in parts) {
+                                            final symptom = part.trim();
+                                            if (symptom.isNotEmpty) {
+                                              symptoms.add(symptom);
+                                            }
+                                          }
                                         }
                                       }
 
@@ -587,46 +603,64 @@ class _RecordADRPageState extends LocalizedState<RecordADRPage> {
                                                             top: 8.0),
                                                     child: Column(
                                                       children: e.values!
-                                                          .map((e) =>
-                                                              DigitCheckboxTile(
-                                                                label: e,
-                                                                value: controller[
-                                                                        index]
-                                                                    .text
-                                                                    .split('.')
-                                                                    .contains(
-                                                                        e),
-                                                                onChanged:
-                                                                    (value) {
-                                                                  final String
-                                                                      ele;
-                                                                  var val = controller[
-                                                                          index]
-                                                                      .text
-                                                                      .split(
-                                                                          '.');
-                                                                  if (val
-                                                                      .contains(
-                                                                          e)) {
-                                                                    val.remove(
-                                                                        e);
-                                                                    ele = val
-                                                                        .join(
-                                                                            ".");
-                                                                  } else {
-                                                                    ele =
-                                                                        "${controller[index].text}.$e";
-                                                                  }
-                                                                  controller[index]
-                                                                          .value =
-                                                                      TextEditingController
-                                                                          .fromValue(
-                                                                    TextEditingValue(
-                                                                      text: ele,
-                                                                    ),
-                                                                  ).value;
-                                                                },
-                                                              ))
+                                                          .map(
+                                                            (e) =>
+                                                                DigitCheckboxTile(
+                                                              label:
+                                                                  localizations
+                                                                      .translate(
+                                                                          e),
+                                                              value: controller[
+                                                                      index]
+                                                                  .text
+                                                                  .split('.')
+                                                                  .contains(e),
+                                                              onChanged:
+                                                                  (value) {
+                                                                setState(
+                                                                  () {
+                                                                    final String
+                                                                        ele;
+                                                                    var val = controller[
+                                                                            index]
+                                                                        .text
+                                                                        .split(
+                                                                            '.');
+                                                                    if (val
+                                                                        .contains(
+                                                                            e)) {
+                                                                      val.remove(
+                                                                          e);
+                                                                      ele = val
+                                                                          .join(
+                                                                              ".");
+                                                                    } else {
+                                                                      if (controller[
+                                                                              index]
+                                                                          .text
+                                                                          .trim()
+                                                                          .isEmpty) {
+                                                                        ele =
+                                                                            e; // first selection → "SYMPTOM1"
+                                                                      } else {
+                                                                        ele =
+                                                                            "${controller[index].text}.$e"; // subsequent → "SYMPTOM1.SYMPTOM2"
+                                                                      }
+                                                                    }
+                                                                    controller[index]
+                                                                            .value =
+                                                                        TextEditingController
+                                                                            .fromValue(
+                                                                      TextEditingValue(
+                                                                        text:
+                                                                            ele,
+                                                                      ),
+                                                                    ).value;
+                                                                  },
+                                                                );
+                                                              },
+                                                            ),
+                                                          )
                                                           .toList(),
                                                     ),
                                                   );
