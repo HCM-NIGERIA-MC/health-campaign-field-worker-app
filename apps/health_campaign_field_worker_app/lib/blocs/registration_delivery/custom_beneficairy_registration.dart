@@ -254,14 +254,25 @@ class CustomBeneficiaryRegistrationBloc
             final initialModifiedAt = DateTime.now().millisecondsSinceEpoch;
             await individualRepository.create(
               individual.copyWith(
-                address: [
-                  address!.copyWith(
-                    relatedClientReferenceId: individual.clientReferenceId,
-                    auditDetails: individual.auditDetails,
-                    clientAuditDetails: individual.clientAuditDetails,
-                    locality: locality,
-                  ),
-                ],
+                address: address != null
+                    ? [
+                        address.copyWith(
+                          relatedClientReferenceId:
+                              individual.clientReferenceId,
+                          auditDetails: individual.auditDetails,
+                          clientAuditDetails: individual.clientAuditDetails,
+                          locality: locality,
+                        ),
+                      ]
+                    : [
+                        AddressModel(
+                          relatedClientReferenceId:
+                              individual.clientReferenceId,
+                          auditDetails: individual.auditDetails,
+                          clientAuditDetails: individual.clientAuditDetails,
+                          locality: locality,
+                        ),
+                      ],
               ),
             );
 

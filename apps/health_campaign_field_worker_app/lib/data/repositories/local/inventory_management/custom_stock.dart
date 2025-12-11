@@ -39,8 +39,7 @@ class CustomStockLocalRepository
                 [
                   if (query.id != null) sql.stock.id.equals(query.id!),
                   if (query.receiverId != null)
-                    sql.stock.receiverId
-                        .isIn(query.receiverId! as Iterable<String>),
+                    sql.stock.receiverId.equals(query.receiverId!),
                   if (query.senderId != null)
                     sql.stock.senderId.equals(query.senderId!),
                   if (query.productVariantId != null)
@@ -138,8 +137,7 @@ class CustomStockLocalRepository
                 [
                   if (query.id != null) sql.stock.id.equals(query.id!),
                   if (query.receiverId != null)
-                    sql.stock.receiverId
-                        .isIn(query.receiverId! as Iterable<String>),
+                    sql.stock.receiverId.equals(query.receiverId!),
                   if (query.senderId != null)
                     sql.stock.senderId.equals(query.senderId!),
                   if (query.productVariantId != null)

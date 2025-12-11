@@ -915,6 +915,7 @@ class CustomIndividualDetailsPageState
 
     identifier ??= IdentifierModel(
       clientReferenceId: individual.clientReferenceId,
+      individualClientReferenceId: individual.clientReferenceId,
       tenantId: RegistrationDeliverySingleton().tenantId,
       rowVersion: 1,
       auditDetails: AuditDetails(
@@ -937,6 +938,7 @@ class CustomIndividualDetailsPageState
     if (isEditIndividual == false) {
       identifiers?.add(IdentifierModel(
         clientReferenceId: individual.clientReferenceId,
+        individualClientReferenceId: individual.clientReferenceId,
         identifierId: beneficiaryId,
         identifierType: IdentifierTypes.uniqueBeneficiaryID.toValue(),
         clientAuditDetails: individual.clientAuditDetails,
