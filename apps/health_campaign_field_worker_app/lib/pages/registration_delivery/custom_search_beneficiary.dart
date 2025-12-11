@@ -1,4 +1,3 @@
-import 'package:auto_route/auto_route.dart';
 import 'package:digit_components/widgets/digit_info_card.dart';
 import 'package:digit_data_model/data_model.dart';
 import 'package:digit_data_model/models/entities/household_type.dart';
@@ -15,28 +14,28 @@ import 'package:digit_ui_components/widgets/molecules/show_pop_up.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
-import '../../blocs/registration_delivery/custom_beneficairy_registration.dart';
-import '../../widgets/custom_back_navigation.dart';
 import 'package:registration_delivery/blocs/search_households/search_bloc_common_wrapper.dart';
 import 'package:registration_delivery/blocs/search_households/search_households.dart'
     as registration_delivery;
-
-import 'package:registration_delivery/utils/i18_key_constants.dart' as i18;
-import '../../utils/extensions/extensions.dart';
-import '../../blocs/search/individual_global_search_smc.dart';
-import '../../blocs/search/search_households_smc.dart'
-    as searchHouseholdSMCBloc;
-import '../../utils/i18_key_constants.dart' as i18_local;
 import 'package:registration_delivery/models/entities/status.dart';
 import 'package:registration_delivery/router/registration_delivery_router.gm.dart';
+import 'package:registration_delivery/utils/i18_key_constants.dart' as i18;
 import 'package:registration_delivery/utils/utils.dart';
 import 'package:registration_delivery/widgets/localized.dart';
 import 'package:registration_delivery/widgets/status_filter/status_filter.dart';
 
+import '../../blocs/registration_delivery/custom_beneficairy_registration.dart';
 import '../../blocs/registration_delivery/custom_search_household.dart';
+import '../../blocs/search/individual_global_search_smc.dart';
+import '../../blocs/search/search_households_smc.dart'
+    as searchHouseholdSMCBloc;
 import '../../router/app_router.dart';
+import '../../utils/extensions/extensions.dart';
+import '../../utils/i18_key_constants.dart' as i18_local;
 import '../../utils/search/global_search_parameters_smc.dart';
+import '../../widgets/custom_back_navigation.dart';
 import '../../widgets/showcase/showcase_wrappers.dart';
+import '../../utils/registration_delivery/beneficiary_id_input_formatter.dart';
 import 'custom_view_beneficiary_card.dart';
 
 @RoutePage()
@@ -165,18 +164,28 @@ class _CustomSearchBeneficiaryPageState
                                     child: DigitSearchBar(
                                       controller: searchController,
                                       icon: const SizedBox.shrink(),
+                                      inputFormatters:
+                                          isSearchByBeneficaryIdEnabled
+                                              ? [BeneficiaryIdInputFormatter()]
+                                              : [],
                                       hintText: (RegistrationDeliverySingleton()
                                                   .householdType ==
                                               HouseholdType.community)
                                           ? localizations.translate(i18
                                               .searchBeneficiary
                                               .clfSearchHintText)
-                                          : localizations.translate(
-                                              i18.searchBeneficiary
-                                                  .beneficiarySearchHintText,
-                                            ),
+                                          : (isSearchByBeneficaryIdEnabled
+                                              ? localizations.translate(i18
+                                                  .searchBeneficiary
+                                                  .beneficiaryIdSearchHintText)
+                                              : localizations.translate(
+                                                  i18.searchBeneficiary
+                                                      .beneficiarySearchHintText,
+                                                )),
                                       textCapitalization:
-                                          TextCapitalization.words,
+                                          isSearchByBeneficaryIdEnabled
+                                              ? TextCapitalization.characters
+                                              : TextCapitalization.words,
                                       onChanged: (value) {
                                         if (isSearchByBeneficaryIdEnabled &&
                                             isBeneficiaryIdValid(
