@@ -451,14 +451,14 @@ class CustomMemberCard extends StatelessWidget {
                               ),
                               child: Text(
                                 individual.identifiers!
-                                        .lastWhere(
+                                        .lastWhereOrNull(
                                           (e) =>
                                               e.identifierType ==
                                               IdentifierTypes
                                                   .uniqueBeneficiaryID
                                                   .toValue(),
                                         )
-                                        .identifierId ??
+                                        ?.identifierId ??
                                     localizations
                                         .translate(i18.common.noResultsFound),
                                 style: theme.textTheme.headlineSmall,
