@@ -421,7 +421,7 @@ class CustomSurveyFormViewPageState
                                           inputFormatters: [
                                             FilteringTextInputFormatter.allow(
                                                 RegExp(
-                                              "[a-zA-Z0-9/]",
+                                              "[a-zA-Z0-9/ ]",
                                             )),
                                           ],
                                         ));
@@ -858,6 +858,9 @@ class CustomSurveyFormViewPageState
                                         visibleSurveyFormIndexes.removeWhere(
                                             (v) => v == childIndex);
                                       }
+                                      if (childIndex != null) {
+                                        controller[childIndex].clear();
+                                      }
                                     }
 
                                     // Update the current controller's value
@@ -997,7 +1000,7 @@ class CustomSurveyFormViewPageState
                 controller: controller[index],
                 inputFormatters: [
                   FilteringTextInputFormatter.allow(RegExp(
-                    "[a-zA-Z0-9 ]",
+                    "[a-zA-Z0-9/ ]",
                   )),
                 ],
               ),
