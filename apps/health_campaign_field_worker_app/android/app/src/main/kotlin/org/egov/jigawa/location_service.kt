@@ -1,4 +1,4 @@
-package org.egov.kebbi
+package org.egov.jigawa
 
 import android.annotation.TargetApi
 import android.app.NotificationChannel
