@@ -38,6 +38,8 @@ import '../../utils/extensions/extensions.dart';
 import '../../utils/registration_delivery/registration_delivery_utils.dart';
 
 class DynamicTabsPage extends LocalizedStatefulWidget {
+  const DynamicTabsPage({super.key});
+
   @override
   LocalizedState<DynamicTabsPage> createState() => _DynamicTabsPageState();
 }
@@ -46,6 +48,8 @@ class _DynamicTabsPageState extends LocalizedState<DynamicTabsPage>
     with TickerProviderStateMixin {
   late final TabController _tabController;
   late final Map<String, FormGroup> _forms = {};
+  late String? vehicleNumber;
+  late String? typeOfTransport;
   late List<ProductVariantModel> products;
   late String receivedFrom;
   late String secondaryPartyType;
@@ -103,6 +107,8 @@ class _DynamicTabsPageState extends LocalizedState<DynamicTabsPage>
 
       final state = context.read<StockBloc>().state;
       if (state is StockSelectedState) {
+        vehicleNumber = state.vehicleNumber;
+        typeOfTransport = state.typeOfTransport;
         products = state.selectedProducts;
         receivedFrom = state.receivedFrom;
         secondaryPartyType = state.secondaryPartyType;
@@ -125,10 +131,11 @@ class _DynamicTabsPageState extends LocalizedState<DynamicTabsPage>
   }
 
   void _initializeForms() {
-    final state = context.read<RecordStockBloc>().state;
-    StockRecordEntryType entryType = state.entryType;
     final selectedProducts =
         products.map((variant) => variant.sku).whereType<String>().toList();
+
+    final stockState = context.read<RecordStockBloc>().state;
+    StockRecordEntryType entryType = stockState.entryType;
 
     _forms.addAll({
       for (final product in selectedProducts)
@@ -298,6 +305,10 @@ class _DynamicTabsPageState extends LocalizedState<DynamicTabsPage>
       additionalFields: StockAdditionalFields(
         version: 1,
         fields: [
+          if (vehicleNumber != null)
+            AdditionalField('vehicleNumber', vehicleNumber),
+          if (typeOfTransport != null)
+            AdditionalField('typeOfTransport', typeOfTransport),
           AdditionalField('productName', product.sku),
           AdditionalField('variation', product.variation),
           AdditionalField(_materialNoteNumberKey, _sharedMRN),
@@ -851,11 +862,7 @@ class _DynamicTabsPageState extends LocalizedState<DynamicTabsPage>
 
         int currentSpaq1Count = context.spaq1;
 
-        int currentSpaq2Count = context.spaq2;
-
         int spaq1Count = 0;
-
-        int spaq2Count = 0;
 
         for (var productName in selectedProducts) {
           await _saveCurrentTabData(productName, entryType);
@@ -865,7 +872,6 @@ class _DynamicTabsPageState extends LocalizedState<DynamicTabsPage>
         // Loop through all stocks and dispatch individual events
         for (final stockModel in _tabStocks.values) {
           int quantity = int.parse(stockModel.quantity.toString());
-
           int quantityWasted = int.parse(stockModel.additionalFields?.fields
                   .firstWhereOrNull(
                       (element) => element.key == 'wastedBlistersReturned')
@@ -919,7 +925,10 @@ class _DynamicTabsPageState extends LocalizedState<DynamicTabsPage>
             }
           }
 
-          spaq1Count = totalQty * Constants.mlPerBottle;
+          spaq1Count =
+              entryType == StockRecordEntryType.dispatch && context.isCDD
+                  ? currentSpaq1Count * -1
+                  : totalQty * Constants.mlPerBottle;
 
           final bloc = RecordStockBloc(
             stockRepository: context.repository<StockModel, StockSearchModel>(),
@@ -953,7 +962,7 @@ class _DynamicTabsPageState extends LocalizedState<DynamicTabsPage>
         context.read<AuthBloc>().add(
               AuthAddSpaqCountsEvent(
                 spaq1Count: spaq1Count,
-                spaq2Count: spaq2Count,
+                spaq2Count: 0,
                 blueVasCount: 0,
                 redVasCount: 0,
               ),
