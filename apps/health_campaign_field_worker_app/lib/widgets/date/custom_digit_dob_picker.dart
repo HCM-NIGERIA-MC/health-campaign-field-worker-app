@@ -76,7 +76,8 @@ class CustomDigitDobPicker extends StatelessWidget {
               cancelText: cancelText,
               confirmText: confirmText,
               onChangeOfFormControl: onChangeOfFormControl,
-              end: finalDate ?? DateTime.now(),
+              end: finalDate ??
+                  DateTime.now().subtract(const Duration(days: 30)),
             ),
             const SizedBox(height: 16),
             // Text widget to display a separator label between the date picker and age fields
