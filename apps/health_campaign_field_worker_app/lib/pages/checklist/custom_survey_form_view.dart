@@ -123,8 +123,9 @@ class CustomSurveyFormViewPageState
                                       ),
                                     );
                                 final isValid =
-                                    surveyFormKey.currentState?.validate();
-                                if (!isValid!) {
+                                    surveyFormKey.currentState?.validate() ??
+                                        false;
+                                if (!isValid) {
                                   return;
                                 }
 
