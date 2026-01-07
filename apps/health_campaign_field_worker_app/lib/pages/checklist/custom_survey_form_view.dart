@@ -73,6 +73,7 @@ class CustomSurveyFormViewPageState
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final textTheme = theme.digitTextTheme(context);
+    String? boundaryCode = SurveyFormSingleton().boundary?.code;
 
     return WillPopScope(
       onWillPop: () async => _onBackPressed(context),
@@ -323,17 +324,21 @@ class CustomSurveyFormViewPageState
                                                                       version:
                                                                           1,
                                                                       fields: [
-                                                                    AdditionalField(
-                                                                        'lng',
-                                                                        longitude),
-                                                                    AdditionalField(
-                                                                        'lat',
-                                                                        latitude),
-                                                                    AdditionalField(
-                                                                        'boundaryCode',
-                                                                        SurveyFormSingleton()
-                                                                            .boundary
-                                                                            ?.code)
+                                                                    if (longitude !=
+                                                                        null)
+                                                                      AdditionalField(
+                                                                          'lng',
+                                                                          longitude),
+                                                                    if (latitude !=
+                                                                        null)
+                                                                      AdditionalField(
+                                                                          'lat',
+                                                                          latitude),
+                                                                    if (boundaryCode !=
+                                                                        null)
+                                                                      AdditionalField(
+                                                                          'boundaryCode',
+                                                                          boundaryCode)
                                                                   ])),
                                                     ),
                                                   );
