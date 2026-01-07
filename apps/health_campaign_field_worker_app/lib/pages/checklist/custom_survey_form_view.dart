@@ -57,6 +57,9 @@ class CustomSurveyFormViewPageState
 
   @override
   void initState() {
+    // Request location from LocationBloc
+    context.read<LocationBloc>().add(const LocationEvent.load());
+
     context.read<ServiceBloc>().add(
           ServiceSurveyFormEvent(
             value: Random().nextInt(100).toString(),
@@ -97,259 +100,272 @@ class CustomSurveyFormViewPageState
                 return ScrollableContent(
                   header: const BackNavigationHelpHeaderWidget(),
                   enableFixedDigitButton: true,
-                  footer: DigitCard(
-                      cardType: CardType.primary,
-                      margin: const EdgeInsets.only(top: spacer2),
-                      children: [
-                        DigitButton(
-                          label: localizations
-                              .translate(i18.common.coreCommonSubmit),
-                          type: DigitButtonType.primary,
-                          size: DigitButtonSize.large,
-                          mainAxisSize: MainAxisSize.max,
-                          onPressed: () async {
-                            final router = context.router;
-                            submitTriggered = true;
+                  footer: BlocBuilder<LocationBloc, LocationState>(
+                    builder: (context, locationState) {
+                      return DigitCard(
+                          cardType: CardType.primary,
+                          margin: const EdgeInsets.only(top: spacer2),
+                          children: [
+                            DigitButton(
+                              label: localizations
+                                  .translate(i18.common.coreCommonSubmit),
+                              type: DigitButtonType.primary,
+                              size: DigitButtonSize.large,
+                              mainAxisSize: MainAxisSize.max,
+                              onPressed: () async {
+                                final router = context.router;
+                                submitTriggered = true;
 
-                            context.read<ServiceBloc>().add(
-                                  const ServiceSurveyFormEvent(
-                                    value: '',
-                                    submitTriggered: true,
-                                  ),
-                                );
-                            final isValid =
-                                surveyFormKey.currentState?.validate();
-                            if (!isValid!) {
-                              return;
-                            }
+                                context.read<ServiceBloc>().add(
+                                      const ServiceSurveyFormEvent(
+                                        value: '',
+                                        submitTriggered: true,
+                                      ),
+                                    );
+                                final isValid =
+                                    surveyFormKey.currentState?.validate();
+                                if (!isValid!) {
+                                  return;
+                                }
 
-                            final itemsAttributes = initialAttributes;
+                                final itemsAttributes = initialAttributes;
 
-                            for (int i = 0; i < controller.length; i++) {
-                              if (itemsAttributes?[i].required == true &&
-                                  visibleSurveyFormIndexes.any((e) => e == i) &&
-                                  controller[i].text == '') {
-                                return;
-                              }
-                            }
+                                for (int i = 0; i < controller.length; i++) {
+                                  if (itemsAttributes?[i].required == true &&
+                                      visibleSurveyFormIndexes
+                                          .any((e) => e == i) &&
+                                      controller[i].text == '') {
+                                    return;
+                                  }
+                                }
 
-                            // Request location from LocationBloc
-                            context
-                                .read<LocationBloc>()
-                                .add(const LocationEvent.load());
+                                double? latitude = locationState.latitude;
+                                double? longitude = locationState.longitude;
 
-                            // Wait for the location to be obtained
-                            final locationState =
-                                context.read<LocationBloc>().state;
-                            double? latitude = locationState.latitude;
-                            double? longitude = locationState.longitude;
-
-                            showCustomPopup(
-                              context: context,
-                              builder: (popUpContext) => Popup(
-                                  type: PopUpType.simple,
-                                  title: localizations.translate(
-                                    i18.surveyForm.surveyFormDialogLabel,
-                                  ),
-                                  description: localizations.translate(
-                                    i18.surveyForm.surveyFormDialogDescription,
-                                  ),
-                                  actions: [
-                                    DigitButton(
-                                        label: localizations.translate(
-                                          i18.surveyForm
-                                              .surveyFormDialogPrimaryAction,
-                                        ),
-                                        onPressed: () {
-                                          List<ServiceAttributesModel>
-                                              attributes = [];
-                                          var referenceId = IdGen.i.identifier;
-                                          for (int i = 0;
-                                              i < controller.length;
-                                              i++) {
-                                            final attribute = initialAttributes;
-                                            String? additionalDetailValue =
-                                                ((attribute?[i]
-                                                                .values
-                                                                ?.firstWhereOrNull(
-                                                                  (element) =>
-                                                                      element
-                                                                          .toUpperCase() ==
-                                                                      othersText,
-                                                                ) !=
-                                                            null &&
-                                                        controller[i]
+                                showCustomPopup(
+                                  context: context,
+                                  builder: (popUpContext) => Popup(
+                                      type: PopUpType.simple,
+                                      title: localizations.translate(
+                                        i18.surveyForm.surveyFormDialogLabel,
+                                      ),
+                                      description: localizations.translate(
+                                        i18.surveyForm
+                                            .surveyFormDialogDescription,
+                                      ),
+                                      actions: [
+                                        DigitButton(
+                                            label: localizations.translate(
+                                              i18.surveyForm
+                                                  .surveyFormDialogPrimaryAction,
+                                            ),
+                                            onPressed: () {
+                                              List<ServiceAttributesModel>
+                                                  attributes = [];
+                                              var referenceId =
+                                                  IdGen.i.identifier;
+                                              for (int i = 0;
+                                                  i < controller.length;
+                                                  i++) {
+                                                final attribute =
+                                                    initialAttributes;
+                                                String? additionalDetailValue =
+                                                    ((attribute?[i]
+                                                                    .values
+                                                                    ?.firstWhereOrNull(
+                                                                      (element) =>
+                                                                          element
+                                                                              .toUpperCase() ==
+                                                                          othersText,
+                                                                    ) !=
+                                                                null &&
+                                                            controller[i]
+                                                                    .text
+                                                                    .split(
+                                                                      multiSelectionSeparator,
+                                                                    )
+                                                                    .firstWhereOrNull(
+                                                                      (element) =>
+                                                                          element
+                                                                              .toUpperCase() ==
+                                                                          othersText,
+                                                                    ) !=
+                                                                null))
+                                                        ? additionalController[
+                                                                    i]
                                                                 .text
-                                                                .split(
-                                                                  multiSelectionSeparator,
-                                                                )
-                                                                .firstWhereOrNull(
-                                                                  (element) =>
-                                                                      element
-                                                                          .toUpperCase() ==
-                                                                      othersText,
-                                                                ) !=
-                                                            null))
-                                                    ? additionalController[i]
-                                                            .text
-                                                            .toString()
-                                                            .isEmpty
-                                                        ? null
-                                                        : additionalController[
-                                                                i]
-                                                            .text
-                                                            .toString()
-                                                    : null;
-                                            attributes
-                                                .add(ServiceAttributesModel(
-                                              attributeCode:
-                                                  '${attribute?[i].code}',
-                                              dataType: attribute?[i].dataType,
-                                              clientReferenceId:
-                                                  IdGen.i.identifier,
-                                              referenceId: referenceId,
-                                              value: attribute?[i].dataType ==
-                                                      'MultiValueList'
-                                                  ? controller[i]
-                                                          .text
-                                                          .toString()
-                                                          .isNotEmpty
-                                                      ? controller[i]
-                                                          .text
-                                                          .toString()
-                                                          .substring(1)
-                                                      : i18.surveyForm
-                                                          .notSelectedKey
-                                                  : attribute?[i].dataType !=
-                                                          'SingleValueList'
+                                                                .toString()
+                                                                .isEmpty
+                                                            ? null
+                                                            : additionalController[
+                                                                    i]
+                                                                .text
+                                                                .toString()
+                                                        : null;
+                                                attributes
+                                                    .add(ServiceAttributesModel(
+                                                  attributeCode:
+                                                      '${attribute?[i].code}',
+                                                  dataType:
+                                                      attribute?[i].dataType,
+                                                  clientReferenceId:
+                                                      IdGen.i.identifier,
+                                                  referenceId: referenceId,
+                                                  value: attribute?[i]
+                                                              .dataType ==
+                                                          'MultiValueList'
                                                       ? controller[i]
                                                               .text
                                                               .toString()
-                                                              .trim()
                                                               .isNotEmpty
                                                           ? controller[i]
                                                               .text
                                                               .toString()
-                                                          : (attribute?[i]
-                                                                      .dataType !=
-                                                                  'Number'
-                                                              ? i18.surveyForm
-                                                                  .notSelectedKey
-                                                              : '0')
-                                                      : visibleSurveyFormIndexes
-                                                              .contains(i)
-                                                          ? controller[i]
-                                                              .text
-                                                              .toString()
+                                                              .substring(1)
                                                           : i18.surveyForm
-                                                              .notSelectedKey,
-                                              rowVersion: 1,
-                                              additionalDetails:
-                                                  additionalDetailValue,
-                                              additionalFields:
-                                                  additionalDetailValue != null
-                                                      ? ServiceAttributesAdditionalFields(
-                                                          version: 1,
-                                                          fields: [
-                                                              AdditionalField(
-                                                                  'additionalValue',
-                                                                  additionalDetailValue)
-                                                            ])
-                                                      : null,
-                                              tenantId: attribute?[i].tenantId,
-                                            ));
-                                          }
-
-                                          context.read<ServiceBloc>().add(
-                                                ServiceCreateEvent(
-                                                  serviceModel: ServiceModel(
-                                                      createdAt: DigitDateUtils
-                                                          .getDateFromTimestamp(
-                                                        DateTime.now()
-                                                            .toLocal()
-                                                            .millisecondsSinceEpoch,
-                                                        dateFormat: Constants
-                                                            .SurveyFormViewDateFormat,
-                                                      ),
-                                                      tenantId: value
-                                                          .selectedServiceDefinition!
-                                                          .tenantId,
-                                                      clientId: referenceId,
-                                                      serviceDefId: value
-                                                          .selectedServiceDefinition
-                                                          ?.id,
-                                                      attributes: attributes,
-                                                      rowVersion: 1,
-                                                      accountId:
-                                                          SurveyFormSingleton()
-                                                              .projectId,
-                                                      auditDetails:
-                                                          AuditDetails(
-                                                        createdBy:
-                                                            SurveyFormSingleton()
-                                                                .loggedInUserUuid,
-                                                        createdTime: DateTime
-                                                                .now()
-                                                            .millisecondsSinceEpoch,
-                                                      ),
-                                                      clientAuditDetails:
-                                                          ClientAuditDetails(
-                                                        createdBy:
-                                                            SurveyFormSingleton()
-                                                                .loggedInUserUuid,
-                                                        createdTime: context
-                                                            .millisecondsSinceEpoch(),
-                                                        lastModifiedBy:
-                                                            SurveyFormSingleton()
-                                                                .loggedInUserUuid,
-                                                        lastModifiedTime: context
-                                                            .millisecondsSinceEpoch(),
-                                                      ),
-                                                      additionalFields:
-                                                          ServiceAdditionalFields(
+                                                              .notSelectedKey
+                                                      : attribute?[i]
+                                                                  .dataType !=
+                                                              'SingleValueList'
+                                                          ? controller[i]
+                                                                  .text
+                                                                  .toString()
+                                                                  .trim()
+                                                                  .isNotEmpty
+                                                              ? controller[i]
+                                                                  .text
+                                                                  .toString()
+                                                              : (attribute?[i]
+                                                                          .dataType !=
+                                                                      'Number'
+                                                                  ? i18
+                                                                      .surveyForm
+                                                                      .notSelectedKey
+                                                                  : '0')
+                                                          : visibleSurveyFormIndexes
+                                                                  .contains(i)
+                                                              ? controller[i]
+                                                                  .text
+                                                                  .toString()
+                                                              : i18.surveyForm
+                                                                  .notSelectedKey,
+                                                  rowVersion: 1,
+                                                  additionalDetails:
+                                                      additionalDetailValue,
+                                                  additionalFields:
+                                                      additionalDetailValue !=
+                                                              null
+                                                          ? ServiceAttributesAdditionalFields(
                                                               version: 1,
                                                               fields: [
-                                                            AdditionalField(
-                                                                'lng',
-                                                                longitude),
-                                                            AdditionalField(
-                                                                'lat',
-                                                                latitude),
-                                                            AdditionalField(
-                                                                'boundaryCode',
-                                                                SurveyFormSingleton()
-                                                                    .boundary
-                                                                    ?.code)
-                                                          ])),
-                                                ),
-                                              );
-                                          Navigator.of(
-                                            context,
-                                            rootNavigator: true,
-                                          ).pop(true);
-                                          router.push(
-                                              CustomSurveyFormAcknowledgementRoute());
-                                        },
-                                        type: DigitButtonType.primary,
-                                        size: DigitButtonSize.large),
-                                    DigitButton(
-                                        label: localizations.translate(
-                                          i18.surveyForm
-                                              .surveyFormDialogSecondaryAction,
-                                        ),
-                                        onPressed: () {
-                                          Navigator.of(
-                                            context,
-                                            rootNavigator: true,
-                                          ).pop(false);
-                                        },
-                                        type: DigitButtonType.secondary,
-                                        size: DigitButtonSize.large)
-                                  ]),
-                            );
-                          },
-                        ),
-                      ]),
+                                                                  AdditionalField(
+                                                                      'additionalValue',
+                                                                      additionalDetailValue)
+                                                                ])
+                                                          : null,
+                                                  tenantId:
+                                                      attribute?[i].tenantId,
+                                                ));
+                                              }
+
+                                              context.read<ServiceBloc>().add(
+                                                    ServiceCreateEvent(
+                                                      serviceModel:
+                                                          ServiceModel(
+                                                              createdAt: DigitDateUtils
+                                                                  .getDateFromTimestamp(
+                                                                DateTime.now()
+                                                                    .toLocal()
+                                                                    .millisecondsSinceEpoch,
+                                                                dateFormat:
+                                                                    Constants
+                                                                        .SurveyFormViewDateFormat,
+                                                              ),
+                                                              tenantId: value
+                                                                  .selectedServiceDefinition!
+                                                                  .tenantId,
+                                                              clientId:
+                                                                  referenceId,
+                                                              serviceDefId: value
+                                                                  .selectedServiceDefinition
+                                                                  ?.id,
+                                                              attributes:
+                                                                  attributes,
+                                                              rowVersion: 1,
+                                                              accountId:
+                                                                  SurveyFormSingleton()
+                                                                      .projectId,
+                                                              auditDetails:
+                                                                  AuditDetails(
+                                                                createdBy:
+                                                                    SurveyFormSingleton()
+                                                                        .loggedInUserUuid,
+                                                                createdTime: DateTime
+                                                                        .now()
+                                                                    .millisecondsSinceEpoch,
+                                                              ),
+                                                              clientAuditDetails:
+                                                                  ClientAuditDetails(
+                                                                createdBy:
+                                                                    SurveyFormSingleton()
+                                                                        .loggedInUserUuid,
+                                                                createdTime: context
+                                                                    .millisecondsSinceEpoch(),
+                                                                lastModifiedBy:
+                                                                    SurveyFormSingleton()
+                                                                        .loggedInUserUuid,
+                                                                lastModifiedTime:
+                                                                    context
+                                                                        .millisecondsSinceEpoch(),
+                                                              ),
+                                                              additionalFields:
+                                                                  ServiceAdditionalFields(
+                                                                      version:
+                                                                          1,
+                                                                      fields: [
+                                                                    AdditionalField(
+                                                                        'lng',
+                                                                        longitude),
+                                                                    AdditionalField(
+                                                                        'lat',
+                                                                        latitude),
+                                                                    AdditionalField(
+                                                                        'boundaryCode',
+                                                                        SurveyFormSingleton()
+                                                                            .boundary
+                                                                            ?.code)
+                                                                  ])),
+                                                    ),
+                                                  );
+                                              Navigator.of(
+                                                context,
+                                                rootNavigator: true,
+                                              ).pop(true);
+                                              router.push(
+                                                  CustomSurveyFormAcknowledgementRoute());
+                                            },
+                                            type: DigitButtonType.primary,
+                                            size: DigitButtonSize.large),
+                                        DigitButton(
+                                            label: localizations.translate(
+                                              i18.surveyForm
+                                                  .surveyFormDialogSecondaryAction,
+                                            ),
+                                            onPressed: () {
+                                              Navigator.of(
+                                                context,
+                                                rootNavigator: true,
+                                              ).pop(false);
+                                            },
+                                            type: DigitButtonType.secondary,
+                                            size: DigitButtonSize.large)
+                                      ]),
+                                );
+                              },
+                            ),
+                          ]);
+                    },
+                  ),
                   children: [
                     Form(
                       key: surveyFormKey, //assigning key to form
