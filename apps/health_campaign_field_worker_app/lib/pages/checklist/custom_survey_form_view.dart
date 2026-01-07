@@ -283,8 +283,8 @@ class CustomSurveyFormViewPageState
                                                                         .SurveyFormViewDateFormat,
                                                               ),
                                                               tenantId: value
-                                                                  .selectedServiceDefinition!
-                                                                  .tenantId,
+                                                                  .selectedServiceDefinition
+                                                                  ?.tenantId,
                                                               clientId:
                                                                   referenceId,
                                                               serviceDefId: value
