@@ -57,6 +57,9 @@ class CustomSurveyFormViewPageState
 
   @override
   void initState() {
+    // Request location from LocationBloc
+    context.read<LocationBloc>().add(const LocationEvent.load());
+
     context.read<ServiceBloc>().add(
           ServiceSurveyFormEvent(
             value: Random().nextInt(100).toString(),
@@ -132,11 +135,6 @@ class CustomSurveyFormViewPageState
                                 return;
                               }
                             }
-
-                            // Request location from LocationBloc
-                            context
-                                .read<LocationBloc>()
-                                .add(const LocationEvent.load());
 
                             // Wait for the location to be obtained
                             final locationState =
@@ -423,7 +421,7 @@ class CustomSurveyFormViewPageState
                                           inputFormatters: [
                                             FilteringTextInputFormatter.allow(
                                                 RegExp(
-                                              "[a-zA-Z0-9]",
+                                              "[a-zA-Z0-9/ ]",
                                             )),
                                           ],
                                         ));
@@ -860,6 +858,9 @@ class CustomSurveyFormViewPageState
                                         visibleSurveyFormIndexes.removeWhere(
                                             (v) => v == childIndex);
                                       }
+                                      if (childIndex != null) {
+                                        controller[childIndex].clear();
+                                      }
                                     }
 
                                     // Update the current controller's value
@@ -999,7 +1000,7 @@ class CustomSurveyFormViewPageState
                 controller: controller[index],
                 inputFormatters: [
                   FilteringTextInputFormatter.allow(RegExp(
-                    "[a-zA-Z0-9 ]",
+                    "[a-zA-Z0-9/ ]",
                   )),
                 ],
               ),
