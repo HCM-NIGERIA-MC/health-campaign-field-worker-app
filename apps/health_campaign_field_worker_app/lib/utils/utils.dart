@@ -39,7 +39,6 @@ import 'package:registration_delivery/registration_delivery.init.dart'
 import '../../models/entities/additional_fields_type.dart'
     as additional_fields_local;
 import 'package:survey_form/survey_form.dart' as surveyForm_mappers;
-import 'package:survey_form/survey_form.init.dart' as surveyForm_mappers;
 
 import '../../utils/i18_key_constants.dart' as i18_local;
 import '../blocs/app_initialization/app_initialization.dart';
