@@ -100,6 +100,10 @@ class AppRouter extends _$AppRouter {
         AutoRoute(page: ProfileRoute.page, path: 'profile'),
         AutoRoute(page: UserQRDetailsRoute.page, path: 'user-qr-code'),
         AutoRoute(
+          page: ManageStocksRoute.page,
+          path: 'custom-manage-stocks',
+        ),
+        AutoRoute(
           page: DigitScannerRoute.page,
           path: 'digit-scanner',
         ),
@@ -252,11 +256,21 @@ class AppRouter extends _$AppRouter {
               page: StockDetailsRoute.page,
               path: 'details',
             ),
-            RedirectRoute(
-              path: 'details',
-              redirectTo: 'custom-details',
+            AutoRoute(
+              page: WarehouseDetailsRoute.page,
+              path: 'custom-warehouse-details',
+              initial: true,
             ),
           ],
+        ),
+
+        AutoRoute(
+          page: StockReconciliationRoute.page,
+          path: 'stock-reconciliation',
+        ),
+        AutoRoute(
+          page: InventoryReportSelectionRoute.page,
+          path: 'inventory-report-selection',
         ),
 
         AutoRoute(

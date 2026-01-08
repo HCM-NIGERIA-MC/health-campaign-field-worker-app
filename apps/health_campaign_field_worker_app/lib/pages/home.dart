@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:collection/collection.dart';
 import 'package:digit_data_model/models/templates/template_config.dart';
+import 'package:inventory_management/router/inventory_router.gm.dart';
 import 'package:recase/recase.dart';
 import 'package:referral_reconciliation/referral_reconciliation.dart';
 
@@ -671,6 +672,44 @@ class _HomePageState extends LocalizedState<HomePage> {
           },
         ),
       ),
+      i18.home.manageStockLabel:
+          homeShowcaseData.warehouseManagerManageStock.buildWith(
+        child: HomeItemCard(
+          icon: Icons.store_mall_directory,
+          label: i18.home.manageStockLabel,
+          onPressed: () {
+            context.read<AppInitializationBloc>().state.maybeWhen(
+                  orElse: () {},
+                  initialized: (
+                    AppConfiguration appConfiguration,
+                    _,
+                    __,
+                  ) {
+                    context.router.push(ManageStocksRoute());
+                  },
+                );
+          },
+        ),
+      ),
+      i18.home.stockReconciliationLabel:
+          homeShowcaseData.wareHouseManagerStockReconciliation.buildWith(
+        child: HomeItemCard(
+          icon: Icons.menu_book,
+          label: i18.home.stockReconciliationLabel,
+          onPressed: () {
+            context.router.push(StockReconciliationRoute());
+          },
+        ),
+      ),
+      i18.home.viewReportsLabel: homeShowcaseData.inventoryReport.buildWith(
+        child: HomeItemCard(
+          icon: Icons.announcement,
+          label: i18.home.viewReportsLabel,
+          onPressed: () {
+            context.router.push(InventoryReportSelectionRoute());
+          },
+        ),
+      ),
       i18.home.dashboard: homeShowcaseData.dashBoard.buildWith(
         child: HomeItemCard(
           icon: Icons.bar_chart_sharp,
@@ -764,6 +803,9 @@ class _HomePageState extends LocalizedState<HomePage> {
       i18.home.beneficiaryLabel,
       i18.home.manageAttendanceLabel,
       i18.home.viewSummaryReportsLabel,
+      i18.home.manageStockLabel,
+      i18.home.stockReconciliationLabel,
+      i18.home.viewReportsLabel,
       i18.home.syncDataLabel,
       i18.home.manageAttendanceLabel,
       i18.home.fileComplaint,
