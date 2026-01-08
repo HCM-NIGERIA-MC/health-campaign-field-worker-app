@@ -457,12 +457,46 @@ class _CustomSearchBeneficiaryPageState
                     },
                     child: BlocBuilder<LocationBloc, LocationState>(
                       builder: (context, locationState) {
+                        final List<HouseholdMemberWrapper>
+                            sortedHouseholdMembers =
+                            List<HouseholdMemberWrapper>.from(
+                                searchHouseholdsState.householdMembers);
+
+                        if (isProximityEnabled && lat != 0.0 && long != 0.0) {
+                          sortedHouseholdMembers.sort((a, b) {
+                            final distanceA = calculateDistance(
+                                  Coordinate(
+                                    lat,
+                                    long,
+                                  ),
+                                  Coordinate(
+                                    a.household?.address?.latitude,
+                                    a.household?.address?.longitude,
+                                  ),
+                                ) ??
+                                double.infinity;
+
+                            final distanceB = calculateDistance(
+                                  Coordinate(
+                                    lat,
+                                    long,
+                                  ),
+                                  Coordinate(
+                                    b.household?.address?.latitude,
+                                    b.household?.address?.longitude,
+                                  ),
+                                ) ??
+                                double.infinity;
+
+                            return distanceA.compareTo(distanceB);
+                          });
+                        }
+
                         return SliverList(
                           delegate: SliverChildBuilderDelegate(
                             (ctx, index) {
-                              HouseholdMemberWrapper i = searchHouseholdsState
-                                  .householdMembers
-                                  .elementAt(index);
+                              HouseholdMemberWrapper i =
+                                  sortedHouseholdMembers.elementAt(index);
                               registration_delivery.HouseholdMemberWrapper
                                   householdMemberWrapper =
                                   registration_delivery.HouseholdMemberWrapper(
@@ -566,8 +600,7 @@ class _CustomSearchBeneficiaryPageState
                                 ),
                               );
                             },
-                            childCount:
-                                searchHouseholdsState.householdMembers.length,
+                            childCount: sortedHouseholdMembers.length,
                           ),
                         );
                       },
@@ -720,8 +753,13 @@ class _CustomSearchBeneficiaryPageState
                       mainAxisSize: MainAxisSize.max,
                       type: DigitButtonType.primary,
                       size: DigitButtonSize.large,
-                      isDisabled: !(isSearchByBeneficaryIdEnabled &&
-                          beneficiaryIdSearchResultsNotFound),
+                      isDisabled: !(
+                          // No results in normal search mode
+                          (!isSearchByBeneficaryIdEnabled &&
+                                  searchHouseholdsState.resultsNotFound) ||
+                              // No results in beneficiary ID search mode
+                              (isSearchByBeneficaryIdEnabled &&
+                                  beneficiaryIdSearchResultsNotFound)),
                       onPressed: () {
                         int spaq1 = context.spaq1;
 
