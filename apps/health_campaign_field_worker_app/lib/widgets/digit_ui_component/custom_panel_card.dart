@@ -319,7 +319,7 @@ class _PanelState extends State<Panel> with SingleTickerProviderStateMixin {
       padding: widget.type == PanelType.success
           ? themeData.successPadding
           : themeData.errorPadding,
-      width: themeData.cardWidth,
+      width: MediaQuery.of(context).size.width * 0.8,
       decoration: BoxDecoration(
         color: widget.type == PanelType.success
             ? themeData.successBackgroundColor
@@ -375,12 +375,12 @@ class _PanelState extends State<Panel> with SingleTickerProviderStateMixin {
           Text(
             widget.subTitle?['id'] ?? "",
             textAlign: TextAlign.center,
-            style: themeData.titleTextStyle.copyWith(fontSize: 16),
+            style: themeData.titleTextStyle.copyWith(fontSize: 22),
           ),
           Text(
             widget.subTitle?['value'] ?? "",
             textAlign: TextAlign.center,
-            style: themeData.titleTextStyle.copyWith(fontSize: 16),
+            style: themeData.titleTextStyle.copyWith(fontSize: 22),
           ),
           if (widget.description != null)
             SizedBox(

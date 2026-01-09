@@ -199,18 +199,6 @@ class _ViewStockRecordsLGAPageState
 
         bloc.close();
 
-        //TODO: old
-        // context.read<RecordStockBloc>().add(
-        //       RecordStockSaveStockDetailsEvent(
-        //         stockModel: stock,
-        //       ),
-        //     );
-        // context.read<RecordStockBloc>().add(
-        //       const RecordStockCreateStockEntryEvent(),
-        //     );
-
-        // end of it
-        // if (InventorySingleton().isDistributor) {
         final totalQty =
             int.parse(_form.control('quantityReceived').value.toString());
 
@@ -219,31 +207,13 @@ class _ViewStockRecordsLGAPageState
 
         int blueVasCount = context.blueVas;
         int redVasCount = context.redVas;
-        String productName = stock.additionalFields?.fields
-            .firstWhereOrNull((element) => element.key == "productName")
-            ?.value;
+
         // Custom logic based on productName
-        if (productName == Constants.spaq1) {
-          spaq1Count = totalQty;
-          spaq2Count = 0;
-          redVasCount = 0;
-          blueVasCount = 0;
-        } else if (productName == Constants.spaq2) {
-          spaq2Count = totalQty;
-          spaq1Count = 0;
-          redVasCount = 0;
-          blueVasCount = 0;
-        } else if (productName == Constants.blueVAS) {
-          blueVasCount = totalQty;
-          spaq1Count = 0;
-          spaq2Count = 0;
-          redVasCount = 0;
-        } else {
-          blueVasCount = 0;
-          spaq1Count = 0;
-          spaq2Count = 0;
-          redVasCount = totalQty;
-        }
+        spaq1Count = totalQty * Constants.mlPerBottle;
+        spaq2Count = 0;
+        redVasCount = 0;
+        blueVasCount = 0;
+
         context.read<AuthBloc>().add(
               AuthAddSpaqCountsEvent(
                 spaq1Count: spaq1Count,
@@ -253,12 +223,6 @@ class _ViewStockRecordsLGAPageState
               ),
             );
         await Future.delayed(const Duration(milliseconds: 500));
-        // _tabController.animateTo(_tabController.index + 1);
-        // await Future.delayed(const Duration(milliseconds: 500));
-        // context.read<RecordStockBloc>().add(
-        //       const RecordStockCreateStockEntryEvent(),
-        //     );
-        // }
       }
 
       context.router.push(

@@ -16,6 +16,7 @@ import '../../router/app_router.dart';
 import '../../utils/extensions/extensions.dart';
 import 'package:digit_components/widgets/digit_dialog.dart' as dialog;
 import 'package:registration_delivery/utils/i18_key_constants.dart' as i18;
+import '../../utils/i18_key_constants.dart' as i18_local;
 
 @RoutePage()
 class QRScannerPage extends LocalizedStatefulWidget {
@@ -68,7 +69,8 @@ class _QRScannerPageState extends LocalizedState<QRScannerPage> {
       for (String item in decodedJson) {
         StockModel model = StockModelMapper.fromJson(item);
         if (model.receiverId != context.loggedInUserUuid) {
-          _showError('This QR code is not applicable for your account');
+          _showError(localizations
+              .translate(i18_local.stockDetails.qrCodeAccountError));
           return;
         }
         stockList.add(model);
@@ -98,7 +100,8 @@ class _QRScannerPageState extends LocalizedState<QRScannerPage> {
                 ?.toString() ??
             'N/A';
         if (minStock == mrnNumber) {
-          _showError('Stock already received');
+          _showError(localizations
+              .translate(i18_local.stockDetails.stockAlreadyReceivedLabel));
           return;
         }
       }

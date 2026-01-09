@@ -354,8 +354,8 @@ class CustomHouseHoldDetailsPageState
                                     i18.householdDetails.clfDetailsLabel,
                                   )
                                 : localizations.translate(
-                                    i18_local.householdDetails
-                                        .dateOfHouseholdRegistrationLabelUpdate,
+                                    i18_local
+                                        .householdDetails.householdDetailsLabel,
                                   ),
                             headingStyle: textTheme.headingXl
                                 .copyWith(color: theme.colorTheme.text.primary),

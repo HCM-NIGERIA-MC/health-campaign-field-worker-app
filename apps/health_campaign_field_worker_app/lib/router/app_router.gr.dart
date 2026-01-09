@@ -137,6 +137,17 @@ abstract class _$AppRouter extends RootStackRouter {
         ),
       );
     },
+    CustomComplaintsInboxRoute.name: (routeData) {
+      final args = routeData.argsAs<CustomComplaintsInboxRouteArgs>(
+          orElse: () => const CustomComplaintsInboxRouteArgs());
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: CustomComplaintsInboxPage(
+          key: args.key,
+          appLocalizations: args.appLocalizations,
+        ),
+      );
+    },
     CustomDeliverInterventionRoute.name: (routeData) {
       final args = routeData.argsAs<CustomDeliverInterventionRouteArgs>();
       return AutoRoutePage<dynamic>(
@@ -492,6 +503,17 @@ abstract class _$AppRouter extends RootStackRouter {
         ),
       );
     },
+    CustomSummaryReportRoute.name: (routeData) {
+      final args = routeData.argsAs<CustomSummaryReportRouteArgs>(
+          orElse: () => const CustomSummaryReportRouteArgs());
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: CustomSummaryReportPage(
+          key: args.key,
+          appLocalizations: args.appLocalizations,
+        ),
+      );
+    },
     CustomSurveyFormAcknowledgementRoute.name: (routeData) {
       final args = routeData.argsAs<CustomSurveyFormAcknowledgementRouteArgs>(
           orElse: () => const CustomSurveyFormAcknowledgementRouteArgs());
@@ -581,6 +603,20 @@ abstract class _$AppRouter extends RootStackRouter {
         child: CustomWarehouseDetailsPage(
           key: args.key,
           appLocalizations: args.appLocalizations,
+        ),
+      );
+    },
+    DigitScannerRoute.name: (routeData) {
+      final args = routeData.argsAs<DigitScannerRouteArgs>();
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: DigitScannerPage(
+          key: args.key,
+          appLocalizations: args.appLocalizations,
+          quantity: args.quantity,
+          isGS1code: args.isGS1code,
+          singleValue: args.singleValue,
+          isEditEnabled: args.isEditEnabled,
         ),
       );
     },
@@ -1199,6 +1235,45 @@ class CustomComplaintsDetailsRouteArgs {
   @override
   String toString() {
     return 'CustomComplaintsDetailsRouteArgs{key: $key, appLocalizations: $appLocalizations}';
+  }
+}
+
+/// generated route for
+/// [CustomComplaintsInboxPage]
+class CustomComplaintsInboxRoute
+    extends PageRouteInfo<CustomComplaintsInboxRouteArgs> {
+  CustomComplaintsInboxRoute({
+    Key? key,
+    ComplaintsLocalization? appLocalizations,
+    List<PageRouteInfo>? children,
+  }) : super(
+          CustomComplaintsInboxRoute.name,
+          args: CustomComplaintsInboxRouteArgs(
+            key: key,
+            appLocalizations: appLocalizations,
+          ),
+          initialChildren: children,
+        );
+
+  static const String name = 'CustomComplaintsInboxRoute';
+
+  static const PageInfo<CustomComplaintsInboxRouteArgs> page =
+      PageInfo<CustomComplaintsInboxRouteArgs>(name);
+}
+
+class CustomComplaintsInboxRouteArgs {
+  const CustomComplaintsInboxRouteArgs({
+    this.key,
+    this.appLocalizations,
+  });
+
+  final Key? key;
+
+  final ComplaintsLocalization? appLocalizations;
+
+  @override
+  String toString() {
+    return 'CustomComplaintsInboxRouteArgs{key: $key, appLocalizations: $appLocalizations}';
   }
 }
 
@@ -2532,6 +2607,45 @@ class CustomSummaryRouteArgs {
 }
 
 /// generated route for
+/// [CustomSummaryReportPage]
+class CustomSummaryReportRoute
+    extends PageRouteInfo<CustomSummaryReportRouteArgs> {
+  CustomSummaryReportRoute({
+    Key? key,
+    AppLocalizations? appLocalizations,
+    List<PageRouteInfo>? children,
+  }) : super(
+          CustomSummaryReportRoute.name,
+          args: CustomSummaryReportRouteArgs(
+            key: key,
+            appLocalizations: appLocalizations,
+          ),
+          initialChildren: children,
+        );
+
+  static const String name = 'CustomSummaryReportRoute';
+
+  static const PageInfo<CustomSummaryReportRouteArgs> page =
+      PageInfo<CustomSummaryReportRouteArgs>(name);
+}
+
+class CustomSummaryReportRouteArgs {
+  const CustomSummaryReportRouteArgs({
+    this.key,
+    this.appLocalizations,
+  });
+
+  final Key? key;
+
+  final AppLocalizations? appLocalizations;
+
+  @override
+  String toString() {
+    return 'CustomSummaryReportRouteArgs{key: $key, appLocalizations: $appLocalizations}';
+  }
+}
+
+/// generated route for
 /// [CustomSurveyFormAcknowledgementPage]
 class CustomSurveyFormAcknowledgementRoute
     extends PageRouteInfo<CustomSurveyFormAcknowledgementRouteArgs> {
@@ -2859,6 +2973,64 @@ class CustomWarehouseDetailsRouteArgs {
   @override
   String toString() {
     return 'CustomWarehouseDetailsRouteArgs{key: $key, appLocalizations: $appLocalizations}';
+  }
+}
+
+/// generated route for
+/// [DigitScannerPage]
+class DigitScannerRoute extends PageRouteInfo<DigitScannerRouteArgs> {
+  DigitScannerRoute({
+    Key? key,
+    ScannerLocalization? appLocalizations,
+    required int quantity,
+    required bool isGS1code,
+    bool singleValue = false,
+    bool isEditEnabled = false,
+    List<PageRouteInfo>? children,
+  }) : super(
+          DigitScannerRoute.name,
+          args: DigitScannerRouteArgs(
+            key: key,
+            appLocalizations: appLocalizations,
+            quantity: quantity,
+            isGS1code: isGS1code,
+            singleValue: singleValue,
+            isEditEnabled: isEditEnabled,
+          ),
+          initialChildren: children,
+        );
+
+  static const String name = 'DigitScannerRoute';
+
+  static const PageInfo<DigitScannerRouteArgs> page =
+      PageInfo<DigitScannerRouteArgs>(name);
+}
+
+class DigitScannerRouteArgs {
+  const DigitScannerRouteArgs({
+    this.key,
+    this.appLocalizations,
+    required this.quantity,
+    required this.isGS1code,
+    this.singleValue = false,
+    this.isEditEnabled = false,
+  });
+
+  final Key? key;
+
+  final ScannerLocalization? appLocalizations;
+
+  final int quantity;
+
+  final bool isGS1code;
+
+  final bool singleValue;
+
+  final bool isEditEnabled;
+
+  @override
+  String toString() {
+    return 'DigitScannerRouteArgs{key: $key, appLocalizations: $appLocalizations, quantity: $quantity, isGS1code: $isGS1code, singleValue: $singleValue, isEditEnabled: $isEditEnabled}';
   }
 }
 

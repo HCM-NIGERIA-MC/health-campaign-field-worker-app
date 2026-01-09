@@ -85,7 +85,6 @@ class CustomAcknowledgementPageState
                     ViewStockRecordsRoute(
                       mrnNumber: widget.mrnNumber,
                       stockRecords: widget.stockRecords,
-                      // entryType: widget.entryType,
                     ),
                   );
                 },
