@@ -98,6 +98,9 @@ import '../pages/checklist/custom_survey_form_preview.dart';
 import '../pages/checklist/custom_survey_form_boundary_view.dart';
 import '../pages/checklist/custom_survey_form_acknowledgement.dart';
 import '../pages/checklist/custom_survey_form_wrapper.dart';
+import 'package:digit_scanner/blocs/app_localization.dart';
+import '../pages/inventory_management/qr_scanner.dart';
+import '../pages/inventory_management/custom_summary_report_page.dart';
 
 part 'app_router.gr.dart';
 
@@ -456,6 +459,10 @@ class AppRouter extends _$AppRouter {
         AutoRoute(
           page: CustomInventoryReportSelectionRoute.page,
           path: 'custom-inventory-report-selection',
+        ),
+        AutoRoute(
+          page: CustomSummaryReportRoute.page,
+          path: 'custom-report-summary',
         ),
         // AutoRoute(
         //   page: InventoryReportDetailsRoute.page,

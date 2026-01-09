@@ -164,6 +164,8 @@ class HouseholdOverView {
 
   String get householdOverViewSMCAssessmentActionText =>
       'HOUSEHOLD_OVER_VIEW_SMC_ASSESSMENT_ACTION_TEXT';
+  String get householdOverviewAZMAssessmentActionText =>
+      'HOUSEHOLD_OVER_VIEW_AZM_ASSESSMENT_ACTION_TEXT';
 
   String get householdOverViewVASAssessmentActionText =>
       'HOUSEHOLD_OVER_VIEW_VAS_ASSESSMENT_ACTION_TEXT';
@@ -196,6 +198,7 @@ class DeliverIntervention {
       'DELIVER_INTERVENTION_OTHER_REASON_FOR_REDOSE_LABEL';
   String get deliverInterventionSMCLabel => 'DELIVER_INTERVENTION_SMC_LABEL';
   String get deliverInterventionVASLabel => 'DELIVER_INTERVENTION_VAS_LABEL';
+  String get DeliverInterventionAZMLabel => 'DELIVER_INTERVENTION_AZM_LABEL';
   String get recordRedoseLabel => 'DELIVER_INTERVENTION_RECORD_REDOSE_LABEL';
   String get selectTheResourcDeliveredLabel => 'Select the Resource delivered';
   String get reasonForRedoseLabel =>
@@ -233,6 +236,7 @@ class DeliverIntervention {
   String get spaqRedirectionScreenDescription => 'SPAQ_REDIRECTED_SCREEN_DESC';
   String get deliversmcintervention => 'DELIVER_SMC_INTERVENTION';
   String get deliverVASIntervention => 'DELIVER_VAS_INTERVENTION';
+  String get deliverAZMIntervention => 'DELIVER_AZM_INTERVENTION';
   String get recordsmcdeliverdetails => 'RECORD_SMC_DELIVER_DETAILS';
   String get doseadministeredby => 'DOSE_ADMINISTERED_BY_LABEL';
   String get proceedToVASLabel => 'PROCEED_TO_VAS_LABEL';
@@ -373,6 +377,50 @@ class ForgotPassword {
 class HomeShowcase {
   const HomeShowcase();
 
+  String get summaryReport {
+    return 'HOME_SHOWCASE_SUMMARY_REPORT_LABEL';
+  }
+
+  String get summaryReportDate {
+    return 'HOME_SHOWCASE_SUMMARY_REPORT_DATE';
+  }
+
+  String get householdRegistered {
+    return 'HOME_SHOWCASE_SUMMARY_REPORT_HOUSEHOLD_REGISTERED';
+  }
+
+  String get childrenTreated {
+    return 'HOME_SHOWCASE_SUMMARY_REPORT_CHILDREN_TREATED';
+  }
+
+  String get childrenTreatedCoverage {
+    return 'HOME_SHOWCASE_SUMMARY_REPORT_CHILDREN_TREATED_COVERAGE';
+  }
+
+  String get drugsReceived {
+    return 'HOME_SHOWCASE_SUMMARY_REPORT_DRUGS_RECEIVED';
+  }
+
+  String get drugsUtilized {
+    return 'HOME_SHOWCASE_SUMMARY_REPORT_DRUGS_UTILIZED';
+  }
+
+  String get drugsBalance {
+    return 'HOME_SHOWCASE_SUMMARY_REPORT_DRUGS_BALANCE';
+  }
+
+  String get summaryReportRegistredChildren {
+    return 'HOME_SHOWCASE_SUMMARY_REPORT_REGISTRED_CHILDREN';
+  }
+
+  String get summaryReportAdministredChildren {
+    return 'HOME_SHOWCASE_SUMMARY_REPORT_ADMINISTRED_CHILDREN';
+  }
+
+  String get summaryReportAZM {
+    return 'HOME_SHOWCASE_SUMMARY_REPORT_AZM';
+  }
+
   String get distributorProgressBar {
     return 'DISTRIBUTOR_HOME_SHOWCASE_PROGRESS_BAR';
   }
@@ -448,6 +496,24 @@ class HomeShowcase {
 
 class StockDetails {
   const StockDetails();
+  String get stockScanResourcesLabel => 'STOCK_SCAN_RESOURCE_LABEL';
+  String get selectMINNumber => 'STOCK_DETAILS_SELECT_MIN_NUMBER';
+  String get selectMRNNumber => 'STOCK_DETAILS_SELECT_MRN_NUMBER';
+  String get noTransactionsFound => 'STOCK_DETAILS_NO_TRANSACTIONS_FOUND';
+  String get resource => 'STOCK_DETAILS_RESOURCE';
+  String get qrCodeAccountError => 'STOCK_DETAILS_QR_CODE_ACCOUNT_ERROR';
+  String get stockAlreadyReceivedLabel => 'STOCK_ALREADY_RECEIVED_LABEL';
+
+  String get stockReceivedIssuedQuantityLabel =>
+      'STOCK_DETAILS_RECEIVED_ISSUES_QUANTITY_LABEL';
+
+  String get stockQuantityLabel => 'STOCK_DETAILS_QUANTITY_LABEL';
+  String get stockCommentsLabel => 'STOCK_DETAILS_COMMENTS_LABEL';
+  String get stockWastedQuantityLabel => 'STOCK_DETAILS_WASTED_QUANTITY_LABEL';
+  String get stockPartialQuantityLabel =>
+      'STOCK_DETAILS_PARTIAL_QUANTITY_LABEL';
+
+  String get stockDetailsLabel => 'STOCK_DETAILS_LABEL';
   String get selectTransactingPartyReturnedFrom =>
       'STOCK_DETAILS_RETURNED_FROM';
 
@@ -456,6 +522,11 @@ class StockDetails {
   String get viewCreatedTransactionLabel => 'VIEW_CREATED_TRANSACTION';
 
   String get createNewTransactionLabel => 'CREATE_NEW_TRANSACTION';
+
+  String get stockIssueDetails => 'STOCK_DETAILS_STOCK_ISSUE_DETAILS';
+  String get stockReceiptDetails => 'STOCK_DETAILS_STOCK_RECEIPT_DETAILS';
+
+  String get stockReturnDetails => 'STOCK_DETAILS_STOCK_RETURN_DETAILS';
 
 //TODO:
   String get quantityCapsulePartialReturnedLabel =>
@@ -728,6 +799,8 @@ class CaregiverConsent {
 
   String get caregiverConsentDescriptionTextSMC =>
       'CARE_GIVER_CONSENT_DESCRIPTION_TEXT_SMC';
+  String get caregiverConsentDescriptionTextAZM =>
+      'CARE_GIVER_CONSENT_DESCRIPTION_TEXT_AZM';
 
   String get caregiverConsentLabelText => 'CARE_GIVER_CONSENT_LABEL_TEXT';
 
@@ -893,6 +966,8 @@ class Home {
   String get viewReportsLabel => 'HOME_VIEW_REPORTS_LABEL';
 
   String get syncDataLabel => 'HOME_SYNC_DATA_LABEL';
+
+  String get summaryLabel => 'HOME_SUMMARY_LABEL';
 
   String get callbackLabel => 'HOME_CALL_BACK_LABEL';
 
@@ -1357,6 +1432,17 @@ class IndividualDetails {
   String get yearsAndMonthsErrorText => 'ERR_YEARS_AND_MONTHS';
 
   String get linkVoucherToIndividual => 'LINK_VOUCHER_TO_INDIVIDUAL';
+
+  String get heightHeadLabelText => 'CHILD_LABEL_HEIGHT_TEXT';
+  String get weightHeadLabelText => 'CHILD_LABEL_WEIGHT_TEXT';
+
+  String get weightErrorValidationText => 'WEIGHT_ERROR_VALIDATION_TEXT';
+  String get heightErrorValidationText => 'HEIGHT_ERROR_VALIDATION_TEXT';
+
+  String get maxWeightLengthError => "MAX_WEIGHT_LENGTH_ERROR";
+  String get minWeightLengthError => "MIN_WEIGHT_LENGTH_ERROR";
+  String get minHeightLengthError => "MIN_HEIGHT_LENGTH_ERROR";
+  String get maxHeightLengthError => "MAX_HEIGHT_LENGTH_ERROR";
 }
 
 class BeneficiaryDetails {
@@ -1392,6 +1478,7 @@ class BeneficiaryDetails {
   String get beneficiaryDoseUnit => 'BENEFICIARY_DETAILS_DOSE_UNIT';
   String get spaq1DoseUnit => 'SPAQ1_STOCK_ZERO';
   String get spaq2DoseUnit => 'SPAQ2_STOCK_ZERO';
+  String get azmDoseUnit => 'AZM_DOSE_UNIT';
 
   String get beneficiarysDetailsLabelText => 'BENEFICIARY_DETAILS_LABEL_TEXT';
   String get beneficiarysDetailsEditIconLabelText =>

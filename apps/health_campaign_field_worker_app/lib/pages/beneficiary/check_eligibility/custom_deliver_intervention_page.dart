@@ -1,7 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:collection/collection.dart';
 import 'package:digit_components/widgets/digit_dialog.dart' as dialog;
-// import 'package:digit_components/digit_components.dart';
 import 'package:digit_data_model/data_model.dart';
 import 'package:digit_ui_components/digit_components.dart';
 import 'package:digit_ui_components/services/location_bloc.dart';
@@ -15,30 +14,27 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:health_campaign_field_worker_app/blocs/auth/auth.dart';
-import 'package:health_campaign_field_worker_app/utils/constants.dart';
 import 'package:intl/intl.dart';
 import 'package:reactive_forms/reactive_forms.dart';
 import 'package:registration_delivery/models/entities/deliver_strategy_type.dart';
 import 'package:registration_delivery/registration_delivery.dart';
 import 'package:registration_delivery/router/registration_delivery_router.gm.dart';
-import 'package:registration_delivery/utils/extensions/extensions.dart';
-import 'package:registration_delivery/utils/utils.dart';
 
 import 'package:registration_delivery/models/entities/additional_fields_type.dart';
 import 'package:registration_delivery/models/entities/status.dart';
 import 'package:registration_delivery/utils/i18_key_constants.dart' as i18;
-import 'package:registration_delivery/widgets/back_navigation_help_header.dart';
-import 'package:registration_delivery/widgets/beneficiary/resource_beneficiary_card.dart';
 import 'package:registration_delivery/widgets/component_wrapper/product_variant_bloc_wrapper.dart';
 import 'package:registration_delivery/widgets/localized.dart';
 
 import '../../../router/app_router.dart';
 import '../../../utils/app_enums.dart';
+import '../../../utils/extensions/extensions.dart';
 import '../../../utils/i18_key_constants.dart' as i18_local;
 import '../../../models/entities/additional_fields_type.dart'
     as additional_fields_local;
 import '../../../utils/utils.dart' show getIndividualAdditionalFields;
 import '../../../widgets/custom_back_navigation.dart';
+import '/utils/registration_delivery/utils_smc.dart' as utils_smc;
 
 @RoutePage()
 class CustomDeliverInterventionPage extends LocalizedStatefulWidget {
@@ -92,6 +88,21 @@ class CustomDeliverInterventionPageState
       IndividualModel? selectedIndividual) async {
     final lat = locationState.latitude;
     final long = locationState.longitude;
+    final currentCycle = deliverInterventionState.cycle >= 0
+        ? deliverInterventionState.cycle
+        : 0;
+    final currentDose =
+        deliverInterventionState.dose >= 0 ? deliverInterventionState.dose : 0;
+    final householdModel = householdMember.household;
+    final ProjectTypeModel projectType =
+        RegistrationDeliverySingleton().projectType!;
+    final item =
+        projectType.cycles?[currentCycle - 1].deliveries?[currentDose - 1];
+    final productVariant = utils_smc
+        .fetchProductVariant(item, selectedIndividual, householdModel)
+        ?.productVariants;
+    final productQuantity = productVariant?.firstOrNull?.quantity ?? 0;
+
     TaskModel taskModel = _getTaskModel(context,
         form: form,
         oldTask: RegistrationDeliverySingleton().beneficiaryType ==
@@ -106,7 +117,9 @@ class CustomDeliverInterventionPageState
         address: householdMember.members?.first.address?.first,
         latitude: lat,
         longitude: long,
-        selectedIndividual: selectedIndividual);
+        productQuantity: productQuantity,
+        selectedIndividual: selectedIndividual,
+        householdMemberWrapper: householdMember);
     context.read<DeliverInterventionBloc>().add(
           DeliverInterventionSubmitEvent(
               task: taskModel,
@@ -133,15 +146,7 @@ class CustomDeliverInterventionPageState
     int blueVas = 0;
     int redVas = 0;
 
-    if (productvariantList!.first?.sku! == Constants.spaq1) {
-      spaq1 = int.parse(qty) * -1;
-    } else if (productvariantList!.first?.sku! == Constants.spaq2) {
-      spaq2 = int.parse(qty) * -1;
-    } else if (productvariantList!.first?.sku! == Constants.blueVAS) {
-      blueVas = int.parse(qty) * -1;
-    } else {
-      redVas = int.parse(qty) * -1;
-    }
+    spaq1 = productQuantity * -1;
 
     context.read<AuthBloc>().add(
           AuthAddSpaqCountsEvent(
@@ -278,6 +283,24 @@ class CustomDeliverInterventionPageState
                 : BlocBuilder<DeliverInterventionBloc,
                     DeliverInterventionState>(
                     builder: (context, deliveryInterventionState) {
+                      final currentCycle = deliveryInterventionState.cycle >= 0
+                          ? deliveryInterventionState.cycle
+                          : 0;
+                      final currentDose = deliveryInterventionState.dose >= 0
+                          ? deliveryInterventionState.dose
+                          : 0;
+                      final individualModel = state.selectedIndividual;
+                      final householdModel = householdMemberWrapper.household;
+                      final ProjectTypeModel projectType =
+                          RegistrationDeliverySingleton().projectType!;
+                      final item = projectType.cycles?[currentCycle - 1]
+                          .deliveries?[currentDose - 1];
+                      final productVariant = utils_smc
+                          .fetchProductVariant(
+                              item, individualModel, householdModel)
+                          ?.productVariants;
+                      final productQuantity =
+                          productVariant?.firstOrNull?.quantity ?? 0;
                       ProjectTypeModel? projectTypeModel =
                           widget.eligibilityAssessmentType ==
                                   EligibilityAssessmentType.smc
@@ -291,7 +314,8 @@ class CustomDeliverInterventionPageState
                                   ?.additionalProjectType;
                       List<DeliveryProductVariant>? productVariants =
                           projectTypeModel?.cycles?.isNotEmpty == true
-                              ? (fetchProductVariant(
+                              ? (utils_smc
+                                  .fetchProductVariant(
                                       projectTypeModel
                                               ?.cycles![
                                                   deliveryInterventionState
@@ -550,19 +574,11 @@ class CustomDeliverInterventionPageState
                                                   const EdgeInsets.all(spacer2),
                                               children: [
                                                 Text(
-                                                  widget.eligibilityAssessmentType ==
-                                                          EligibilityAssessmentType
-                                                              .smc
-                                                      ? localizations.translate(
-                                                          i18_local
-                                                              .deliverIntervention
-                                                              .deliverInterventionSMCLabel,
-                                                        )
-                                                      : localizations.translate(
-                                                          i18_local
-                                                              .deliverIntervention
-                                                              .deliverInterventionVASLabel,
-                                                        ),
+                                                  localizations.translate(
+                                                    i18_local
+                                                        .deliverIntervention
+                                                        .DeliverInterventionAZMLabel,
+                                                  ),
                                                   style: textTheme.headingL
                                                       .copyWith(
                                                           color: theme
@@ -662,7 +678,7 @@ class CustomDeliverInterventionPageState
                                                     initialValue:
                                                         RegistrationDeliverySingleton()
                                                                 .loggedInUser
-                                                                ?.name ??
+                                                                ?.userName ??
                                                             '',
                                                   ),
                                                 ),
@@ -685,6 +701,8 @@ class CustomDeliverInterventionPageState
                                                 ),
                                                 ..._controllers.map((e) =>
                                                     CustomResourceBeneficiaryCard(
+                                                      productQuantity:
+                                                          productQuantity,
                                                       form: form,
                                                       eligibilityAssessmentType:
                                                           widget
@@ -800,7 +818,9 @@ class CustomDeliverInterventionPageState
     AddressModel? address,
     double? latitude,
     double? longitude,
+    int? productQuantity,
     IndividualModel? selectedIndividual,
+    HouseholdMemberWrapper? householdMemberWrapper,
   }) {
     // Initialize task with oldTask if available, or create a new one
     var task = oldTask;
@@ -839,9 +859,10 @@ class CustomDeliverInterventionPageState
                 taskId: task?.id,
                 tenantId: RegistrationDeliverySingleton().tenantId,
                 rowVersion: oldTask?.rowVersion ?? 1,
-                quantity: (((form.control(_quantityDistributedKey) as FormArray)
-                        .value)?[productvariantList.indexOf(e)])
-                    .toString(),
+                quantity: productQuantity.toString(),
+                //  (((form.control(_quantityDistributedKey) as FormArray)
+                //         .value)?[productvariantList.indexOf(e)])
+                //     .toString(),
                 clientAuditDetails: ClientAuditDetails(
                   createdBy: RegistrationDeliverySingleton().loggedInUserUuid!,
                   createdTime: context.millisecondsSinceEpoch(),
@@ -905,8 +926,7 @@ class CustomDeliverInterventionPageState
                 : EligibilityAssessmentStatus.vasDone.name,
           ),
           ...getIndividualAdditionalFields(
-            selectedIndividual,
-          ),
+              selectedIndividual, householdMemberWrapper),
         ],
       ),
     );
@@ -940,7 +960,8 @@ class CustomDeliverInterventionPageState
     if (_controllers.isEmpty) {
       final int r = projectTypeModel?.cycles == null
           ? 1
-          : fetchProductVariant(
+          : utils_smc
+                  .fetchProductVariant(
                       projectTypeModel
                           ?.cycles![bloc.cycle - 1].deliveries?[bloc.dose - 1],
                       overViewbloc.selectedIndividual,
@@ -999,6 +1020,7 @@ class CustomDeliverInterventionPageState
 }
 
 class CustomResourceBeneficiaryCard extends LocalizedStatefulWidget {
+  final int productQuantity;
   final void Function(int) onDelete;
   final int cardIndex;
   final FormGroup form;
@@ -1008,6 +1030,7 @@ class CustomResourceBeneficiaryCard extends LocalizedStatefulWidget {
   const CustomResourceBeneficiaryCard({
     super.key,
     super.appLocalizations,
+    required this.productQuantity,
     required this.onDelete,
     required this.cardIndex,
     required this.form,
@@ -1078,7 +1101,7 @@ class CustomResourceBeneficiaryCardState
                         isDisabled: true,
                         minValue: 1,
                         step: 1,
-                        initialValue: "1",
+                        initialValue: '${widget.productQuantity}',
                         onChange: (value) {
                           widget.form
                               .control(

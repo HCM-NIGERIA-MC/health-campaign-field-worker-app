@@ -151,11 +151,6 @@ class CustomWarehouseDetailsPageState
                                 !InventorySingleton().isWareHouseMgr!,
                             stockState),
                         builder: (context, form, child) {
-                          // form.control(_teamCodeKey).value =
-                          //     scannerState.qrCodes.isNotEmpty
-                          //         ? scannerState.qrCodes.firstOrNull
-                          //         : '';
-
                           return ScrollableContent(
                             header: const Column(children: [
                               CustomBackNavigationHelpHeaderWidget(
@@ -173,7 +168,6 @@ class CustomWarehouseDetailsPageState
                                           type: DigitButtonType.primary,
                                           mainAxisSize: MainAxisSize.max,
                                           size: DigitButtonSize.large,
-                                          // isDisabled: !form.valid,
                                           label: localizations.translate(
                                             i18.householdDetails.actionLabel,
                                           ),
@@ -302,7 +296,9 @@ class CustomWarehouseDetailsPageState
                                         stockState.entryType !=
                                             StockRecordEntryType.dispatch)
                                       DigitButton(
-                                        label: "Scan Resource",
+                                        label: localizations.translate(i18_local
+                                            .stockDetails
+                                            .stockScanResourcesLabel),
                                         onPressed: _handleSubmission,
                                         type: DigitButtonType.primary,
                                         mainAxisSize: MainAxisSize.max,

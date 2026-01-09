@@ -51,11 +51,7 @@ class CustomTransactionalDetailsPageState
   static const _transactionQuantityKey = 'quantity';
   static const _transactionPartialQuantityKey = 'partialBlistersReturned';
   static const _transactionReasonKey = 'transactionReason';
-  // static const _waybillNumberKey = 'waybillNumber';
-  // static const _waybillQuantityKey = 'waybillQuantity';
-  // static const _batchNumberKey = 'batchNumberKey';
-  // static const _vehicleNumberKey = 'vehicleNumber';
-  // static const _typeOfTransportKey = 'typeOfTransport';
+
   static const _commentsKey = 'comments';
   static const _deliveryTeamKey = 'deliveryTeam';
   bool deliveryTeamSelected = false;
@@ -86,15 +82,6 @@ class CustomTransactionalDetailsPageState
                 ]),
       _transactionPartialQuantityKey: FormControl<int>(validators: []),
       _transactionReasonKey: FormControl<String>(),
-      // _waybillNumberKey: FormControl<String>(
-      //   validators: [Validators.minLength(2), Validators.maxLength(200)],
-      // ),
-      // _waybillQuantityKey: FormControl<String>(),
-      // _batchNumberKey: FormControl<String>(
-      //   validators: [],
-      // ),
-      // _vehicleNumberKey: FormControl<String>(),
-      // _typeOfTransportKey: FormControl<String>(),
       _commentsKey: FormControl<String>(),
       _deliveryTeamKey: FormControl<String>(
         validators: deliveryTeamSelected ? [Validators.required] : [],
@@ -236,13 +223,6 @@ class CustomTransactionalDetailsPageState
                                       ],
                                 autoValidate: true);
                       }
-                      // else {
-                      //   form.control(_batchNumberKey).setValidators([
-                      //     Validators.required,
-                      //     Validators.minLength(2),
-                      //     Validators.maxLength(200)
-                      //   ], autoValidate: true);
-                      // }
 
                       return ScrollableContent(
                         header: Column(children: [
@@ -400,22 +380,6 @@ class CustomTransactionalDetailsPageState
                                                         _transactionPartialQuantityKey)
                                                     .value ??
                                                 0;
-
-                                            // final waybillNumber = form
-                                            //     .control(_waybillNumberKey)
-                                            //     .value as String?;
-
-                                            // final waybillQuantity = form
-                                            //     .control(_waybillQuantityKey)
-                                            //     .value as String?;
-
-                                            // final batchNumber = form
-                                            //     .control(_batchNumberKey)
-                                            //     .value as String?;
-
-                                            // final vehicleNumber = form
-                                            //     .control(_vehicleNumberKey)
-                                            //     .value as String?;
 
                                             final lat = locationState.latitude;
                                             final lng = locationState.longitude;
@@ -594,33 +558,6 @@ class CustomTransactionalDetailsPageState
                                                               .loggedInUser
                                                               ?.name,
                                                         ),
-                                                        // if (waybillQuantity !=
-                                                        //         null &&
-                                                        //     waybillQuantity
-                                                        //         .trim()
-                                                        //         .isNotEmpty)
-                                                        //   AdditionalField(
-                                                        //     'waybill_quantity',
-                                                        //     waybillQuantity,
-                                                        //   ),
-                                                        // if (batchNumber !=
-                                                        //         null &&
-                                                        //     batchNumber
-                                                        //         .trim()
-                                                        //         .isNotEmpty)
-                                                        //   AdditionalField(
-                                                        //     'batch_number',
-                                                        //     batchNumber,
-                                                        //   ),
-                                                        // if (vehicleNumber !=
-                                                        //         null &&
-                                                        //     vehicleNumber
-                                                        //         .trim()
-                                                        //         .isNotEmpty)
-                                                        //   AdditionalField(
-                                                        //     'vehicle_number',
-                                                        //     vehicleNumber,
-                                                        //   ),
                                                         if (comments != null &&
                                                             comments
                                                                 .trim()

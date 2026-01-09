@@ -107,13 +107,25 @@ class Constants {
   static const int apiCallLimit = 1000;
   static const String pipeSeparator = '||';
   static const int stockMaxLimit = 100000000;
+  static const String uniqueBeneficiaryIdKey = 'uniqueBeneficiaryID';
 
   // for stock validation
 
   static const String spaq1 = "SPAQ 1";
   static const String spaq2 = "SPAQ 2";
+  static const String azm = "AZM";
   static const String blueVAS = "Blue VAS";
   static const String redVAS = "Red VAS";
+
+  static const String height = "height";
+  static const String weight = "weight";
+
+  static const String registered = "registered";
+  static const String administered = "administered";
+  static const String household = "household";
+  static const String azmStock = "AZM Stock";
+  static const String mrnNumberLabel = "MRN Number";
+  static const String minNumberLabel = "MIN Number";
 
   // todo enable before cycle2
   static const bool isDownSyncEnabled = true;
@@ -287,6 +299,14 @@ class Constants {
     KeyValue('CORE_COMMON_YES', true),
     KeyValue('CORE_COMMON_NO', false),
   ];
+
+  // min and max consideration for both weight and height
+
+  static const int minHeight = 01;
+  static const int maxHeight = 138;
+
+  static const double minWeight = 0.01;
+  static const double maxWeight = 15.0;
 
   void setInitialDataOfPackages() {
     DigitDataModelSingleton().setData(

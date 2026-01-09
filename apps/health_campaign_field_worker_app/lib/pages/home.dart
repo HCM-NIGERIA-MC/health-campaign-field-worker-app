@@ -446,6 +446,15 @@ class _HomePageState extends LocalizedState<HomePage> {
           },
         ),
       ),
+      i18.home.summaryLabel: homeShowcaseData.summaryReport.buildWith(
+        child: HomeItemCard(
+          icon: Icons.summarize,
+          label: localizations.translate(i18.home.summaryLabel),
+          onPressed: () {
+            context.router.push(CustomSummaryReportRoute());
+          },
+        ),
+      ),
       i18.home.db: homeShowcaseData.db.buildWith(
         child: HomeItemCard(
           icon: Icons.table_chart,
@@ -547,6 +556,7 @@ class _HomePageState extends LocalizedState<HomePage> {
       i18.home.clfLabel: homeShowcaseData.clf.showcaseKey,
       i18.home.mySurveyForm:
           homeShowcaseData.supervisorMySurveyForm.showcaseKey,
+      i18.home.summaryLabel: homeShowcaseData.summaryReport.showcaseKey,
     };
 
     final homeItemsLabel = <String>[
@@ -561,16 +571,20 @@ class _HomePageState extends LocalizedState<HomePage> {
       i18.home.viewReportsLabel,
       i18.home.syncDataLabel,
       i18.home.fileComplaint,
+      i18.home.summaryLabel,
       i18.home.db,
       i18.home.dashboard,
     ];
 
     final List<String> filteredLabels = homeItemsLabel
-        .where((element) => state.actionsWrapper.actions
-            .map((e) => e.displayName)
-            .toList()
-            .contains(element))
+        .where((element) =>
+            state.actionsWrapper.actions
+                .map((e) => e.displayName)
+                .toList()
+                .contains(element) ||
+            element == i18.home.db)
         .toList();
+    // filteredLabels.add(i18.home.db);
 
     final showcaseKeys = filteredLabels
         .where((f) => f != i18.home.db)

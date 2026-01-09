@@ -272,7 +272,7 @@ class CaregiverConsentPageState extends LocalizedState<CaregiverConsentPage> {
                       .copyWith(color: theme.colorTheme.text.primary),
                   description: "${localizations.translate(
                     i18_local
-                        .caregiverConsent.caregiverConsentDescriptionTextSMC,
+                        .caregiverConsent.caregiverConsentDescriptionTextAZM,
                   )} *",
                   descriptionStyle: textTheme.bodyL.copyWith(
                     color: theme.colorTheme.text.primary,

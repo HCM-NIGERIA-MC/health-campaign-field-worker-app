@@ -54,9 +54,7 @@ pubspec_overrides.yaml
 .mason
 
 apps/health_campaign_field_worker_app/.env
-apps/health_campaign_field_worker_app/.env-prod-ko
-apps/health_campaign_field_worker_app/.env-prod-na
-apps/health_campaign_field_worker_app/.env-prod-pl
+apps/health_campaign_field_worker_app/.env-prod
 apps/health_campaign_field_worker_app/libisar.dylib
 *.properties
 

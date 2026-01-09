@@ -1,5 +1,4 @@
 import 'package:auto_route/auto_route.dart';
-import 'package:digit_components/widgets/digit_dialog.dart';
 import 'package:digit_components/widgets/digit_info_card.dart';
 import 'package:digit_data_model/data_model.dart';
 import 'package:digit_data_model/models/entities/household_type.dart';
@@ -567,6 +566,25 @@ class _CustomSearchBeneficiaryPageState
                         if (searchSMCstate.loading) {
                           return const Center(
                               child: CircularProgressIndicator());
+                        } else if (searchSMCstate.householdMembers.isEmpty &&
+                            searchSMCstate.loading == false &&
+                            isBeneficiaryIdValidPattern(
+                                searchController.text.trim()) &&
+                            isBeneficiaryIdValid(
+                                searchController.text.trim())) {
+                          return SliverList(
+                              delegate:
+                                  SliverChildBuilderDelegate((ctx, index) {
+                            return DigitInfoCard(
+                              description: localizations.translate(
+                                i18_local.searchBeneficiary
+                                    .beneficiaryInfoDescription,
+                              ),
+                              title: localizations.translate(
+                                i18.searchBeneficiary.beneficiaryInfoTitle,
+                              ),
+                            );
+                          }, childCount: 1));
                         } else {
                           return SliverList(
                             delegate: SliverChildBuilderDelegate(
@@ -691,41 +709,18 @@ class _CustomSearchBeneficiaryPageState
                       mainAxisSize: MainAxisSize.max,
                       type: DigitButtonType.primary,
                       size: DigitButtonSize.large,
-                      isDisabled: false,
+                      isDisabled: !(searchHouseholdsState.searchQuery != null &&
+                          searchHouseholdsState.searchQuery!.isNotEmpty),
                       onPressed: () {
                         int spaq1 = context.spaq1;
-                        int spaq2 = context.spaq2;
 
                         String descriptionText = localizations.translate(
                             i18_local
                                 .beneficiaryDetails.insufficientStockMessage);
 
-                        if (spaq1 == 0) {
+                        if (spaq1 <= 0) {
                           descriptionText +=
-                              "\n ${localizations.translate(i18_local.beneficiaryDetails.spaq1DoseUnit)}";
-                        }
-                        if (spaq2 == 0) {
-                          descriptionText +=
-                              "\n ${localizations.translate(i18_local.beneficiaryDetails.spaq2DoseUnit)}";
-                        }
-
-                        if ((spaq1 > 0 || spaq2 > 0)) {
-                          FocusManager.instance.primaryFocus?.unfocus();
-                          context.read<DigitScannerBloc>().add(
-                                const DigitScannerEvent.handleScanner(),
-                              );
-                          context.router
-                              .push(CustomBeneficiaryRegistrationWrapperRoute(
-                            initialState: BeneficiaryRegistrationCreateState(
-                              searchQuery: searchHouseholdsState.searchQuery,
-                            ),
-                          ));
-                          searchController.clear();
-                          selectedFilters = [];
-                          customSearchHouseholdsBloc.add(
-                            const SearchHouseholdsClearEvent(),
-                          );
-                        } else {
+                              "\n ${localizations.translate(i18_local.beneficiaryDetails.azmDoseUnit)}";
                           showCustomPopup(
                             context: context,
                             builder: (popupContext) => Popup(
@@ -757,7 +752,23 @@ class _CustomSearchBeneficiaryPageState
                               ],
                             ),
                           );
+                          return;
                         }
+                        FocusManager.instance.primaryFocus?.unfocus();
+                        context.read<DigitScannerBloc>().add(
+                              const DigitScannerEvent.handleScanner(),
+                            );
+                        context.router
+                            .push(CustomBeneficiaryRegistrationWrapperRoute(
+                          initialState: BeneficiaryRegistrationCreateState(
+                            searchQuery: searchHouseholdsState.searchQuery,
+                          ),
+                        ));
+                        searchController.clear();
+                        selectedFilters = [];
+                        customSearchHouseholdsBloc.add(
+                          const SearchHouseholdsClearEvent(),
+                        );
                       },
                     );
                   },
