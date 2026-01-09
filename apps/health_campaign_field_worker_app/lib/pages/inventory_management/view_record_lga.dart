@@ -1,4 +1,5 @@
-import 'package:auto_route/auto_route.dart';
+import 'package:collection/collection.dart';
+import 'package:digit_components/widgets/atoms/digit_toaster.dart';
 import 'package:digit_data_model/data_model.dart';
 import 'package:digit_ui_components/digit_components.dart';
 import 'package:digit_ui_components/widgets/atoms/input_wrapper.dart';
@@ -10,16 +11,16 @@ import 'package:inventory_management/models/entities/stock.dart';
 import 'package:inventory_management/models/entities/transaction_reason.dart';
 import 'package:inventory_management/models/entities/transaction_type.dart';
 import 'package:inventory_management/utils/i18_key_constants.dart' as i18;
+import 'package:inventory_management/utils/typedefs.dart';
 import 'package:inventory_management/utils/utils.dart';
-import 'package:registration_delivery/widgets/localized.dart';
 import 'package:reactive_forms/reactive_forms.dart';
+import 'package:registration_delivery/widgets/localized.dart';
 
 import '../../blocs/auth/auth.dart';
 import '../../router/app_router.dart';
 import '../../utils/constants.dart';
 import '../../utils/extensions/extensions.dart';
-import 'package:collection/collection.dart';
-
+import '../../utils/i18_key_constants.dart' as i18_local;
 import '../../widgets/custom_back_navigation.dart';
 
 @RoutePage()
@@ -124,9 +125,86 @@ class _ViewStockRecordsLGAPageState
     super.dispose();
   }
 
+  num _getQuantityCount(Iterable<StockModel> stocks) {
+    return stocks.fold<num>(
+      0.0,
+      (old, e) => (num.tryParse(e.quantity ?? '') ?? 0.0) + old,
+    );
+  }
+
+  Future<num> getQuantityReceivedToday(
+      BuildContext context, StockModel stock) async {
+    final StockDataRepository stockRepository =
+        context.repository<StockModel, StockSearchModel>();
+    final productVariantId = stock.productVariantId;
+    final facilityId;
+    if (InventorySingleton().isDistributor) {
+      facilityId = InventorySingleton().loggedInUserUuid;
+    } else {
+      facilityId = stock.receiverId;
+    }
+
+    if ((productVariantId == null) || facilityId == null) return 0;
+
+    final now = DateTime.now();
+    final startOfDay = DateTime(now.year, now.month, now.day);
+    final endOfDay = startOfDay.add(const Duration(days: 1));
+
+    // Fetching the stock receipt details for today
+    final receivedStocks = (await stockRepository.search(
+      StockSearchModel(
+          productVariantId: productVariantId,
+          receiverId: facilityId,
+          transactionType: [TransactionType.received.toValue()]),
+    ))
+        .where((element) =>
+            element.auditDetails != null &&
+            element.auditDetails?.createdBy ==
+                InventorySingleton().loggedInUserUuid &&
+            element.clientAuditDetails?.createdTime != null &&
+            element.clientAuditDetails!.createdTime >=
+                startOfDay.millisecondsSinceEpoch &&
+            element.clientAuditDetails!.createdTime <=
+                endOfDay.millisecondsSinceEpoch)
+        .toList();
+
+    return _getQuantityCount(
+      receivedStocks.where((e) =>
+          e.transactionType == TransactionType.received.toValue() &&
+          e.transactionReason == TransactionReason.received.toValue()),
+    );
+  }
+
   Future<void> _handleSubmission() async {
     if (_form.valid && !isSubmitClicked) {
       isSubmitClicked = true;
+      final theme = Theme.of(context);
+
+      for (final stock in widget.stockRecords) {
+        final quantityReceivedToday =
+            await getQuantityReceivedToday(context, stock);
+
+        final quantity =
+            int.parse(_form.control('quantityReceived').value.toString());
+
+        if (stock.transactionType == TransactionType.dispatched.toValue() &&
+            context.isCommunityDistributor) {
+          if (quantity + quantityReceivedToday >
+              Constants.cddStockTransactionDailyLimit) {
+            await DigitToast.show(
+              context,
+              options: DigitToastOptions(
+                  localizations.translate(i18_local
+                      .stockDetails.stockReceivedByCddDailyLimitValidation),
+                  true,
+                  theme),
+            );
+            isSubmitClicked = false;
+            return;
+          }
+        }
+      }
+
       final updatedStocks = widget.stockRecords.map((stock) {
         final additionalFields = stock.additionalFields?.fields ?? [];
 
