@@ -6,12 +6,16 @@ import 'package:inventory_management/models/entities/stock.dart';
 abstract class StockEvent {}
 
 class StockSelectedEvent extends StockEvent {
+  final String? vehicleNumber;
+  final String? typeOfTransport;
   final List<ProductVariantModel> selectedProducts;
   final String receivedFrom;
   final String secondaryPartyType;
 
   StockSelectedEvent(
-      {required this.selectedProducts,
+      {this.vehicleNumber,
+      this.typeOfTransport,
+      required this.selectedProducts,
       required this.receivedFrom,
       required this.secondaryPartyType});
 }
@@ -27,12 +31,16 @@ abstract class StockState {}
 class StockInitial extends StockState {}
 
 class StockSelectedState extends StockState {
+  final String? vehicleNumber;
+  final String? typeOfTransport;
   final List<ProductVariantModel> selectedProducts;
   final String receivedFrom;
   final String secondaryPartyType;
 
   StockSelectedState(
-      {required this.selectedProducts,
+      {required this.vehicleNumber,
+      required this.typeOfTransport,
+      required this.selectedProducts,
       required this.receivedFrom,
       required this.secondaryPartyType});
 }
@@ -47,6 +55,8 @@ class StockBloc extends Bloc<StockEvent, StockState> {
   StockBloc() : super(StockInitial()) {
     on<StockSelectedEvent>((event, emit) {
       emit(StockSelectedState(
+        vehicleNumber: event.vehicleNumber,
+        typeOfTransport: event.typeOfTransport,
         selectedProducts: event.selectedProducts,
         receivedFrom: event.receivedFrom,
         secondaryPartyType: event.secondaryPartyType,

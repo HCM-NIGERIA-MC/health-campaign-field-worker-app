@@ -1,5 +1,6 @@
 import 'package:attendance_management/router/attendance_router.dart';
 import 'package:attendance_management/router/attendance_router.gm.dart';
+import 'package:complaints/blocs/localization/app_localization.dart';
 import 'package:complaints/router/complaints_router.dart';
 import 'package:complaints/router/complaints_router.gm.dart';
 import 'package:health_campaign_field_worker_app/blocs/registration_delivery/custom_beneficairy_registration.dart';
@@ -32,6 +33,7 @@ import '../pages/beneficiary/check_eligibility/household_acknowledgement_smc.dar
 import '../pages/beneficiary/check_eligibility/inventory_facility_selection_smc.dart';
 import '../pages/beneficiary/check_eligibility/refer_beneficiary_smc.dart';
 import '../pages/beneficiary/check_eligibility/refer_beneficiary_vas.dart';
+import '../pages/complaints/custom_complaints_inbox.dart';
 import '../pages/inventory_management/view_record_lga.dart';
 import '../pages/registration_delivery/custom_complaints_details.dart';
 import '../pages/boundary_selection.dart';
@@ -585,6 +587,14 @@ class AppRouter extends _$AppRouter {
               page: ComplaintsInboxRoute.page,
               path: 'complaints-inbox-items',
               initial: true,
+            ),
+            AutoRoute(
+              page: CustomComplaintsInboxRoute.page,
+              path: 'custom-complaints-inbox-items',
+            ),
+            RedirectRoute(
+              path: 'complaints-inbox-items',
+              redirectTo: 'custom-complaints-inbox-items',
             ),
             AutoRoute(
               page: ComplaintsInboxFilterRoute.page,
