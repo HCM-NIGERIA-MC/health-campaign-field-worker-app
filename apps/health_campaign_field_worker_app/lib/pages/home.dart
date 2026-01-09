@@ -1095,6 +1095,7 @@ void setPackagesSingleton(BuildContext context) {
                 ..name = e.code
                 ..code = e.code)
               .toList(),
+          loggedInUser: context.loggedInUserModel,
         );
 
         DashboardSingleton().setInitialData(
