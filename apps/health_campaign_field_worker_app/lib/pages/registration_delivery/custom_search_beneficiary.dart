@@ -12,6 +12,7 @@ import 'package:digit_ui_components/widgets/atoms/switch.dart';
 import 'package:digit_ui_components/widgets/molecules/digit_card.dart';
 import 'package:digit_ui_components/widgets/molecules/show_pop_up.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:registration_delivery/blocs/search_households/search_bloc_common_wrapper.dart';
@@ -167,7 +168,10 @@ class _CustomSearchBeneficiaryPageState
                                       inputFormatters:
                                           isSearchByBeneficaryIdEnabled
                                               ? [BeneficiaryIdInputFormatter()]
-                                              : [],
+                                              : [
+                                                  FilteringTextInputFormatter
+                                                      .deny(RegExp(r'[0-9]'))
+                                                ],
                                       hintText: (RegistrationDeliverySingleton()
                                                   .householdType ==
                                               HouseholdType.community)
