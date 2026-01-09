@@ -899,7 +899,8 @@ List<AdditionalField> getAdditionalIndividualInfoFromHouseholdMemberWrapper(
         householdMemberWrapper.headOfHousehold?.name?.givenName,
       ),
     if (householdMemberWrapper.headOfHousehold != null &&
-        householdMemberWrapper.headOfHousehold?.mobileNumber != null)
+        householdMemberWrapper.headOfHousehold?.mobileNumber != null &&
+        (householdMemberWrapper.headOfHousehold?.mobileNumber?.length ?? 0) > 2)
       AdditionalField(
         additional_fields_local.AdditionalFieldsType.householdHeadMobileNumber
             .toValue(),

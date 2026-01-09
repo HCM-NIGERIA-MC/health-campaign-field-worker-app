@@ -375,84 +375,13 @@ class CustomStockDetailsPageState
                                           .control(_vehicleNumberKey)
                                           .value as String?;
 
-                                      final lat = locationState.latitude;
-                                      final lng = locationState.longitude;
-
-                                      final hasLocationData =
-                                          lat != null && lng != null;
+                                      final _typeOfTransport = form
+                                          .control(_typeOfTransportKey)
+                                          .value as String?;
 
                                       final deliveryTeamName = form
                                           .control(_deliveryTeamKey)
                                           .value as String?;
-
-                                      int spaq1 = 0;
-                                      int spaq2 = 0;
-
-                                      int totalQuantity = 0;
-                                      int totalRemainingQuantityInMl =
-                                          context.spaq1;
-
-                                      int totalExpectedUnusedBottles =
-                                          totalRemainingQuantityInMl ~/
-                                              Constants.mlPerBottle;
-
-                                      int totalExpectedPartialQuantityInMl =
-                                          totalRemainingQuantityInMl %
-                                              Constants.mlPerBottle;
-
-                                      int totalExpectedPartialBottles =
-                                          totalRemainingQuantityInMl %
-                                                      Constants.mlPerBottle !=
-                                                  0
-                                              ? 1
-                                              : 0;
-
-                                      spaq1 =
-                                          totalQuantity * Constants.mlPerBottle;
-
-                                      String? senderId;
-                                      String? senderType;
-                                      String? receiverId;
-                                      String? receiverType;
-
-                                      final primaryType =
-                                          BlocProvider.of<RecordStockBloc>(
-                                        context,
-                                      ).state.primaryType;
-
-                                      final primaryId =
-                                          BlocProvider.of<RecordStockBloc>(
-                                        context,
-                                      ).state.primaryId;
-
-                                      switch (entryType) {
-                                        case StockRecordEntryType.receipt:
-                                        case StockRecordEntryType.loss:
-                                        case StockRecordEntryType.damaged:
-                                        case StockRecordEntryType.returned:
-                                          if (deliveryTeamSelected) {
-                                            senderId = deliveryTeamName;
-                                            senderType = "STAFF";
-                                          } else {
-                                            senderId = secondaryParty?.id;
-                                            senderType = "WAREHOUSE";
-                                          }
-                                          receiverId = primaryId;
-                                          receiverType = primaryType;
-
-                                          break;
-                                        case StockRecordEntryType.dispatch:
-                                          if (deliveryTeamSelected) {
-                                            receiverId = deliveryTeamName;
-                                            receiverType = "STAFF";
-                                          } else {
-                                            receiverId = secondaryParty?.id;
-                                            receiverType = "WAREHOUSE";
-                                          }
-                                          senderId = primaryId;
-                                          senderType = primaryType;
-                                          break;
-                                      }
 
                                       if (form.valid) {
                                         final selectedProducts = form
@@ -464,6 +393,9 @@ class CustomStockDetailsPageState
                                             .value as String;
                                         context.read<StockBloc>().add(
                                               StockSelectedEvent(
+                                                vehicleNumber: vehicleNumber,
+                                                typeOfTransport:
+                                                    _typeOfTransport,
                                                 selectedProducts:
                                                     selectedProducts,
                                                 secondaryPartyType:
