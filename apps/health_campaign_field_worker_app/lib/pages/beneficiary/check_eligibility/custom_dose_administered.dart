@@ -36,7 +36,9 @@ import '../../../models/entities/additional_fields_type.dart'
 import '../../../models/entities/identifier_types.dart';
 import '../../../router/app_router.dart';
 import '../../../utils/app_enums.dart';
+import '../../../utils/constants.dart' as local_constants;
 import '../../../utils/utils.dart' show getIndividualAdditionalFields;
+import '/utils/registration_delivery/utils_smc.dart' as utils_smc;
 
 @RoutePage()
 class CustomDoseAdministeredPage extends LocalizedStatefulWidget {
@@ -173,7 +175,8 @@ class CustomDoseAdministeredPageState
                                           createdTime:
                                               context.millisecondsSinceEpoch(),
                                         ),
-                                        resources: fetchProductVariant(
+                                        resources: utils_smc
+                                            .fetchProductVariant(
                                                 e,
                                                 overViewBloc.selectedIndividual,
                                                 overViewBloc
@@ -281,6 +284,8 @@ class CustomDoseAdministeredPageState
                                             ),
                                             ...getIndividualAdditionalFields(
                                               overViewBloc.selectedIndividual,
+                                              overViewBloc
+                                                  .householdMemberWrapper,
                                             ),
                                           ],
                                         ),
@@ -330,8 +335,11 @@ class CustomDoseAdministeredPageState
                                 .selectedIndividual?.identifiers
                                 ?.lastWhereOrNull((e) =>
                                     e.identifierType ==
-                                    IdentifierTypes.uniqueBeneficiaryID
-                                        .toValue())
+                                        IdentifierTypes.uniqueBeneficiaryID
+                                            .toValue() ||
+                                    e.identifierType ==
+                                        local_constants
+                                            .Constants.uniqueBeneficiaryIdKey)
                                 ?.identifierId ??
                             "";
                         return DigitCard(

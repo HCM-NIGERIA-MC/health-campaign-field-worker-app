@@ -220,7 +220,7 @@ class RecordDeliveryCycleState
                       ? (widget.eligibilityAssessmentType ==
                               EligibilityAssessmentType.smc)
                           ? localizations.translate(
-                              i18_local.beneficiaryDetails.currentSmcCycleLabel)
+                              i18_local.beneficiaryDetails.currentCycleLabel)
                           : localizations.translate(
                               i18.beneficiaryDetails.currentCycleLabel)
                       : '${localizations.translate(i18.beneficiaryDetails.beneficiaryCycle)} ${e.id}',
@@ -233,7 +233,7 @@ class RecordDeliveryCycleState
             ),
             SizedBox(
               width: MediaQuery.of(context).size.width,
-              height: ((e.deliveries?.length ?? 0) + 1) * 57.5,
+              height: ((e.deliveries?.length ?? 0) + 1) * 60,
               child: DigitTable(
                 enableBorder: true,
                 withRowDividers: true,

@@ -18,11 +18,13 @@ import 'package:inventory_management/router/inventory_router.gm.dart';
 import 'package:reactive_forms/reactive_forms.dart';
 
 import 'package:inventory_management/utils/i18_key_constants.dart' as i18;
+import '../../blocs/inventory_management/custom_stock_reconciliation.dart';
+import '../../data/repositories/local/inventory_management/custom_stock.dart';
 import '../../utils/i18_key_constants.dart' as i18_local;
 import 'package:inventory_management/widgets/inventory/no_facilities_assigned_dialog.dart';
 import 'package:inventory_management/widgets/localized.dart';
 import 'package:inventory_management/blocs/product_variant.dart';
-import 'package:inventory_management/blocs/stock_reconciliation.dart';
+// import 'package:inventory_management/blocs/stock_reconciliation.dart';
 import 'package:inventory_management/widgets/back_navigation_help_header.dart';
 import 'package:inventory_management/widgets/component_wrapper/facility_bloc_wrapper.dart';
 import 'package:inventory_management/widgets/component_wrapper/product_variant_bloc_wrapper.dart';
@@ -89,18 +91,19 @@ class CustomStockReconciliationPageState
             child: ProductVariantBlocWrapper(
               projectId: InventorySingleton().projectId,
               child: BlocProvider(
-                create: (context) => StockReconciliationBloc(
+                create: (context) => CustomStockReconciliationBloc(
                   StockReconciliationState(
                     projectId: InventorySingleton().projectId,
                     dateOfReconciliation: DateTime.now(),
                   ),
-                  stockRepository:
-                      context.repository<StockModel, StockSearchModel>(),
+                  stockRepository: context
+                          .read<LocalRepository<StockModel, StockSearchModel>>()
+                      as CustomStockLocalRepository,
                   stockReconciliationRepository: context.repository<
                       StockReconciliationModel,
                       StockReconciliationSearchModel>(),
                 ),
-                child: BlocConsumer<StockReconciliationBloc,
+                child: BlocConsumer<CustomStockReconciliationBloc,
                     StockReconciliationState>(
                   listener: (context, stockState) {
                     if (!stockState.persisted) return;
@@ -176,8 +179,8 @@ class CustomStockReconciliationPageState
                                               ?.unfocus();
                                           if (!form.valid) return;
 
-                                          final bloc = ctx
-                                              .read<StockReconciliationBloc>();
+                                          final bloc = ctx.read<
+                                              CustomStockReconciliationBloc>();
 
                                           final facilityId =
                                               InventorySingleton()
@@ -409,7 +412,7 @@ class CustomStockReconciliationPageState
                                                     onTap: () async {
                                                       final stockReconciliationBloc =
                                                           context.read<
-                                                              StockReconciliationBloc>();
+                                                              CustomStockReconciliationBloc>();
                                                       final facility = await context
                                                               .router
                                                               .push(InventoryFacilitySelectionRoute(
@@ -556,7 +559,7 @@ class CustomStockReconciliationPageState
 
                                                     ctx
                                                         .read<
-                                                            StockReconciliationBloc>()
+                                                            CustomStockReconciliationBloc>()
                                                         .add(
                                                           StockReconciliationSelectProductEvent(
                                                             value.code,

@@ -38,6 +38,7 @@ import 'package:registration_delivery/widgets/table_card/table_card.dart';
 
 import '../../../widgets/registration_delivery/past_delivery_vas.dart';
 import 'custom_record_delivery_cycle.dart';
+import '/utils/registration_delivery/utils_smc.dart' as utils_smc;
 
 @RoutePage()
 class CustomBeneficiaryDetailsPage extends LocalizedStatefulWidget {
@@ -57,7 +58,6 @@ class CustomBeneficiaryDetailsPageState
     extends LocalizedState<CustomBeneficiaryDetailsPage> {
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
   }
 
@@ -287,7 +287,8 @@ class CustomBeneficiaryDetailsPageState
                                                                         ? deliverState
                                                                             .dose
                                                                         : 0;
-                                                                final productVariants = fetchProductVariant(
+                                                                final productVariants = utils_smc
+                                                                    .fetchProductVariant(
                                                                         projectType
                                                                             .cycles![currentCycle -
                                                                                 1]
@@ -295,6 +296,12 @@ class CustomBeneficiaryDetailsPageState
                                                                         state.selectedIndividual,
                                                                         null)
                                                                     ?.productVariants;
+
+                                                                final productQuantity =
+                                                                    productVariants
+                                                                            ?.firstOrNull
+                                                                            ?.quantity ??
+                                                                        0;
 
                                                                 final value =
                                                                     variant!
@@ -314,7 +321,11 @@ class CustomBeneficiaryDetailsPageState
                                                                     (value.contains(Constants
                                                                             .spaq2) &&
                                                                         spaq2 >
-                                                                            0)) {
+                                                                            0) ||
+                                                                    (value.contains(Constants
+                                                                            .azm) &&
+                                                                        spaq1 >=
+                                                                            productQuantity)) {
                                                                   router.push(
                                                                     CustomDeliverInterventionRoute(
                                                                         eligibilityAssessmentType:
@@ -348,10 +359,8 @@ class CustomBeneficiaryDetailsPageState
                                                                             .beneficiaryDetails
                                                                             .insufficientAZTStockMessageDelivery,
                                                                       )} \n ${localizations.translate(
-                                                                        (value.contains(Constants.spaq1)
-                                                                            ? i18_local.beneficiaryDetails.spaq1DoseUnit
-                                                                            : i18_local.beneficiaryDetails.spaq2DoseUnit),
-                                                                      )}",
+                                                                                (i18_local.beneficiaryDetails.spaq1DoseUnit),
+                                                                              ).replaceAll("0", "${context.spaq1}")}",
                                                                       primaryAction:
                                                                           DigitDialogActions(
                                                                         label: localizations.translate(i18_local
@@ -415,13 +424,15 @@ class CustomBeneficiaryDetailsPageState
                               margin: const EdgeInsets.all(spacer2),
                               children: [
                                 Text(
-                                  localizations.translate(
-                                      widget.eligibilityAssessmentType ==
-                                              EligibilityAssessmentType.smc
-                                          ? i18_local.deliverIntervention
-                                              .deliversmcintervention
-                                          : i18_local.deliverIntervention
-                                              .deliverVASIntervention),
+                                  localizations.translate(i18_local
+                                      .deliverIntervention
+                                      .deliverAZMIntervention),
+                                  // widget.eligibilityAssessmentType ==
+                                  //         EligibilityAssessmentType.smc
+                                  //     ? i18_local.deliverIntervention
+                                  //         .deliversmcintervention
+                                  //     : i18_local.deliverIntervention
+                                  //         .deliverVASIntervention),
                                   style: textTheme.headingXl.copyWith(
                                       color: theme.colorTheme.text.primary),
                                 ),
@@ -512,6 +523,18 @@ class CustomBeneficiaryDetailsPageState
 
                                       return DateFormat('dd MMMM yyyy')
                                           .format(registrationDate);
+                                    }(),
+                                    localizations.translate(i18_local
+                                        .individualDetails
+                                        .heightHeadLabelText): () {
+                                      final height = state.selectedIndividual
+                                          ?.additionalFields?.fields
+                                          .firstWhereOrNull(
+                                              (e) => e.key == Constants.height)
+                                          ?.value;
+                                      return height != null && height.isNotEmpty
+                                          ? '$height cm'
+                                          : '--';
                                     }(),
                                   },
                                 ),

@@ -270,7 +270,7 @@ class CustomBeneficiaryRegistrationBloc
             );
 
             List<AdditionalField> additionalFields =
-                getIndividualAdditionalFields(individual);
+                getIndividualAdditionalFields(individual, null);
 
             await householdMemberRepository.create(
               HouseholdMemberModel(
@@ -373,7 +373,7 @@ class CustomBeneficiaryRegistrationBloc
           );
 
           List<AdditionalField> additionalFields =
-              getIndividualAdditionalFields(individual);
+              getIndividualAdditionalFields(individual, null);
 
           await householdMemberRepository.create(
             HouseholdMemberModel(
@@ -651,7 +651,7 @@ class CustomBeneficiaryRegistrationBloc
           ));
 
           List<AdditionalField> additionalFields =
-              getIndividualAdditionalFields(individual);
+              getIndividualAdditionalFields(individual, null);
 
           final HouseholdMemberModel? existingHouseholdmember =
               (await householdMemberRepository
@@ -763,7 +763,7 @@ class CustomBeneficiaryRegistrationBloc
           }
 
           List<AdditionalField> additionalFields =
-              getIndividualAdditionalFields(event.individualModel);
+              getIndividualAdditionalFields(event.individualModel, null);
 
           await householdMemberRepository.create(
             HouseholdMemberModel(

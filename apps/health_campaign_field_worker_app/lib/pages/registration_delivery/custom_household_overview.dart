@@ -401,13 +401,6 @@ class _CustomHouseholdOverviewPageState
                                                           .locality
                                                           ?.code ??
                                                       i18.common.coreCommonNA),
-                                                  // localizations.translate(
-                                                  //   i18.deliverIntervention
-                                                  //       .memberCountText,
-                                                  // ): state
-                                                  // .householdMemberWrapper
-                                                  // .household
-                                                  // ?.memberCount,
                                                   if (shouldShowStatus)
                                                     localizations.translate(i18
                                                             .beneficiaryDetails
@@ -851,6 +844,10 @@ class _CustomHouseholdOverviewPageState
                                                                           ?.lastOrNull
                                                                       : null,
                                                                   sideEffectData,
+                                                                  e,
+                                                                  state
+                                                                      .householdMemberWrapper
+                                                                      .household,
                                                                 )
                                                               : false,
                                                       // isNotEligibleVAS:
@@ -878,8 +875,8 @@ class _CustomHouseholdOverviewPageState
                                                       //             sideEffectData,
                                                       //           )
                                                       //         : false,
-                                                      name: e.name?.givenName ??
-                                                          ' - - ',
+                                                      name:
+                                                          '${e.name?.givenName ?? ' - - '} ${e.name?.familyName ?? ''}',
                                                       years:
                                                           (e.dateOfBirth == null
                                                               ? null
@@ -942,10 +939,7 @@ class _CustomHouseholdOverviewPageState
                                     mainAxisSize: MainAxisSize.max,
                                     onPressed: () {
                                       int spaq1 = context.spaq1;
-                                      int spaq2 = context.spaq2;
-                                      //TODO: comment vas
-                                      // int blueVas = context.blueVas;
-                                      // int redVas = context.redVas;
+
                                       String descriptionText =
                                           localizations.translate(i18_local
                                               .beneficiaryDetails
@@ -953,33 +947,6 @@ class _CustomHouseholdOverviewPageState
                                       if (spaq1 <= 0) {
                                         descriptionText +=
                                             "\n ${localizations.translate(i18_local.beneficiaryDetails.spaq1DoseUnit)}";
-                                      }
-                                      if (spaq2 <= 0) {
-                                        descriptionText +=
-                                            "\n ${localizations.translate(i18_local.beneficiaryDetails.spaq2DoseUnit)}";
-                                      }
-                                      //TODO: comment for vas
-                                      // if (blueVas == 0) {
-                                      //   descriptionText +=
-                                      //       "\n ${localizations.translate(i18_local.beneficiaryDetails.blueVasZeroQuantity)}";
-                                      // }
-                                      // if (redVas == 0) {
-                                      //   descriptionText +=
-                                      //       "\n ${localizations.translate(i18_local.beneficiaryDetails.redVasZeroQuantity)}";
-                                      // }
-
-                                      if (context.spaq1 > 0 || context.spaq2 > 0
-                                          //TODO: comment for VAS
-                                          // ||
-                                          // context.blueVas > 0 ||
-                                          // context.redVas > 0
-                                          ) {
-                                        addIndividual(
-                                          context,
-                                          state
-                                              .householdMemberWrapper.household,
-                                        );
-                                      } else {
                                         showCustomPopup(
                                           context: context,
                                           builder: (popupContext) => Popup(
@@ -996,14 +963,13 @@ class _CustomHouseholdOverviewPageState
                                               DigitButton(
                                                 label: localizations.translate(
                                                   i18_local.beneficiaryDetails
-                                                      .goToHome,
+                                                      .backToHouseholdDetails,
                                                 ),
                                                 onPressed: () {
                                                   Navigator.of(
                                                     popupContext,
                                                     rootNavigator: true,
                                                   ).pop();
-                                                  //
                                                 },
                                                 type: DigitButtonType.primary,
                                                 size: DigitButtonSize.large,
@@ -1011,7 +977,12 @@ class _CustomHouseholdOverviewPageState
                                             ],
                                           ),
                                         );
+                                        return;
                                       }
+                                      addIndividual(
+                                        context,
+                                        state.householdMemberWrapper.household,
+                                      );
                                     },
                                     label: localizations.translate(i18_local
                                         .householdDetails.addBeneficiartText),
@@ -1044,10 +1015,12 @@ class _CustomHouseholdOverviewPageState
             RegistrationDeliverySingleton().beneficiaryType!,
       ),
     );
+    // note : setting id to null to create new address entry for add member flow
+    final updatedAddress = address.copyWith(id: null);
     await context.router.popAndPush(
       CustomBeneficiaryRegistrationWrapperRoute(
         initialState: BeneficiaryRegistrationAddMemberState(
-          addressModel: address,
+          addressModel: updatedAddress,
           householdModel: household!,
         ),
         children: [

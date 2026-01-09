@@ -8,12 +8,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:inventory_management/blocs/record_stock.dart';
 import 'package:inventory_management/models/entities/stock.dart';
+import 'package:inventory_management/models/entities/transaction_type.dart';
 import 'package:inventory_management/utils/i18_key_constants.dart' as i18;
 import 'package:inventory_management/utils/utils.dart';
 import 'package:registration_delivery/widgets/localized.dart';
 
 import '../../utils/extensions/extensions.dart';
 import '../../utils/utils.dart';
+import '../../utils/i18_key_constants.dart' as i18_local;
 
 @RoutePage()
 class ViewStockRecordsPage extends LocalizedStatefulWidget {
@@ -112,21 +114,30 @@ class _ViewStockRecordsPageState extends LocalizedState<ViewStockRecordsPage>
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
-                    'Stock Receipt Details',
+                  Text(
+                    localizations.translate(getStockRecordLabel(stock)),
                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 12),
                   Row(
                     children: [
-                      const Expanded(child: Text('MRN Number')),
+                      Expanded(
+                        child: Text(
+                          stock.transactionType ==
+                                  TransactionType.dispatched.toValue()
+                              ? Constants.minNumberLabel
+                              : Constants.mrnNumberLabel,
+                        ),
+                      ),
                       Expanded(child: Text(widget.mrnNumber)),
                     ],
                   ),
                   const SizedBox(height: 8),
                   Row(
                     children: [
-                      const Expanded(child: Text('Resource')),
+                      Expanded(
+                          child: Text(localizations
+                              .translate(i18_local.stockDetails.resource))),
                       Expanded(
                         child: Text(
                           stock.additionalFields?.fields
@@ -168,8 +179,10 @@ class _ViewStockRecordsPageState extends LocalizedState<ViewStockRecordsPage>
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
-                    'Stock Details',
+                  Text(
+                    localizations.translate(
+                      i18_local.stockDetails.stockDetailsLabel,
+                    ),
                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 12),
@@ -177,7 +190,9 @@ class _ViewStockRecordsPageState extends LocalizedState<ViewStockRecordsPage>
                     // Waybill Number
                     InputField(
                       type: InputType.text,
-                      label: 'Waybill Number *',
+                      label: localizations.translate(
+                        i18_local.inventoryReportDetails.waybillNumberText,
+                      ),
                       initialValue: stock.wayBillNumber ?? '',
                       isDisabled: true,
                       readOnly: true,
@@ -186,7 +201,8 @@ class _ViewStockRecordsPageState extends LocalizedState<ViewStockRecordsPage>
                     // Batch Number
                     InputField(
                       type: InputType.text,
-                      label: 'Batch Number',
+                      label: localizations.translate(
+                          i18_local.inventoryReportDetails.batchNumberText),
                       initialValue: stock.additionalFields?.fields
                               .firstWhere(
                                 (field) => field.key == 'batchNumber',
@@ -205,7 +221,8 @@ class _ViewStockRecordsPageState extends LocalizedState<ViewStockRecordsPage>
                   // Quantity
                   InputField(
                     type: InputType.text,
-                    label: 'Quantity *',
+                    label: localizations
+                        .translate(i18_local.stockDetails.stockQuantityLabel),
                     initialValue: stock.quantity ?? '',
                     isDisabled: true,
                     readOnly: true,
@@ -216,7 +233,8 @@ class _ViewStockRecordsPageState extends LocalizedState<ViewStockRecordsPage>
                   if (partialQuantity != null)
                     InputField(
                       type: InputType.text,
-                      label: 'Partial Quantity *',
+                      label:
+                          '${localizations.translate(i18_local.stockDetails.stockPartialQuantityLabel)} *',
                       initialValue: partialQuantity,
                       isDisabled: true,
                       readOnly: true,
@@ -226,7 +244,8 @@ class _ViewStockRecordsPageState extends LocalizedState<ViewStockRecordsPage>
                   if (wastedQuantity != null)
                     InputField(
                       type: InputType.text,
-                      label: 'Wasted Quantity *',
+                      label:
+                          '${localizations.translate(i18_local.stockDetails.stockWastedQuantityLabel)} *',
                       initialValue: wastedQuantity,
                       isDisabled: true,
                       readOnly: true,
@@ -235,7 +254,8 @@ class _ViewStockRecordsPageState extends LocalizedState<ViewStockRecordsPage>
                   // Comments
                   InputField(
                     type: InputType.textArea,
-                    label: 'Comments',
+                    label: localizations
+                        .translate(i18_local.stockDetails.stockCommentsLabel),
                     initialValue: stock.additionalFields?.fields
                             .firstWhere(
                               (field) => field.key == 'comments',

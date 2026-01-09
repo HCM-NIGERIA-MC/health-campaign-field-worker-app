@@ -1,4 +1,4 @@
-package org.egov.oyo
+package org.egov.kaduna
 
 import android.annotation.TargetApi
 import android.app.NotificationChannel

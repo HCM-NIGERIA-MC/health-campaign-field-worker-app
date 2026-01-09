@@ -36,9 +36,14 @@ class CustomInventoryReportBloc
     InventoryReportEmitter emit,
   ) async {
     final reportType = event.reportType;
-    final facilityId = event.facilityId;
+    final facilityId;
     final productVariantId = event.productVariantId;
 
+    if (InventorySingleton().isDistributor) {
+      facilityId = InventorySingleton().loggedInUserUuid;
+    } else {
+      facilityId = event.facilityId;
+    }
     if (facilityId.trim().isEmpty || productVariantId.trim().isEmpty) {
       emit(const InventoryReportEmptyState());
     } else {

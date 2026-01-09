@@ -139,12 +139,31 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
             redVasCount: redVas),
       );
     } on DioException catch (error) {
-      emit(const AuthErrorState());
+      final response = error.response;
+      final data = response?.data;
+      String message;
+      if (data == null) {
+        message = 'error';
+      } else if (data is String) {
+        message = data;
+      } else if (data is Map) {
+        message = (data['error_description'] ??
+                    data['error'] ??
+                    data['message'] ??
+                    data['details'])
+                ?.toString() ??
+            data.toString();
+      } else if (data is Iterable) {
+        message = data.map((e) => e.toString()).join('; ');
+      } else {
+        message = data.toString();
+      }
+      emit(AuthErrorState(message));
       emit(const AuthUnauthenticatedState());
 
       AppLogger.instance.error(
         title: 'Login error',
-        message: error.response?.data.toString(),
+        message: message,
       );
     } catch (_) {
       emit(const AuthErrorState());

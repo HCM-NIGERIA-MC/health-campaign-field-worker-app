@@ -33,6 +33,8 @@ class CustomStockLocalRepository
     return retryLocalCallOperation<List<StockModel>>(() async {
       var results = [];
       final selectQuery = sql.select(sql.stock).join([]);
+      final now = DateTime.now();
+
       results = await (selectQuery
             ..where(
               buildAnd(
