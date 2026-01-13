@@ -697,7 +697,7 @@ class _HomePageState extends LocalizedState<HomePage> {
           icon: Icons.menu_book,
           label: i18.home.stockReconciliationLabel,
           onPressed: () {
-            context.router.push(StockReconciliationRoute());
+            context.router.push(CustomStockReconciliationRoute());
           },
         ),
       ),
@@ -706,7 +706,7 @@ class _HomePageState extends LocalizedState<HomePage> {
           icon: Icons.announcement,
           label: i18.home.viewReportsLabel,
           onPressed: () {
-            context.router.push(InventoryReportSelectionRoute());
+            context.router.push(CustomInventoryReportSelectionRoute());
           },
         ),
       ),

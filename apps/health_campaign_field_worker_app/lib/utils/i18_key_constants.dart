@@ -456,6 +456,16 @@ class StockDetails {
   String get minNumberLabel => 'MIN_NUMBER_LABEL';
   String get mrnNumberLabel => 'MRN_NUMBER_LABEL';
 
+  // String get quantityUnitLabel => 'STOCK_DETAILS_QUANTITY_UNIT_LABEL';
+  String get quantityReceivedUnitLabel =>
+      'STOCK_DETAILS_QUANTITY_RECEIVED_UNIT_LABEL';
+  String get quantitySentUnitLabel => 'STOCK_DETAILS_QUANTITY_SENT_UNIT_LABEL';
+  String get quantityReturnedUnitLabel =>
+      'STOCK_DETAILS_QUANTITY_RETURNED_UNIT_LABEL';
+  String get quantityLostUnitLabel => 'STOCK_DETAILS_QUANTITY_LOST_UNIT_LABEL';
+  String get quantityDamagedUnitLabel =>
+      'STOCK_DETAILS_QUANTITY_DAMAGED_UNIT_LABEL';
+
   String get stockReceiptDetails => 'STOCK_DETAILS_STOCK_RECEIPT_DETAILS';
   String get stockIssueDetails => 'STOCK_DETAILS_STOCK_ISSUE_DETAILS';
   String get stockReturnDetails => 'STOCK_DETAILS_STOCK_RETURN_DETAILS';
