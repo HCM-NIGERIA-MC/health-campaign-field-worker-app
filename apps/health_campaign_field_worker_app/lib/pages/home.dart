@@ -466,6 +466,11 @@ class _HomePageState extends LocalizedState<HomePage> {
                   return validation["type"] == "scanLimit" &&
                       validation["type"] == "isGS1";
                 }).toList();
+                List deliveryCountFieldValidation = deliverySchemaData['pages']
+                            ['DeliveryDetails']['properties'][
+                        'DeliveryDetails_023f5613-1f51-42c9-a70e-d6127bff109d_newField1']
+                    ['validations'];
+
                 deliverySchemaData['pages']['DeliveryDetails']['properties']
                     ['scanner']['validations'] = [
                   ...filterScannerValidations,
@@ -478,6 +483,17 @@ class _HomePageState extends LocalizedState<HomePage> {
                     "type": "isGS1",
                     "value": true,
                     "message": "quantity exceeded"
+                  }
+                ];
+
+                deliverySchemaData['pages']['DeliveryDetails']['properties'][
+                        'DeliveryDetails_023f5613-1f51-42c9-a70e-d6127bff109d_newField1']
+                    ['validations'] = [
+                  ...deliveryCountFieldValidation,
+                  {
+                    "type": "pattern",
+                    "value": r"^[0-9]*$",
+                    "message": "invalid input"
                   }
                 ];
 
