@@ -75,12 +75,7 @@ class CustomStockDetailsPageState
         Validators.min(0),
         Validators.max(10000),
       ]),
-      _transactionQuantityUnitKey: FormControl<int>(validators: [
-        Validators.number(),
-        Validators.required,
-        Validators.min(0),
-        Validators.max(10000),
-      ]),
+      _transactionQuantityUnitKey: FormControl<int>(validators: []),
       _transactionReasonKey: FormControl<String>(),
       // _waybillNumberKey: FormControl<String>(
       //   validators: [],
@@ -214,6 +209,16 @@ class CustomStockDetailsPageState
                         scannedResources.addAll(scannerState.barCodes);
                       }
 
+                      if (entryType == StockRecordEntryType.receipt) {
+                        form
+                            .control(_transactionQuantityUnitKey)
+                            .setValidators([
+                          Validators.number(),
+                          Validators.min(0),
+                          Validators.max(10000),
+                        ]);
+                      }
+
                       return ScrollableContent(
                         header: Column(children: [
                           BackNavigationHelpHeaderWidget(
@@ -250,6 +255,8 @@ class CustomStockDetailsPageState
                                 form.control(_deliveryTeamKey).value =
                                     scannerState.qrCodes.isNotEmpty
                                         ? scannerState.qrCodes.last
+                                            .split("||")
+                                            .last
                                         : '';
                               }
                               return DigitButton(
@@ -790,9 +797,12 @@ class CustomStockDetailsPageState
                                             name: 'CDD Team',
                                           ),
                                         ];
-                                        teamFacilities.addAll(
-                                          facilities,
-                                        );
+                                        if (entryType ==
+                                            StockRecordEntryType.dispatch) {
+                                          teamFacilities.addAll(
+                                            facilities,
+                                          );
+                                        }
                                         return Column(
                                           children: [
                                             const SizedBox(
@@ -809,8 +819,11 @@ class CustomStockDetailsPageState
                                                     .router
                                                     .push(InventoryFacilitySelectionRoute(
                                                         facilities: entryType ==
-                                                                StockRecordEntryType
-                                                                    .dispatch
+                                                                    StockRecordEntryType
+                                                                        .dispatch ||
+                                                                entryType ==
+                                                                    StockRecordEntryType
+                                                                        .returned
                                                             ? teamFacilities
                                                             : facilities)) as FacilityModel?;
 
@@ -881,52 +894,108 @@ class CustomStockDetailsPageState
                               // TODO: as this case i need to set when occurring
                               Visibility(
                                 visible: deliveryTeamSelected,
-                                child: ReactiveWrapperField(
-                                    formControlName: _deliveryTeamKey,
-                                    builder: (field) {
-                                      return InputField(
-                                        type: InputType.text,
-                                        label: localizations.translate(
-                                          i18.stockReconciliationDetails
-                                              .teamCodeLabel,
+                                child: InkWell(
+                                  onTap: () {
+                                    Navigator.of(context).push(
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            const DigitScannerPage(
+                                          quantity: 1,
+                                          isGS1code: false,
+                                          singleValue: false,
                                         ),
-                                        isRequired: deliveryTeamSelected,
-                                        suffixIcon: Icons.qr_code_2,
-                                        onSuffixTap: (value) {
-                                          //[TODO: Add route to auto_route]
-                                          Navigator.of(context).push(
-                                            MaterialPageRoute(
-                                              builder: (context) =>
-                                                  const DigitScannerPage(
-                                                quantity: 5,
-                                                isGS1code: false,
-                                                singleValue: false,
-                                              ),
-                                              settings: const RouteSettings(
-                                                  name: '/qr-scanner'),
+                                        settings: const RouteSettings(
+                                            name: '/qr-scanner'),
+                                      ),
+                                    );
+                                  },
+                                  child: IgnorePointer(
+                                    child: ReactiveWrapperField(
+                                        formControlName: _deliveryTeamKey,
+                                        builder: (field) {
+                                          return InputField(
+                                            type: InputType.search,
+                                            label: localizations.translate(
+                                              i18.stockReconciliationDetails
+                                                  .teamCodeLabel,
                                             ),
-                                          );
-                                        },
-                                        onChange: (val) {
-                                          String? value = val;
-                                          if (value != null &&
-                                              value.trim().isNotEmpty) {
-                                            context
-                                                .read<DigitScannerBloc>()
-                                                .add(
-                                                  DigitScannerEvent
-                                                      .handleScanner(
-                                                    barCode: [],
-                                                    qrCode: [value],
-                                                    manualCode: value,
+                                            initialValue: form
+                                                .control(_deliveryTeamKey)
+                                                .value,
+                                            isRequired: deliveryTeamSelected,
+                                            suffixIcon: Icons.qr_code_2,
+                                            onSuffixTap: (value) {
+                                              //[TODO: Add route to auto_route]
+                                              Navigator.of(context).push(
+                                                MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      const DigitScannerPage(
+                                                    quantity: 1,
+                                                    isGS1code: false,
+                                                    singleValue: false,
                                                   ),
-                                                );
-                                          } else {
-                                            clearQRCodes();
-                                          }
-                                        },
-                                      );
-                                    }),
+                                                  settings: const RouteSettings(
+                                                      name: '/qr-scanner'),
+                                                ),
+                                              );
+                                            },
+                                            // onChange: (val) {
+                                            //   String? value = val;
+                                            //   if (value != null &&
+                                            //       value.trim().isNotEmpty) {
+                                            //     context
+                                            //         .read<DigitScannerBloc>()
+                                            //         .add(
+                                            //           DigitScannerEvent
+                                            //               .handleScanner(
+                                            //             barCode: [],
+                                            //             qrCode: [value],
+                                            //             manualCode: value,
+                                            //           ),
+                                            //         );
+                                            //   } else {
+                                            //     clearQRCodes();
+                                            //   }
+                                            // },
+                                          );
+                                        }),
+                                  ),
+                                ),
+                                // Visibility(
+                                //   visible: deliveryTeamSelected,
+                                //   child: InkWell(
+                                //     onTap: () {
+                                //       Navigator.of(context).push(
+                                //         MaterialPageRoute(
+                                //           builder: (context) =>
+                                //               const DigitScannerPage(
+                                //             quantity: 1,
+                                //             isGS1code: false,
+                                //             singleValue: false,
+                                //           ),
+                                //           settings: const RouteSettings(
+                                //               name: '/qr-scanner'),
+                                //         ),
+                                //       );
+                                //     },
+                                //     child: IgnorePointer(
+                                //       child: ReactiveWrapperField(
+                                //           formControlName: _deliveryTeamKey,
+                                //           builder: (field) {
+                                //             return InputField(
+                                //               type: InputType.text,
+                                //               label: localizations.translate(
+                                //                 i18.stockReconciliationDetails
+                                //                     .teamCodeLabel,
+                                //               ),
+                                //               initialValue: form,
+                                //               onChange: (val) {
+                                //                 field.control.value = val;
+                                //               },
+                                //             );
+                                //           }),
+                                //     ),
+                                //   ),
                                 // DigitTextFormField(
                                 //   label: localizations.translate(
                                 //     i18.stockReconciliationDetails
@@ -1019,52 +1088,56 @@ class CustomStockDetailsPageState
                                       ),
                                     );
                                   }),
-                              ReactiveWrapperField(
-                                  formControlName: _transactionQuantityUnitKey,
-                                  validationMessages: {
-                                    "number": (object) =>
-                                        localizations.translate(
-                                          '${quantityUnitLabel}_ERROR',
-                                        ),
-                                    "max": (object) => localizations.translate(
-                                          '${quantityUnitLabel}_MAX_ERROR',
-                                        ),
-                                    "min": (object) => localizations.translate(
-                                          '${quantityUnitLabel}_MIN_ERROR',
-                                        ),
-                                  },
-                                  showErrors: (control) =>
-                                      control.invalid && control.touched,
-                                  builder: (field) {
-                                    return LabeledField(
-                                      label: localizations.translate(
-                                        quantityUnitLabel,
-                                      ),
-                                      isRequired: true,
-                                      child: BaseDigitFormInput(
-                                        errorMessage: field.errorText,
-                                        keyboardType: const TextInputType
-                                            .numberWithOptions(
-                                          decimal: true,
-                                        ),
-                                        inputFormatters: [
-                                          FilteringTextInputFormatter.allow(
-                                            RegExp(r'[0-9]'),
+                              if (entryType == StockRecordEntryType.receipt)
+                                ReactiveWrapperField(
+                                    formControlName:
+                                        _transactionQuantityUnitKey,
+                                    validationMessages: {
+                                      "number": (object) =>
+                                          localizations.translate(
+                                            '${quantityUnitLabel}_ERROR',
                                           ),
-                                          LengthLimitingTextInputFormatter(9),
-                                        ],
-                                        onChange: (val) {
-                                          field.control.markAsTouched();
-                                          if (val != '') {
-                                            field.control.value =
-                                                int.parse(val);
-                                          } else {
-                                            field.control.value = null;
-                                          }
-                                        },
-                                      ),
-                                    );
-                                  }),
+                                      "max": (object) =>
+                                          localizations.translate(
+                                            '${quantityUnitLabel}_MAX_ERROR',
+                                          ),
+                                      "min": (object) =>
+                                          localizations.translate(
+                                            '${quantityUnitLabel}_MIN_ERROR',
+                                          ),
+                                    },
+                                    showErrors: (control) =>
+                                        control.invalid && control.touched,
+                                    builder: (field) {
+                                      return LabeledField(
+                                        label: localizations.translate(
+                                          quantityUnitLabel,
+                                        ),
+                                        isRequired: true,
+                                        child: BaseDigitFormInput(
+                                          errorMessage: field.errorText,
+                                          keyboardType: const TextInputType
+                                              .numberWithOptions(
+                                            decimal: true,
+                                          ),
+                                          inputFormatters: [
+                                            FilteringTextInputFormatter.allow(
+                                              RegExp(r'[0-9]'),
+                                            ),
+                                            LengthLimitingTextInputFormatter(9),
+                                          ],
+                                          onChange: (val) {
+                                            field.control.markAsTouched();
+                                            if (val != '') {
+                                              field.control.value =
+                                                  int.parse(val);
+                                            } else {
+                                              field.control.value = null;
+                                            }
+                                          },
+                                        ),
+                                      );
+                                    }),
                               // if (isWareHouseMgr)
                               //   ReactiveWrapperField(
                               //       formControlName: _waybillNumberKey,
@@ -1232,7 +1305,6 @@ class CustomStockDetailsPageState
                                     label: localizations.translate(
                                       module.commentsLabel,
                                     ),
-                                    isRequired: true,
                                     child: DigitDropdown(
                                       errorMessage: field.errorText,
                                       emptyItemText: localizations.translate(
