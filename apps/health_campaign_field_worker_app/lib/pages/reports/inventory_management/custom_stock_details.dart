@@ -58,10 +58,7 @@ class CustomStockDetailsPageState
   List<GS1Barcode> scannedResources = [];
   TextEditingController controller1 = TextEditingController();
 
-  List<String> commentsOptions = [
-    'Livraison conforme',
-    'Livraison non conforme',
-  ];
+  List<String> commentsOptions = [];
 
   FormGroup _form(StockRecordEntryType stockType) {
     return fb.group({
@@ -133,6 +130,7 @@ class CustomStockDetailsPageState
               },
               builder: (context, stockState) {
                 StockRecordEntryType entryType = stockState.entryType;
+                setCommentsOptions(entryType);
 
                 const module = i18.stockDetails;
 
@@ -1088,56 +1086,7 @@ class CustomStockDetailsPageState
                                       ),
                                     );
                                   }),
-                              if (entryType == StockRecordEntryType.receipt)
-                                ReactiveWrapperField(
-                                    formControlName:
-                                        _transactionQuantityUnitKey,
-                                    validationMessages: {
-                                      "number": (object) =>
-                                          localizations.translate(
-                                            '${quantityUnitLabel}_ERROR',
-                                          ),
-                                      "max": (object) =>
-                                          localizations.translate(
-                                            '${quantityUnitLabel}_MAX_ERROR',
-                                          ),
-                                      "min": (object) =>
-                                          localizations.translate(
-                                            '${quantityUnitLabel}_MIN_ERROR',
-                                          ),
-                                    },
-                                    showErrors: (control) =>
-                                        control.invalid && control.touched,
-                                    builder: (field) {
-                                      return LabeledField(
-                                        label: localizations.translate(
-                                          quantityUnitLabel,
-                                        ),
-                                        isRequired: true,
-                                        child: BaseDigitFormInput(
-                                          errorMessage: field.errorText,
-                                          keyboardType: const TextInputType
-                                              .numberWithOptions(
-                                            decimal: true,
-                                          ),
-                                          inputFormatters: [
-                                            FilteringTextInputFormatter.allow(
-                                              RegExp(r'[0-9]'),
-                                            ),
-                                            LengthLimitingTextInputFormatter(9),
-                                          ],
-                                          onChange: (val) {
-                                            field.control.markAsTouched();
-                                            if (val != '') {
-                                              field.control.value =
-                                                  int.parse(val);
-                                            } else {
-                                              field.control.value = null;
-                                            }
-                                          },
-                                        ),
-                                      );
-                                    }),
+
                               // if (isWareHouseMgr)
                               //   ReactiveWrapperField(
                               //       formControlName: _waybillNumberKey,
@@ -1302,6 +1251,7 @@ class CustomStockDetailsPageState
                                     control.invalid && control.touched,
                                 builder: (field) {
                                   return LabeledField(
+                                    isRequired: true,
                                     label: localizations.translate(
                                       module.commentsLabel,
                                     ),
@@ -1442,6 +1392,43 @@ class CustomStockDetailsPageState
         ),
       ),
     );
+  }
+
+  void setCommentsOptions(StockRecordEntryType stockEntryType) {
+    switch (stockEntryType) {
+      case StockRecordEntryType.dispatch:
+        commentsOptions = [
+          'Ravitaillement initial',
+          'Ravitaillement additionnel',
+        ];
+        break;
+      case StockRecordEntryType.returned:
+        commentsOptions = [
+          'Quantité retournée conforme',
+          'Quantité retournée non conforme',
+        ];
+        break;
+      case StockRecordEntryType.loss:
+        commentsOptions = [
+          'Perte déclarée',
+          'Perte non déclarée',
+        ];
+        break;
+      case StockRecordEntryType.damaged:
+        commentsOptions = [
+          'Endommagée déclarée',
+          'Endommagée non déclarée',
+        ];
+        break;
+      case StockRecordEntryType.receipt:
+        commentsOptions = [
+          'Livraison conforme',
+          'Livraison non conforme',
+        ];
+        break;
+      default:
+        commentsOptions = [];
+    }
   }
 
   void clearQRCodes() {
