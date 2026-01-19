@@ -5,6 +5,7 @@ import 'package:digit_data_model/utils/app_exception.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:intl/intl.dart';
+import 'package:inventory_management/blocs/inventory_report.dart';
 import 'package:inventory_management/utils/utils.dart';
 
 import 'package:inventory_management/utils/typedefs.dart';
@@ -197,13 +198,4 @@ class InventoryReportState with _$InventoryReportState {
   const factory InventoryReportState.stockReconciliation({
     @Default({}) Map<String, List<StockReconciliationModel>> data,
   }) = InventoryReportStockReconciliationState;
-}
-
-enum InventoryReportType {
-  receipt,
-  dispatch,
-  returned,
-  damage,
-  loss,
-  reconciliation,
 }
