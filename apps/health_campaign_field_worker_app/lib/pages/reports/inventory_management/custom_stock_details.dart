@@ -1262,7 +1262,8 @@ class CustomStockDetailsPageState
                                       ),
                                       items: commentsOptions.map((comment) {
                                         return DropdownItem(
-                                          name: comment,
+                                          name:
+                                              localizations.translate(comment),
                                           code: comment,
                                         );
                                       }).toList(),
@@ -1394,36 +1395,38 @@ class CustomStockDetailsPageState
     );
   }
 
-  void setCommentsOptions(StockRecordEntryType stockEntryType) {
+  void setCommentsOptions(
+    StockRecordEntryType stockEntryType,
+  ) {
     switch (stockEntryType) {
       case StockRecordEntryType.dispatch:
         commentsOptions = [
-          'Ravitaillement initial',
-          'Ravitaillement additionnel',
+          i18_local.stockDetails.dispatchInitialSupply,
+          i18_local.stockDetails.dispatchAdditionalSupply,
         ];
         break;
       case StockRecordEntryType.returned:
         commentsOptions = [
-          'Quantité retournée conforme',
-          'Quantité retournée non conforme',
+          i18_local.stockDetails.returnedCompliant,
+          i18_local.stockDetails.returnedNonCompliant,
         ];
         break;
       case StockRecordEntryType.loss:
         commentsOptions = [
-          'Perte déclarée',
-          'Perte non déclarée',
+          i18_local.stockDetails.lossDeclared,
+          i18_local.stockDetails.lossNotDeclared,
         ];
         break;
       case StockRecordEntryType.damaged:
         commentsOptions = [
-          'Endommagée déclarée',
-          'Endommagée non déclarée',
+          i18_local.stockDetails.damageDeclared,
+          i18_local.stockDetails.damageNotDeclared,
         ];
         break;
       case StockRecordEntryType.receipt:
         commentsOptions = [
-          'Livraison conforme',
-          'Livraison non conforme',
+          i18_local.stockDetails.receiptCompliant,
+          i18_local.stockDetails.receiptNonCompliant,
         ];
         break;
       default:
