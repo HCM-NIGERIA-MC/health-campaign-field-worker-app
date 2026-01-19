@@ -19,6 +19,7 @@ import 'package:flutter/material.dart';
 import 'package:inventory_management/router/inventory_router.dart';
 import 'package:inventory_management/router/inventory_router.gm.dart';
 
+import '../blocs/inventory_management/custom_inventory_report.dart';
 import '../blocs/localization/app_localization.dart';
 import '../pages/acknowledgement.dart';
 import '../pages/authenticated.dart';

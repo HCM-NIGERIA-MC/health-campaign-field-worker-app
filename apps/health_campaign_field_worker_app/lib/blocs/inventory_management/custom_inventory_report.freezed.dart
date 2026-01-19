@@ -18,8 +18,8 @@ final _privateConstructorUsedError = UnsupportedError(
 mixin _$InventoryReportEvent {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function(InventoryReportType reportType, String facilityId,
-            String productVariantId)
+    required TResult Function(CustomInventoryReport reportType,
+            String facilityId, String productVariantId)
         loadStockData,
     required TResult Function(String facilityId, String productVariantId)
         loadStockReconciliationData,
@@ -28,7 +28,7 @@ mixin _$InventoryReportEvent {
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function(InventoryReportType reportType, String facilityId,
+    TResult? Function(CustomInventoryReport reportType, String facilityId,
             String productVariantId)?
         loadStockData,
     TResult? Function(String facilityId, String productVariantId)?
@@ -38,7 +38,7 @@ mixin _$InventoryReportEvent {
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function(InventoryReportType reportType, String facilityId,
+    TResult Function(CustomInventoryReport reportType, String facilityId,
             String productVariantId)?
         loadStockData,
     TResult Function(String facilityId, String productVariantId)?
@@ -103,7 +103,7 @@ abstract class _$$InventoryReportLoadStockDataEventImplCopyWith<$Res> {
       __$$InventoryReportLoadStockDataEventImplCopyWithImpl<$Res>;
   @useResult
   $Res call(
-      {InventoryReportType reportType,
+      {CustomInventoryReport reportType,
       String facilityId,
       String productVariantId});
 }
@@ -129,7 +129,7 @@ class __$$InventoryReportLoadStockDataEventImplCopyWithImpl<$Res>
       reportType: null == reportType
           ? _value.reportType
           : reportType // ignore: cast_nullable_to_non_nullable
-              as InventoryReportType,
+              as CustomInventoryReport,
       facilityId: null == facilityId
           ? _value.facilityId
           : facilityId // ignore: cast_nullable_to_non_nullable
@@ -152,7 +152,7 @@ class _$InventoryReportLoadStockDataEventImpl
       required this.productVariantId});
 
   @override
-  final InventoryReportType reportType;
+  final CustomInventoryReport reportType;
   @override
   final String facilityId;
   @override
@@ -191,8 +191,8 @@ class _$InventoryReportLoadStockDataEventImpl
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function(InventoryReportType reportType, String facilityId,
-            String productVariantId)
+    required TResult Function(CustomInventoryReport reportType,
+            String facilityId, String productVariantId)
         loadStockData,
     required TResult Function(String facilityId, String productVariantId)
         loadStockReconciliationData,
@@ -204,7 +204,7 @@ class _$InventoryReportLoadStockDataEventImpl
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function(InventoryReportType reportType, String facilityId,
+    TResult? Function(CustomInventoryReport reportType, String facilityId,
             String productVariantId)?
         loadStockData,
     TResult? Function(String facilityId, String productVariantId)?
@@ -217,7 +217,7 @@ class _$InventoryReportLoadStockDataEventImpl
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function(InventoryReportType reportType, String facilityId,
+    TResult Function(CustomInventoryReport reportType, String facilityId,
             String productVariantId)?
         loadStockData,
     TResult Function(String facilityId, String productVariantId)?
@@ -274,12 +274,12 @@ class _$InventoryReportLoadStockDataEventImpl
 abstract class InventoryReportLoadStockDataEvent
     implements InventoryReportEvent {
   const factory InventoryReportLoadStockDataEvent(
-          {required final InventoryReportType reportType,
+          {required final CustomInventoryReport reportType,
           required final String facilityId,
           required final String productVariantId}) =
       _$InventoryReportLoadStockDataEventImpl;
 
-  InventoryReportType get reportType;
+  CustomInventoryReport get reportType;
   String get facilityId;
   String get productVariantId;
   @JsonKey(ignore: true)
@@ -375,8 +375,8 @@ class _$InventoryReportLoadStockReconciliationDataEventImpl
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function(InventoryReportType reportType, String facilityId,
-            String productVariantId)
+    required TResult Function(CustomInventoryReport reportType,
+            String facilityId, String productVariantId)
         loadStockData,
     required TResult Function(String facilityId, String productVariantId)
         loadStockReconciliationData,
@@ -388,7 +388,7 @@ class _$InventoryReportLoadStockReconciliationDataEventImpl
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function(InventoryReportType reportType, String facilityId,
+    TResult? Function(CustomInventoryReport reportType, String facilityId,
             String productVariantId)?
         loadStockData,
     TResult? Function(String facilityId, String productVariantId)?
@@ -401,7 +401,7 @@ class _$InventoryReportLoadStockReconciliationDataEventImpl
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function(InventoryReportType reportType, String facilityId,
+    TResult Function(CustomInventoryReport reportType, String facilityId,
             String productVariantId)?
         loadStockData,
     TResult Function(String facilityId, String productVariantId)?
@@ -512,8 +512,8 @@ class _$InventoryReportLoadingEventImpl implements InventoryReportLoadingEvent {
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function(InventoryReportType reportType, String facilityId,
-            String productVariantId)
+    required TResult Function(CustomInventoryReport reportType,
+            String facilityId, String productVariantId)
         loadStockData,
     required TResult Function(String facilityId, String productVariantId)
         loadStockReconciliationData,
@@ -525,7 +525,7 @@ class _$InventoryReportLoadingEventImpl implements InventoryReportLoadingEvent {
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function(InventoryReportType reportType, String facilityId,
+    TResult? Function(CustomInventoryReport reportType, String facilityId,
             String productVariantId)?
         loadStockData,
     TResult? Function(String facilityId, String productVariantId)?
@@ -538,7 +538,7 @@ class _$InventoryReportLoadingEventImpl implements InventoryReportLoadingEvent {
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function(InventoryReportType reportType, String facilityId,
+    TResult Function(CustomInventoryReport reportType, String facilityId,
             String productVariantId)?
         loadStockData,
     TResult Function(String facilityId, String productVariantId)?

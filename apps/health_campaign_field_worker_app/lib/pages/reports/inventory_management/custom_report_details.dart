@@ -28,7 +28,7 @@ import '../../../blocs/inventory_management/custom_inventory_report.dart';
 
 @RoutePage()
 class CustomInventoryReportDetailsPage extends LocalizedStatefulWidget {
-  final InventoryReportType reportType;
+  final CustomInventoryReport reportType;
 
   const CustomInventoryReportDetailsPage({
     super.key,
@@ -69,7 +69,7 @@ class CustomInventoryReportDetailsPageState
   /// @param inventoryReportBloc The [CustomInventoryReportBloc] to which the events are dispatched.
   void handleSelection(
       FormGroup form, CustomInventoryReportBloc inventoryReportBloc) {
-    final event = widget.reportType == InventoryReportType.reconciliation
+    final event = widget.reportType == CustomInventoryReport.reconciliation
         ? InventoryReportLoadStockReconciliationDataEvent(
             facilityId: form.control(_facilityKey).value != null
                 ? selectedFacilityId!
@@ -491,16 +491,16 @@ class CustomInventoryReportDetailsPageState
                                                                 transactingPartyKey,
                                                             value: widget
                                                                             .reportType ==
-                                                                        InventoryReportType
+                                                                        CustomInventoryReport
                                                                             .receipt ||
                                                                     widget.reportType ==
-                                                                        InventoryReportType
+                                                                        CustomInventoryReport
                                                                             .dispatch ||
                                                                     widget.reportType ==
-                                                                        InventoryReportType
+                                                                        CustomInventoryReport
                                                                             .loss ||
                                                                     widget.reportType ==
-                                                                        InventoryReportType
+                                                                        CustomInventoryReport
                                                                             .damage
                                                                 ? model.receiverId ??
                                                                     model
@@ -715,22 +715,22 @@ class CustomInventoryReportDetailsPageState
   String get title {
     String value;
     switch (widget.reportType) {
-      case InventoryReportType.receipt:
+      case CustomInventoryReport.receipt:
         value = i18.inventoryReportDetails.receiptReportTitle;
         break;
-      case InventoryReportType.dispatch:
+      case CustomInventoryReport.dispatch:
         value = i18.inventoryReportDetails.dispatchReportTitle;
         break;
-      case InventoryReportType.returned:
+      case CustomInventoryReport.returned:
         value = i18.inventoryReportDetails.returnedReportTitle;
         break;
-      case InventoryReportType.damage:
+      case CustomInventoryReport.damage:
         value = i18.inventoryReportDetails.damageReportTitle;
         break;
-      case InventoryReportType.loss:
+      case CustomInventoryReport.loss:
         value = i18.inventoryReportDetails.lossReportTitle;
         break;
-      case InventoryReportType.reconciliation:
+      case CustomInventoryReport.reconciliation:
         value = i18.inventoryReportDetails.reconciliationReportTitle;
         break;
     }
@@ -741,16 +741,16 @@ class CustomInventoryReportDetailsPageState
   String get quantityLabel {
     String value;
     switch (widget.reportType) {
-      case InventoryReportType.receipt:
+      case CustomInventoryReport.receipt:
         value = i18.inventoryReportDetails.receiptQuantityLabel;
         break;
-      case InventoryReportType.dispatch:
+      case CustomInventoryReport.dispatch:
         value = i18.inventoryReportDetails.dispatchQuantityLabel;
         break;
-      case InventoryReportType.returned:
+      case CustomInventoryReport.returned:
         value = i18.inventoryReportDetails.returnedQuantityLabel;
         break;
-      case InventoryReportType.damage:
+      case CustomInventoryReport.damage:
         value = i18.inventoryReportDetails.damagedQuantityLabel;
         break;
       default:
@@ -765,16 +765,16 @@ class CustomInventoryReportDetailsPageState
     String value;
 
     switch (widget.reportType) {
-      case InventoryReportType.receipt:
+      case CustomInventoryReport.receipt:
         value = i18.inventoryReportDetails.receiptTransactingPartyLabel;
         break;
-      case InventoryReportType.dispatch:
+      case CustomInventoryReport.dispatch:
         value = i18.inventoryReportDetails.dispatchTransactingPartyLabel;
         break;
-      case InventoryReportType.returned:
+      case CustomInventoryReport.returned:
         value = i18.inventoryReportDetails.returnedTransactingPartyLabel;
         break;
-      case InventoryReportType.damage:
+      case CustomInventoryReport.damage:
         value = i18.inventoryReportDetails.damagedTransactingPartyLabel;
         break;
       default:

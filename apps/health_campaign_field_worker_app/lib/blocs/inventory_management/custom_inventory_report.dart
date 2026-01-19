@@ -42,7 +42,7 @@ class CustomInventoryReportBloc
     if (facilityId.trim().isEmpty || productVariantId.trim().isEmpty) {
       emit(const InventoryReportEmptyState());
     } else {
-      if (reportType == InventoryReportType.reconciliation) {
+      if (reportType == CustomInventoryReport.reconciliation) {
         throw AppException(
           'Invalid report type: ${event.reportType}',
         );
@@ -54,22 +54,22 @@ class CustomInventoryReportBloc
       String? senderId;
       String? receiverId;
 
-      if (reportType == InventoryReportType.receipt) {
+      if (reportType == CustomInventoryReport.receipt) {
         transactionType = [TransactionType.received.toValue()];
         transactionReason = [TransactionReason.received.toValue()];
         receiverId = facilityId;
         senderId = null;
-      } else if (reportType == InventoryReportType.dispatch) {
+      } else if (reportType == CustomInventoryReport.dispatch) {
         transactionType = [TransactionType.dispatched.toValue()];
         transactionReason = [];
         receiverId = null;
         senderId = facilityId;
-      } else if (reportType == InventoryReportType.returned) {
+      } else if (reportType == CustomInventoryReport.returned) {
         transactionType = [TransactionType.received.toValue()];
         transactionReason = [TransactionReason.returned.toValue()];
         receiverId = facilityId;
         senderId = null;
-      } else if (reportType == InventoryReportType.damage) {
+      } else if (reportType == CustomInventoryReport.damage) {
         transactionType = [TransactionType.dispatched.toValue()];
         transactionReason = [
           TransactionReason.damagedInStorage.toValue(),
@@ -77,7 +77,7 @@ class CustomInventoryReportBloc
         ];
         receiverId = facilityId;
         senderId = null;
-      } else if (reportType == InventoryReportType.loss) {
+      } else if (reportType == CustomInventoryReport.loss) {
         transactionType = [TransactionType.dispatched.toValue()];
         transactionReason = [
           TransactionReason.lostInStorage.toValue(),
@@ -113,7 +113,7 @@ class CustomInventoryReportBloc
       // Added data filter for dispatch because of no transaction reasons
       // We are removing all the loss and damage stocks from here
       var newData = data;
-      if (reportType == InventoryReportType.dispatch && data.isNotEmpty) {
+      if (reportType == CustomInventoryReport.dispatch && data.isNotEmpty) {
         newData = data.where((e) {
           return [
                 TransactionReason.damagedInStorage.toValue(),
@@ -172,7 +172,7 @@ class CustomInventoryReportBloc
 @freezed
 class InventoryReportEvent with _$InventoryReportEvent {
   const factory InventoryReportEvent.loadStockData({
-    required InventoryReportType reportType,
+    required CustomInventoryReport reportType,
     required String facilityId,
     required String productVariantId,
   }) = InventoryReportLoadStockDataEvent;
@@ -199,7 +199,7 @@ class InventoryReportState with _$InventoryReportState {
   }) = InventoryReportStockReconciliationState;
 }
 
-enum InventoryReportType {
+enum CustomInventoryReport {
   receipt,
   dispatch,
   returned,
