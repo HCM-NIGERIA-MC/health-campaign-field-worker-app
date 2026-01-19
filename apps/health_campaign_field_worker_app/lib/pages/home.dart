@@ -466,6 +466,11 @@ class _HomePageState extends LocalizedState<HomePage> {
                   return validation["type"] == "scanLimit" &&
                       validation["type"] == "isGS1";
                 }).toList();
+
+                List deliveryCommentValidation = deliverySchemaData['pages']
+                        ['DeliveryDetails']['properties']['deliveryComment']
+                    ['validations'];
+
                 List deliveryCountFieldValidation = deliverySchemaData['pages']
                             ['DeliveryDetails']['properties'][
                         'DeliveryDetails_023f5613-1f51-42c9-a70e-d6127bff109d_newField1']
@@ -483,6 +488,11 @@ class _HomePageState extends LocalizedState<HomePage> {
                     "type": "isGS1",
                     "value": true,
                     "message": "quantity exceeded"
+                  },
+                  {
+                    "type": "applicationIdentifier",
+                    "value": "21",
+                    "message": "quantity exceeded"
                   }
                 ];
 
@@ -493,6 +503,19 @@ class _HomePageState extends LocalizedState<HomePage> {
                   {
                     "type": "pattern",
                     "value": r"^[0-9]*$",
+                    "message": "invalid input"
+                  }
+                ];
+
+                deliverySchemaData['pages']['DeliveryDetails']['properties']
+                    ['deliveryComment']['validations'] = [
+                  ...deliveryCommentValidation,
+                  {
+                    "type": "matchValue",
+                    "value": [
+                      "DeliveryDetails_023f5613-1f51-42c9-a70e-d6127bff109d_newField1",
+                      "resourceCard.quantityDistributed"
+                    ],
                     "message": "invalid input"
                   }
                 ];
