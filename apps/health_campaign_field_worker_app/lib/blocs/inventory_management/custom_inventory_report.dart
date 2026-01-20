@@ -5,6 +5,7 @@ import 'package:digit_data_model/utils/app_exception.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:intl/intl.dart';
+import 'package:inventory_management/blocs/inventory_report.dart';
 import 'package:inventory_management/utils/utils.dart';
 
 import 'package:inventory_management/utils/typedefs.dart';
@@ -75,16 +76,16 @@ class CustomInventoryReportBloc
           TransactionReason.damagedInStorage.toValue(),
           TransactionReason.damagedInTransit.toValue(),
         ];
-        receiverId = facilityId;
-        senderId = null;
+        receiverId = null;
+        senderId = facilityId;
       } else if (reportType == CustomInventoryReport.loss) {
         transactionType = [TransactionType.dispatched.toValue()];
         transactionReason = [
           TransactionReason.lostInStorage.toValue(),
           TransactionReason.lostInTransit.toValue(),
         ];
-        receiverId = facilityId;
-        senderId = null;
+        receiverId = null;
+        senderId = facilityId;
       }
       final data = (receiverId != null
               ? await stockRepository.search(

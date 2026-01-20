@@ -7,6 +7,9 @@ import 'package:digit_ui_components/widgets/atoms/input_wrapper.dart';
 import 'package:digit_ui_components/widgets/molecules/digit_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:inventory_management/blocs/app_localization.dart';
+import 'package:inventory_management/blocs/inventory_report.dart'
+    show InventoryReportType;
 import 'package:inventory_management/router/inventory_router.gm.dart';
 import 'package:inventory_management/utils/extensions/extensions.dart';
 import 'package:reactive_forms/reactive_forms.dart';
@@ -25,6 +28,8 @@ import 'package:inventory_management/utils/utils.dart';
 import 'package:inventory_management/widgets/back_navigation_help_header.dart';
 
 import '../../../blocs/inventory_management/custom_inventory_report.dart';
+import '../../../blocs/localization/app_localization.dart';
+import '../../../utils/constants.dart';
 
 @RoutePage()
 class CustomInventoryReportDetailsPage extends LocalizedStatefulWidget {
@@ -502,14 +507,20 @@ class CustomInventoryReportDetailsPageState
                                                                     widget.reportType ==
                                                                         CustomInventoryReport
                                                                             .damage
-                                                                ? model.receiverId ??
-                                                                    model
-                                                                        .receiverType ??
-                                                                    ''
-                                                                : model.senderId ??
-                                                                    model
-                                                                        .receiverType ??
-                                                                    '',
+                                                                ? _buildTransactingPartyLabel(
+                                                                    localizations,
+                                                                    isReceiver:
+                                                                        true,
+                                                                    model:
+                                                                        model,
+                                                                  )
+                                                                : _buildTransactingPartyLabel(
+                                                                    localizations,
+                                                                    isReceiver:
+                                                                        false,
+                                                                    model:
+                                                                        model,
+                                                                  ),
                                                           ),
                                                         ],
                                                       ),
@@ -814,6 +825,53 @@ class CustomInventoryReportDetailsPageState
       return '0';
     }
     return (double.tryParse(count.value.toString()) ?? 0.0).toStringAsFixed(0);
+  }
+
+  /// Builds a transacting party label (sender or receiver) with proper null checks.
+  ///
+  /// This method conditionally builds the translation key based on the model's
+  /// sender/receiver ID and type, ensuring that null IDs don't produce strings
+  /// like "FAC_null". It properly handles STAFF types and falls back to the
+  /// appropriate type when ID is null.
+  ///
+  /// @param localizations The localization instance for translating keys
+  /// @param isReceiver Whether to build the receiver label (true) or sender label (false)
+  /// @param model The stock model containing sender/receiver information
+  /// @return The translated party label
+  String _buildTransactingPartyLabel(
+    InventoryLocalization localizations, {
+    required bool isReceiver,
+    required StockModel model,
+  }) {
+    String key;
+
+    if (isReceiver) {
+      if (model.receiverType == "STAFF") {
+        key = model.additionalFields?.fields
+                .firstWhereOrNull(
+                    (e) => e.key == Constants.teamNameDeliveryTeam)
+                ?.value ??
+            'Delivery Team';
+      } else if (model.receiverId != null && model.receiverId!.isNotEmpty) {
+        key = 'FAC_${model.receiverId}';
+      } else {
+        key = model.receiverType ?? '';
+      }
+    } else {
+      if (model.senderType == "STAFF") {
+        key = model.additionalFields?.fields
+                .firstWhereOrNull(
+                    (e) => e.key == Constants.teamNameDeliveryTeam)
+                ?.value ??
+            'Delivery Team';
+      } else if (model.senderId != null && model.senderId!.isNotEmpty) {
+        key = 'FAC_${model.senderId}';
+      } else {
+        key = model.senderType ?? '';
+      }
+    }
+
+    return key.isEmpty ? '' : localizations.translate(key);
   }
 
   handleFacilitySelection(
