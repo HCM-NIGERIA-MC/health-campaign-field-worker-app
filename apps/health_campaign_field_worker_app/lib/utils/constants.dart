@@ -113,6 +113,7 @@ class Constants {
   static const String household = 'Household';
   static const String projectBeneficiary = 'ProjectBeneficiary';
   static const String bednetDistributed = 'BednetDistributed';
+  static const String teamNameDeliveryTeam = 'teamName';
 
   static const int targetHouseHold = 200;
 

@@ -27,6 +27,7 @@ import 'package:inventory_management/utils/utils.dart';
 import 'package:inventory_management/widgets/back_navigation_help_header.dart';
 
 import '../../../blocs/inventory_management/custom_inventory_report.dart';
+import '../../../utils/constants.dart';
 
 @RoutePage()
 class CustomInventoryReportDetailsPage extends LocalizedStatefulWidget {
@@ -491,10 +492,7 @@ class CustomInventoryReportDetailsPageState
                                                           DigitGridCell(
                                                             key:
                                                                 transactingPartyKey,
-                                                            value: widget
-                                                                            .reportType ==
-                                                                        CustomInventoryReport
-                                                                            .receipt ||
+                                                            value: widget.reportType == CustomInventoryReport.receipt ||
                                                                     widget.reportType ==
                                                                         CustomInventoryReport
                                                                             .dispatch ||
@@ -504,17 +502,25 @@ class CustomInventoryReportDetailsPageState
                                                                     widget.reportType ==
                                                                         CustomInventoryReport
                                                                             .damage
-                                                                ? localizations
-                                                                    .translate(
+                                                                ? model.senderType ==
+                                                                        "STAFF"
+                                                                    ? localizations.translate(
+                                                                        (model.additionalFields?.fields.firstWhereOrNull((e) => e.key == Constants.teamNameDeliveryTeam)?.value ??
+                                                                            'Delivery Team'))
+                                                                    : localizations.translate(
                                                                         'FAC_${model.receiverId}' ??
                                                                             model
                                                                                 .receiverType ??
                                                                             '')
-                                                                : localizations
-                                                                    .translate(
-                                                                        'FAC_${model.senderId}' ??
-                                                                            model.receiverType ??
-                                                                            ''),
+                                                                : model.senderType ==
+                                                                        "STAFF"
+                                                                    ? localizations.translate((model
+                                                                            .additionalFields
+                                                                            ?.fields
+                                                                            .firstWhereOrNull((e) => e.key == Constants.teamNameDeliveryTeam)
+                                                                            ?.value ??
+                                                                        'Delivery Team'))
+                                                                    : localizations.translate('FAC_${model.senderId}' ?? model.receiverType ?? ''),
                                                           ),
                                                         ],
                                                       ),

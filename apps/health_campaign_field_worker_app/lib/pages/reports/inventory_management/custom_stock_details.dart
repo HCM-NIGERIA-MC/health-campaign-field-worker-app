@@ -24,8 +24,10 @@ import 'package:inventory_management/widgets/localized.dart';
 import 'package:inventory_management/blocs/product_variant.dart';
 import 'package:inventory_management/blocs/record_stock.dart';
 import 'package:inventory_management/widgets/back_navigation_help_header.dart';
+import 'package:survey_form/utils/constants.dart';
 
 import '../../../utils/i18_key_constants.dart' as i18_local;
+import '../../../utils/constants.dart' as local_constants;
 
 @RoutePage()
 class CustomStockDetailsPage extends LocalizedStatefulWidget {
@@ -60,6 +62,7 @@ class CustomStockDetailsPageState
   List<String> commentsOptions = [];
 
   String? teamCode;
+  String? teamName;
   List<GS1Barcode> balesCode = [];
 
   FormGroup _form(StockRecordEntryType stockType) {
@@ -207,6 +210,9 @@ class CustomStockDetailsPageState
                       listener: (context, scannerState) {
                         teamCode = scannerState.qrCodes.isNotEmpty
                             ? scannerState.qrCodes.last.split("||").last
+                            : null;
+                        teamName = scannerState.qrCodes.isNotEmpty
+                            ? scannerState.qrCodes.last.split("||").first
                             : null;
 
                         balesCode = scannerState.barCodes;
@@ -518,6 +524,16 @@ class CustomStockDetailsPageState
                                                           AdditionalField(
                                                             'deliveryTeam',
                                                             deliveryTeamName,
+                                                          ),
+                                                        if (deliveryTeamSelected &&
+                                                            (teamName ?? '')
+                                                                .trim()
+                                                                .isNotEmpty)
+                                                          AdditionalField(
+                                                            local_constants
+                                                                .Constants
+                                                                .teamNameDeliveryTeam,
+                                                            teamName,
                                                           ),
                                                         if (hasLocationData) ...[
                                                           AdditionalField(
