@@ -502,7 +502,7 @@ class CustomInventoryReportDetailsPageState
                                                                     widget.reportType ==
                                                                         CustomInventoryReport
                                                                             .damage
-                                                                ? model.senderType ==
+                                                                ? model.receiverType ==
                                                                         "STAFF"
                                                                     ? localizations.translate(
                                                                         (model.additionalFields?.fields.firstWhereOrNull((e) => e.key == Constants.teamNameDeliveryTeam)?.value ??
