@@ -76,8 +76,8 @@ class CustomInventoryReportBloc
           TransactionReason.damagedInStorage.toValue(),
           TransactionReason.damagedInTransit.toValue(),
         ];
-        receiverId = facilityId;
-        senderId = null;
+        receiverId = null;
+        senderId = facilityId;
       } else if (reportType == CustomInventoryReport.loss) {
         transactionType = [TransactionType.dispatched.toValue()];
         transactionReason = [
