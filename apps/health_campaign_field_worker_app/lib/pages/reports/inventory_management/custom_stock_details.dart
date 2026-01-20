@@ -24,8 +24,10 @@ import 'package:inventory_management/widgets/localized.dart';
 import 'package:inventory_management/blocs/product_variant.dart';
 import 'package:inventory_management/blocs/record_stock.dart';
 import 'package:inventory_management/widgets/back_navigation_help_header.dart';
+import 'package:survey_form/utils/constants.dart';
 
 import '../../../utils/i18_key_constants.dart' as i18_local;
+import '../../../utils/constants.dart' as local_constants;
 
 @RoutePage()
 class CustomStockDetailsPage extends LocalizedStatefulWidget {
@@ -60,6 +62,7 @@ class CustomStockDetailsPageState
   List<String> commentsOptions = [];
 
   String? teamCode;
+  String? teamName;
   List<GS1Barcode> balesCode = [];
 
   FormGroup _form(StockRecordEntryType stockType) {
@@ -207,6 +210,9 @@ class CustomStockDetailsPageState
                       listener: (context, scannerState) {
                         teamCode = scannerState.qrCodes.isNotEmpty
                             ? scannerState.qrCodes.last.split("||").last
+                            : null;
+                        teamName = scannerState.qrCodes.isNotEmpty
+                            ? scannerState.qrCodes.last.split("||").first
                             : null;
 
                         balesCode = scannerState.barCodes;
@@ -519,6 +525,16 @@ class CustomStockDetailsPageState
                                                             'deliveryTeam',
                                                             deliveryTeamName,
                                                           ),
+                                                        if (deliveryTeamSelected &&
+                                                            (teamName ?? '')
+                                                                .trim()
+                                                                .isNotEmpty)
+                                                          AdditionalField(
+                                                            local_constants
+                                                                .Constants
+                                                                .teamNameDeliveryTeam,
+                                                            teamName,
+                                                          ),
                                                         if (hasLocationData) ...[
                                                           AdditionalField(
                                                             'lat',
@@ -531,7 +547,7 @@ class CustomStockDetailsPageState
                                                         ],
                                                         if (balesCode
                                                             .isNotEmpty)
-                                                          addBarCodesToFields(
+                                                          ...addBarCodesToFields(
                                                               balesCode),
                                                       ],
                                                     )
@@ -1430,15 +1446,20 @@ class CustomStockDetailsPageState
   ///
   /// @param barCodes The list of GS1Barcode objects to be processed.
   /// @return A map where the keys and values are joined by '|'.
-  AdditionalField addBarCodesToFields(List<GS1Barcode> barCodes) {
-    List<String> keys = [];
-    List<String> values = [];
+  List<AdditionalField> addBarCodesToFields(List<GS1Barcode> barCodes) {
+    List<AdditionalField> additionalFields = [];
     for (var element in barCodes) {
+      List<String> keys = [];
+      List<String> values = [];
       for (var e in element.elements.entries) {
-        keys.add(e.key.toString());
-        values.add(e.value.data.toString());
+        String key = e.key.toString();
+        if (key == "10" || key == "21" || key == "17") {
+          keys.add(key);
+          values.add(e.value.data.toString());
+        }
       }
+      additionalFields.add(AdditionalField(keys.join('|'), values.join('|')));
     }
-    return AdditionalField(keys.join('|'), values.join('|'));
+    return additionalFields;
   }
 }
