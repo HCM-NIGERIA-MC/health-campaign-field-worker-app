@@ -76,16 +76,16 @@ class CustomInventoryReportBloc
           TransactionReason.damagedInStorage.toValue(),
           TransactionReason.damagedInTransit.toValue(),
         ];
-        receiverId = facilityId;
-        senderId = null;
+        receiverId = null;
+        senderId = facilityId;
       } else if (reportType == InventoryReportType.loss) {
         transactionType = [TransactionType.dispatched.toValue()];
         transactionReason = [
           TransactionReason.lostInStorage.toValue(),
           TransactionReason.lostInTransit.toValue(),
         ];
-        receiverId = facilityId;
-        senderId = null;
+        receiverId = null;
+        senderId = facilityId;
       }
       final data = (receiverId != null
               ? await stockRepository.search(
