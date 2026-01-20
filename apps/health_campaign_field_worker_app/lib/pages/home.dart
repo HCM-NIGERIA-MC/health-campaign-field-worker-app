@@ -449,6 +449,30 @@ class _HomePageState extends LocalizedState<HomePage> {
                         ["properties"]
                     .remove("scanner");
 
+                var beneficiaryDetailsProperties =
+                    registrationSchemaData['pages']["beneficiaryDetails"]
+                        ["properties"];
+
+                String? beneficiaryDetailsNewFieldKey;
+                // Changed the newField1 to actualQuantityDelivered
+                for (var key in beneficiaryDetailsProperties.keys) {
+                  if (key.toString().endsWith('_newField1')) {
+                    beneficiaryDetailsNewFieldKey = key;
+                  }
+                }
+                if (beneficiaryDetailsNewFieldKey != null) {
+                  var familyNameOfIndividual = beneficiaryDetailsProperties[
+                      beneficiaryDetailsNewFieldKey];
+                  familyNameOfIndividual['fieldName'] =
+                      'familyNameOfIndividual';
+                  registrationSchemaData['pages']['beneficiaryDetails']
+                          ['properties']
+                      .remove(beneficiaryDetailsNewFieldKey);
+                  registrationSchemaData['pages']['beneficiaryDetails']
+                          ['properties']['familyNameOfIndividual'] =
+                      familyNameOfIndividual;
+                }
+
                 // Navigate the beneficiaryDetails page to household-acknowledgement page
                 if (context.isRegistrar && !context.isDistributor) {
                   registrationSchemaData['pages']["beneficiaryDetails"]
@@ -456,6 +480,27 @@ class _HomePageState extends LocalizedState<HomePage> {
                     "name": "household-acknowledgement",
                     "type": "template"
                   };
+                }
+
+                var deliveryDetailsProperties = deliverySchemaData['pages']
+                    ['DeliveryDetails']['properties'];
+
+                String? deliveryDetailsNewFieldKey;
+                // Changed the newField1 to actualQuantityDelivered
+                for (var key in deliveryDetailsProperties.keys) {
+                  if (key.toString().endsWith('_newField1')) {
+                    deliveryDetailsNewFieldKey = key;
+                  }
+                }
+                if (deliveryDetailsNewFieldKey != null) {
+                  var actualQuantityDelivered =
+                      deliveryDetailsProperties[deliveryDetailsNewFieldKey];
+                  actualQuantityDelivered['fieldName'] =
+                      'actualQuantityDelivered';
+                  deliverySchemaData['pages']['DeliveryDetails']['properties']
+                      .remove(deliveryDetailsNewFieldKey);
+                  deliverySchemaData['pages']['DeliveryDetails']['properties']
+                      ['actualQuantityDelivered'] = actualQuantityDelivered;
                 }
 
                 // Added scanner validations in delivery details page
@@ -472,16 +517,15 @@ class _HomePageState extends LocalizedState<HomePage> {
                     ['validations'];
 
                 List deliveryCountFieldValidation = deliverySchemaData['pages']
-                            ['DeliveryDetails']['properties'][
-                        'DeliveryDetails_023f5613-1f51-42c9-a70e-d6127bff109d_newField1']
-                    ['validations'];
+                        ['DeliveryDetails']['properties']
+                    ['actualQuantityDelivered']['validations'];
 
                 deliverySchemaData['pages']['DeliveryDetails']['properties']
                     ['scanner']['validations'] = [
                   ...filterScannerValidations,
                   {
                     "type": "scanLimit",
-                    "value": "{{resourceCard.first.quantityDistributed}}",
+                    "value": "{actualQuantityDelivered}",
                     "message": "quantity exceeded"
                   },
                   {
@@ -496,14 +540,18 @@ class _HomePageState extends LocalizedState<HomePage> {
                   }
                 ];
 
-                deliverySchemaData['pages']['DeliveryDetails']['properties'][
-                        'DeliveryDetails_023f5613-1f51-42c9-a70e-d6127bff109d_newField1']
-                    ['validations'] = [
+                deliverySchemaData['pages']['DeliveryDetails']['properties']
+                    ['actualQuantityDelivered']['validations'] = [
                   ...deliveryCountFieldValidation,
                   {
                     "type": "pattern",
                     "value": r"^[0-9]*$",
                     "message": "invalid input"
+                  },
+                  {
+                    "type": "maxDependencyField",
+                    "value": "{{resourceCard.first.quantityDistributed}}",
+                    "message": "DELIVERY_DETAILS_MAX_INPUT_EXCEED"
                   }
                 ];
 
@@ -513,8 +561,8 @@ class _HomePageState extends LocalizedState<HomePage> {
                   {
                     "type": "matchValue",
                     "value": [
-                      "DeliveryDetails_023f5613-1f51-42c9-a70e-d6127bff109d_newField1",
-                      "resourceCard.quantityDistributed"
+                      "actualQuantityDelivered",
+                      "{{resourceCard.first.quantityDistributed}}"
                     ],
                     "message": "invalid input"
                   }
