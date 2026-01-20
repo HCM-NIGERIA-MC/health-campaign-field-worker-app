@@ -10,6 +10,7 @@ import 'package:inventory_management/widgets/localized.dart';
 import 'package:inventory_management/blocs/inventory_report.dart';
 import 'package:inventory_management/widgets/back_navigation_help_header.dart';
 
+import '../../../blocs/inventory_management/custom_inventory_report.dart';
 import '../../../router/app_router.dart';
 
 @RoutePage()
@@ -71,7 +72,7 @@ class CustomInventoryReportSelectionPageState
                     icon: Icons.login,
                     onTap: () => context.router.push(
                       CustomInventoryReportDetailsRoute(
-                        reportType: InventoryReportType.receipt,
+                        reportType: CustomInventoryReport.receipt,
                       ),
                     ),
                   ),
@@ -89,7 +90,7 @@ class CustomInventoryReportSelectionPageState
                     icon: Icons.logout,
                     onTap: () => context.router.push(
                       CustomInventoryReportDetailsRoute(
-                        reportType: InventoryReportType.dispatch,
+                        reportType: CustomInventoryReport.dispatch,
                       ),
                     ),
                   ),
@@ -107,7 +108,7 @@ class CustomInventoryReportSelectionPageState
                     icon: Icons.settings_backup_restore,
                     onTap: () => context.router.push(
                       CustomInventoryReportDetailsRoute(
-                        reportType: InventoryReportType.returned,
+                        reportType: CustomInventoryReport.returned,
                       ),
                     ),
                   ),
@@ -126,7 +127,7 @@ class CustomInventoryReportSelectionPageState
                     icon: Icons.store,
                     onTap: () => context.router.push(
                       CustomInventoryReportDetailsRoute(
-                        reportType: InventoryReportType.damage,
+                        reportType: CustomInventoryReport.damage,
                       ),
                     ),
                   ),
@@ -145,7 +146,7 @@ class CustomInventoryReportSelectionPageState
                     icon: Icons.store,
                     onTap: () => context.router.push(
                       CustomInventoryReportDetailsRoute(
-                        reportType: InventoryReportType.loss,
+                        reportType: CustomInventoryReport.loss,
                       ),
                     ),
                   ),
@@ -165,7 +166,7 @@ class CustomInventoryReportSelectionPageState
                     icon: Icons.store,
                     onTap: () => context.router.push(
                       CustomInventoryReportDetailsRoute(
-                        reportType: InventoryReportType.reconciliation,
+                        reportType: CustomInventoryReport.reconciliation,
                       ),
                     ),
                   ),

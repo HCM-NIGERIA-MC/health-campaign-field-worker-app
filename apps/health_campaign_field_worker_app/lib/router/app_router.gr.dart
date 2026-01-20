@@ -826,7 +826,7 @@ class CustomInventoryReportDetailsRoute
   CustomInventoryReportDetailsRoute({
     Key? key,
     InventoryLocalization? appLocalizations,
-    required InventoryReportType reportType,
+    required CustomInventoryReport reportType,
     List<PageRouteInfo>? children,
   }) : super(
           CustomInventoryReportDetailsRoute.name,
@@ -855,7 +855,7 @@ class CustomInventoryReportDetailsRouteArgs {
 
   final InventoryLocalization? appLocalizations;
 
-  final InventoryReportType reportType;
+  final CustomInventoryReport reportType;
 
   @override
   String toString() {

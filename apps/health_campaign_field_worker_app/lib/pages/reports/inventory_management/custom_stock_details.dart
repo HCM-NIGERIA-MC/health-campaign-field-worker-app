@@ -43,7 +43,6 @@ class CustomStockDetailsPageState
   static const _productVariantKey = 'productVariant';
   static const _secondaryPartyKey = 'secondaryParty';
   static const _transactionQuantityKey = 'quantity';
-  static const _transactionQuantityUnitKey = 'quantityUnit';
   static const _transactionReasonKey = 'transactionReason';
   // static const _waybillNumberKey = 'waybillNumber';
   // static const _waybillQuantityKey = 'waybillQuantity';
@@ -55,10 +54,13 @@ class CustomStockDetailsPageState
   String? selectedFacilityId;
   List<InventoryTransportTypes> transportTypes = [];
 
-  List<GS1Barcode> scannedResources = [];
+  // List<GS1Barcode> scannedResources = [];
   TextEditingController controller1 = TextEditingController();
 
   List<String> commentsOptions = [];
+
+  String? teamCode;
+  List<GS1Barcode> balesCode = [];
 
   FormGroup _form(StockRecordEntryType stockType) {
     return fb.group({
@@ -72,7 +74,6 @@ class CustomStockDetailsPageState
         Validators.min(0),
         Validators.max(10000),
       ]),
-      _transactionQuantityUnitKey: FormControl<int>(validators: []),
       _transactionReasonKey: FormControl<String>(),
       // _waybillNumberKey: FormControl<String>(
       //   validators: [],
@@ -80,7 +81,9 @@ class CustomStockDetailsPageState
       // _waybillQuantityKey: FormControl<int>(validators: []),
       // _vehicleNumberKey: FormControl<String>(),
       // _typeOfTransportKey: FormControl<String>(),
-      _commentsKey: FormControl<String>(),
+      _commentsKey: FormControl<String>(
+        validators: [Validators.required],
+      ),
       _deliveryTeamKey: FormControl<String>(
         validators: deliveryTeamSelected ? [Validators.required] : [],
       ),
@@ -200,24 +203,27 @@ class CustomStockDetailsPageState
                 return ReactiveFormBuilder(
                   form: () => _form(entryType),
                   builder: (context, form, child) {
-                    return BlocBuilder<DigitScannerBloc, DigitScannerState>(
-                        builder: (context, scannerState) {
-                      if (scannerState.barCodes.isNotEmpty) {
-                        scannedResources.clear();
-                        scannedResources.addAll(scannerState.barCodes);
-                      }
+                    return BlocListener<DigitScannerBloc, DigitScannerState>(
+                      listener: (context, scannerState) {
+                        teamCode = scannerState.qrCodes.isNotEmpty
+                            ? scannerState.qrCodes.last.split("||").last
+                            : null;
 
-                      if (entryType == StockRecordEntryType.receipt) {
-                        form
-                            .control(_transactionQuantityUnitKey)
-                            .setValidators([
-                          Validators.number(),
-                          Validators.min(0),
-                          Validators.max(10000),
-                        ]);
-                      }
+                        balesCode = scannerState.barCodes;
 
-                      return ScrollableContent(
+                        setState(() {});
+
+                        if (form
+                                .control(_deliveryTeamKey)
+                                .value
+                                .toString()
+                                .isEmpty ||
+                            form.control(_deliveryTeamKey).value == null ||
+                            teamCode != null) {
+                          form.control(_deliveryTeamKey).value = teamCode;
+                        }
+                      },
+                      child: ScrollableContent(
                         header: Column(children: [
                           BackNavigationHelpHeaderWidget(
                             handleBack: () {
@@ -242,21 +248,6 @@ class CustomStockDetailsPageState
                           children: [
                             ReactiveFormConsumer(
                                 builder: (context, form, child) {
-                              if (form
-                                      .control(_deliveryTeamKey)
-                                      .value
-                                      .toString()
-                                      .isEmpty ||
-                                  form.control(_deliveryTeamKey).value ==
-                                      null ||
-                                  scannerState.qrCodes.isNotEmpty) {
-                                form.control(_deliveryTeamKey).value =
-                                    scannerState.qrCodes.isNotEmpty
-                                        ? scannerState.qrCodes.last
-                                            .split("||")
-                                            .last
-                                        : '';
-                              }
                               return DigitButton(
                                 type: DigitButtonType.primary,
                                 size: DigitButtonSize.large,
@@ -365,11 +356,6 @@ class CustomStockDetailsPageState
                                             final quantity = form
                                                 .control(
                                                     _transactionQuantityKey)
-                                                .value;
-
-                                            final quantityUnit = form
-                                                .control(
-                                                    _transactionQuantityUnitKey)
                                                 .value;
 
                                             // final waybillNumber = form
@@ -501,12 +487,6 @@ class CustomStockDetailsPageState
                                                               .loggedInUser
                                                               ?.name,
                                                         ),
-                                                        if (quantityUnit !=
-                                                            null)
-                                                          AdditionalField(
-                                                            'quantity_unit',
-                                                            quantityUnit,
-                                                          ),
                                                         // if (waybillQuantity !=
                                                         //     null)
                                                         //   AdditionalField(
@@ -549,12 +529,10 @@ class CustomStockDetailsPageState
                                                             lng,
                                                           ),
                                                         ],
-                                                        if (scannerState
-                                                            .barCodes
+                                                        if (balesCode
                                                             .isNotEmpty)
                                                           ...addBarCodesToFields(
-                                                              scannerState
-                                                                  .barCodes),
+                                                              balesCode),
                                                       ],
                                                     )
                                                   : null,
@@ -1298,93 +1276,87 @@ class CustomStockDetailsPageState
                                   );
                                 },
                               ),
-                              scannerState.barCodes.isEmpty
-                                  ? DigitButton(
-                                      mainAxisSize: MainAxisSize.max,
-                                      size: DigitButtonSize.large,
-                                      type: DigitButtonType.secondary,
-                                      onPressed: () {
-                                        //[TODO: Add route to auto_route]
-                                        Navigator.of(context).push(
-                                          MaterialPageRoute(
-                                            builder: (context) =>
-                                                DigitScannerPage(
-                                              quantity: int.tryParse(
-                                                      '${form.control(_transactionQuantityKey).value ?? 0}') ??
-                                                  0,
-                                              isGS1code: true,
-                                              singleValue: false,
-                                            ),
-                                            settings: const RouteSettings(
-                                                name: '/qr-scanner'),
-                                          ),
-                                        );
-                                      },
-                                      prefixIcon: Icons.qr_code,
-                                      label: localizations.translate(
-                                        i18.common.scanBales,
+                              if (balesCode.isEmpty)
+                                DigitButton(
+                                  mainAxisSize: MainAxisSize.max,
+                                  size: DigitButtonSize.large,
+                                  type: DigitButtonType.secondary,
+                                  onPressed: () {
+                                    //[TODO: Add route to auto_route]
+                                    Navigator.of(context).push(
+                                      MaterialPageRoute(
+                                        builder: (context) => DigitScannerPage(
+                                          quantity: int.tryParse(
+                                                  '${form.control(_transactionQuantityKey).value ?? 0}') ??
+                                              0,
+                                          isGS1code: true,
+                                          singleValue: false,
+                                        ),
+                                        settings: const RouteSettings(
+                                            name: '/qr-scanner'),
                                       ),
-                                    )
-                                  : Column(children: [
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Align(
-                                            alignment: Alignment.centerLeft,
-                                            child: Text(
-                                              localizations.translate(i18
-                                                  .stockDetails
-                                                  .scannedResources),
-                                              style: DigitTheme
-                                                  .instance
-                                                  .mobileTheme
-                                                  .textTheme
-                                                  .labelSmall,
-                                            ),
-                                          ),
-                                          Padding(
-                                            padding: const EdgeInsets.only(
-                                              bottom: spacer4,
-                                            ),
-                                            child: IconButton(
-                                              alignment: Alignment.centerRight,
-                                              color: theme
-                                                  .colorTheme.primary.primary1,
-                                              icon: const Icon(Icons.edit),
-                                              onPressed: () {
-                                                //[TODO: Add route to auto_route]
-                                                Navigator.of(context).push(
-                                                  MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        const DigitScannerPage(
-                                                      quantity: 5,
-                                                      isGS1code: true,
-                                                      singleValue: false,
-                                                    ),
-                                                    settings:
-                                                        const RouteSettings(
-                                                            name:
-                                                                '/qr-scanner'),
-                                                  ),
-                                                );
-                                              },
-                                            ),
-                                          ),
-                                        ],
+                                    );
+                                  },
+                                  prefixIcon: Icons.qr_code,
+                                  label: localizations.translate(
+                                    i18.common.scanBales,
+                                  ),
+                                ),
+                              if (balesCode.isNotEmpty)
+                                Column(children: [
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Align(
+                                        alignment: Alignment.centerLeft,
+                                        child: Text(
+                                          localizations.translate(i18
+                                              .stockDetails.scannedResources),
+                                          style: DigitTheme.instance.mobileTheme
+                                              .textTheme.labelSmall,
+                                        ),
                                       ),
-                                      ...scannedResources.map((e) => Align(
-                                            alignment: Alignment.centerLeft,
-                                            child: Text(e
-                                                .elements.values.first.data
-                                                .toString()),
-                                          ))
-                                    ])
+                                      Padding(
+                                        padding: const EdgeInsets.only(
+                                          bottom: spacer4,
+                                        ),
+                                        child: IconButton(
+                                          alignment: Alignment.centerRight,
+                                          color:
+                                              theme.colorTheme.primary.primary1,
+                                          icon: const Icon(Icons.edit),
+                                          onPressed: () {
+                                            //[TODO: Add route to auto_route]
+                                            Navigator.of(context).push(
+                                              MaterialPageRoute(
+                                                builder: (context) =>
+                                                    DigitScannerPage(
+                                                  quantity: int.tryParse(
+                                                          '${form.control(_transactionQuantityKey).value ?? 0}') ??
+                                                      0,
+                                                  isGS1code: true,
+                                                  singleValue: false,
+                                                ),
+                                                settings: const RouteSettings(
+                                                    name: '/qr-scanner'),
+                                              ),
+                                            );
+                                          },
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  ...balesCode.map((e) => Align(
+                                        alignment: Alignment.centerLeft,
+                                        child: Text(e.elements["21"]?.data),
+                                      ))
+                                ]),
                             ],
                           ),
                         ],
-                      );
-                    });
+                      ),
+                    );
                   },
                 );
               },
@@ -1435,10 +1407,12 @@ class CustomStockDetailsPageState
   }
 
   void clearQRCodes() {
-    context.read<DigitScannerBloc>().add(const DigitScannerEvent.handleScanner(
-          barCode: [],
-          qrCode: [],
-        ));
+    context.read<DigitScannerBloc>().add(
+          DigitScannerEvent.handleScanner(
+            barCode: [],
+            qrCode: [],
+          ),
+        );
   }
 
   /// This function processes a list of GS1 barcodes and returns a map where the keys and values are joined by '|'.
