@@ -504,14 +504,17 @@ class CustomInventoryReportDetailsPageState
                                                                     widget.reportType ==
                                                                         InventoryReportType
                                                                             .damage
-                                                                ? model.receiverId ??
-                                                                    model
-                                                                        .receiverType ??
-                                                                    ''
-                                                                : model.senderId ??
-                                                                    model
-                                                                        .receiverType ??
-                                                                    '',
+                                                                ? localizations
+                                                                    .translate(
+                                                                        'FAC_${model.receiverId}' ??
+                                                                            model
+                                                                                .receiverType ??
+                                                                            '')
+                                                                : localizations
+                                                                    .translate(
+                                                                        'FAC_${model.senderId}' ??
+                                                                            model.receiverType ??
+                                                                            ''),
                                                           ),
                                                         ],
                                                       ),
