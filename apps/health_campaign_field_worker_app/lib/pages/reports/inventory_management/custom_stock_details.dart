@@ -1365,7 +1365,8 @@ class CustomStockDetailsPageState
                                   ),
                                   ...balesCode.map((e) => Align(
                                         alignment: Alignment.centerLeft,
-                                        child: Text(e.elements["21"]?.data),
+                                        child:
+                                            Text(e.elements["00"]?.data ?? ""),
                                       ))
                                 ]),
                             ],
