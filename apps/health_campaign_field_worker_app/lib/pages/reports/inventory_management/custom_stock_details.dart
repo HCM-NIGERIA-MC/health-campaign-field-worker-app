@@ -1431,11 +1431,36 @@ class CustomStockDetailsPageState
                                       ),
                                     ],
                                   ),
-                                  ...balesCode.map((e) => Align(
-                                        alignment: Alignment.centerLeft,
-                                        child:
-                                            Text(e.elements["00"]?.data ?? ""),
-                                      ))
+                                  ...balesCode.map((barcodeItem) {
+                                    // Priority order for GS1 element keys
+                                    const priorityKeys = [
+                                      '00',
+                                      '21',
+                                      '10',
+                                      '01',
+                                      '02',
+                                      '240'
+                                    ];
+
+                                    String barcodeDisplay = '';
+                                    for (String key in priorityKeys) {
+                                      if (barcodeItem.elements
+                                          .containsKey(key)) {
+                                        barcodeDisplay = barcodeItem
+                                                .elements[key]?.data
+                                                ?.toString() ??
+                                            '';
+                                        if (barcodeDisplay.isNotEmpty) break;
+                                      }
+                                    }
+
+                                    return Align(
+                                      alignment: Alignment.centerLeft,
+                                      child: Text(barcodeDisplay.isNotEmpty
+                                          ? barcodeDisplay
+                                          : 'Unknown'),
+                                    );
+                                  }),
                                 ]),
                             ],
                           ),
