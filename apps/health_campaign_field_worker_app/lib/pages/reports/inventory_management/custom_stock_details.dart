@@ -549,9 +549,7 @@ class CustomStockDetailsPageState
                                                             teamName,
                                                           ),
                                                         if (quantityUnit !=
-                                                                null &&
-                                                            quantityUnit
-                                                                .isNotEmpty)
+                                                            null)
                                                           AdditionalField(
                                                             local_constants
                                                                 .Constants
