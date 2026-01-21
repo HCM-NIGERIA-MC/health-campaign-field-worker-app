@@ -114,6 +114,7 @@ class Constants {
   static const String projectBeneficiary = 'ProjectBeneficiary';
   static const String bednetDistributed = 'BednetDistributed';
   static const String teamNameDeliveryTeam = 'teamName';
+  static const String balesQuantity = 'balesQuantity';
 
   static const int targetHouseHold = 200;
 
