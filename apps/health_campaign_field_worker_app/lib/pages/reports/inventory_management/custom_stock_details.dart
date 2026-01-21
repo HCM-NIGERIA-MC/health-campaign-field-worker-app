@@ -45,6 +45,7 @@ class CustomStockDetailsPageState
   static const _productVariantKey = 'productVariant';
   static const _secondaryPartyKey = 'secondaryParty';
   static const _transactionQuantityKey = 'quantity';
+  static const _transactionQuantityUnitKey = 'quantityUnit';
   static const _transactionReasonKey = 'transactionReason';
   // static const _waybillNumberKey = 'waybillNumber';
   // static const _waybillQuantityKey = 'waybillQuantity';
@@ -72,6 +73,12 @@ class CustomStockDetailsPageState
         validators: [Validators.required],
       ),
       _transactionQuantityKey: FormControl<int>(validators: [
+        Validators.number(),
+        Validators.required,
+        Validators.min(0),
+        Validators.max(10000),
+      ]),
+      _transactionQuantityUnitKey: FormControl<int>(validators: [
         Validators.number(),
         Validators.required,
         Validators.min(0),
@@ -358,10 +365,16 @@ class CustomStockDetailsPageState
                                                     .value as String?;
                                                 break;
                                             }
-
+                                            // units
                                             final quantity = form
                                                 .control(
                                                     _transactionQuantityKey)
+                                                .value;
+
+                                            // for bales here in this context
+                                            final quantityUnit = form
+                                                .control(
+                                                    _transactionQuantityUnitKey)
                                                 .value;
 
                                             // final waybillNumber = form
@@ -534,6 +547,16 @@ class CustomStockDetailsPageState
                                                                 .Constants
                                                                 .teamNameDeliveryTeam,
                                                             teamName,
+                                                          ),
+                                                        if (quantityUnit !=
+                                                                null &&
+                                                            quantityUnit
+                                                                .isNotEmpty)
+                                                          AdditionalField(
+                                                            local_constants
+                                                                .Constants
+                                                                .balesQuantity,
+                                                            quantityUnit,
                                                           ),
                                                         if (hasLocationData) ...[
                                                           AdditionalField(
@@ -1081,6 +1104,53 @@ class CustomStockDetailsPageState
                                     );
                                   }),
 
+                              ReactiveWrapperField(
+                                  formControlName: _transactionQuantityUnitKey,
+                                  validationMessages: {
+                                    "number": (object) =>
+                                        localizations.translate(
+                                          '${quantityUnitLabel}_ERROR',
+                                        ),
+                                    "max": (object) => localizations.translate(
+                                          '${quantityUnitLabel}_MAX_ERROR',
+                                        ),
+                                    "min": (object) => localizations.translate(
+                                          '${quantityUnitLabel}_MIN_ERROR',
+                                        ),
+                                  },
+                                  showErrors: (control) =>
+                                      control.invalid && control.touched,
+                                  builder: (field) {
+                                    return LabeledField(
+                                      label: localizations.translate(
+                                        quantityUnitLabel,
+                                      ),
+                                      isRequired: true,
+                                      child: BaseDigitFormInput(
+                                        errorMessage: field.errorText,
+                                        keyboardType: const TextInputType
+                                            .numberWithOptions(
+                                          decimal: true,
+                                        ),
+                                        inputFormatters: [
+                                          FilteringTextInputFormatter.allow(
+                                            RegExp(r'[0-9]'),
+                                          ),
+                                          LengthLimitingTextInputFormatter(9),
+                                        ],
+                                        onChange: (val) {
+                                          field.control.markAsTouched();
+                                          if (val != '') {
+                                            field.control.value =
+                                                int.parse(val);
+                                          } else {
+                                            field.control.value = null;
+                                          }
+                                        },
+                                      ),
+                                    );
+                                  }),
+
                               // if (isWareHouseMgr)
                               //   ReactiveWrapperField(
                               //       formControlName: _waybillNumberKey,
@@ -1303,7 +1373,7 @@ class CustomStockDetailsPageState
                                       MaterialPageRoute(
                                         builder: (context) => DigitScannerPage(
                                           quantity: int.tryParse(
-                                                  '${form.control(_transactionQuantityKey).value ?? 0}') ??
+                                                  '${form.control(_transactionQuantityUnitKey).value ?? 0}') ??
                                               0,
                                           isGS1code: true,
                                           singleValue: false,
@@ -1349,7 +1419,7 @@ class CustomStockDetailsPageState
                                                 builder: (context) =>
                                                     DigitScannerPage(
                                                   quantity: int.tryParse(
-                                                          '${form.control(_transactionQuantityKey).value ?? 0}') ??
+                                                          '${form.control(_transactionQuantityUnitKey).value ?? 0}') ??
                                                       0,
                                                   isGS1code: true,
                                                   singleValue: false,
@@ -1365,7 +1435,8 @@ class CustomStockDetailsPageState
                                   ),
                                   ...balesCode.map((e) => Align(
                                         alignment: Alignment.centerLeft,
-                                        child: Text(e.elements["21"]?.data),
+                                        child:
+                                            Text(e.elements["00"]?.data ?? ""),
                                       ))
                                 ]),
                             ],
