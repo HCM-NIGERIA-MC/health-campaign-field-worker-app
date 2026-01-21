@@ -1,7 +1,7 @@
 name: health_campaign_field_worker_app
 description: A new Flutter project.
 publish_to: "none"
-version: 1.8.29+29
+version: 1.8.31+31
 
 environment:
   sdk: ">=3.3.0 <=4.0.0"
@@ -76,7 +76,11 @@ dependencies:
   mobile_scanner: ^3.4.1
   change_app_package_name: ^1.5.0
   closed_household: ^1.1.0-dev.1-console
-  digit_forms_engine: ^0.0.12-dev
+  digit_forms_engine: #^0.0.12-dev
+    git:
+      url: https://github.com/egov-skb/health-campaign-field-worker-app/
+      ref: digit-form-engine-0.0.12-dev-scan-fix
+      path: ./packages/digit_forms_engine
   digit_data_converter: ^0.0.3-dev
   digit_crud_bloc: ^0.0.2-dev
   # qr_code_scanner: ^1.0.1

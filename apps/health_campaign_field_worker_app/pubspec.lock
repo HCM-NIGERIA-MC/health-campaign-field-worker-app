@@ -580,10 +580,11 @@ packages:
   digit_forms_engine:
     dependency: "direct main"
     description:
-      name: digit_forms_engine
-      sha256: ac524909357a4df3fc62f68161193e7e7109320c76570fb1634e7903e115af83
-      url: "https://pub.dev"
-    source: hosted
+      path: "packages/digit_forms_engine"
+      ref: "digit-form-engine-0.0.12-dev-scan-fix"
+      resolved-ref: e0f31c1ffcdd152e532cab0bd3e0fab416cace5b
+      url: "https://github.com/egov-skb/health-campaign-field-worker-app/"
+    source: git
     version: "0.0.12-dev"
   digit_formula_parser:
     dependency: transitive
