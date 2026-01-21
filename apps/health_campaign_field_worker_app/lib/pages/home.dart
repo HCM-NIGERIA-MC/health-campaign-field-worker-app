@@ -46,6 +46,7 @@ import '../data/local_store/app_shared_preferences.dart';
 import '../data/local_store/no_sql/schema/app_configuration.dart';
 import '../data/local_store/no_sql/schema/service_registry.dart';
 import '../data/local_store/secure_store/secure_store.dart';
+import '../models/entities/assessment_checklist/status.dart';
 import '../models/entities/roles_type.dart';
 import '../router/app_router.dart';
 import '../utils/debound.dart';
@@ -76,10 +77,49 @@ class _HomePageState extends LocalizedState<HomePage> {
   late StreamSubscription<List<ConnectivityResult>> subscription;
   bool isTriggerLocalization = true;
 
+  Set<String> voucherCodes = {};
+  Set<String> bednetCodes = {};
+
+  _getAllVouchers() async {
+    voucherCodes.clear();
+    final repository = context.read<
+            LocalRepository<ProjectBeneficiaryModel,
+                ProjectBeneficiarySearchModel>>()
+        as ProjectBeneficiaryLocalRepository;
+    List<ProjectBeneficiaryModel> projectBeneficiary =
+        await repository.search(ProjectBeneficiarySearchModel());
+    for (var element in projectBeneficiary) {
+      if (element.tag != null) {
+        voucherCodes.add(element.tag!);
+      }
+    }
+  }
+
+  _getAllBednets() async {
+    bednetCodes.clear();
+    final taskRepository =
+        context.read<LocalRepository<TaskModel, TaskSearchModel>>()
+            as TaskDataRepository;
+    List<TaskModel> successfulTaskList =
+        await (taskRepository as TaskLocalRepository).search(
+      TaskSearchModel(status: Status.administeredSuccess.toValue()),
+      context.loggedInUser.uuid,
+    );
+    for (var task in successfulTaskList) {
+      List<AdditionalField>? additionalFieldTask = task.additionalFields?.fields
+          .where((e) => e.key == "scanner")
+          .toList();
+      for (AdditionalField field in additionalFieldTask ?? []) {
+        String code = field.value;
+        List<String> codes = code.split(",");
+        bednetCodes.addAll(codes);
+      }
+    }
+  }
+
   @override
   initState() {
     super.initState();
-
     subscription = Connectivity()
         .onConnectivityChanged
         .listen((List<ConnectivityResult> result) async {
@@ -349,6 +389,8 @@ class _HomePageState extends LocalizedState<HomePage> {
           icon: Icons.family_restroom_rounded,
           label: i18.home.beneficiaryLabel,
           onPressed: () async {
+            await _getAllVouchers();
+            await _getAllBednets();
             RegistrationDeliverySingleton()
                 .setHouseholdType(HouseholdType.family);
             final prefs = await SharedPreferences.getInstance();
@@ -445,6 +487,18 @@ class _HomePageState extends LocalizedState<HomePage> {
                     ["properties"]['tag'] = scanner;
                 registrationSchemaData['pages']["beneficiaryDetails"]
                     ["properties"]['tag']['fieldName'] = 'tag';
+                var tagValidations = registrationSchemaData['pages']
+                    ["beneficiaryDetails"]["properties"]['tag']['validations'];
+                registrationSchemaData['pages']["beneficiaryDetails"]
+                    ["properties"]['tag']['validations'] = [
+                  ...tagValidations,
+                  {
+                    "type": "duplicateVoucherScanValidation",
+                    "value": voucherCodes.toList(),
+                    "message":
+                        "DELIVERY_DETAILS_DUPLICATE_VOUCHER_SCAN_VALIDATION"
+                  }
+                ];
                 registrationSchemaData['pages']["beneficiaryDetails"]
                         ["properties"]
                     .remove("scanner");
@@ -534,8 +588,24 @@ class _HomePageState extends LocalizedState<HomePage> {
                     "message": "quantity exceeded"
                   },
                   {
-                    "type": "applicationIdentifier",
-                    "value": "21",
+                    "type": "applicationIdentifiers",
+                    "value": ['21', '01', '02', '00', '240'],
+                    "message": "quantity exceeded"
+                  },
+                  {
+                    "type": "duplicateBednetScanValidation",
+                    "value": bednetCodes.toList(),
+                    "message":
+                        "DELIVERY_DETAILS_DUPLICATE_BEDNET_SCAN_VALIDATION"
+                  },
+                  {
+                    "type": "manualScanValidationGS1",
+                    "value": {
+                      "01": r'^[a-zA-Z0-9]{9,18}$',
+                      "11": r'^[a-zA-Z0-9]{8,18}$',
+                      "10": r'^[a-zA-Z0-9]{6,18}$',
+                      "21": r'^[a-zA-Z0-9]{9,18}$',
+                    },
                     "message": "quantity exceeded"
                   }
                 ];
