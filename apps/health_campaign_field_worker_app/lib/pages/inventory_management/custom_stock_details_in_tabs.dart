@@ -1226,6 +1226,8 @@ class _DynamicTabsPageState extends LocalizedState<DynamicTabsPage>
       facilityId = stockState.facilityModel?.id;
     }
 
+    if (productVariantId == null || facilityId == null) return 0;
+
     final now = DateTime.now();
     final startOfDay = DateTime(now.year, now.month, now.day);
     final endOfDay = startOfDay.add(const Duration(days: 1));
