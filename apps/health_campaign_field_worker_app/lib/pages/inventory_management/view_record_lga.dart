@@ -164,7 +164,7 @@ class _ViewStockRecordsLGAPageState
             element.clientAuditDetails?.createdTime != null &&
             element.clientAuditDetails!.createdTime >=
                 startOfDay.millisecondsSinceEpoch &&
-            element.clientAuditDetails!.createdTime <=
+            element.clientAuditDetails!.createdTime <
                 endOfDay.millisecondsSinceEpoch)
         .toList();
 

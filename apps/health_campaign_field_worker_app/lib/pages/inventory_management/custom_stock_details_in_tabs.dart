@@ -1211,7 +1211,7 @@ class _DynamicTabsPageState extends LocalizedState<DynamicTabsPage>
       List<String> selectedProducts) async {
     final StockDataRepository stockRepository =
         context.repository<StockModel, StockSearchModel>();
-    final productVariantId = products.first.id;
+    final productVariantId = stockModel.productVariantId;
 
     final secondartParty = receivedFrom.contains(("FAC_"))
         ? receivedFrom.replaceFirst("FAC_", "")
@@ -1244,7 +1244,7 @@ class _DynamicTabsPageState extends LocalizedState<DynamicTabsPage>
             element.clientAuditDetails?.createdTime != null &&
             element.clientAuditDetails!.createdTime >=
                 startOfDay.millisecondsSinceEpoch &&
-            element.clientAuditDetails!.createdTime <=
+            element.clientAuditDetails!.createdTime <
                 endOfDay.millisecondsSinceEpoch)
         .toList();
 
