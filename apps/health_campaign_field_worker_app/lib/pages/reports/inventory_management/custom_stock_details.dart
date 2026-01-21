@@ -1547,12 +1547,14 @@ class CustomStockDetailsPageState
       List<String> values = [];
       for (var e in element.elements.entries) {
         String key = e.key.toString();
-        if (key == "10" || key == "21" || key == "17") {
+        if (key == "00" || key == "10" || key == "21" || key == "17") {
           keys.add(key);
           values.add(e.value.data.toString());
         }
       }
-      additionalFields.add(AdditionalField(keys.join('|'), values.join('|')));
+      if (keys.isNotEmpty && values.isNotEmpty) {
+        additionalFields.add(AdditionalField(keys.join('|'), values.join('|')));
+      }
     }
     return additionalFields;
   }
