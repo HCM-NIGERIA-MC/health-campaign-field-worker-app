@@ -111,8 +111,13 @@ class _HomePageState extends LocalizedState<HomePage> {
           .toList();
       for (AdditionalField field in additionalFieldTask ?? []) {
         String code = field.value;
-        List<String> codes = code.split(",");
-        bednetCodes.addAll(codes);
+        List<String> firstCodes = code.split(",");
+        List<String> codes = [];
+        for (var element in firstCodes) {
+          codes.addAll(element.split("|"));
+        }
+        List<String> codes21 = codes.where((e) => e.contains("(21)")).toList();
+        bednetCodes.addAll(codes21);
       }
     }
   }
