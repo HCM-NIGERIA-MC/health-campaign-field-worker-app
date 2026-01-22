@@ -527,7 +527,9 @@ class CustomStockDetailsPageState
                                                                 .isNotEmpty)
                                                           AdditionalField(
                                                             'comments',
-                                                            comments,
+                                                            localizations
+                                                                .translate(
+                                                                    comments),
                                                           ),
                                                         if (deliveryTeamName !=
                                                                 null &&
