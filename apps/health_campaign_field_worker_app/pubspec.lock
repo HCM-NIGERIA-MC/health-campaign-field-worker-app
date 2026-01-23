@@ -582,7 +582,7 @@ packages:
     description:
       path: "packages/digit_forms_engine"
       ref: "digit-form-engine-0.0.12-dev-scan-fix"
-      resolved-ref: e0f31c1ffcdd152e532cab0bd3e0fab416cace5b
+      resolved-ref: "5b3a67c501c0896032179585438e40da73ee4985"
       url: "https://github.com/egov-skb/health-campaign-field-worker-app/"
     source: git
     version: "0.0.12-dev"
@@ -605,10 +605,11 @@ packages:
   digit_scanner:
     dependency: "direct main"
     description:
-      name: digit_scanner
-      sha256: ae005932c884f0557c2fb9623b2a31712cc621169f0cb98bb75c09f317fe84c6
-      url: "https://pub.dev"
-    source: hosted
+      path: "packages/digit_scanner"
+      ref: "digit-scanner-0.0.2-console-fix"
+      resolved-ref: "1aaf22f0fb5676cbf7ce202c8158396b3ba4410b"
+      url: "https://github.com/egov-skb/health-campaign-field-worker-app/"
+    source: git
     version: "0.0.2-console"
   digit_showcase:
     dependency: "direct main"

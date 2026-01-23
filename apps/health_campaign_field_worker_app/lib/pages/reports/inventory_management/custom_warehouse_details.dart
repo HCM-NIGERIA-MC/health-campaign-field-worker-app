@@ -93,39 +93,8 @@ class CustomWarehouseDetailsPageState
               );
             },
             builder: (ctx, facilityState) {
-              // final facilities = facilityState.whenOrNull(
-              //       fetched: (facilities, allFacilities) {
-              //         final teamFacilities = [
-              //           FacilityModel(
-              //             id: 'Delivery Team',
-              //           ),
-              //         ];
-              //         teamFacilities.addAll(
-              //           facilities,
-              //         );
-
-              //         return InventorySingleton().isDistributor! &&
-              //                 !InventorySingleton().isWareHouseMgr!
-              //             ? teamFacilities
-              //             : facilities;
-              //       },
-              //     ) ??
-              //     [];
-
               final facilities = facilityState.whenOrNull(
                     fetched: (facilities, allfacilities) {
-                      if (ctx.selectedProject.address?.boundaryType ==
-                          Constants.healthFacility) {
-                        List<FacilityModel> filteredFacilities = facilities
-                            .where(
-                              (element) =>
-                                  element.usage == Constants.healthFacility,
-                            )
-                            .toList();
-                        facilities = filteredFacilities.isEmpty
-                            ? facilities
-                            : filteredFacilities;
-                      }
                       final teamFacilities = [
                         FacilityModel(
                           id: 'Delivery Team',

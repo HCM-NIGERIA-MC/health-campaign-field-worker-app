@@ -92,7 +92,9 @@ class CustomStockDetailsPageState
       // _vehicleNumberKey: FormControl<String>(),
       // _typeOfTransportKey: FormControl<String>(),
       _commentsKey: FormControl<String>(
-        validators: [Validators.required],
+        validators: stockType != StockRecordEntryType.returned
+            ? [Validators.required]
+            : [],
       ),
       _deliveryTeamKey: FormControl<String>(
         validators: deliveryTeamSelected ? [Validators.required] : [],
@@ -377,18 +379,6 @@ class CustomStockDetailsPageState
                                                     _transactionQuantityUnitKey)
                                                 .value;
 
-                                            // final waybillNumber = form
-                                            //     .control(_waybillNumberKey)
-                                            //     .value as String?;
-
-                                            // final waybillQuantity = form
-                                            //     .control(_waybillQuantityKey)
-                                            //     .value as int?;
-
-                                            // final vehicleNumber = form
-                                            //     .control(_vehicleNumberKey)
-                                            //     .value as String?;
-
                                             final lat = locationState.latitude;
                                             final lng = locationState.longitude;
 
@@ -489,8 +479,6 @@ class CustomStockDetailsPageState
                                                     .millisecondsSinceEpoch(),
                                               ),
                                               additionalFields: [
-                                                        // waybillQuantity,
-                                                        // vehicleNumber,
                                                         comments,
                                                       ].any((element) =>
                                                           element != null) ||
@@ -506,21 +494,6 @@ class CustomStockDetailsPageState
                                                               .loggedInUser
                                                               ?.name,
                                                         ),
-                                                        // if (waybillQuantity !=
-                                                        //     null)
-                                                        //   AdditionalField(
-                                                        //     'waybill_quantity',
-                                                        //     waybillQuantity,
-                                                        //   ),
-                                                        // if (vehicleNumber !=
-                                                        //         null &&
-                                                        //     vehicleNumber
-                                                        //         .trim()
-                                                        //         .isNotEmpty)
-                                                        //   AdditionalField(
-                                                        //     'vehicle_number',
-                                                        //     vehicleNumber,
-                                                        //   ),
                                                         if (comments != null &&
                                                             comments
                                                                 .trim()
@@ -812,10 +785,27 @@ class CustomStockDetailsPageState
                                             name: 'CDD Team',
                                           ),
                                         ];
+                                        List<FacilityModel> filteredFacilities =
+                                            allFacilities
+                                                .where((element) =>
+                                                    element.id !=
+                                                    local_constants
+                                                        .Constants.deliveryTeam)
+                                                .toList();
                                         if (entryType ==
                                             StockRecordEntryType.dispatch) {
                                           teamFacilities.addAll(
-                                            facilities,
+                                            allFacilities
+                                                .where((element) =>
+                                                    element.id !=
+                                                        local_constants
+                                                            .Constants
+                                                            .deliveryTeam &&
+                                                    element.usage !=
+                                                        local_constants
+                                                            .Constants
+                                                            .centralFacility)
+                                                .toList(),
                                           );
                                         }
                                         return Column(
@@ -840,7 +830,7 @@ class CustomStockDetailsPageState
                                                                     StockRecordEntryType
                                                                         .returned
                                                             ? teamFacilities
-                                                            : facilities)) as FacilityModel?;
+                                                            : filteredFacilities)) as FacilityModel?;
 
                                                 if (facility == null) return;
                                                 form
@@ -954,108 +944,10 @@ class CustomStockDetailsPageState
                                                 ),
                                               );
                                             },
-                                            // onChange: (val) {
-                                            //   String? value = val;
-                                            //   if (value != null &&
-                                            //       value.trim().isNotEmpty) {
-                                            //     context
-                                            //         .read<DigitScannerBloc>()
-                                            //         .add(
-                                            //           DigitScannerEvent
-                                            //               .handleScanner(
-                                            //             barCode: [],
-                                            //             qrCode: [value],
-                                            //             manualCode: value,
-                                            //           ),
-                                            //         );
-                                            //   } else {
-                                            //     clearQRCodes();
-                                            //   }
-                                            // },
                                           );
                                         }),
                                   ),
                                 ),
-                                // Visibility(
-                                //   visible: deliveryTeamSelected,
-                                //   child: InkWell(
-                                //     onTap: () {
-                                //       Navigator.of(context).push(
-                                //         MaterialPageRoute(
-                                //           builder: (context) =>
-                                //               const DigitScannerPage(
-                                //             quantity: 1,
-                                //             isGS1code: false,
-                                //             singleValue: false,
-                                //           ),
-                                //           settings: const RouteSettings(
-                                //               name: '/qr-scanner'),
-                                //         ),
-                                //       );
-                                //     },
-                                //     child: IgnorePointer(
-                                //       child: ReactiveWrapperField(
-                                //           formControlName: _deliveryTeamKey,
-                                //           builder: (field) {
-                                //             return InputField(
-                                //               type: InputType.text,
-                                //               label: localizations.translate(
-                                //                 i18.stockReconciliationDetails
-                                //                     .teamCodeLabel,
-                                //               ),
-                                //               initialValue: form,
-                                //               onChange: (val) {
-                                //                 field.control.value = val;
-                                //               },
-                                //             );
-                                //           }),
-                                //     ),
-                                //   ),
-                                // DigitTextFormField(
-                                //   label: localizations.translate(
-                                //     i18.stockReconciliationDetails
-                                //         .teamCodeLabel,
-                                //   ),
-                                //   onChanged: (val) {
-                                //     String? value = val.value as String?;
-                                //     if (value != null &&
-                                //         value.trim().isNotEmpty) {
-                                //       context.read<DigitScannerBloc>().add(
-                                //             DigitScannerEvent.handleScanner(
-                                //               barCode: [],
-                                //               qrCode: [value],
-                                //               manualCode: value,
-                                //             ),
-                                //           );
-                                //     } else {
-                                //       clearQRCodes();
-                                //     }
-                                //   },
-                                //   suffix: IconButton(
-                                //     onPressed: () {
-                                //       //[TODO: Add route to auto_route]
-                                //       Navigator.of(context).push(
-                                //         MaterialPageRoute(
-                                //           builder: (context) =>
-                                //               const DigitScannerPage(
-                                //             quantity: 5,
-                                //             isGS1code: false,
-                                //             singleValue: false,
-                                //           ),
-                                //           settings: const RouteSettings(
-                                //               name: '/qr-scanner'),
-                                //         ),
-                                //       );
-                                //     },
-                                //     icon: Icon(
-                                //       Icons.qr_code_2,
-                                //       color: theme.colorScheme.secondary,
-                                //     ),
-                                //   ),
-                                //   isRequired: deliveryTeamSelected,
-                                //   maxLines: 3,
-                                //   formControlName: _deliveryTeamKey,
-                                // ),
                               ),
                               ReactiveWrapperField(
                                   formControlName: _transactionQuantityKey,
@@ -1150,161 +1042,6 @@ class CustomStockDetailsPageState
                                       ),
                                     );
                                   }),
-
-                              // if (isWareHouseMgr)
-                              //   ReactiveWrapperField(
-                              //       formControlName: _waybillNumberKey,
-                              //       validationMessages: {
-                              //         'maxLength': (object) => localizations
-                              //             .translate(
-                              //                 i18.common.maxCharsRequired)
-                              //             .replaceAll('{}', '200'),
-                              //         'minLength': (object) => localizations
-                              //             .translate(
-                              //                 i18.common.min2CharsRequired)
-                              //             .replaceAll('{}', ''),
-                              //       },
-                              //       builder: (field) {
-                              //         return InputField(
-                              //           type: InputType.text,
-                              //           label: localizations.translate(
-                              //             i18.stockDetails.waybillNumberLabel,
-                              //           ),
-                              //           onChange: (val) {
-                              //             if (val != '') {
-                              //               field.control.setValidators([
-                              //                 Validators.minLength(2),
-                              //                 Validators.maxLength(200)
-                              //               ]);
-                              //             } else {
-                              //               field.control.setValidators([]);
-                              //             }
-                              //             field.control.value = val;
-                              //           },
-                              //           keyboardType: const TextInputType
-                              //               .numberWithOptions(
-                              //             decimal: true,
-                              //           ),
-                              //           errorMessage: field.errorText,
-                              //         );
-                              //       }),
-                              // if (isWareHouseMgr)
-                              //   ReactiveWrapperField(
-                              //       formControlName: _waybillQuantityKey,
-                              //       builder: (field) {
-                              //         return LabeledField(
-                              //           label: localizations.translate(
-                              //             i18.stockDetails
-                              //                 .quantityOfProductIndicatedOnWaybillLabel,
-                              //           ),
-                              //           child: BaseDigitFormInput(
-                              //             errorMessage: field.errorText,
-                              //             keyboardType: const TextInputType
-                              //                 .numberWithOptions(
-                              //               decimal: true,
-                              //             ),
-                              //             inputFormatters: [
-                              //               FilteringTextInputFormatter.allow(
-                              //                 RegExp(r'[0-9]'),
-                              //               ),
-                              //               LengthLimitingTextInputFormatter(9),
-                              //             ],
-                              //             onChange: (val) {
-                              //               if (val != '') {
-                              //                 field.control.setValidators([
-                              //                   Validators.number(),
-                              //                   Validators.min(0),
-                              //                   Validators.max(10000),
-                              //                 ]);
-                              //               } else {
-                              //                 field.control.setValidators([]);
-                              //               }
-                              //               field.control.markAsTouched();
-                              //               if (val != '') {
-                              //                 field.control.value =
-                              //                     int.parse(val);
-                              //               } else {
-                              //                 field.control.value = null;
-                              //               }
-                              //             },
-                              //           ),
-                              //         );
-                              //       }),
-                              // if (isWareHouseMgr)
-                              //   transportTypes.isNotEmpty
-                              //       ? ReactiveWrapperField(
-                              //           formControlName: _typeOfTransportKey,
-                              //           builder: (field) {
-                              //             return LabeledField(
-                              //               label: localizations.translate(
-                              //                 i18.stockDetails
-                              //                     .transportTypeLabel,
-                              //               ),
-                              //               child: DigitDropdown(
-                              //                 selectedOption: (form
-                              //                             .control(
-                              //                                 _typeOfTransportKey)
-                              //                             .value !=
-                              //                         null)
-                              //                     ? DropdownItem(
-                              //                         name: localizations
-                              //                             .translate(form
-                              //                                 .control(
-                              //                                     _typeOfTransportKey)
-                              //                                 .value),
-                              //                         code: form
-                              //                             .control(
-                              //                                 _typeOfTransportKey)
-                              //                             .value)
-                              //                     : const DropdownItem(
-                              //                         name: '', code: ''),
-                              //                 emptyItemText:
-                              //                     localizations.translate(
-                              //                   i18.common.noMatchFound,
-                              //                 ),
-                              //                 items: transportTypes.map((type) {
-                              //                   return DropdownItem(
-                              //                     name: localizations
-                              //                         .translate(type.name),
-                              //                     code: type.code,
-                              //                   );
-                              //                 }).toList(),
-                              //                 onSelect: (value) {
-                              //                   field.control.value =
-                              //                       value.name;
-                              //                 },
-                              //               ),
-                              //             );
-                              //           },
-                              //         )
-                              //       : const Offstage(),
-                              // if (isWareHouseMgr)
-                              //   ReactiveWrapperField(
-                              //       formControlName: _vehicleNumberKey,
-                              //       builder: (field) {
-                              //         return InputField(
-                              //           type: InputType.text,
-                              //           label: localizations.translate(
-                              //             i18.stockDetails.vehicleNumberLabel,
-                              //           ),
-                              //           onChange: (val) {
-                              //             field.control.value = val;
-                              //           },
-                              //         );
-                              //       }),
-                              // ReactiveWrapperField(
-                              //     formControlName: _commentsKey,
-                              //     builder: (field) {
-                              //       return InputField(
-                              //         type: InputType.textArea,
-                              //         label: localizations.translate(
-                              //           i18.stockDetails.commentsLabel,
-                              //         ),
-                              //         onChange: (val) {
-                              //           field.control.value = val;
-                              //         },
-                              //       );
-                              //     }),
                               ReactiveWrapperField(
                                 formControlName: _commentsKey,
                                 validationMessages: {
@@ -1315,7 +1052,8 @@ class CustomStockDetailsPageState
                                     control.invalid && control.touched,
                                 builder: (field) {
                                   return LabeledField(
-                                    isRequired: true,
+                                    isRequired: entryType !=
+                                        StockRecordEntryType.returned,
                                     label: localizations.translate(
                                       module.commentsLabel,
                                     ),
@@ -1362,7 +1100,10 @@ class CustomStockDetailsPageState
                                   );
                                 },
                               ),
-                              if (balesCode.isEmpty)
+                              if (balesCode.isEmpty &&
+                                  (entryType == StockRecordEntryType.receipt ||
+                                      entryType ==
+                                          StockRecordEntryType.dispatch))
                                 DigitButton(
                                   mainAxisSize: MainAxisSize.max,
                                   size: DigitButtonSize.large,
@@ -1388,7 +1129,10 @@ class CustomStockDetailsPageState
                                     i18.common.scanBales,
                                   ),
                                 ),
-                              if (balesCode.isNotEmpty)
+                              if (balesCode.isNotEmpty &&
+                                  (entryType == StockRecordEntryType.receipt ||
+                                      entryType ==
+                                          StockRecordEntryType.dispatch))
                                 Column(children: [
                                   Row(
                                     mainAxisAlignment:
