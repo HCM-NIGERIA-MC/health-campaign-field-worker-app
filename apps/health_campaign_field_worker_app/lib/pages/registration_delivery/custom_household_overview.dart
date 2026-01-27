@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:collection/collection.dart';
 import 'package:digit_data_converter/src/reverse_transformer_service.dart';
@@ -21,7 +23,10 @@ import 'package:digit_ui_components/widgets/scrollable_content.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:registration_delivery/blocs/registration_wrapper/registration_wrapper_bloc.dart';
+import 'package:registration_delivery/data/repositories/local/task.dart';
 import 'package:registration_delivery/data/transformer_config.dart';
+import 'package:registration_delivery/models/entities/task.dart';
+import 'package:registration_delivery/utils/typedefs.dart';
 import 'package:survey_form/survey_form.dart';
 
 import 'package:registration_delivery/widgets/status_filter/status_filter.dart';
@@ -65,6 +70,34 @@ class _CustomHouseholdOverviewPageState
   void initState() {
     callReloadEvent(offset: offset, limit: limit);
     super.initState();
+  }
+
+  Future<Set<String>> _getAllBednets() async {
+    Set<String> bednetCodes = {};
+    final taskRepository =
+        context.read<LocalRepository<TaskModel, TaskSearchModel>>()
+            as TaskDataRepository;
+    List<TaskModel> successfulTaskList =
+        await (taskRepository as TaskLocalRepository).search(
+      TaskSearchModel(status: Status.administeredSuccess.toValue()),
+      context.loggedInUser.uuid,
+    );
+    for (var task in successfulTaskList) {
+      List<AdditionalField>? additionalFieldTask = task.additionalFields?.fields
+          .where((e) => e.key == "scanner")
+          .toList();
+      for (AdditionalField field in additionalFieldTask ?? []) {
+        String code = field.value;
+        List<String> firstCodes = code.split(",");
+        List<String> codes = [];
+        for (var element in firstCodes) {
+          codes.addAll(element.split("|"));
+        }
+        List<String> codes21 = codes.where((e) => e.contains("(21)")).toList();
+        bednetCodes.addAll(codes21);
+      }
+    }
+    return bednetCodes;
   }
 
   @override
@@ -281,7 +314,7 @@ class _CustomHouseholdOverviewPageState
                                                     empty: () {},
                                                     isloading: () {},
                                                     serviceDefinitionFetch:
-                                                        (value, model) {
+                                                        (value, model) async {
                                                       if (value
                                                           .where((element) =>
                                                               element.code
@@ -294,6 +327,94 @@ class _CustomHouseholdOverviewPageState
                                                                       '${RegistrationDeliverySingleton().selectedProject!.name}.${RegistrationDeliveryEnums.eligibility.toValue()}'))
                                                           .toList()
                                                           .isEmpty) {
+                                                        String?
+                                                            deliveryConfigString =
+                                                            RegistrationDeliverySingleton()
+                                                                .deliveryConfig;
+                                                        if (deliveryConfigString !=
+                                                            null) {
+                                                          final deliverySchemaData =
+                                                              json.decode(
+                                                                  deliveryConfigString);
+                                                          Set<String>
+                                                              bednetCodes =
+                                                              await _getAllBednets();
+                                                          // Added scanner validations in delivery details page
+                                                          List
+                                                              scannerValidations =
+                                                              deliverySchemaData['pages']
+                                                                              [
+                                                                              'DeliveryDetails']
+                                                                          [
+                                                                          'properties']
+                                                                      [
+                                                                      'scanner']
+                                                                  [
+                                                                  'validations'];
+                                                          List
+                                                              filterScannerValidations =
+                                                              scannerValidations
+                                                                  .whereNot(
+                                                                      (validation) {
+                                                            return validation[
+                                                                        "type"] ==
+                                                                    "scanLimit" &&
+                                                                validation[
+                                                                        "type"] ==
+                                                                    "isGS1" &&
+                                                                validation[
+                                                                        "type"] ==
+                                                                    "duplicateBednetScanValidation";
+                                                          }).toList();
+                                                          deliverySchemaData['pages']
+                                                                          [
+                                                                          'DeliveryDetails']
+                                                                      [
+                                                                      'properties']
+                                                                  ['scanner'][
+                                                              'validations'] = [
+                                                            ...filterScannerValidations,
+                                                            {
+                                                              "type":
+                                                                  "duplicateBednetScanValidation",
+                                                              "value":
+                                                                  bednetCodes
+                                                                      .toList(),
+                                                              "message":
+                                                                  "DELIVERY_DETAILS_DUPLICATE_BEDNET_SCAN_VALIDATION"
+                                                            },
+                                                          ];
+                                                          final deliveryConfig =
+                                                              json.encode(
+                                                                  deliverySchemaData);
+                                                          final schemas = [
+                                                            RegistrationDeliverySingleton()
+                                                                .regisrationConfig,
+                                                            deliveryConfig
+                                                          ]
+                                                              .where((s) =>
+                                                                  s != null &&
+                                                                  s
+                                                                      .trim()
+                                                                      .isNotEmpty &&
+                                                                  s.trim().toLowerCase() !=
+                                                                      'null')
+                                                              .cast<String>()
+                                                              .toList();
+
+                                                          if (schemas
+                                                              .isNotEmpty) {
+                                                            context
+                                                                .read<
+                                                                    FormsBloc>()
+                                                                .add(FormsEvent
+                                                                    .load(
+                                                                  schemas:
+                                                                      schemas,
+                                                                ));
+                                                          }
+                                                        }
+
                                                         context.router.push(
                                                           BeneficiaryDetailsRoute(),
                                                         );

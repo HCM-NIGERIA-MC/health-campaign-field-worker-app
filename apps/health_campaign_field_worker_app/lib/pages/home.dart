@@ -77,51 +77,6 @@ class _HomePageState extends LocalizedState<HomePage> {
   late StreamSubscription<List<ConnectivityResult>> subscription;
   bool isTriggerLocalization = true;
 
-  Set<String> voucherCodes = {};
-  Set<String> bednetCodes = {};
-
-  _getAllVouchers() async {
-    voucherCodes.clear();
-    final repository = context.read<
-            LocalRepository<ProjectBeneficiaryModel,
-                ProjectBeneficiarySearchModel>>()
-        as ProjectBeneficiaryLocalRepository;
-    List<ProjectBeneficiaryModel> projectBeneficiary =
-        await repository.search(ProjectBeneficiarySearchModel());
-    for (var element in projectBeneficiary) {
-      if (element.tag != null) {
-        voucherCodes.add(element.tag!);
-      }
-    }
-  }
-
-  _getAllBednets() async {
-    bednetCodes.clear();
-    final taskRepository =
-        context.read<LocalRepository<TaskModel, TaskSearchModel>>()
-            as TaskDataRepository;
-    List<TaskModel> successfulTaskList =
-        await (taskRepository as TaskLocalRepository).search(
-      TaskSearchModel(status: Status.administeredSuccess.toValue()),
-      context.loggedInUser.uuid,
-    );
-    for (var task in successfulTaskList) {
-      List<AdditionalField>? additionalFieldTask = task.additionalFields?.fields
-          .where((e) => e.key == "scanner")
-          .toList();
-      for (AdditionalField field in additionalFieldTask ?? []) {
-        String code = field.value;
-        List<String> firstCodes = code.split(",");
-        List<String> codes = [];
-        for (var element in firstCodes) {
-          codes.addAll(element.split("|"));
-        }
-        List<String> codes21 = codes.where((e) => e.contains("(21)")).toList();
-        bednetCodes.addAll(codes21);
-      }
-    }
-  }
-
   @override
   initState() {
     super.initState();
@@ -394,8 +349,6 @@ class _HomePageState extends LocalizedState<HomePage> {
           icon: Icons.family_restroom_rounded,
           label: i18.home.beneficiaryLabel,
           onPressed: () async {
-            await _getAllVouchers();
-            await _getAllBednets();
             RegistrationDeliverySingleton()
                 .setHouseholdType(HouseholdType.family);
             final prefs = await SharedPreferences.getInstance();
@@ -492,18 +445,18 @@ class _HomePageState extends LocalizedState<HomePage> {
                     ["properties"]['tag'] = scanner;
                 registrationSchemaData['pages']["beneficiaryDetails"]
                     ["properties"]['tag']['fieldName'] = 'tag';
-                var tagValidations = registrationSchemaData['pages']
-                    ["beneficiaryDetails"]["properties"]['tag']['validations'];
-                registrationSchemaData['pages']["beneficiaryDetails"]
-                    ["properties"]['tag']['validations'] = [
-                  ...tagValidations,
-                  {
-                    "type": "duplicateVoucherScanValidation",
-                    "value": voucherCodes.toList(),
-                    "message":
-                        "DELIVERY_DETAILS_DUPLICATE_VOUCHER_SCAN_VALIDATION"
-                  }
-                ];
+                // var tagValidations = registrationSchemaData['pages']
+                //     ["beneficiaryDetails"]["properties"]['tag']['validations'];
+                // registrationSchemaData['pages']["beneficiaryDetails"]
+                //     ["properties"]['tag']['validations'] = [
+                //   ...tagValidations,
+                //   {
+                //     "type": "duplicateVoucherScanValidation",
+                //     "value": voucherCodes.toList(),
+                //     "message":
+                //         "DELIVERY_DETAILS_DUPLICATE_VOUCHER_SCAN_VALIDATION"
+                //   }
+                // ];
                 registrationSchemaData['pages']["beneficiaryDetails"]
                         ["properties"]
                     .remove("scanner");
@@ -596,12 +549,6 @@ class _HomePageState extends LocalizedState<HomePage> {
                     "type": "applicationIdentifiers",
                     "value": ['21', '01', '02', '00', '240'],
                     "message": "quantity exceeded"
-                  },
-                  {
-                    "type": "duplicateBednetScanValidation",
-                    "value": bednetCodes.toList(),
-                    "message":
-                        "DELIVERY_DETAILS_DUPLICATE_BEDNET_SCAN_VALIDATION"
                   },
                   {
                     "type": "manualScanValidationGS1",
