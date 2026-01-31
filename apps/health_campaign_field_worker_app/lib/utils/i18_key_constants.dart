@@ -456,6 +456,16 @@ class StockDetails {
   String get minNumberLabel => 'MIN_NUMBER_LABEL';
   String get mrnNumberLabel => 'MRN_NUMBER_LABEL';
 
+  // String get quantityUnitLabel => 'STOCK_DETAILS_QUANTITY_UNIT_LABEL';
+  String get quantityReceivedUnitLabel =>
+      'STOCK_DETAILS_QUANTITY_RECEIVED_UNIT_LABEL';
+  String get quantitySentUnitLabel => 'STOCK_DETAILS_QUANTITY_SENT_UNIT_LABEL';
+  String get quantityReturnedUnitLabel =>
+      'STOCK_DETAILS_QUANTITY_RETURNED_UNIT_LABEL';
+  String get quantityLostUnitLabel => 'STOCK_DETAILS_QUANTITY_LOST_UNIT_LABEL';
+  String get quantityDamagedUnitLabel =>
+      'STOCK_DETAILS_QUANTITY_DAMAGED_UNIT_LABEL';
+
   String get stockReceiptDetails => 'STOCK_DETAILS_STOCK_RECEIPT_DETAILS';
   String get stockIssueDetails => 'STOCK_DETAILS_STOCK_ISSUE_DETAILS';
   String get stockReturnDetails => 'STOCK_DETAILS_STOCK_RETURN_DETAILS';
@@ -538,6 +548,19 @@ class StockDetails {
       'STOCK_DETAILS_RECORD_STOCK_RETURNED_DESCRIPTION';
 
   String get stockMaxError => 'STOCK_DETAILS_QUANTITY_MAX_ERROR';
+
+  // Comments options for different stock entry types
+  String get dispatchInitialSupply => 'STOCK_DETAILS_DISPATCH_INITIAL_SUPPLY';
+  String get dispatchAdditionalSupply =>
+      'STOCK_DETAILS_DISPATCH_ADDITIONAL_SUPPLY';
+  String get returnedCompliant => 'STOCK_DETAILS_RETURNED_COMPLIANT';
+  String get returnedNonCompliant => 'STOCK_DETAILS_RETURNED_NON_COMPLIANT';
+  String get lossDeclared => 'STOCK_DETAILS_LOSS_DECLARED';
+  String get lossNotDeclared => 'STOCK_DETAILS_LOSS_NOT_DECLARED';
+  String get damageDeclared => 'STOCK_DETAILS_DAMAGE_DECLARED';
+  String get damageNotDeclared => 'STOCK_DETAILS_DAMAGE_NOT_DECLARED';
+  String get receiptCompliant => 'STOCK_DETAILS_RECEIPT_COMPLIANT';
+  String get receiptNonCompliant => 'STOCK_DETAILS_RECEIPT_NON_COMPLIANT';
 }
 
 class StockReconciliationDetails {

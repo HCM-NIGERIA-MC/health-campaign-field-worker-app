@@ -98,6 +98,7 @@ class Constants {
 
   static const String reAdministeredKey = "reAdministered";
   static const String reDoseQuantityKey = 'reDoseQuantity';
+  static const String deliveryTeam = 'Delivery Team';
   static const String healthFacility = 'Health Facility';
   static const String lgaBoundaryLevel = 'LGA';
   static const String provincialBoundaryLevel = 'Provincia';
@@ -113,6 +114,8 @@ class Constants {
   static const String household = 'Household';
   static const String projectBeneficiary = 'ProjectBeneficiary';
   static const String bednetDistributed = 'BednetDistributed';
+  static const String teamNameDeliveryTeam = 'teamName';
+  static const String balesQuantity = 'balesQuantity';
 
   static const int targetHouseHold = 200;
 

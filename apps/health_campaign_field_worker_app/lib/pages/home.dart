@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:collection/collection.dart';
 import 'package:digit_data_model/models/templates/template_config.dart';
+import 'package:inventory_management/router/inventory_router.gm.dart';
 import 'package:recase/recase.dart';
 import 'package:referral_reconciliation/referral_reconciliation.dart';
 
@@ -45,6 +46,7 @@ import '../data/local_store/app_shared_preferences.dart';
 import '../data/local_store/no_sql/schema/app_configuration.dart';
 import '../data/local_store/no_sql/schema/service_registry.dart';
 import '../data/local_store/secure_store/secure_store.dart';
+import '../models/entities/assessment_checklist/status.dart';
 import '../models/entities/roles_type.dart';
 import '../router/app_router.dart';
 import '../utils/debound.dart';
@@ -78,7 +80,6 @@ class _HomePageState extends LocalizedState<HomePage> {
   @override
   initState() {
     super.initState();
-
     subscription = Connectivity()
         .onConnectivityChanged
         .listen((List<ConnectivityResult> result) async {
@@ -444,9 +445,45 @@ class _HomePageState extends LocalizedState<HomePage> {
                     ["properties"]['tag'] = scanner;
                 registrationSchemaData['pages']["beneficiaryDetails"]
                     ["properties"]['tag']['fieldName'] = 'tag';
+                // var tagValidations = registrationSchemaData['pages']
+                //     ["beneficiaryDetails"]["properties"]['tag']['validations'];
+                // registrationSchemaData['pages']["beneficiaryDetails"]
+                //     ["properties"]['tag']['validations'] = [
+                //   ...tagValidations,
+                //   {
+                //     "type": "duplicateVoucherScanValidation",
+                //     "value": voucherCodes.toList(),
+                //     "message":
+                //         "DELIVERY_DETAILS_DUPLICATE_VOUCHER_SCAN_VALIDATION"
+                //   }
+                // ];
                 registrationSchemaData['pages']["beneficiaryDetails"]
                         ["properties"]
                     .remove("scanner");
+
+                var beneficiaryDetailsProperties =
+                    registrationSchemaData['pages']["beneficiaryDetails"]
+                        ["properties"];
+
+                String? beneficiaryDetailsNewFieldKey;
+                // Changed the newField1 to actualQuantityDelivered
+                for (var key in beneficiaryDetailsProperties.keys) {
+                  if (key.toString().endsWith('_newField1')) {
+                    beneficiaryDetailsNewFieldKey = key;
+                  }
+                }
+                if (beneficiaryDetailsNewFieldKey != null) {
+                  var familyNameOfIndividual = beneficiaryDetailsProperties[
+                      beneficiaryDetailsNewFieldKey];
+                  familyNameOfIndividual['fieldName'] =
+                      'familyNameOfIndividual';
+                  registrationSchemaData['pages']['beneficiaryDetails']
+                          ['properties']
+                      .remove(beneficiaryDetailsNewFieldKey);
+                  registrationSchemaData['pages']['beneficiaryDetails']
+                          ['properties']['familyNameOfIndividual'] =
+                      familyNameOfIndividual;
+                }
 
                 // Navigate the beneficiaryDetails page to household-acknowledgement page
                 if (context.isRegistrar && !context.isDistributor) {
@@ -457,6 +494,27 @@ class _HomePageState extends LocalizedState<HomePage> {
                   };
                 }
 
+                var deliveryDetailsProperties = deliverySchemaData['pages']
+                    ['DeliveryDetails']['properties'];
+
+                String? deliveryDetailsNewFieldKey;
+                // Changed the newField1 to actualQuantityDelivered
+                for (var key in deliveryDetailsProperties.keys) {
+                  if (key.toString().endsWith('_newField1')) {
+                    deliveryDetailsNewFieldKey = key;
+                  }
+                }
+                if (deliveryDetailsNewFieldKey != null) {
+                  var actualQuantityDelivered =
+                      deliveryDetailsProperties[deliveryDetailsNewFieldKey];
+                  actualQuantityDelivered['fieldName'] =
+                      'actualQuantityDelivered';
+                  deliverySchemaData['pages']['DeliveryDetails']['properties']
+                      .remove(deliveryDetailsNewFieldKey);
+                  deliverySchemaData['pages']['DeliveryDetails']['properties']
+                      ['actualQuantityDelivered'] = actualQuantityDelivered;
+                }
+
                 // Added scanner validations in delivery details page
                 List scannerValidations = deliverySchemaData['pages']
                     ['DeliveryDetails']['properties']['scanner']['validations'];
@@ -465,18 +523,70 @@ class _HomePageState extends LocalizedState<HomePage> {
                   return validation["type"] == "scanLimit" &&
                       validation["type"] == "isGS1";
                 }).toList();
+
+                List deliveryCommentValidation = deliverySchemaData['pages']
+                        ['DeliveryDetails']['properties']['deliveryComment']
+                    ['validations'];
+
+                List deliveryCountFieldValidation = deliverySchemaData['pages']
+                        ['DeliveryDetails']['properties']
+                    ['actualQuantityDelivered']['validations'];
+
                 deliverySchemaData['pages']['DeliveryDetails']['properties']
                     ['scanner']['validations'] = [
                   ...filterScannerValidations,
                   {
                     "type": "scanLimit",
-                    "value": "{{resourceCard.first.quantityDistributed}}",
+                    "value": "{actualQuantityDelivered}",
                     "message": "quantity exceeded"
                   },
                   {
                     "type": "isGS1",
                     "value": true,
                     "message": "quantity exceeded"
+                  },
+                  {
+                    "type": "applicationIdentifiers",
+                    "value": ['21', '01', '02', '00', '240'],
+                    "message": "quantity exceeded"
+                  },
+                  {
+                    "type": "manualScanValidationGS1",
+                    "value": {
+                      "01": r'^[a-zA-Z0-9]{9,18}$',
+                      "11": r'^[a-zA-Z0-9]{8,18}$',
+                      "10": r'^[a-zA-Z0-9]{6,18}$',
+                      "21": r'^[a-zA-Z0-9]{9,18}$',
+                    },
+                    "message": "quantity exceeded"
+                  }
+                ];
+
+                deliverySchemaData['pages']['DeliveryDetails']['properties']
+                    ['actualQuantityDelivered']['validations'] = [
+                  ...deliveryCountFieldValidation,
+                  {
+                    "type": "pattern",
+                    "value": r"^[0-9]*$",
+                    "message": "invalid input"
+                  },
+                  {
+                    "type": "maxDependencyField",
+                    "value": "{{resourceCard.first.quantityDistributed}}",
+                    "message": "DELIVERY_DETAILS_MAX_INPUT_EXCEED"
+                  }
+                ];
+
+                deliverySchemaData['pages']['DeliveryDetails']['properties']
+                    ['deliveryComment']['validations'] = [
+                  ...deliveryCommentValidation,
+                  {
+                    "type": "matchValue",
+                    "value": [
+                      "actualQuantityDelivered",
+                      "{{resourceCard.first.quantityDistributed}}"
+                    ],
+                    "message": "invalid input"
                   }
                 ];
 
@@ -671,6 +781,44 @@ class _HomePageState extends LocalizedState<HomePage> {
           },
         ),
       ),
+      i18.home.manageStockLabel:
+          homeShowcaseData.warehouseManagerManageStock.buildWith(
+        child: HomeItemCard(
+          icon: Icons.store_mall_directory,
+          label: i18.home.manageStockLabel,
+          onPressed: () {
+            context.read<AppInitializationBloc>().state.maybeWhen(
+                  orElse: () {},
+                  initialized: (
+                    AppConfiguration appConfiguration,
+                    _,
+                    __,
+                  ) {
+                    context.router.push(ManageStocksRoute());
+                  },
+                );
+          },
+        ),
+      ),
+      i18.home.stockReconciliationLabel:
+          homeShowcaseData.wareHouseManagerStockReconciliation.buildWith(
+        child: HomeItemCard(
+          icon: Icons.menu_book,
+          label: i18.home.stockReconciliationLabel,
+          onPressed: () {
+            context.router.push(CustomStockReconciliationRoute());
+          },
+        ),
+      ),
+      i18.home.viewReportsLabel: homeShowcaseData.inventoryReport.buildWith(
+        child: HomeItemCard(
+          icon: Icons.announcement,
+          label: i18.home.viewReportsLabel,
+          onPressed: () {
+            context.router.push(CustomInventoryReportSelectionRoute());
+          },
+        ),
+      ),
       i18.home.dashboard: homeShowcaseData.dashBoard.buildWith(
         child: HomeItemCard(
           icon: Icons.bar_chart_sharp,
@@ -764,6 +912,9 @@ class _HomePageState extends LocalizedState<HomePage> {
       i18.home.beneficiaryLabel,
       i18.home.manageAttendanceLabel,
       i18.home.viewSummaryReportsLabel,
+      i18.home.manageStockLabel,
+      i18.home.stockReconciliationLabel,
+      i18.home.viewReportsLabel,
       i18.home.syncDataLabel,
       i18.home.manageAttendanceLabel,
       i18.home.fileComplaint,
@@ -1053,6 +1204,7 @@ void setPackagesSingleton(BuildContext context) {
                 ..name = e.code
                 ..code = e.code)
               .toList(),
+          loggedInUser: context.loggedInUserModel,
         );
 
         DashboardSingleton().setInitialData(
