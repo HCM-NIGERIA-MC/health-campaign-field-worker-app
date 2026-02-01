@@ -50,11 +50,11 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyDkT1V6wknoUsh8CFDXiA8OwElZnK9sF9w',
-    appId: '1:630326133351:android:5c043092e0cd437c954ac2',
-    messagingSenderId: '630326133351',
-    projectId: 'digit-hcm-nigeria',
-    storageBucket: 'digit-hcm-nigeria.firebasestorage.app',
+    apiKey: 'AIzaSyBzE5f156_ia7HumLb1fDg8A-88uhmQ68Y',
+    appId: '1:397617237644:android:55bec018a3018ceaf6b5a9',
+    messagingSenderId: '397617237644',
+    projectId: 'digit-health-75ed0',
+    storageBucket: 'digit-health-75ed0.appspot.com',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
