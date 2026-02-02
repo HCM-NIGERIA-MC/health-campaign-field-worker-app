@@ -1010,22 +1010,22 @@ class _DynamicTabsPageState extends LocalizedState<DynamicTabsPage>
             return;
           }
 
-          if (entryType == StockRecordEntryType.dispatch &&
-              context.isHealthFacilitySupervisor) {
-            if (quantity + quantityIssuedToday >
-                Constants.cddStockTransactionDailyLimit) {
-              await DigitToast.show(
-                context,
-                options: DigitToastOptions(
-                    localizations.translate(i18_local
-                        .stockDetails.stockDispatchToCddDailyLimitValidation),
-                    true,
-                    theme),
-              );
-              isSubmitClicked = false;
-              return;
-            }
-          }
+          // if (entryType == StockRecordEntryType.dispatch &&
+          //     context.isHealthFacilitySupervisor) {
+          //   if (quantity + quantityIssuedToday >
+          //       Constants.cddStockTransactionDailyLimit) {
+          //     await DigitToast.show(
+          //       context,
+          //       options: DigitToastOptions(
+          //           localizations.translate(i18_local
+          //               .stockDetails.stockDispatchToCddDailyLimitValidation),
+          //           true,
+          //           theme),
+          //     );
+          //     isSubmitClicked = false;
+          //     return;
+          //   }
+          // }
 
           if (entryType == StockRecordEntryType.returned ||
               (entryType == StockRecordEntryType.dispatch &&

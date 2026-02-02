@@ -187,22 +187,22 @@ class _ViewStockRecordsLGAPageState
         final quantity =
             int.parse(_form.control('quantityReceived').value.toString());
 
-        if (stock.transactionType == TransactionType.dispatched.toValue() &&
-            context.isCommunityDistributor) {
-          if (quantity + quantityReceivedToday >
-              Constants.cddStockTransactionDailyLimit) {
-            await DigitToast.show(
-              context,
-              options: DigitToastOptions(
-                  localizations.translate(i18_local
-                      .stockDetails.stockReceivedByCddDailyLimitValidation),
-                  true,
-                  theme),
-            );
-            isSubmitClicked = false;
-            return;
-          }
-        }
+        // if (stock.transactionType == TransactionType.dispatched.toValue() &&
+        //     context.isCommunityDistributor) {
+        //   if (quantity + quantityReceivedToday >
+        //       Constants.cddStockTransactionDailyLimit) {
+        //     await DigitToast.show(
+        //       context,
+        //       options: DigitToastOptions(
+        //           localizations.translate(i18_local
+        //               .stockDetails.stockReceivedByCddDailyLimitValidation),
+        //           true,
+        //           theme),
+        //     );
+        //     isSubmitClicked = false;
+        //     return;
+        //   }
+        // }
       }
 
       final updatedStocks = widget.stockRecords.map((stock) {
