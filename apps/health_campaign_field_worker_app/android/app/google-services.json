@@ -1,10 +1,11 @@
 {
   "project_info": {
-    "project_number": "630326133351",
-    "project_id": "digit-hcm-nigeria",
-    "storage_bucket": "digit-hcm-nigeria.firebasestorage.app"
+    "project_number": "397617237644",
+    "project_id": "digit-health-75ed0",
+    "storage_bucket": "digit-health-75ed0.appspot.com"
   },
   "client": [
+    
     {
       "client_info": {
         "mobilesdk_app_id": "1:397617237644:android:55bec018a3018ceaf6b5a9",

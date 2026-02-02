@@ -116,6 +116,8 @@ class Constants {
   static const String blueVAS = "Blue VAS";
   static const String redVAS = "Red VAS";
 
+  // static const int cddStockTransactionDailyLimit = 20;
+
   static const String height = "height";
   static const String weight = "weight";
 

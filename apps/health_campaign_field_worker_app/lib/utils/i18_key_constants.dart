@@ -511,6 +511,13 @@ class HomeShowcase {
 
 class StockDetails {
   const StockDetails();
+
+  String get stockDispatchToCddDailyLimitValidation =>
+      'STOCK_DISPATCH_TO_CDD_DAILY_LIMIT_VALIDATION';
+
+  String get stockReceivedByCddDailyLimitValidation =>
+      'STOCK_RECEIVE_BY_CDD_DAILY_LIMIT_VALIDATION';
+
   String get selectTransactingPartyReturnedFrom =>
       'STOCK_DETAILS_RETURNED_FROM';
 

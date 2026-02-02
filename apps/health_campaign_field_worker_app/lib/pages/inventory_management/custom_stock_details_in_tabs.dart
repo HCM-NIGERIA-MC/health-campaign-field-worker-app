@@ -198,7 +198,6 @@ class _DynamicTabsPageState extends LocalizedState<DynamicTabsPage>
           stock.transactionReason == 'RETURNED' &&
           stock.senderId == secondartParty &&
           stock.receiverId == primaryId;
-      ;
     }).toList();
 
     int totalReturnQuantity = 0;
@@ -944,6 +943,9 @@ class _DynamicTabsPageState extends LocalizedState<DynamicTabsPage>
           final totalQuantityReceived = await getReceivedQuantity(
               context, stockState, stockModel, selectedProducts);
 
+          final quantityIssuedToday = await getQuantityIssuedTodayToCurrentUser(
+              context, stockState, stockModel, selectedProducts);
+
           int quantity = int.parse(stockModel.quantity.toString());
 
           int quantityWasted = int.parse(stockModel.additionalFields?.fields
@@ -1007,6 +1009,23 @@ class _DynamicTabsPageState extends LocalizedState<DynamicTabsPage>
             isSubmitClicked = false;
             return;
           }
+
+          // if (entryType == StockRecordEntryType.dispatch &&
+          //     context.isHealthFacilitySupervisor) {
+          //   if (quantity + quantityIssuedToday >
+          //       Constants.cddStockTransactionDailyLimit) {
+          //     await DigitToast.show(
+          //       context,
+          //       options: DigitToastOptions(
+          //           localizations.translate(i18_local
+          //               .stockDetails.stockDispatchToCddDailyLimitValidation),
+          //           true,
+          //           theme),
+          //     );
+          //     isSubmitClicked = false;
+          //     return;
+          //   }
+          // }
 
           if (entryType == StockRecordEntryType.returned ||
               (entryType == StockRecordEntryType.dispatch &&
@@ -1182,6 +1201,59 @@ class _DynamicTabsPageState extends LocalizedState<DynamicTabsPage>
       receivedStocks.where((e) =>
           e.transactionType == TransactionType.received.toValue() &&
           e.transactionReason == TransactionReason.received.toValue()),
+    );
+  }
+
+  Future<num> getQuantityIssuedTodayToCurrentUser(
+      BuildContext context,
+      RecordStockState stockState,
+      StockModel stockModel,
+      List<String> selectedProducts) async {
+    final StockDataRepository stockRepository =
+        context.repository<StockModel, StockSearchModel>();
+    final productVariantId = stockModel.productVariantId;
+
+    final secondartParty = receivedFrom.contains(("FAC_"))
+        ? receivedFrom.replaceFirst("FAC_", "")
+        : receivedFrom.contains('||')
+            ? receivedFrom.split('||')[1]
+            : receivedFrom;
+
+    final facilityId;
+    if (InventorySingleton().isDistributor) {
+      facilityId = InventorySingleton().loggedInUserUuid;
+    } else {
+      facilityId = stockState.facilityModel?.id;
+    }
+
+    if (productVariantId == null || facilityId == null) return 0;
+
+    final now = DateTime.now();
+    final startOfDay = DateTime(now.year, now.month, now.day);
+    final endOfDay = startOfDay.add(const Duration(days: 1));
+
+    final issuedStocks = (await stockRepository.search(
+      StockSearchModel(
+          productVariantId: productVariantId,
+          senderId: facilityId, // primaryId,
+          receiverId: secondartParty,
+          transactionType: [TransactionType.dispatched.toValue()]),
+    ))
+        .where((element) =>
+            element.auditDetails != null &&
+            element.auditDetails?.createdBy ==
+                InventorySingleton().loggedInUserUuid &&
+            element.clientAuditDetails?.createdTime != null &&
+            element.clientAuditDetails!.createdTime >=
+                startOfDay.millisecondsSinceEpoch &&
+            element.clientAuditDetails!.createdTime <
+                endOfDay.millisecondsSinceEpoch)
+        .toList();
+
+    return _getQuantityCount(
+      issuedStocks.where((e) =>
+          e.transactionType == TransactionType.dispatched.toValue() &&
+          e.transactionReason == null),
     );
   }
 

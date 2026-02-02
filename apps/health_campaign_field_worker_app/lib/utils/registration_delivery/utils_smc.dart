@@ -557,10 +557,11 @@ DeliveryDoseCriteria? fetchProductVariant(ProjectCycleDelivery? currentDelivery,
             individualModel.additionalFields!.fields
                 .where((element) => element.key == Constants.height)
                 .isNotEmpty) {
-          height = int.parse(individualModel.additionalFields!.fields
+          height = int.tryParse(individualModel.additionalFields!.fields
                   .where((element) => element.key == Constants.height)
-                  .first
-                  .value ??
+                  .firstOrNull
+                  ?.value
+                  .toString() ??
               '0');
         }
       }

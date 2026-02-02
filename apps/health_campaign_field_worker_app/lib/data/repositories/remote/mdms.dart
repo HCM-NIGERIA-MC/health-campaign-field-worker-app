@@ -156,7 +156,7 @@ class MdmsRepository {
 
     final firebaseConfig = FirebaseConfig()
       ..enableAnalytics = element?.firebaseConfig?.first.enableAnalytics
-      ..enableCrashlytics = element?.firebaseConfig?.first.enableCrashlytics;
+      ..enableCrashlytics = true;
 
     appConfiguration
       ..networkDetection = appConfig?.networkDetection
