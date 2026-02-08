@@ -1116,7 +1116,7 @@ class CustomStockDetailsPageState
                                           quantity: int.tryParse(
                                                   '${form.control(_transactionQuantityUnitKey).value ?? 0}') ??
                                               0,
-                                          isGS1code: true,
+                                          isGS1code: false,
                                           singleValue: false,
                                         ),
                                         settings: const RouteSettings(
@@ -1165,7 +1165,7 @@ class CustomStockDetailsPageState
                                                   quantity: int.tryParse(
                                                           '${form.control(_transactionQuantityUnitKey).value ?? 0}') ??
                                                       0,
-                                                  isGS1code: true,
+                                                  isGS1code: false,
                                                   singleValue: false,
                                                 ),
                                                 settings: const RouteSettings(
