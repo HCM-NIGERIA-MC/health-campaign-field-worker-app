@@ -52,6 +52,7 @@ class DigitScannerPage extends LocalizedStatefulWidget {
 class DigitScannerPageState extends LocalizedState<DigitScannerPage> {
   QRViewController? _qrController;
   bool _isProcessing = false;
+  bool _isQRViewReady = false;
   AudioPlayer player = AudioPlayer();
   List<GS1Barcode> result = [];
   List<String> codes = [];
@@ -60,7 +61,8 @@ class DigitScannerPageState extends LocalizedState<DigitScannerPage> {
   final GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
   Timer? _mlKitTimer;
   late mlkit.BarcodeScanner _mlKitScanner;
-  static const _captureChannel = MethodChannel('com.digit_scanner/screen_capture');
+  static const _captureChannel =
+      MethodChannel('com.digit_scanner/screen_capture');
   static const _manualCodeFormKey = 'manualCode';
   static const _manualSerialNoFormKey = 'serialNoCode';
   static const _manualExpiryDateFormKey = 'expiryDate';
@@ -234,11 +236,39 @@ class DigitScannerPageState extends LocalizedState<DigitScannerPage> {
     }
   }
 
+  Future<void> _safeResumeCamera() async {
+    if (_qrController == null || !_isQRViewReady || manualCode) {
+      debugPrint(
+          '[DigitScanner] Cannot resume camera: controller=${_qrController != null}, ready=$_isQRViewReady, manual=$manualCode');
+      return;
+    }
+    try {
+      await _qrController?.resumeCamera();
+      debugPrint('[DigitScanner] Camera resumed successfully');
+    } catch (e) {
+      debugPrint('[DigitScanner] Error resuming camera: $e');
+      // Don't crash the app, just log the error
+    }
+  }
+
+  Future<void> _safePauseCamera() async {
+    if (_qrController == null || !_isQRViewReady) {
+      return;
+    }
+    try {
+      await _qrController?.pauseCamera();
+      debugPrint('[DigitScanner] Camera paused successfully');
+    } catch (e) {
+      debugPrint('[DigitScanner] Error pausing camera: $e');
+    }
+  }
+
   @override
   void reassemble() {
     super.reassemble();
-    _qrController?.pauseCamera();
-    _qrController?.resumeCamera();
+    if (_isQRViewReady && _qrController != null) {
+      _safePauseCamera().then((_) => _safeResumeCamera());
+    }
   }
 
   @override
@@ -267,13 +297,28 @@ class DigitScannerPageState extends LocalizedState<DigitScannerPage> {
 
   void _onQRViewCreated(QRViewController controller) {
     _qrController = controller;
+    setState(() {
+      _isQRViewReady = true;
+    });
+
     // Workaround: Android 11 (API 30) black preview issue
     if (Platform.isAndroid) {
-      controller.pauseCamera();
-      controller.resumeCamera();
+      Future.delayed(const Duration(milliseconds: 300), () async {
+        if (!mounted || manualCode) return;
+        try {
+          await controller.pauseCamera();
+          await Future.delayed(const Duration(milliseconds: 100));
+          await controller.resumeCamera();
+          debugPrint('[DigitScanner] Android camera workaround completed');
+        } catch (e) {
+          debugPrint('[DigitScanner] Android camera workaround failed: $e');
+        }
+      });
     }
+
     controller.scannedDataStream.listen((scanData) async {
-      debugPrint('[DigitScanner] Detected format=${scanData.format} code=${scanData.code}');
+      debugPrint(
+          '[DigitScanner] Detected format=${scanData.format} code=${scanData.code}');
       if (_isProcessing) return;
       setState(() => _isProcessing = true);
 
@@ -314,8 +359,11 @@ class DigitScannerPageState extends LocalizedState<DigitScannerPage> {
 
   @override
   void dispose() {
+    _isQRViewReady = false;
     _mlKitTimer?.cancel();
     _mlKitScanner.close();
+    _qrController?.dispose();
+    _qrController = null;
     super.dispose();
   }
 
@@ -355,7 +403,10 @@ class DigitScannerPageState extends LocalizedState<DigitScannerPage> {
                         setState(() {
                           manualCode = false;
                         });
-                        _qrController?.resumeCamera();
+                        // Delay camera resume to ensure view is ready
+                        Future.delayed(const Duration(milliseconds: 300), () {
+                          _safeResumeCamera();
+                        });
                       },
                       child: Align(
                         alignment: Alignment.topRight,
@@ -405,7 +456,10 @@ class DigitScannerPageState extends LocalizedState<DigitScannerPage> {
                           ));
 
                           setState(() => manualCode = false);
-                          _qrController?.resumeCamera();
+                          // Delay camera resume to ensure view is ready
+                          Future.delayed(const Duration(milliseconds: 300), () {
+                            _safeResumeCamera();
+                          });
                         },
                         type: DigitButtonType.primary,
                         size: DigitButtonSize.large,
@@ -546,7 +600,10 @@ class DigitScannerPageState extends LocalizedState<DigitScannerPage> {
                         setState(() {
                           manualCode = false;
                         });
-                        _qrController?.resumeCamera();
+                        // Delay camera resume to ensure view is ready
+                        Future.delayed(const Duration(milliseconds: 300), () {
+                          _safeResumeCamera();
+                        });
                       },
                       child: Align(
                         alignment: Alignment.topRight,
@@ -589,7 +646,10 @@ class DigitScannerPageState extends LocalizedState<DigitScannerPage> {
                           ));
 
                           setState(() => manualCode = false);
-                          _qrController?.resumeCamera();
+                          // Delay camera resume to ensure view is ready
+                          Future.delayed(const Duration(milliseconds: 300), () {
+                            _safeResumeCamera();
+                          });
                         },
                         type: DigitButtonType.primary,
                         size: DigitButtonSize.large,
@@ -775,11 +835,13 @@ class DigitScannerPageState extends LocalizedState<DigitScannerPage> {
                 label: localizations.translate(
                   i18.scanner.enterManualCode,
                 ),
-                onPressed: () {
-                  _qrController?.pauseCamera();
-                  setState(() {
-                    manualCode = true;
-                  });
+                onPressed: () async {
+                  await _safePauseCamera();
+                  if (mounted) {
+                    setState(() {
+                      manualCode = true;
+                    });
+                  }
                 },
                 type: DigitButtonType.link,
                 size: DigitButtonSize.large)
