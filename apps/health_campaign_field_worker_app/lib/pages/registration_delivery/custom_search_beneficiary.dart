@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:auto_route/auto_route.dart';
+import 'package:collection/collection.dart';
 import 'package:digit_crud_bloc/bloc/crud_bloc.dart';
 import 'package:digit_crud_bloc/models/global_search_params.dart' as reg_params;
 import 'package:digit_data_converter/src/reverse_transformer_service.dart';
@@ -1054,6 +1057,50 @@ class _CustomSearchBeneficiaryPageState
     }
   }
 
+  Future<Set<String>> _getAllVouchers() async {
+    Set<String> voucherCodes = {};
+    final repository = context.read<
+            LocalRepository<ProjectBeneficiaryModel,
+                ProjectBeneficiarySearchModel>>()
+        as ProjectBeneficiaryLocalRepository;
+    List<ProjectBeneficiaryModel> projectBeneficiary =
+        await repository.search(ProjectBeneficiarySearchModel());
+    for (var element in projectBeneficiary) {
+      if (element.tag != null) {
+        voucherCodes.add(element.tag!);
+      }
+    }
+    return voucherCodes;
+  }
+
+  Future<Set<String>> _getAllBednets() async {
+    Set<String> bednetCodes = {};
+    final taskRepository =
+        context.read<LocalRepository<TaskModel, TaskSearchModel>>()
+            as TaskDataRepository;
+    List<TaskModel> successfulTaskList =
+        await (taskRepository as TaskLocalRepository).search(
+      TaskSearchModel(status: Status.administeredSuccess.toValue()),
+      context.loggedInUser.uuid,
+    );
+    for (var task in successfulTaskList) {
+      List<AdditionalField>? additionalFieldTask = task.additionalFields?.fields
+          .where((e) => e.key == "scanner")
+          .toList();
+      for (AdditionalField field in additionalFieldTask ?? []) {
+        String code = field.value;
+        List<String> firstCodes = code.split(",");
+        List<String> codes = [];
+        for (var element in firstCodes) {
+          codes.addAll(element.split("|"));
+        }
+        List<String> codes21 = codes.where((e) => e.contains("(21)")).toList();
+        bednetCodes.addAll(codes21);
+      }
+    }
+    return bednetCodes;
+  }
+
   List<DigitButton> buildSearchButtons(
     BuildContext context,
     TextEditingValue value,
@@ -1082,7 +1129,7 @@ class _CustomSearchBeneficiaryPageState
           type: DigitButtonType.primary,
           size: DigitButtonSize.large,
           // isDisabled: isTextShort,
-          onPressed: () {
+          onPressed: () async {
             if (template?.properties?['searchByID']?.hidden == true) {
               context.read<FormsBloc>().add(
                   const FormsEvent.clearForm(schemaKey: 'REGISTRATIONFLOW'));
@@ -1104,6 +1151,77 @@ class _CustomSearchBeneficiaryPageState
                   type: ToastType.error,
                 );
               } else {
+                String? registrationConfigString =
+                    RegistrationDeliverySingleton().regisrationConfig;
+                String? deliveryConfigString =
+                    RegistrationDeliverySingleton().deliveryConfig;
+                var registrationConfig;
+                var deliveryConfig;
+                if (registrationConfigString != null) {
+                  Set<String> voucherCodes = await _getAllVouchers();
+                  final registrationSchemaData =
+                      json.decode(registrationConfigString);
+                  List tagValidations = registrationSchemaData['pages']
+                          ["beneficiaryDetails"]["properties"]['tag']
+                      ['validations'];
+                  List filterTagValidations = tagValidations
+                      .where(
+                          (v) => v['type'] != 'duplicateVoucherScanValidation')
+                      .toList();
+                  registrationSchemaData['pages']["beneficiaryDetails"]
+                      ["properties"]['tag']['validations'] = [
+                    ...filterTagValidations,
+                    {
+                      "type": "duplicateVoucherScanValidation",
+                      "value": voucherCodes.toList(),
+                      "message":
+                          "DELIVERY_DETAILS_DUPLICATE_VOUCHER_SCAN_VALIDATION"
+                    }
+                  ];
+                  registrationConfig = json.encode(registrationSchemaData);
+                }
+                if (deliveryConfigString != null) {
+                  final deliverySchemaData = json.decode(deliveryConfigString);
+                  Set<String> bednetCodes = await _getAllBednets();
+                  // Added scanner validations in delivery details page
+                  List scannerValidations = deliverySchemaData['pages']
+                          ['DeliveryDetails']['properties']['scanner']
+                      ['validations'];
+                  List filterScannerValidations =
+                      scannerValidations.whereNot((validation) {
+                    return validation["type"] == "scanLimit" &&
+                        validation["type"] == "isGS1" &&
+                        validation["type"] == "duplicateBednetScanValidation";
+                  }).toList();
+                  deliverySchemaData['pages']['DeliveryDetails']['properties']
+                      ['scanner']['validations'] = [
+                    ...filterScannerValidations,
+                    {
+                      "type": "duplicateBednetScanValidation",
+                      "value": bednetCodes.toList(),
+                      "message":
+                          "DELIVERY_DETAILS_DUPLICATE_BEDNET_SCAN_VALIDATION"
+                    },
+                  ];
+                  deliveryConfig = json.encode(deliverySchemaData);
+                }
+
+                final schemas = [
+                  registrationConfig,
+                  deliveryConfig,
+                ]
+                    .where((s) =>
+                        s != null &&
+                        s.trim().isNotEmpty &&
+                        s.trim().toLowerCase() != 'null')
+                    .cast<String>()
+                    .toList();
+
+                if (schemas.isNotEmpty) {
+                  context
+                      .read<FormsBloc>()
+                      .add(FormsEvent.load(schemas: schemas));
+                }
                 context.router.push(FormsRenderRoute(
                   currentSchemaKey: 'REGISTRATIONFLOW',
                   pageName: pageName,

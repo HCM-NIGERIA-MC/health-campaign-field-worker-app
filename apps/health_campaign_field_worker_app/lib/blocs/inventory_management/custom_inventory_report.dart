@@ -5,6 +5,7 @@ import 'package:digit_data_model/utils/app_exception.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:intl/intl.dart';
+import 'package:inventory_management/blocs/inventory_report.dart';
 import 'package:inventory_management/utils/utils.dart';
 
 import 'package:inventory_management/utils/typedefs.dart';
@@ -42,7 +43,7 @@ class CustomInventoryReportBloc
     if (facilityId.trim().isEmpty || productVariantId.trim().isEmpty) {
       emit(const InventoryReportEmptyState());
     } else {
-      if (reportType == InventoryReportType.reconciliation) {
+      if (reportType == CustomInventoryReport.reconciliation) {
         throw AppException(
           'Invalid report type: ${event.reportType}',
         );
@@ -54,37 +55,37 @@ class CustomInventoryReportBloc
       String? senderId;
       String? receiverId;
 
-      if (reportType == InventoryReportType.receipt) {
+      if (reportType == CustomInventoryReport.receipt) {
         transactionType = [TransactionType.received.toValue()];
         transactionReason = [TransactionReason.received.toValue()];
         receiverId = facilityId;
         senderId = null;
-      } else if (reportType == InventoryReportType.dispatch) {
+      } else if (reportType == CustomInventoryReport.dispatch) {
         transactionType = [TransactionType.dispatched.toValue()];
         transactionReason = [];
         receiverId = null;
         senderId = facilityId;
-      } else if (reportType == InventoryReportType.returned) {
+      } else if (reportType == CustomInventoryReport.returned) {
         transactionType = [TransactionType.received.toValue()];
         transactionReason = [TransactionReason.returned.toValue()];
         receiverId = facilityId;
         senderId = null;
-      } else if (reportType == InventoryReportType.damage) {
+      } else if (reportType == CustomInventoryReport.damage) {
         transactionType = [TransactionType.dispatched.toValue()];
         transactionReason = [
           TransactionReason.damagedInStorage.toValue(),
           TransactionReason.damagedInTransit.toValue(),
         ];
-        receiverId = facilityId;
-        senderId = null;
-      } else if (reportType == InventoryReportType.loss) {
+        receiverId = null;
+        senderId = facilityId;
+      } else if (reportType == CustomInventoryReport.loss) {
         transactionType = [TransactionType.dispatched.toValue()];
         transactionReason = [
           TransactionReason.lostInStorage.toValue(),
           TransactionReason.lostInTransit.toValue(),
         ];
-        receiverId = facilityId;
-        senderId = null;
+        receiverId = null;
+        senderId = facilityId;
       }
       final data = (receiverId != null
               ? await stockRepository.search(
@@ -110,7 +111,22 @@ class CustomInventoryReportBloc
               element.auditDetails?.createdBy ==
                   InventorySingleton().loggedInUserUuid);
 
-      final groupedData = data.groupListsBy(
+      // Added data filter for dispatch because of no transaction reasons
+      // We are removing all the loss and damage stocks from here
+      var newData = data;
+      if (reportType == CustomInventoryReport.dispatch && data.isNotEmpty) {
+        newData = data.where((e) {
+          return [
+                TransactionReason.damagedInStorage.toValue(),
+                TransactionReason.damagedInTransit.toValue(),
+                TransactionReason.lostInStorage.toValue(),
+                TransactionReason.lostInTransit.toValue()
+              ].contains(e.transactionReason) ==
+              false;
+        });
+      }
+
+      final groupedData = newData.groupListsBy(
         (element) => DateFormat('dd MMM yyyy').format(
           DateTime.fromMillisecondsSinceEpoch(
             element.auditDetails!.createdTime,
@@ -157,7 +173,7 @@ class CustomInventoryReportBloc
 @freezed
 class InventoryReportEvent with _$InventoryReportEvent {
   const factory InventoryReportEvent.loadStockData({
-    required InventoryReportType reportType,
+    required CustomInventoryReport reportType,
     required String facilityId,
     required String productVariantId,
   }) = InventoryReportLoadStockDataEvent;
@@ -184,7 +200,7 @@ class InventoryReportState with _$InventoryReportState {
   }) = InventoryReportStockReconciliationState;
 }
 
-enum InventoryReportType {
+enum CustomInventoryReport {
   receipt,
   dispatch,
   returned,

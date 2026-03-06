@@ -6,6 +6,8 @@ import 'package:complaints/router/complaints_router.gm.dart';
 import 'package:digit_forms_engine/router/forms_router.dart';
 import 'package:digit_scanner/router/digit_scanner_router.dart';
 import 'package:digit_scanner/router/digit_scanner_router.gm.dart';
+import 'package:inventory_management/blocs/app_localization.dart';
+import 'package:inventory_management/blocs/inventory_report.dart';
 import 'package:referral_reconciliation/router/referral_reconciliation_router.gm.dart';
 import 'package:referral_reconciliation/router/referral_reconciliation_router.dart';
 import 'package:registration_delivery/blocs/app_localization.dart';
@@ -17,6 +19,7 @@ import 'package:flutter/material.dart';
 import 'package:inventory_management/router/inventory_router.dart';
 import 'package:inventory_management/router/inventory_router.gm.dart';
 
+import '../blocs/inventory_management/custom_inventory_report.dart';
 import '../blocs/localization/app_localization.dart';
 import '../pages/acknowledgement.dart';
 import '../pages/authenticated.dart';
@@ -35,6 +38,11 @@ import '../pages/registration_delivery/custom_household_acknowledgement.dart';
 import '../pages/registration_delivery/custom_household_overview.dart';
 import '../pages/registration_delivery/custom_search_beneficiary.dart';
 import '../pages/reports/beneficiary/beneficaries_report.dart';
+import '../pages/reports/inventory_management/custom_report_details.dart';
+import '../pages/reports/inventory_management/custom_report_selection.dart';
+import '../pages/reports/inventory_management/custom_stock_details.dart';
+import '../pages/reports/inventory_management/custom_stock_reconciliation.dart';
+import '../pages/reports/inventory_management/custom_warehouse_details.dart';
 import '../pages/unauthenticated.dart';
 export 'package:auto_route/auto_route.dart';
 import '../pages/referral_reconcillation/custom_search_referral_page.dart';
@@ -99,6 +107,10 @@ class AppRouter extends _$AppRouter {
         AutoRoute(page: HomeRoute.page, path: 'home'),
         AutoRoute(page: ProfileRoute.page, path: 'profile'),
         AutoRoute(page: UserQRDetailsRoute.page, path: 'user-qr-code'),
+        AutoRoute(
+          page: ManageStocksRoute.page,
+          path: 'custom-manage-stocks',
+        ),
         AutoRoute(
           page: DigitScannerRoute.page,
           path: 'digit-scanner',
@@ -249,14 +261,42 @@ class AppRouter extends _$AppRouter {
           path: 'record-stock',
           children: [
             AutoRoute(
-              page: StockDetailsRoute.page,
-              path: 'details',
+              page: CustomWarehouseDetailsRoute.page,
+              path: 'custom-warehouse-details',
+              initial: true,
             ),
-            RedirectRoute(
-              path: 'details',
-              redirectTo: 'custom-details',
+            AutoRoute(
+              page: CustomStockDetailsRoute.page,
+              path: 'custom-details',
             ),
+            // AutoRoute(
+            //   page: StockDetailsRoute.page,
+            //   path: 'details',
+            // ),
+            // RedirectRoute(
+            //   path: 'details',
+            //   redirectTo: 'custom-details',
+            // ),
+            // AutoRoute(
+            //   page: WarehouseDetailsRoute.page,
+            //   path: 'custom-warehouse-details',
+            //   initial: true,
+            // ),
           ],
+        ),
+
+        AutoRoute(
+          page: CustomStockReconciliationRoute.page,
+          path: 'custom-stock-reconciliation',
+        ),
+        AutoRoute(
+          page: CustomInventoryReportSelectionRoute.page,
+          path: 'custom-inventory-report-selection',
+        ),
+
+        AutoRoute(
+          page: CustomInventoryReportDetailsRoute.page,
+          path: 'custom-inventory-report-details',
         ),
 
         AutoRoute(
