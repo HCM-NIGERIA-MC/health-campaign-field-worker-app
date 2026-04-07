@@ -1178,9 +1178,14 @@ class _CustomSearchBeneficiaryPageState
                           "DELIVERY_DETAILS_DUPLICATE_VOUCHER_SCAN_VALIDATION"
                     }
                   ];
-                  registrationSchemaData['pages']["beneficiaryDetails"]
-                          ["properties"]['tag']['hidden'] =
-                      context.isDistributor && context.isRegistrar;
+                  if (registrationSchemaData['pages']["beneficiaryDetails"]
+                          ["properties"]['tag']['hidden'] ==
+                      false) {
+                    registrationSchemaData['pages']["beneficiaryDetails"]
+                            ["properties"]['tag']['hidden'] =
+                        context.isDistributor && context.isRegistrar;
+                  }
+
                   registrationConfig = json.encode(registrationSchemaData);
                 }
                 if (deliveryConfigString != null) {
@@ -1258,7 +1263,8 @@ class _CustomSearchBeneficiaryPageState
 
     // — Secondary button —
     if (secondaryProp?.hidden != true &&
-        (!context.isRegistrar || !context.isDistributor)) {
+        context.isDistributor &&
+        !context.isRegistrar) {
       final order = secondaryProp?.order ?? 1;
       entries.add(MapEntry(
         order,
