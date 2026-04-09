@@ -1181,9 +1181,22 @@ class _CustomSearchBeneficiaryPageState
                   if (registrationSchemaData['pages']["beneficiaryDetails"]
                           ["properties"]['tag']['hidden'] ==
                       false) {
-                    registrationSchemaData['pages']["beneficiaryDetails"]
-                            ["properties"]['tag']['hidden'] =
-                        context.isDistributor && context.isRegistrar;
+                    if (context.isDistributor && context.isRegistrar) {
+                      registrationSchemaData['pages']["beneficiaryDetails"]
+                          ["properties"]['tag']['hidden'] = true;
+                    } else {
+                      var tagValidations = registrationSchemaData['pages']
+                              ["beneficiaryDetails"]["properties"]['tag']
+                          ['validations'];
+                      registrationSchemaData['pages']["beneficiaryDetails"]
+                          ["properties"]['tag']['validations'] = [
+                        ...tagValidations,
+                        {
+                          "type": "required",
+                          "value": true,
+                        }
+                      ];
+                    }
                   }
 
                   registrationConfig = json.encode(registrationSchemaData);
