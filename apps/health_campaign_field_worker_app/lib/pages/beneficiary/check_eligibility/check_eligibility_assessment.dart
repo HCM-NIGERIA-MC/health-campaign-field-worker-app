@@ -105,7 +105,7 @@ class _EligibilityChecklistViewPage
               double? longitude = locationState.longitude;
               String eligibilityAssessment = widget.eligibilityAssessmentType ==
                       EligibilityAssessmentType.smc
-                  ? "ELIGIBLITY_ASSESSMENT"
+                  ? "UPDATED_ELIGIBLITY_ASSESSMENT"
                   : "ELIGIBLITY_ASSESSMENT_2";
               return BlocBuilder<ServiceDefinitionBloc, ServiceDefinitionState>(
                 builder: (context, state) {
@@ -189,7 +189,12 @@ class _EligibilityChecklistViewPage
                                                 'Number'
                                             ? ''
                                             : '0')
-                                    : visibleChecklistIndexes.contains(i)
+                                    : visibleChecklistIndexes.contains(i) &&
+                                            controller[i]
+                                                .text
+                                                .toString()
+                                                .trim()
+                                                .isNotEmpty
                                         ? controller[i].text.toString()
                                         : i18_local.checklist.notSelectedKey;
                                 responses[attributeCode] = value;
@@ -315,7 +320,12 @@ class _EligibilityChecklistViewPage
                                                       .toString()
                                                   : ''
                                               : visibleChecklistIndexes
-                                                      .contains(i)
+                                                          .contains(i) &&
+                                                      controller[i]
+                                                          .text
+                                                          .trim()
+                                                          .toString()
+                                                          .isNotEmpty
                                                   ? controller[i]
                                                       .text
                                                       .toString()
