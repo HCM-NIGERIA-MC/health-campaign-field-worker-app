@@ -472,6 +472,7 @@ class _DynamicTabsPageState extends LocalizedState<DynamicTabsPage>
           Validators.min(-1),
           Validators.max(Constants.stockMaxLimit),
         ],
+        autoValidate: true,
       );
     }
 

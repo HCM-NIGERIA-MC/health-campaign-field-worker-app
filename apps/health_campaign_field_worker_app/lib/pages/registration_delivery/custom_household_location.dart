@@ -45,6 +45,7 @@ class CustomHouseholdLocationPageState
   static const _lngKey = 'lng';
   static const _accuracyKey = 'accuracy';
   static const maxLength = 64;
+  static const postalMaxLength = 6;
   static const _buildingNameKey = 'buildingName';
 
   @override
@@ -470,7 +471,8 @@ class CustomHouseholdLocationPageState
                                       .translate(i18.common.min3CharsRequired),
                                   'maxLength': (object) => localizations
                                       .translate(i18.common.maxCharsRequired)
-                                      .replaceAll('{}', maxLength.toString()),
+                                      .replaceAll(
+                                          '{}', postalMaxLength.toString()),
                                 },
                                 builder: (field) => LabeledField(
                                     isRequired: false,

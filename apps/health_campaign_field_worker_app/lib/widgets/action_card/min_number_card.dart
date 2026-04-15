@@ -106,7 +106,7 @@ class MinNumberCard extends StatelessWidget {
                     ),
                     const SizedBox(width: spacer2),
                     Text(
-                      "${item['quantity']!} ${item['name']!.contains('SPAQ') ? 'Blisters' : 'Capsules'}",
+                      "${item['quantity']!} ${item['name']!.contains('SPAQ') ? 'Blisters' : 'Bottles'}",
                       style: textTheme.bodyL,
                     ),
                   ],
