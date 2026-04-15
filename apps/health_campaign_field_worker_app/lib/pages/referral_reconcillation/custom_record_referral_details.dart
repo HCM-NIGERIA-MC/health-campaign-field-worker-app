@@ -1239,7 +1239,10 @@ class _CustomRecordReferralDetailsPageState
         ],
       ),
       _beneficiaryIdKey: FormControl<String>(
-        validators: [Validators.required],
+        validators: [
+          Validators.required,
+          Validators.maxLength(20),
+        ],
         value: referralState.mapOrNull(
           create: (value) => value.hfReferralModel?.beneficiaryId,
         ),

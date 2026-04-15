@@ -1110,11 +1110,13 @@ class _EligibilityChecklistViewPage
     var q2Key = "A2";
     var q3Key = "A3";
     var q4Key = "A4";
+    var q5Key = "A5";
     Map<String, String> referralKeysVsCode = {
       q1Key: "ALLERGIES",
       q2Key: "LIVER_DISEASE",
       q3Key: "TAKEN_ANTIBIOTICS",
       q4Key: "CHRONIC_ILLNESS",
+      q5Key: "SIX_MONTHS_AZM",
     };
     // TODO Configure the reasons ,verify hardcoded strings
 
@@ -1133,6 +1135,10 @@ class _EligibilityChecklistViewPage
       if (!isReferral &&
           (responses.containsKey(q4Key) && responses[q4Key]!.isNotEmpty)) {
         isReferral = responses[q4Key] == yes ? true : false;
+      }
+      if (!isReferral &&
+          (responses.containsKey(q5Key) && responses[q5Key]!.isNotEmpty)) {
+        isReferral = responses[q5Key] == yes ? true : false;
       }
     }
     if (isReferral) {
