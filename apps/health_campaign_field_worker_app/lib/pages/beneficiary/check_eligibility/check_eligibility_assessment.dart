@@ -1118,7 +1118,7 @@ class _EligibilityChecklistViewPage
       q4Key: "CHRONIC_ILLNESS",
       q5Key: "SIX_MONTHS_AZM",
     };
-    // TODO Configure the reasons ,verify hardcoded strings
+    // A1–A4 trigger referral routing; A5 only records SIX_MONTHS_AZM when Yes, but always proceeds to administration.
 
     if (responses.isNotEmpty) {
       if (responses.containsKey(q1Key) && responses[q1Key]!.isNotEmpty) {
@@ -1136,10 +1136,6 @@ class _EligibilityChecklistViewPage
           (responses.containsKey(q4Key) && responses[q4Key]!.isNotEmpty)) {
         isReferral = responses[q4Key] == yes ? true : false;
       }
-      if (!isReferral &&
-          (responses.containsKey(q5Key) && responses[q5Key]!.isNotEmpty)) {
-        isReferral = responses[q5Key] == yes ? true : false;
-      }
     }
     if (isReferral) {
       for (var entry in referralKeysVsCode.entries) {
@@ -1150,6 +1146,10 @@ class _EligibilityChecklistViewPage
           }
         }
       }
+    } else if (responses.containsKey(q5Key) &&
+        responses[q5Key]!.isNotEmpty &&
+        responses[q5Key] == yes) {
+      referralReasons.add(referralKeysVsCode[q5Key]!);
     }
 
     return isReferral;
@@ -1193,10 +1193,11 @@ class _EligibilityChecklistViewPage
 
   bool isDelivery(Map<String?, String> responses) {
     var isDeliver = true;
-    var q1Key = "KBEA7";
+    // KBEA7 (VAS) and A5 (SMC) do not block proceeding when other criteria pass.
+    const skipKeysForDelivery = {'KBEA7', 'A5'};
 
     for (var entry in responses.entries) {
-      if (entry.key == q1Key) {
+      if (skipKeysForDelivery.contains(entry.key)) {
         continue;
       }
       if (entry.value == yes) {
