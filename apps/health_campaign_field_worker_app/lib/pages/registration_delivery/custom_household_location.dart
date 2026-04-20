@@ -383,7 +383,7 @@ class CustomHouseholdLocationPageState
                               'required': (_) => localizations.translate(
                                     i18.common.corecommonRequired,
                                   ),
-                              'sizeLessThan2': (_) => localizations
+                              'minLength': (_) => localizations
                                   .translate(i18.common.min3CharsRequired),
                               'maxLength': (object) => localizations
                                   .translate(i18.common.maxCharsRequired)
@@ -412,7 +412,7 @@ class CustomHouseholdLocationPageState
                               'required': (_) => localizations.translate(
                                     i18.common.corecommonRequired,
                                   ),
-                              'sizeLessThan2': (_) => localizations
+                              'minLength': (_) => localizations
                                   .translate(i18.common.min3CharsRequired),
                               'maxLength': (object) => localizations
                                   .translate(i18.common.maxCharsRequired)
@@ -441,7 +441,7 @@ class CustomHouseholdLocationPageState
                                   'required': (_) => localizations.translate(
                                         i18.common.corecommonRequired,
                                       ),
-                                  'sizeLessThan2': (_) => localizations
+                                  'minLength': (_) => localizations
                                       .translate(i18.common.min3CharsRequired),
                                   'maxLength': (object) => localizations
                                       .translate(i18.common.maxCharsRequired)
@@ -467,7 +467,7 @@ class CustomHouseholdLocationPageState
                                   'required': (_) => localizations.translate(
                                         i18.common.corecommonRequired,
                                       ),
-                                  'sizeLessThan2': (_) => localizations
+                                  'minLength': (_) => localizations
                                       .translate(i18.common.min3CharsRequired),
                                   'maxLength': (object) => localizations
                                       .translate(i18.common.maxCharsRequired)
@@ -500,9 +500,8 @@ class CustomHouseholdLocationPageState
                                     'required': (_) => localizations.translate(
                                           i18.common.corecommonRequired,
                                         ),
-                                    'sizeLessThan2': (_) =>
-                                        localizations.translate(
-                                            i18.common.min3CharsRequired),
+                                    'minLength': (_) => localizations.translate(
+                                        i18.common.min3CharsRequired),
                                     'maxLength': (object) => localizations
                                         .translate(i18.common.maxCharsRequired)
                                         .replaceAll('{}', maxLength.toString()),
