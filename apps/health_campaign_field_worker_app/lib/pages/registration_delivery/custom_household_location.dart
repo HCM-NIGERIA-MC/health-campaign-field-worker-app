@@ -383,7 +383,7 @@ class CustomHouseholdLocationPageState
                               'required': (_) => localizations.translate(
                                     i18.common.corecommonRequired,
                                   ),
-                              'sizeLessThan2': (_) => localizations
+                              'minLength': (_) => localizations
                                   .translate(i18.common.min3CharsRequired),
                               'maxLength': (object) => localizations
                                   .translate(i18.common.maxCharsRequired)
@@ -412,7 +412,7 @@ class CustomHouseholdLocationPageState
                               'required': (_) => localizations.translate(
                                     i18.common.corecommonRequired,
                                   ),
-                              'sizeLessThan2': (_) => localizations
+                              'minLength': (_) => localizations
                                   .translate(i18.common.min3CharsRequired),
                               'maxLength': (object) => localizations
                                   .translate(i18.common.maxCharsRequired)
@@ -441,7 +441,7 @@ class CustomHouseholdLocationPageState
                                   'required': (_) => localizations.translate(
                                         i18.common.corecommonRequired,
                                       ),
-                                  'sizeLessThan2': (_) => localizations
+                                  'minLength': (_) => localizations
                                       .translate(i18.common.min3CharsRequired),
                                   'maxLength': (object) => localizations
                                       .translate(i18.common.maxCharsRequired)
@@ -467,7 +467,7 @@ class CustomHouseholdLocationPageState
                                   'required': (_) => localizations.translate(
                                         i18.common.corecommonRequired,
                                       ),
-                                  'sizeLessThan2': (_) => localizations
+                                  'minLength': (_) => localizations
                                       .translate(i18.common.min3CharsRequired),
                                   'maxLength': (object) => localizations
                                       .translate(i18.common.maxCharsRequired)
@@ -500,9 +500,8 @@ class CustomHouseholdLocationPageState
                                     'required': (_) => localizations.translate(
                                           i18.common.corecommonRequired,
                                         ),
-                                    'sizeLessThan2': (_) =>
-                                        localizations.translate(
-                                            i18.common.min3CharsRequired),
+                                    'minLength': (_) => localizations.translate(
+                                        i18.common.min3CharsRequired),
                                     'maxLength': (object) => localizations
                                         .translate(i18.common.maxCharsRequired)
                                         .replaceAll('{}', maxLength.toString()),
@@ -552,22 +551,26 @@ class CustomHouseholdLocationPageState
       _addressLine1Key:
           FormControl<String>(value: addressModel?.addressLine1, validators: [
         Validators.maxLength(64),
+        Validators.minLength(3),
       ]),
       _addressLine2Key: FormControl<String>(
         value: addressModel?.addressLine2,
         validators: [
           Validators.maxLength(64),
+          Validators.minLength(3),
         ],
       ),
       _landmarkKey:
           FormControl<String>(value: addressModel?.landmark, validators: [
         Validators.maxLength(64),
+        Validators.minLength(3),
         Validators.delegate((validator) =>
             local_utils.CustomValidator.onlyAlphabetsAndDigits(validator)),
       ]),
       _postalCodeKey:
           FormControl<String>(value: addressModel?.pincode, validators: [
         Validators.maxLength(6),
+        Validators.minLength(3),
       ]),
       _latKey: FormControl<double>(value: addressModel?.latitude),
       _lngKey: FormControl<double>(
