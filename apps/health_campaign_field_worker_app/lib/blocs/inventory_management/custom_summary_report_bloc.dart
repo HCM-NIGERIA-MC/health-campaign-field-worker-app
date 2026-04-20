@@ -60,11 +60,14 @@ class SummaryReportBloc extends Bloc<SummaryReportEvent, SummaryReportState> {
       taskList = await (taskDataRepository).search(TaskSearchModel());
       productVariantList = await (productVariantDataRepository)
           .search(ProductVariantSearchModel());
-      for (var element in taskList) {
-        final status = StatusMapper.fromValue(element.status);
 
-        if (status == Status.administeredSuccess) {
-          administeredChildrenList.add(element);
+      for (var element in taskList) {
+        if (element.status != null) {
+          final status = StatusMapper.fromValue(element.status);
+
+          if (status == Status.administeredSuccess) {
+            administeredChildrenList.add(element);
+          }
         }
       }
 
