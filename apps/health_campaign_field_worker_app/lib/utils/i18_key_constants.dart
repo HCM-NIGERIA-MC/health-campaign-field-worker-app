@@ -1154,6 +1154,9 @@ class SyncDialog {
 
   String get dataSyncedTitle => 'SYNC_DIALOG_DATA_SYNCED_TITLE';
 
+  /// Shown when sync completes but there were no pending up/down rows to process.
+  String get nothingToSyncTitle => 'SYNC_DIALOG_NOTHING_TO_SYNC_TITLE';
+
   String get closeButtonLabel => 'SYNC_DIALOG_CLOSE_BUTTON_LABEL';
 
   String get retryButtonLabel => 'SYNC_DIALOG_RETRY_BUTTON_LABEL';

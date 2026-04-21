@@ -45,6 +45,7 @@ import '../router/app_router.dart';
 import '../utils/debound.dart';
 import '../utils/environment_config.dart';
 import '../utils/i18_key_constants.dart' as i18;
+import '../utils/sync_failure_reporter.dart';
 import '../utils/least_level_boundary_singleton.dart';
 import '../utils/utils.dart';
 import '../widgets/header/back_navigation_help_header.dart';
@@ -52,6 +53,7 @@ import '../widgets/home/home_item_card.dart';
 import '../widgets/localized.dart';
 import '../widgets/registration_delivery/custom_beneficiary_progress.dart';
 import '../widgets/showcase/config/showcase_constants.dart';
+import '../widgets/sync_failed_details_dialog.dart';
 
 @RoutePage()
 class HomePage extends LocalizedStatefulWidget {
@@ -203,14 +205,22 @@ class _HomePageState extends LocalizedState<HomePage> {
                     }
                   },
                   completedSync: () async {
+                    final hadPendingWork =
+                        SyncFailureReporter.instance.rootSyncHadPendingWork;
+                    SyncFailureReporter.instance.clear();
                     Navigator.of(context, rootNavigator: true).pop();
                     await localSecureStore.setManualSyncTrigger(true);
                     if (context.mounted) {
+                      final successLabel = hadPendingWork == false
+                          ? localizations.translate(
+                              i18.syncDialog.nothingToSyncTitle,
+                            )
+                          : localizations.translate(
+                              i18.syncDialog.dataSyncedTitle,
+                            );
                       DigitSyncDialog.show(context,
                           type: DialogType.complete,
-                          label: localizations.translate(
-                            i18.syncDialog.dataSyncedTitle,
-                          ),
+                          label: successLabel,
                           primaryAction: DigitDialogActions(
                             label: localizations.translate(
                               i18.syncDialog.closeButtonLabel,
@@ -293,26 +303,19 @@ class _HomePageState extends LocalizedState<HomePage> {
   }) {
     Navigator.of(context, rootNavigator: true).pop();
 
-    DigitSyncDialog.show(
+    SyncFailedDetailsDialog.show<void>(
       context,
-      type: DialogType.failed,
-      label: message,
-      primaryAction: DigitDialogActions(
-        label: localizations.translate(
-          i18.syncDialog.retryButtonLabel,
-        ),
-        action: (ctx) {
-          Navigator.pop(ctx);
-          // Sync Failed Manual Sync is Enabled
-          _attemptSyncUp(context);
-        },
+      title: message,
+      primaryLabel: localizations.translate(
+        i18.syncDialog.retryButtonLabel,
       ),
-      secondaryAction: DigitDialogActions(
-        label: localizations.translate(
-          i18.syncDialog.closeButtonLabel,
-        ),
-        action: (ctx) => Navigator.pop(ctx),
+      secondaryLabel: localizations.translate(
+        i18.syncDialog.closeButtonLabel,
       ),
+      onRetry: (ctx) {
+        Navigator.pop(ctx);
+        _attemptSyncUp(context);
+      },
     );
   }
 

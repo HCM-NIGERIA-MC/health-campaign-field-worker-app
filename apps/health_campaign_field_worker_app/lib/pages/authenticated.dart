@@ -31,6 +31,7 @@ import '../blocs/localization/app_localization.dart';
 import '../blocs/localization/localization.dart';
 import '../blocs/projects_beneficiary_downsync/project_beneficiaries_downsync.dart';
 import '../data/local_store/no_sql/schema/app_configuration.dart';
+import '../data/sync/instrumented_sync_service.dart';
 import '../data/remote_client.dart';
 import '../data/repositories/remote/bandwidth_check.dart';
 import '../models/downsync/downsync.dart';
@@ -156,7 +157,7 @@ class AuthenticatedPageWrapper extends StatelessWidget {
                           final isar = context.read<Isar>();
                           final bloc = SyncBloc(
                             isar: isar,
-                            syncService: SyncService(),
+                            syncService: InstrumentedSyncService(),
                           );
 
                           if (!bloc.isClosed) {

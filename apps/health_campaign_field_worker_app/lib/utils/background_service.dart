@@ -16,10 +16,10 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:isar/isar.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:recase/recase.dart';
-import 'package:sync_service/data/sync_service.dart';
 import 'package:sync_service/models/bandwidth/bandwidth_model.dart';
 
 import '../data/local_store/no_sql/schema/app_configuration.dart';
+import '../data/sync/instrumented_sync_service.dart';
 import '../data/local_store/no_sql/schema/service_registry.dart';
 import '../data/local_store/secure_store/secure_store.dart';
 import '../data/remote_client.dart';
@@ -204,7 +204,8 @@ void onStart(ServiceInstance service) async {
                   ),
                 );
                 // Insert sync logic here
-                final isSyncCompleted = await SyncService().performSync(
+                final isSyncCompleted = await InstrumentedSyncService()
+                    .performSync(
                   localRepositories: Constants.getLocalRepositories(
                     _sql,
                     _isar,

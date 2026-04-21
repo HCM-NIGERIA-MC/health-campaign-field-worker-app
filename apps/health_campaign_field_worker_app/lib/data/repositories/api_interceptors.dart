@@ -79,6 +79,32 @@ class ApiLoggerInterceptor extends Interceptor {
     }
   }
 
+  /// Logs failed calls (e.g. **401**) — [onResponse] never runs for these, so this was missing before.
+  @override
+  void onError(DioException err, ErrorInterceptorHandler handler) {
+    final code = err.response?.statusCode;
+    final uri = err.requestOptions.uri.toString();
+    final summary = StringBuffer()
+      ..writeln('DioException [${err.type.name}]')
+      ..writeln('HTTP: $code')
+      ..writeln('URI: $uri')
+      ..writeln('Message: ${err.message ?? "(none)"}');
+    if (err.response?.data != null) {
+      try {
+        summary.writeln(
+          'Response (truncated): ${_truncate(err.response!.data.toString(), 800)}',
+        );
+      } catch (_) {}
+    }
+    AppLogger.instance.info(summary.toString(), title: '[API ERROR]');
+    handler.next(err);
+  }
+
+  static String _truncate(String s, int max) {
+    if (s.length <= max) return s;
+    return '${s.substring(0, max)}…';
+  }
+
   String _getIndentedJson(String json) {
     return const JsonEncoder.withIndent('  ').convert(jsonDecode(json));
   }
