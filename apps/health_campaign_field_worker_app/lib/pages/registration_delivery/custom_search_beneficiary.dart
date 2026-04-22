@@ -1178,6 +1178,27 @@ class _CustomSearchBeneficiaryPageState
                           "DELIVERY_DETAILS_DUPLICATE_VOUCHER_SCAN_VALIDATION"
                     }
                   ];
+                  if (registrationSchemaData['pages']["beneficiaryDetails"]
+                          ["properties"]['tag']['hidden'] ==
+                      false) {
+                    if (context.isDistributor && context.isRegistrar) {
+                      registrationSchemaData['pages']["beneficiaryDetails"]
+                          ["properties"]['tag']['hidden'] = true;
+                    } else {
+                      var tagValidations = registrationSchemaData['pages']
+                              ["beneficiaryDetails"]["properties"]['tag']
+                          ['validations'];
+                      registrationSchemaData['pages']["beneficiaryDetails"]
+                          ["properties"]['tag']['validations'] = [
+                        ...tagValidations,
+                        {
+                          "type": "required",
+                          "value": true,
+                        }
+                      ];
+                    }
+                  }
+
                   registrationConfig = json.encode(registrationSchemaData);
                 }
                 if (deliveryConfigString != null) {
@@ -1254,7 +1275,9 @@ class _CustomSearchBeneficiaryPageState
     }
 
     // — Secondary button —
-    if (secondaryProp?.hidden != true) {
+    if (secondaryProp?.hidden != true &&
+        context.isDistributor &&
+        !context.isRegistrar) {
       final order = secondaryProp?.order ?? 1;
       entries.add(MapEntry(
         order,
