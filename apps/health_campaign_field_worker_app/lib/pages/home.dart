@@ -571,6 +571,11 @@ class _HomePageState extends LocalizedState<HomePage> {
                     "message": "invalid input"
                   },
                   {
+                    "type": "minValue",
+                    "value": "1",
+                    "message": "DELIVERY_DETAILS_MIN_INPUT_VALIDATION"
+                  },
+                  {
                     "type": "maxDependencyField",
                     "value": "{{resourceCard.first.quantityDistributed}}",
                     "message": "DELIVERY_DETAILS_MAX_INPUT_EXCEED"
