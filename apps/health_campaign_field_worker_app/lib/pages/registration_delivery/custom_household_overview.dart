@@ -1015,10 +1015,12 @@ class _CustomHouseholdOverviewPageState
             RegistrationDeliverySingleton().beneficiaryType!,
       ),
     );
+    // note : setting id to null to create new address entry for add member flow
+    final updatedAddress = address.copyWith(id: null);
     await context.router.popAndPush(
       CustomBeneficiaryRegistrationWrapperRoute(
         initialState: BeneficiaryRegistrationAddMemberState(
-          addressModel: address,
+          addressModel: updatedAddress,
           householdModel: household!,
         ),
         children: [

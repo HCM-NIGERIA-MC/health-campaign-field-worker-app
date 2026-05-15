@@ -79,7 +79,7 @@ class CustomStockReconciliationBloc
         (!event.isDistributor && facilityId == null)) return;
 
     // Fetching the stock reconciliation details
-    final receivedStocks = (await stockRepository.searchForReconciliation(
+    final receivedStocks = (await stockRepository.search(
       StockSearchModel(
           productVariantId: productVariantId,
           receiverId: [facilityId!],
@@ -90,7 +90,7 @@ class CustomStockReconciliationBloc
             element.auditDetails?.createdBy ==
                 InventorySingleton().loggedInUserUuid)
         .toList();
-    final sentStocks = (await stockRepository.searchForReconciliation(
+    final sentStocks = (await stockRepository.search(
       StockSearchModel(
           productVariantId: productVariantId,
           senderId: facilityId,

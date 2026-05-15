@@ -109,7 +109,7 @@ class MinNumberCard extends StatelessWidget {
                     ),
                     const SizedBox(width: 8.0), // Replace spacer2
                     Text(
-                      "${item['quantity']!} ${item['name']!.contains('SPAQ') ? 'Blisters' : 'Capsules'}",
+                      "${item['quantity']!} ${getResourceQuantityUnit(item['name']!)}",
                       style: textTheme.bodyL,
                     ),
                   ],
@@ -134,5 +134,17 @@ class MinNumberCard extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  // move to constants also add localisation where possible
+
+  String getResourceQuantityUnit(String resourceName) {
+    if (resourceName.contains('SPAQ')) {
+      return 'Blisters';
+    } else if (resourceName.contains('AZM')) {
+      return 'Bottles';
+    } else {
+      return 'Bottles';
+    }
   }
 }
