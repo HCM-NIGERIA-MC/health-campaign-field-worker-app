@@ -261,11 +261,11 @@ bool checkEligibilityForAgeAndSideEffectAll(
               : false
           : false;
     } else {
-      if (individual != null) {
+      if (individual != null && household != null) {
         return (fetchProductVariant(
                   currentCycle.deliveries!.firstOrNull,
                   individual,
-                  household!,
+                  household,
                 ) !=
                 null)
             ? true

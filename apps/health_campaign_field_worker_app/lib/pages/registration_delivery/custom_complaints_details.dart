@@ -22,6 +22,8 @@ import '../../../utils/i18_key_constants.dart' as i18;
 import '../../../utils/utils.dart' show CustomValidator;
 import '../../../widgets/header/back_navigation_help_header.dart';
 import '../../../widgets/localized.dart';
+import '../../utils/i18_key_constants.dart' as i18_local;
+import '../../utils/utils.dart' as local_utils;
 
 @RoutePage()
 class CustomComplaintsDetailsPage extends LocalizedStatefulWidget {
@@ -385,6 +387,11 @@ class CustomComplaintsDetailsPageState
                               'maxLength': (object) => localizations
                                   .translate(i18.common.maxCharsRequired)
                                   .replaceAll('{}', '50'),
+                              'onlyAlphabets': (object) =>
+                                  localizations.translate(
+                                    i18_local.individualDetails
+                                        .onlyAlphabetsValidationMessage,
+                                  )
                             },
                             builder: (field) {
                               return LabeledField(
@@ -454,6 +461,11 @@ class CustomComplaintsDetailsPageState
                               'maxLength': (object) => localizations
                                   .translate(i18.common.maxCharsRequired)
                                   .replaceAll('{}', '64'),
+                              'onlyAlphabets': (object) =>
+                                  localizations.translate(
+                                    i18_local.individualDetails
+                                        .onlyAlphabetsValidationMessage,
+                                  )
                             },
                             builder: (field) {
                               return LabeledField(
@@ -571,7 +583,12 @@ class CustomComplaintsDetailsPageState
       _complainantName: FormControl<String>(
         value: complaintDetails?.complainantName,
         disabled: shouldDisableForm,
-        validators: [Validators.required, Validators.maxLength(50)],
+        validators: [
+          Validators.required,
+          Validators.maxLength(50),
+          Validators.delegate((validator) =>
+              local_utils.CustomValidator.onlyAlphabets(validator))
+        ],
       ),
       _complainantContactNumber: FormControl<String>(
         value: complaintDetails?.complainantContactNumber,
@@ -587,7 +604,11 @@ class CustomComplaintsDetailsPageState
       _supervisorName: FormControl<String>(
         value: complaintDetails?.supervisorName,
         disabled: shouldDisableForm,
-        validators: [Validators.maxLength(64)],
+        validators: [
+          Validators.maxLength(64),
+          Validators.delegate((validator) =>
+              local_utils.CustomValidator.onlyAlphabets(validator))
+        ],
       ),
       _supervisorContactNumber: FormControl<String>(
         value: complaintDetails?.supervisorContactNumber,

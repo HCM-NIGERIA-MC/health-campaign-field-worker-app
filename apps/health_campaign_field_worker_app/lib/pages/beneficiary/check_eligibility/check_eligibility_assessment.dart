@@ -1230,10 +1230,10 @@ class _EligibilityChecklistViewPage
 
   bool isDelivery(Map<String?, String> responses) {
     var isDeliver = true;
-    var q1Key = "KBEA7";
+    var q5Key = "A5";
 
     for (var entry in responses.entries) {
-      if (entry.key == q1Key) {
+      if (entry.key == q5Key) {
         continue;
       }
       if (entry.value == yes) {
