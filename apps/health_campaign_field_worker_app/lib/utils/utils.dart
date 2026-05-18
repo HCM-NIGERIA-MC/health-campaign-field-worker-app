@@ -39,7 +39,6 @@ import 'package:registration_delivery/registration_delivery.init.dart'
 import '../../models/entities/additional_fields_type.dart'
     as additional_fields_local;
 import 'package:survey_form/survey_form.dart' as surveyForm_mappers;
-import 'package:survey_form/survey_form.init.dart' as surveyForm_mappers;
 
 import '../../utils/i18_key_constants.dart' as i18_local;
 import '../blocs/app_initialization/app_initialization.dart';
@@ -899,7 +898,8 @@ List<AdditionalField> getAdditionalIndividualInfoFromHouseholdMemberWrapper(
         householdMemberWrapper.headOfHousehold?.name?.givenName,
       ),
     if (householdMemberWrapper.headOfHousehold != null &&
-        householdMemberWrapper.headOfHousehold?.mobileNumber != null)
+        householdMemberWrapper.headOfHousehold?.mobileNumber != null &&
+        (householdMemberWrapper.headOfHousehold?.mobileNumber?.length ?? 0) > 2)
       AdditionalField(
         additional_fields_local.AdditionalFieldsType.householdHeadMobileNumber
             .toValue(),

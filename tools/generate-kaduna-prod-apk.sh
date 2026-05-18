@@ -1,7 +1,7 @@
 cd apps/health_campaign_field_worker_app || exit
 
 
-flutter pub run change_app_package_name:main org.egov.kaduna
+flutter pub run change_app_package_name:main org.egov.kebbi
 
 rm -rf release-apk
 mkdir release-apk
